@@ -3,6 +3,9 @@ use thiserror::Error;
 use typedef::Row;
 
 pub mod typedef;
+pub mod parser {
+    pub use crate::ops_parser::row as parse_row;
+}
 
 peg::parser! {
     grammar ops_parser() for str {
