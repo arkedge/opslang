@@ -1,11 +1,27 @@
 //! type definition of AST.
 
+use std::ops::Range;
+
+#[derive(Debug)]
+pub struct Spanned<T> {
+    pub value: T,
+    pub span: Range<usize>,
+}
+
+impl<T> std::ops::Deref for Spanned<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.value
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct Row {
     pub breaks: Option<()>,
     pub content: Option<ReservedControl>,
     pub comment_trailing: Option<Comment>,
 }
+pub type SRow = Spanned<Row>;
 
 #[derive(Debug, PartialEq)]
 pub struct Comment(pub String);
