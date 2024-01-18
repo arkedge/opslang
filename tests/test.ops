@@ -1,9 +1,4 @@
-# opslang
-syntax definition and sample implementation of ops file language
-
 ## 基本構文
-
-```
 let ok = "OK"                       # string型
 let t = time!(2024-01-01T00:00:00Z) # time型
 let d = 1s                          # duration型
@@ -28,11 +23,9 @@ print hk.OBC.XX.YY                  # テレメトリ集合型は構造体のよ
 @BL.MOBC 30: NOP
 @UTL.MOBC time!(2024-01-01T00:00:00Z): NOP                # 時刻をTime Indicatorとしてとるコマンド
 @TL.MOBC 20: @@RT.AOBC NOP                                # 最終的な実行コンポーネントが異なるコマンド (WINGSのMOBC_TL.AOBC_RTに相当)
-```
 
 ## 糖衣構文
 
-```
 @RT.MOBC delay=0.5s { # comment
     # この中はデフォルトで @MOBC
     # 一行実行するごとにdelayだけwaitを挟む
@@ -60,18 +53,4 @@ print hk.OBC.XX.YY                  # テレメトリ集合型は構造体のよ
     @RT.MOBC NOP #このブロック内はデフォルトでTL.MOBCだが、この行はRT.MOBC
 }
 
-```
 
-## 検討中
-
-```
-# after!で直前の時間指定からの相対時間を指定できる
-@TL.MOBC delay=0.5s {
-    10: NOP                              # TI=10
-    assert_eq last_ti!(), 10
-    last_ti!() + 10: NOP                 # TI=20
-    assert_eq last_ti!(), 20
-    last_ti!() + 10: @@AOBC NOP               # TI=30
-    assert_eq last_ti!(), 30
-}
-```

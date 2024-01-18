@@ -1,8 +1,9 @@
 //! type definition of AST.
 
+use chrono::{DateTime, Utc};
 use std::ops::Range;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Spanned<T> {
     pub value: T,
     pub span: Range<usize>,
@@ -18,24 +19,40 @@ impl<T> std::ops::Deref for Spanned<T> {
 #[derive(Debug, PartialEq)]
 pub struct Row {
     pub breaks: Option<()>,
-    pub content: Option<ReservedControl>,
+    pub content: Option<SingleStatement>,
     pub comment_trailing: Option<Comment>,
 }
 pub type SRow = Spanned<Row>;
+
+#[derive(Debug, PartialEq)]
+pub struct Block {
+    pub default_destination: Option<Destination>,
+    pub delay: Option<Expr>,
+    pub rows: Vec<SRow>,
+    pub comment_first: Option<Comment>,
+    pub comment_last: Option<Comment>,
+}
+pub type SBlock = Spanned<Block>;
 
 #[derive(Debug, PartialEq)]
 pub struct Comment(pub String);
 
 /// reserved controls
 #[derive(Debug, PartialEq)]
-pub enum ReservedControl {
+pub enum SingleStatement {
     Call(Call),
-    WaitSec(WaitSec),
-    WaitUntil(WaitUntil),
-    CheckValue(CheckValue),
+    Wait(Wait),
+    Assert(Assert),
+    AssertEq(AssertEq),
     Command(Command),
     Let(Let),
-    Get(Get),
+    Print(Print),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Statement {
+    Single(SRow),
+    Block(SBlock),
 }
 
 #[derive(Debug, PartialEq)]
@@ -49,15 +66,29 @@ pub struct FilePath {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct CheckValue {
+pub struct Assert {
     pub condition: Expr,
 }
 
 #[derive(Debug, PartialEq)]
+pub struct AssertEq {
+    pub left: Expr,
+    pub right: Expr,
+    pub tolerance: Option<Expr>,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct Command {
-    pub destinations: Vec<Destination>,
+    pub destination: DestinationSpec,
     pub name: String,
     pub args: Vec<Expr>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct DestinationSpec {
+    pub receiver: Option<Destination>,
+    pub time_indicator: Option<Expr>,
+    pub executor: Option<Destination>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -72,12 +103,7 @@ pub struct Call {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct WaitSec {
-    pub sec: Expr,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct WaitUntil {
+pub struct Wait {
     pub condition: Expr,
 }
 
@@ -126,8 +152,8 @@ pub struct Let {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Get {
-    pub variable: VariablePath,
+pub struct Print {
+    pub arg: Expr,
 }
 
 /// an expression.
@@ -136,6 +162,7 @@ pub struct Get {
 #[derive(Debug, PartialEq)]
 pub enum Expr {
     Variable(VariablePath),
+    TlmRef(VariablePath),
     Literal(Literal),
     UnOp(UnOpKind, Box<Self>),
     BinOp(BinOpKind, Box<Self>, Box<Self>),
@@ -147,6 +174,8 @@ pub enum Literal {
     Array(Vec<Expr>),
     String(String),
     Numeric(Numeric, Option<NumericSuffix>),
+    DateTime(DateTime<Utc>),
+    TlmId(String),
 }
 
 #[derive(Debug, PartialEq)]
