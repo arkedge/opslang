@@ -4,7 +4,7 @@ use typedef::Row;
 
 pub mod typedef;
 pub mod parser {
-    pub use crate::ops_parser::row as parse_row;
+    pub use crate::ops_parser::{row as parse_row, rows as parse_rows};
 }
 
 peg::parser! {
@@ -138,7 +138,7 @@ peg::parser! {
             / command:command() { ReservedControl::Command(command) }
 
         rule comment() -> Comment
-            = "#" _ s:$([_]*) { Comment(s.to_owned()) }
+            = "#" _ s:$([c if c != '\n']*) { Comment(s.to_owned()) }
 
         pub rule row_() -> Row
             = breaks:"."? _ r:(
@@ -151,10 +151,13 @@ peg::parser! {
         pub rule row() -> SRow
             = spanned(<row_()>)
 
+        pub rule rows() -> Vec<SRow>
+            = r:(row() ** "\n") _ { r }
+
         rule _() = ws()*
         rule __() = ![c if c.is_alphanumeric()] _
 
-        rule ws() = quiet!{[c if c.is_whitespace()]}
+        rule ws() = quiet!{[c if c.is_whitespace() && c != '\n']}
 
         // cf. https://github.com/kevinmehall/rust-peg/issues/283#issuecomment-1014858352
         rule spanned<T>(inner : rule<T>) -> Spanned<T>
@@ -296,9 +299,7 @@ mod tests {
 .let CURRENT_EXAMPLE_TLM_VALUE = FOO.BAR.EXAMPLE_TLM.VALUE
 .ABC_DEF.Cmd_DO_IT
  wait_until FOO.BAR.EXAMPLE_TLM.VALUE > CURRENT_EXAMPLE_TLM_VALUE || 5s"#;
-        for l in s.lines() {
-            let r = ops_parser::row(l);
-            dbg!(r.unwrap());
-        }
+        let r = ops_parser::rows(s);
+        dbg!(r.unwrap());
     }
 }
