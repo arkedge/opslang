@@ -140,7 +140,7 @@ peg::parser! {
         rule comment() -> Comment
             = "#" _ s:$([_]*) { Comment(s.to_owned()) }
 
-        pub rule row() -> Row
+        pub rule row_() -> Row
             = breaks:"."? _ r:(
                   content:reserved_control() _ comment_trailing:comment()?
                     { Row { breaks, content: Some(content), comment_trailing } }
@@ -148,10 +148,17 @@ peg::parser! {
                     { Row { breaks, content: None, comment_trailing } }
             ) { r }
 
+        pub rule row() -> SRow
+            = spanned(<row_()>)
+
         rule _() = ws()*
         rule __() = ![c if c.is_alphanumeric()] _
 
         rule ws() = quiet!{[c if c.is_whitespace()]}
+
+        // cf. https://github.com/kevinmehall/rust-peg/issues/283#issuecomment-1014858352
+        rule spanned<T>(inner : rule<T>) -> Spanned<T>
+            = b:position!() value:inner() e:position!() { Spanned { span: b..e, value } }
     }
 }
 
