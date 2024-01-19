@@ -10,13 +10,13 @@ pub mod parser {
 peg::parser! {
     grammar ops_parser() for str {
         use typedef::*;
-        rule file_path() -> FilePath<'input>
+        rule file_path() -> FilePath
             = full_name:ident()
-            { FilePath { full_name } }
+            { FilePath { full_name: full_name.to_owned() } }
 
-        rule variable_path() -> VariablePath<'input>
+        rule variable_path() -> VariablePath
             = raw:ident()
-            { VariablePath { raw } }
+            { VariablePath { raw: raw.to_owned() } }
 
         rule ident() -> &'input str
             = $(
@@ -24,16 +24,16 @@ peg::parser! {
                 [c if c.is_ascii_alphanumeric() || c == '_' || c == '/' || c == '.' || c == '-']*
             )
 
-        rule destination() -> Destination<'input>
+        rule destination() -> Destination
             = component:$([c if c.is_ascii_alphanumeric()]+) destination_sep()
             exec_method:$([c if c.is_ascii_alphanumeric() || c == '_']+)
-            { Destination { component, exec_method } }
+            { Destination { component: component.to_owned(), exec_method: exec_method.to_owned() } }
 
         rule destination_sep() = "_"
 
-        pub(crate) rule command() -> Command<'input>
+        pub(crate) rule command() -> Command
             = destinations:(d:destination() _ "." {d})* _ name:cmd_name() _ args:(e:expr() _ {e})*
-            { Command { destinations, name, args } }
+            { Command { destinations, name: name.to_owned(), args } }
 
         rule cmd_name() -> &'input str
             = $(
@@ -41,7 +41,7 @@ peg::parser! {
                 [c if c.is_ascii_alphanumeric() || c == '_']*
             )
 
-        pub(crate) rule expr() -> Expr<'input>
+        pub(crate) rule expr() -> Expr
             = precedence!{
                 x:@ _ "||" _ y:(@) { Expr::BinOp(BinOpKind::Or, Box::new(x), Box::new(y)) }
                 x:@ _ "if" __ y:(@) { Expr::BinOp(BinOpKind::If, Box::new(x), Box::new(y)) }
@@ -68,26 +68,26 @@ peg::parser! {
                 v:variable_path() { Expr::Variable(v) }
             }
 
-        pub(crate) rule numeric() -> Numeric<'input>
+        pub(crate) rule numeric() -> Numeric
             = "0x" i:$(['a'..='f' | 'A'..='F' | '0'..='9' | '_']+)
-            { Numeric::Integer(i, IntegerPrefix::Hexadecimal) }
+            { Numeric::Integer(i.to_owned(), IntegerPrefix::Hexadecimal) }
             / "0o" i:$(['0'..='7' | '_']+)
-            { Numeric::Integer(i, IntegerPrefix::Octal) }
+            { Numeric::Integer(i.to_owned(), IntegerPrefix::Octal) }
             / "0b" i:$(['0' | '1' | '_']+)
-            { Numeric::Integer(i, IntegerPrefix::Binary) }
+            { Numeric::Integer(i.to_owned(), IntegerPrefix::Binary) }
             / i:$(['0'..='9']['0'..='9' | '_']*) !['.' | 'e' | 'E']
-            { Numeric::Integer(i, IntegerPrefix::Decimal) }
+            { Numeric::Integer(i.to_owned(), IntegerPrefix::Decimal) }
             / f:$(['0'..='9']['0'..='9' | '_']*
                 "."? (['0'..='9']['0'..='9' | '_']*)?
                 (['e' | 'E']['+' | '-']['0'..='9' | '_']*)?
-            ) { Numeric::Float(f) }
+            ) { Numeric::Float(f.to_owned()) }
 
         rule numeric_suffix() -> NumericSuffix
             = "s" ![c if c.is_alphanumeric()] { NumericSuffix::Second }
 
-        rule literal() -> Literal<'input>
+        rule literal() -> Literal
             = "[" _ v:(expr() ** (_ "," _)) _ "]" { Literal::Array(v) }
-            / "\"" s:$([c if c != '"']*) "\"" { Literal::String(s) }
+            / "\"" s:$([c if c != '"']*) "\"" { Literal::String(s.to_owned()) }
             / n:numeric() s:numeric_suffix()? { Literal::Numeric(n, s) }
 
         rule compare_binop_kind() -> CompareBinOpKind
@@ -100,35 +100,35 @@ peg::parser! {
             = "!=" { CompareBinOpKind::NotEqual }
             / "==" { CompareBinOpKind::Equal }
 
-        pub(crate) rule call() -> Call<'input>
+        pub(crate) rule call() -> Call
             = "call" __ path:file_path()
             { Call { path } }
 
-        pub(crate) rule wait_sec() -> WaitSec<'input>
+        pub(crate) rule wait_sec() -> WaitSec
             = "wait_sec" __ sec:expr()
             { WaitSec { sec } }
 
-        pub(crate) rule wait_until() -> WaitUntil<'input>
+        pub(crate) rule wait_until() -> WaitUntil
             = "wait_until" __ condition:expr()
             { WaitUntil { condition } }
 
-        pub(crate) rule wait_inc() -> WaitInc<'input>
+        pub(crate) rule wait_inc() -> WaitInc
             = "wait_inc" __ condition:expr()
             { WaitInc { condition } }
 
-        pub(crate) rule check_value() -> CheckValue<'input>
+        pub(crate) rule check_value() -> CheckValue
             = "check_value" __ condition:expr()
             { CheckValue { condition } }
 
-        pub(crate) rule let_bind() -> Let<'input>
+        pub(crate) rule let_bind() -> Let
             = "let" __ raw:ident() _ "=" _ rhs:expr()
-            { Let { variable: Ident { raw }, rhs } }
+            { Let { variable: Ident { raw: raw.to_owned()}, rhs } }
 
-        pub(crate) rule get() -> Get<'input>
+        pub(crate) rule get() -> Get
             = "get" __ variable:variable_path()
             { Get { variable } }
 
-        rule reserved_control() -> ReservedControl<'input>
+        rule reserved_control() -> ReservedControl
             = call:call() { ReservedControl::Call(call) }
             / wait_sec:wait_sec() { ReservedControl::WaitSec(wait_sec) }
             / wait_until:wait_until() { ReservedControl::WaitUntil(wait_until) }
@@ -137,10 +137,10 @@ peg::parser! {
             / get:get() { ReservedControl::Get(get) }
             / command:command() { ReservedControl::Command(command) }
 
-        rule comment() -> Comment<'input>
-            = "#" _ s:$([_]*) { Comment(s) }
+        rule comment() -> Comment
+            = "#" _ s:$([_]*) { Comment(s.to_owned()) }
 
-        pub rule row() -> Row<'input>
+        pub rule row() -> Row
             = breaks:"."? _ r:(
                   content:reserved_control() _ comment_trailing:comment()?
                     { Row { breaks, content: Some(content), comment_trailing } }
