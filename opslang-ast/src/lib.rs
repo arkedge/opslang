@@ -47,6 +47,7 @@ pub enum SingleStatement {
     Command(Command),
     Let(Let),
     Print(Print),
+    Set(Set),
 }
 
 #[derive(Debug, PartialEq)]
@@ -154,6 +155,12 @@ pub struct Let {
 #[derive(Debug, PartialEq)]
 pub struct Print {
     pub arg: Expr,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Set {
+    pub name: VariablePath,
+    pub expr: Expr,
 }
 
 /// an expression.

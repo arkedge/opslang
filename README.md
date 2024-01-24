@@ -4,6 +4,8 @@ syntax definition and sample implementation of ops file language
 ## 基本構文
 
 ```
+set DATETIME_ORIGIN=time!(2020-01-01T00:00:00Z) # 処理系のパラメータ設定
+
 let ok = "OK"                       # string型
 let t = time!(2024-01-01T00:00:00Z) # time型
 let d = 1s                          # duration型

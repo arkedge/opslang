@@ -152,6 +152,10 @@ peg::parser! {
             = "print" __ arg:expr()
             { Print { arg } }
 
+        pub(crate) rule set() -> Set
+            = "set" __ name:variable_path() _ "=" _ expr:expr()
+            { Set { name, expr } }
+
         rule reserved_control() -> SingleStatement
             = call:call() { SingleStatement::Call(call) }
             / wait:wait() { SingleStatement::Wait(wait) }
@@ -160,6 +164,7 @@ peg::parser! {
             / assert_eq:assert_approx_eq() { SingleStatement::AssertEq(assert_eq) }
             / let_bind:let_bind() { SingleStatement::Let(let_bind) }
             / print:print() { SingleStatement::Print(print) }
+            / set:set() { SingleStatement::Set(set) }
             / command:command() { SingleStatement::Command(command) }
 
         rule comment() -> Comment
@@ -334,6 +339,11 @@ mod tests {
         dbg!(r.unwrap());
     }
     #[test]
+    fn test_set() {
+        let r = ops_parser::set("set A.B = 1");
+        dbg!(r.unwrap());
+    }
+    #[test]
     fn test_command() {
         let r = ops_parser::command("DO_IT");
         dbg!(r.unwrap());
@@ -383,6 +393,7 @@ mod tests {
     #[test]
     fn test_rows() {
         let s = r#".# ****** #
+    .set X.Y=2
     .let CURRENT_EXAMPLE_TLM_VALUE = FOO.BAR.EXAMPLE_TLM.VALUE
     .@@ABC.DEF DO_IT
      wait $FOO.BAR.EXAMPLE_TLM.VALUE > CURRENT_EXAMPLE_TLM_VALUE || 5s
