@@ -26,7 +26,7 @@ pub type SRow = Spanned<Row>;
 
 #[derive(Debug, PartialEq)]
 pub struct Block {
-    pub default_destination: Option<Destination>,
+    pub default_receiver_component: Option<ReceiverComponent>,
     pub delay: Option<Expr>,
     pub rows: Vec<SRow>,
     pub comment_first: Option<Comment>,
@@ -87,15 +87,20 @@ pub struct Command {
 
 #[derive(Debug, PartialEq)]
 pub struct DestinationSpec {
-    pub receiver: Option<Destination>,
+    pub receiver_component: Option<ReceiverComponent>,
     pub time_indicator: Option<Expr>,
-    pub executor: Option<Destination>,
+    pub executor_component: Option<ExecutorComponent>,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Destination {
-    pub component: String,
+pub struct ReceiverComponent {
+    pub name: String,
     pub exec_method: String,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ExecutorComponent {
+    pub name: String,
 }
 
 #[derive(Debug, PartialEq)]

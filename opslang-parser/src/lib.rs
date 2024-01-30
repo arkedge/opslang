@@ -30,18 +30,21 @@ peg::parser! {
         rule alphanum_underscore() -> &'input str
             = $([c if c.is_ascii_alphanumeric() || c == '_']*)
 
-        rule destination() -> Destination
-            = exec_method:alphanum_underscore() "." component:alphanum_underscore()
-            { Destination { component: component.to_owned(), exec_method: exec_method.to_owned() } }
+        rule receiver() -> ReceiverComponent
+            = exec_method:alphanum_underscore() "." name:alphanum_underscore()
+            { ReceiverComponent { name: name.to_owned(), exec_method: exec_method.to_owned() } }
+        rule executor() -> ExecutorComponent
+            = name:alphanum_underscore()
+            { ExecutorComponent { name: name.to_owned() } }
 
         rule time_indicator() -> Expr
             = e:expr() ":" { e } // TODO: これで大丈夫か検討
 
         rule destination_spec() -> DestinationSpec
-           = receiver:("@" receiver:destination() { receiver })? _
+           = receiver_component:("@" r:receiver() { r })? _
              time_indicator:time_indicator()? _
-             executor:("@@" executor:destination() { executor })?
-           { DestinationSpec { receiver, time_indicator, executor } }
+             executor_component:("@@" e:executor() { e })?
+           { DestinationSpec { receiver_component, time_indicator, executor_component } }
 
         pub(crate) rule command() -> Command
             = destination:destination_spec() _ name:cmd_name() _ args:(e:expr() _ {e})*
@@ -189,10 +192,11 @@ peg::parser! {
             = row:row() _ newline() { row }
 
         pub rule block_() -> Block
-            = _ default_destination:("@" d:destination(){d})? _ delay:block_delay()? _ "{" _ comment_first:comment()? newline()
-                  rows:(row_line()*)
-              _ "}" _ comment_last:comment()?
-            { Block { default_destination, delay, rows, comment_first, comment_last } }
+            = _ default_receiver_component:("@" r:receiver(){r})? _ delay:block_delay()?
+            _ "{" _ comment_first:comment()? newline()
+              rows:(row_line()*)
+            _ "}" _ comment_last:comment()?
+            { Block { default_receiver_component, delay, rows, comment_first, comment_last } }
 
         pub rule block() -> SBlock
             = spanned(<block_()>)
@@ -351,7 +355,7 @@ mod tests {
         dbg!(r.unwrap());
         let r = ops_parser::command("@ABC.DEF CMD_WITH_ARGS some_value 0xaa 0xbb 2");
         dbg!(r.unwrap());
-        let r = ops_parser::command("@ABC.DEF @@G.H CMD_WITH_ARGS relative_x 0xcc 0xdd 0xee 0xff");
+        let r = ops_parser::command("@ABC.DEF @@G CMD_WITH_ARGS relative_x 0xcc 0xdd 0xee 0xff");
         dbg!(r.unwrap());
     }
     #[test]
@@ -368,14 +372,14 @@ mod tests {
         let r = ops_parser::block(
             r#"delay=1s {
   let x = 2
-  @AB.CD @@EF.GH DO_IT
+  @AB.CD @@GH DO_IT
 } #comment"#,
         );
         dbg!(r.unwrap());
         let r = ops_parser::block(
             r#"  @AB.CD delay=1s {
     0: DO_IT
-    0 + 1: @@EF.GH DO_IT 1 2 3
+    0 + 1: @@EF DO_IT 1 2 3
     2: DO_IT x y z
     @XY.ZW FOO_BAR tlmid!(AB.CD)
     wait 1 == 1
@@ -395,7 +399,7 @@ mod tests {
         let s = r#".# ****** #
     .set X.Y=2
     .let CURRENT_EXAMPLE_TLM_VALUE = FOO.BAR.EXAMPLE_TLM.VALUE
-    .@@ABC.DEF DO_IT
+    .@@DEF DO_IT
      wait $FOO.BAR.EXAMPLE_TLM.VALUE > CURRENT_EXAMPLE_TLM_VALUE || 5s
      let foobar = $FOO.BAR
      wait foobar.EXAMPLE_TLM.VALUE > CURRENT_EXAMPLE_TLM_VALUE || 5s

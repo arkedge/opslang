@@ -22,7 +22,7 @@ print hk.OBC.XX.YY                  # テレメトリ集合型は構造体のよ
 @TL.MOBC 20: NOP                                          # ステップ単位のTime Indicatorをとるコマンド
 @BL.MOBC 30: NOP
 @UTL.MOBC time!(2024-01-01T00:00:00Z): NOP                # 時刻をTime Indicatorとしてとるコマンド
-@TL.MOBC 20: @@RT.AOBC NOP                                # 最終的な実行コンポーネントが異なるコマンド (WINGSのMOBC_TL.AOBC_RTに相当)
+@TL.MOBC 20: @@AOBC NOP                                # 最終的な実行コンポーネントが異なるコマンド (WINGSのMOBC_TL.AOBC_RTに相当)
 
 ## 糖衣構文
 
@@ -44,8 +44,8 @@ print hk.OBC.XX.YY                  # テレメトリ集合型は構造体のよ
 @TL.MOBC delay=0.5s {
     10: NOP
     20: NOP
-    30: @@RT.AOBC NOP
-    40: @@RT.AOBC NOP
+    30: @@AOBC NOP
+    40: @@AOBC NOP
 }
 
 @TL.MOBC delay=0.5s {
