@@ -103,7 +103,7 @@ peg::parser! {
             / "\"" s:$([c if c != '"']*) "\"" { Literal::String(s.to_owned()) }
             / n:numeric() s:numeric_suffix()? { Literal::Numeric(n, s) }
             / "time!" _ "(" _ content:$([c if c != ')']*) _ ")" {?
-                let datetime = chrono::DateTime::parse_from_rfc3339(content).map_err(|e| "invalid datetime")?;
+                let datetime = chrono::DateTime::parse_from_rfc3339(content).map_err(|_| "valid datetime")?;
                 Ok(Literal::DateTime(datetime.into()))
             }
             / "tlmid!" _ "(" _ content:$([c if c != ')']*) _ ")" {?
