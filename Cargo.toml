@@ -1,11 +1,13 @@
-[package]
-name = "opslang-syn"
-version = "0.1.0"
-edition = "2021"
-license = "MPL-2.0"
-description = "ops file language syntax"
+[workspace]
+resolver = "2"
+members = [
+    "opslang-ast",
+    "opslang-parser",
+]
 
-[dependencies]
-peg = "0.8.1"
-thiserror = "1.0.48"
-anyhow = "1.0.75"
+[workspace.package]
+version = "0.1.0"
+
+[workspace.dependencies]
+opslang-ast = { path = "opslang-ast" }
+opslang-parser = { path = "opslang-parser" }
