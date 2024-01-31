@@ -3,7 +3,7 @@ name = "opslang-parser"
 version.workspace = true
 edition = "2021"
 license = "MPL-2.0"
-description = "ops file language syntax"
+description = "ops file language parser"
 
 [dependencies]
 peg = "0.8.1"
