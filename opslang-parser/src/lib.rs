@@ -1,15 +1,14 @@
+use opslang_ast::Row;
 use peg::str::LineCol;
 use thiserror::Error;
-use typedef::Row;
 
-pub mod typedef;
 pub mod parser {
     pub use crate::ops_parser::row as parse_row;
 }
 
 peg::parser! {
     grammar ops_parser() for str {
-        use typedef::*;
+        use opslang_ast::*;
         rule file_path() -> FilePath
             = full_name:ident()
             { FilePath { full_name: full_name.to_owned() } }
