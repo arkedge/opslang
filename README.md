@@ -4,7 +4,7 @@ syntax definition and sample implementation of ops file language
 ## 基本構文
 
 ```
-set DATETIME_ORIGIN=time!(2020-01-01T00:00:00Z) # 処理系のパラメータ設定
+set DATETIME_ORIGIN.MOBC=time!(2020-01-01T00:00:00Z) # 処理系のパラメータ設定
 
 let ok = "OK"                       # string型
 let t = time!(2024-01-01T00:00:00Z) # time型
@@ -22,8 +22,6 @@ wait 0 == 1 || 5s                   # タイムアウトつき
 
 print tlmid!(MOBC.HK)               # telemetry id 参照
 print $MOBC.HK.XX.YY
-let hk = $MOBC.HK                   # テレメトリ集合型
-print hk.OBC.XX.YY                  # テレメトリ集合型は構造体のように参照できる
 
 @RT.MOBC NOP                                              # Time Indicator をとらないコマンド
 @TL.MOBC 20: NOP                                          # ステップ単位のTime Indicatorをとるコマンド
@@ -67,6 +65,9 @@ print hk.OBC.XX.YY                  # テレメトリ集合型は構造体のよ
 ## 検討中
 
 ```
+let hk = $MOBC.HK                   # テレメトリ集合型
+print hk.OBC.XX.YY                  # テレメトリ集合型は構造体のように参照できる
+
 # after!で直前の時間指定からの相対時間を指定できる
 @TL.MOBC delay=0.5s {
     10: NOP                              # TI=10
