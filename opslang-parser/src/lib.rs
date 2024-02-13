@@ -140,11 +140,11 @@ peg::parser! {
             { Assert { condition } }
 
         pub(crate) rule assert_eq() -> AssertEq
-            = "assert_eq" __ left:expr() _ "," _ right:expr()
+            = "assert_eq" __ left:expr() _ right:expr()
             { AssertEq { left, right, tolerance: None } }
 
         pub(crate) rule assert_approx_eq() -> AssertEq
-            = "assert_approx_eq" __ left:expr() _ "," _ right:expr() _ "," _ tolerance:expr()
+            = "assert_approx_eq" __ left:expr() _ right:expr() _ tolerance:expr()
             { AssertEq { left, right, tolerance: Some(tolerance) } }
 
         pub(crate) rule let_bind() -> Let

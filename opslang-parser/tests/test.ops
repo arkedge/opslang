@@ -6,8 +6,8 @@ let ti = 2000                       # 数値型
 
 .                                   # breakpoint機能
 assert 2 == 2                       # WINGS: check_value
-assert_eq 2, 2
-assert_approx_eq 1.0, 1.0, 0.001    # WINGS: --tolerance 0.001
+assert_eq 2 2
+assert_approx_eq 1.0 1.0 0.001      # WINGS: --tolerance 0.001
 print 2                             # WINGS: get
 wait 5s                             # WINGS: wait_sec
 wait 1 == 1 && 2 <= 2               # WINGS: wait_until
