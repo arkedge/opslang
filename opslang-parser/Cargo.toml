@@ -9,5 +9,5 @@ description = "ops file language parser"
 peg = "0.8.1"
 thiserror = "1.0.48"
 anyhow = "1.0.75"
-opslang-ast.workspace = true
+opslang-ast = "0.2"
 chrono = "0.4.33"
