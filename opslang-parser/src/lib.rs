@@ -76,7 +76,7 @@ peg::parser! {
                 x:(@) _ "/" _ y:@ { Expr::BinOp(BinOpKind::Div, Box::new(x), Box::new(y)) }
                 x:(@) _ "%" _ y:@ { Expr::BinOp(BinOpKind::Mod, Box::new(x), Box::new(y)) }
                 --
-                x:@ _ "(" _ v:(expr() ** (_ "," _)) _ ")" { Expr::FunCall(Box::new(x), v) }
+                x:@ "(" _ v:(expr() ** (_ "," _)) _ ")" { Expr::FunCall(Box::new(x), v) }
                 --
                 "(" _ v:expr() _ ")" { v }
                 n:literal() { Expr::Literal(n) }
@@ -249,7 +249,7 @@ mod tests {
         dbg!(r.unwrap());
         let r = ops_parser::expr("1 + (a.a * (0xB_C))");
         dbg!(r.unwrap());
-        let r = ops_parser::expr("a ((c), d) + b");
+        let r = ops_parser::expr("a((c), d) + b");
         dbg!(r.unwrap());
         let r = ops_parser::expr("ABC.DEF == 0xabcdef || 5s");
         dbg!(r.unwrap());
