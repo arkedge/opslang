@@ -293,6 +293,11 @@ mod tests {
         not_differ(ops_parser::let_bind, "let variable=0", "let variable = 0");
     }
     #[test]
+    fn test_error_msg() {
+        let r = ops_parser::let_bind("let !");
+        assert!(r.unwrap_err().to_string().contains("ident"));
+    }
+    #[test]
     fn test_fun_call() {
         let r = ops_parser::let_bind(
             "let result_of_test_fun = Test.fun2(Test.fun1([P.VEC.X, P.VEC.Y, P.VEC.Z]))",
