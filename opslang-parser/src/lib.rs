@@ -22,13 +22,13 @@ peg::parser! {
             { VariablePath { raw: raw.to_owned() } }
 
         rule ident() -> &'input str
-            = $(
+            = quiet!{$(
                 [c if c.is_ascii_alphabetic()]
                 [c if c.is_ascii_alphanumeric() || c == '_' || c == '/' || c == '.' || c == '-']*
-            )
+            )} / expected!("ident")
 
         rule alphanum_underscore() -> &'input str
-            = $([c if c.is_ascii_alphanumeric() || c == '_']*)
+            = quiet!{$([c if c.is_ascii_alphanumeric() || c == '_']*)} / expected!("alphanum_underscore")
 
         rule receiver() -> ReceiverComponent
             = exec_method:alphanum_underscore() "." name:alphanum_underscore()
@@ -47,14 +47,14 @@ peg::parser! {
            { DestinationSpec { receiver_component, time_indicator, executor_component } }
 
         pub(crate) rule command() -> Command
-            = destination:destination_spec() _ name:cmd_name() _ args:(e:expr() _ {e})*
+            = destination:destination_spec() _ name:command_name() _ args:(e:expr() _ {e})*
             { Command { destination, name: name.to_owned(), args } }
 
-        rule cmd_name() -> &'input str
-            = $(
+        rule command_name() -> &'input str
+            = quiet!{$(
                 [c if c.is_ascii_alphabetic()]
                 [c if c.is_ascii_alphanumeric() || c == '_']*
-            )
+            )} / expected!("command name")
 
         pub(crate) rule expr() -> Expr
             = precedence!{
@@ -85,7 +85,7 @@ peg::parser! {
             }
 
         pub(crate) rule numeric() -> Numeric
-            = "0x" i:$(['a'..='f' | 'A'..='F' | '0'..='9' | '_']+)
+            = quiet!{"0x" i:$(['a'..='f' | 'A'..='F' | '0'..='9' | '_']+)
             { Numeric::Integer(i.to_owned(), IntegerPrefix::Hexadecimal) }
             / "0o" i:$(['0'..='7' | '_']+)
             { Numeric::Integer(i.to_owned(), IntegerPrefix::Octal) }
@@ -96,7 +96,7 @@ peg::parser! {
             / f:$(['0'..='9']['0'..='9' | '_']*
                 "."? (['0'..='9']['0'..='9' | '_']*)?
                 (['e' | 'E']['+' | '-']['0'..='9' | '_']*)?
-            ) { Numeric::Float(f.to_owned()) }
+            ) { Numeric::Float(f.to_owned()) }} / expected!("numeric")
 
         rule numeric_suffix() -> NumericSuffix
             = "s" ![c if c.is_alphanumeric()] { NumericSuffix::Second }
