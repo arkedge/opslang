@@ -6,8 +6,8 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.1"
+version = "0.2.2"
 
 [workspace.dependencies]
-opslang-ast = { path = "opslang-ast" }
-opslang-parser = { path = "opslang-parser" }
+opslang-ast = "0.2.2"
+opslang-parser = "0.2.2"
