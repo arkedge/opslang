@@ -188,6 +188,7 @@ pub enum Literal {
     Numeric(Numeric, Option<NumericSuffix>),
     DateTime(DateTime<Utc>),
     TlmId(String),
+    Bytes(Vec<u8>),
 }
 
 #[derive(Debug, PartialEq)]
