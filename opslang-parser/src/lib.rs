@@ -98,6 +98,29 @@ peg::parser! {
                 (['e' | 'E']['+' | '-']['0'..='9' | '_']*)?
             ) { Numeric::Float(f.to_owned()) }} / expected!("numeric")
 
+        rule hex_digit() -> u8
+            = quiet!{
+                s:$(['a'..='f' | 'A'..='F' | '0'..='9']) {?
+                    let c = s.chars().next().unwrap();
+                    match c {
+                        '0'..='9' => Ok(c as u8 - '0' as u8),
+                        'a'..='f' => Ok(c as u8 - 'a' as u8 + 10),
+                        'A'..='F' => Ok(c as u8 - 'A' as u8 + 10),
+                        _ => Err("invalid hex digit")
+                    }
+                }
+            } / expected!("hexadecimal digit")
+
+        rule hex_byte() -> u8
+            = quiet!{
+                high:(hex_digit()) low:(hex_digit()) {?
+                    Ok(high << 4 | low)
+                }
+            } / expected!("hexadecimal byte")
+
+        rule hex_bytes() -> Vec<u8>
+            = quiet!{ s:(hex_byte()*) }
+
         rule numeric_suffix() -> NumericSuffix
             = "s" ![c if c.is_alphanumeric()] { NumericSuffix::Second }
 
@@ -111,6 +134,9 @@ peg::parser! {
             }
             / "tlmid!" _ "(" _ content:$([c if c != ')']*) _ ")" {?
                 Ok(Literal::TlmId(content.to_owned()))
+            }
+            / "hex_bytes!" _ "(" _ content:hex_bytes() _ ")" {?
+                Ok(Literal::Bytes(content))
             }
 
         rule compare_binop_kind() -> CompareBinOpKind
@@ -259,7 +285,10 @@ mod tests {
         dbg!(r.unwrap());
         let r = ops_parser::expr(r#"tlmid!(AB.CD.EF)"#);
         dbg!(r.unwrap());
+        let r = ops_parser::expr(r#"hex_bytes!(0123456789abcdefABCDEF)"#);
+        dbg!(r.unwrap());
     }
+
     #[test]
     fn test_space() {
         fn differ<T: std::cmp::PartialEq + std::fmt::Debug, E: std::fmt::Debug>(
