@@ -10,8 +10,19 @@ peg::parser! {
     grammar ops_parser() for str {
         use opslang_ast::*;
         rule file_path() -> FilePath
-            = full_name:ident()
-            { FilePath { full_name: full_name.to_owned() } }
+            = full_name:(file_path_section() ** (_ "/" _))
+            { FilePath { full_name: full_name.join("/") } }
+
+        rule file_path_section_ident() -> &'input str
+            = quiet!{
+                e:$( [c if c.is_ascii_alphanumeric() || c == '_' || c == '-' || c == '.']+)
+                {? if e.chars().all(|c| c == '.') { Err("") } else { Ok(e) } }
+            }
+
+        rule file_path_section() -> &'input str
+            = file_path_section_ident()
+            / ".." { ".." }
+            / "." { "." }
 
         rule variable_path() -> VariablePath
             = raw:ident()
@@ -337,6 +348,12 @@ mod tests {
     fn test_call() {
         let r = ops_parser::call("call OTHER_FILE.ops");
         dbg!(r.unwrap());
+        let r = ops_parser::call("call ./OTHER_FILE.ops");
+        dbg!(r.unwrap());
+        let r = ops_parser::call("call ../.another_dir/../x.y.z");
+        dbg!(r.unwrap());
+        let r = ops_parser::call("call x/.../fail");
+        assert!(r.is_err());
     }
     #[test]
     fn test_wait() {
