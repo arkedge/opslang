@@ -192,6 +192,9 @@ peg::parser! {
             = "print" __ arg:expr()
             { Print { arg } }
 
+        pub(crate) rule return_() -> ()
+            = "return" { }
+
         pub(crate) rule set() -> Set
             = "set" __ name:variable_path() _ "=" _ expr:expr()
             { Set { name, expr } }
@@ -204,6 +207,7 @@ peg::parser! {
             / assert_eq:assert_approx_eq() { SingleStatement::AssertEq(assert_eq) }
             / let_bind:let_bind() { SingleStatement::Let(let_bind) }
             / print:print() { SingleStatement::Print(print) }
+            / _:return_() { SingleStatement::Return }
             / set:set() { SingleStatement::Set(set) }
             / command:command() { SingleStatement::Command(command) }
 
@@ -379,6 +383,14 @@ mod tests {
         let r = ops_parser::assert(r#"assert TEST.VAR_4.X in [ 0, 0.07 ] if TEST.Var5 == "OFF""#);
         dbg!(r.unwrap());
     }
+
+    #[test]
+    fn test_return() {
+        let r = ops_parser::return_("return");
+        dbg!(r.unwrap());
+        let r = ops_parser::return_("return 0");
+        assert!(r.is_err());
+    }
     #[test]
     fn test_let() {
         let r = ops_parser::let_bind("let relative_x = relative_x + 9");
@@ -454,6 +466,7 @@ mod tests {
      wait $FOO.BAR.EXAMPLE_TLM.VALUE > CURRENT_EXAMPLE_TLM_VALUE || 5s
      let foobar = $FOO.BAR
      wait foobar.EXAMPLE_TLM.VALUE > CURRENT_EXAMPLE_TLM_VALUE || 5s
+     return
     "#;
         for l in s.lines() {
             let r = ops_parser::row(l);

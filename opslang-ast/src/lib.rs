@@ -48,6 +48,7 @@ pub enum SingleStatement {
     Let(Let),
     Print(Print),
     Set(Set),
+    Return,
 }
 
 #[derive(Debug, PartialEq)]
