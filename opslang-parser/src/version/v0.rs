@@ -1,14 +1,14 @@
-use opslang_ast::Row;
+use opslang_ast::v0::Row;
 use peg::str::LineCol;
 use thiserror::Error;
 
 pub mod parser {
-    pub use crate::ops_parser::{row as parse_row, statements as parse_statements};
+    pub use super::ops_parser::{row as parse_row, statements as parse_statements};
 }
 
 peg::parser! {
     grammar ops_parser() for str {
-        use opslang_ast::*;
+        use opslang_ast::v0::*;
         rule file_path() -> FilePath
             = full_name:(file_path_section() ** (_ "/" _))
             { FilePath { full_name: full_name.join("/") } }
@@ -453,7 +453,7 @@ mod tests {
 
     #[test]
     fn test_file() {
-        let s = include_str!("../tests/test.ops");
+        let s = include_str!("../../tests/test.ops");
         let r = ops_parser::statements(s);
         dbg!(r.unwrap());
     }
