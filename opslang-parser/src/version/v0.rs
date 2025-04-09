@@ -1,6 +1,34 @@
-use opslang_ast::v0::Row;
+use opslang_ast::{di::Parse, v0::Row};
 use peg::str::LineCol;
 use thiserror::Error;
+
+type This = super::V0;
+
+impl Parse<This> for opslang_ast::v0::SRow {
+    type Format<'a> = &'a str;
+
+    type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
+
+    fn parse<'a>(from: Self::Format<'a>) -> Result<Self, Self::Error>
+    where
+        Self: 'a,
+    {
+        ops_parser::row(from)
+    }
+}
+
+impl Parse<This> for Vec<opslang_ast::v0::Statement> {
+    type Format<'a> = &'a str;
+
+    type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
+
+    fn parse<'a>(from: Self::Format<'a>) -> Result<Self, Self::Error>
+    where
+        Self: 'a,
+    {
+        ops_parser::statements(from)
+    }
+}
 
 pub mod parser {
     pub use super::ops_parser::{row as parse_row, statements as parse_statements};
