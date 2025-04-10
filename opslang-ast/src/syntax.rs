@@ -25,5 +25,6 @@ const _: () = {
 };
 
 declare_versions! {
-    [pub] v0, V0;
+    v0, V0;
+    [pub] v1, V1;
 }
