@@ -5,7 +5,7 @@ pub(crate) mod sealed {
     pub trait VersionMarker<DiParser> {}
 }
 
-pub struct Versioned<T, DiParser, Version: sealed::VersionMarker<DiParser> = crate::Current> {
+pub struct Versioned<T, DiParser, Version: sealed::VersionMarker<DiParser> = crate::Default> {
     value: T,
     _marker: std::marker::PhantomData<(Version, DiParser)>,
 }

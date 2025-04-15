@@ -5,7 +5,8 @@ macro_rules! declare_versions {
         pub struct $ty;
 
         $(
-            $current type Current = $ty;
+            /// Type alias for the default version of the parser.
+            $current type Default = $ty;
             $current use $path::*;
         )?
 
@@ -13,6 +14,15 @@ macro_rules! declare_versions {
     }
 }
 
+/// Assertion that [`Default`] type alias exists at this scope.
+///
+/// This is a compile-time check that will fail if [`Default`] is not defined.
+#[allow(dead_code)]
+const _: () = {
+    let _: Default;
+};
+
 declare_versions! {
     [pub] v0, V0;
+    v1, V1;
 }

@@ -8,7 +8,8 @@ macro_rules! declare_versions {
         impl<DiParser> $crate::version::sealed::VersionMarker<DiParser> for $ty {}
 
         $(
-            $current type Current = $ty;
+            /// Type alias for the default version of the ast.
+            $current type Default = $ty;
             $current use $path::*;
         )?
 
@@ -16,12 +17,12 @@ macro_rules! declare_versions {
     }
 }
 
-/// Assertion that [`Current`] type alias exists at this scope.
+/// Assertion that [`Default`] type alias exists at this scope.
 ///
-/// This is a compile-time check that will fail if [`Current`] is not defined.
+/// This is a compile-time check that will fail if [`Default`] is not defined.
 #[allow(dead_code)]
 const _: () = {
-    let _: Current;
+    let _: Default;
 };
 
 declare_versions! {
