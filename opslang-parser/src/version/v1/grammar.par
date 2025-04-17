@@ -1,0 +1,7 @@
+%start Program
+%title "opslang v1 grammar"
+%grammar_type 'LALR(1)'
+
+%%
+
+Program: "Hello world!";

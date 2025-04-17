@@ -5,10 +5,29 @@ edition.workspace = true
 license.workspace = true
 description = "ops file language parser"
 
+[features]
+v0 = ["dep:peg"]
+v1 = ["build-parol", "dep:typed-arena"]
+build-parol = ["dep:parol", "dep:parol_runtime"]
+default = ["v0", "v1"]
+
 [dependencies]
 opslang-ast = { path = "../opslang-ast", version = "0.4.0" }
 
-peg = "0.8.1"
+peg.version = "0.8.1"
+peg.optional = true
+parol.version = "3.0.1"
+parol.optional = true
+parol_runtime.version = "3.0.0"
+parol_runtime.optional = true
+typed-arena.version = "2.0.2"
+typed-arena.optional = true
 thiserror = "1.0.48"
 anyhow = "1.0.75"
 chrono = "0.4.33"
+
+[build-dependencies]
+parol.version = "3.0.1"
+parol.optional = true
+parol_runtime.version = "3.0.0"
+parol_runtime.optional = true
