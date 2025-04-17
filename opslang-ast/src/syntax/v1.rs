@@ -8,24 +8,28 @@ pub trait Span {
 #[derive(Debug, PartialEq)]
 /// A whole program. The program is a sequence of statements.
 pub struct Program<'cx> {
-    pub statements: &'cx [Statement<'cx>],
+    pub content: Scope<'cx>,
 }
 
 #[derive(Debug, PartialEq)]
-/// A statement can be a single statement or a block of statements.
-pub enum Statement<'cx> {
-    Single(Row<'cx>),
-    Block(Block<'cx>),
-}
-
-#[derive(Debug, PartialEq)]
-/// A single statement with optional comments and breaks.
-pub struct Row<'cx> {
-    pub breaks: Option<()>,
-    pub content: Option<SingleStatement<'cx>>,
-    pub comment_trailing: Option<Comment<'cx>>,
+/// A comment in the code.
+///
+/// Comments are NOT ignored by the parser.
+pub struct Comment<'cx> {
+    pub content: &'cx str,
     pub start: usize,
     pub end: usize,
+}
+
+#[derive(Debug, PartialEq)]
+/// A semicolon in the code.
+pub struct Semi {
+    pub start: usize,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Scope<'cx> {
+    pub content: &'cx [ScopeContent<'cx>],
 }
 
 #[derive(Debug, PartialEq)]
@@ -40,37 +44,54 @@ pub struct Row<'cx> {
 /// }
 /// ```
 pub struct Block<'cx> {
-    pub default_receiver_component: Option<ReceiverComponent<'cx>>,
-    pub delay: Option<Expr<'cx>>,
-    pub rows: Vec<Row<'cx>>,
-    pub comment_first: Option<Comment<'cx>>,
-    pub comment_last: Option<Comment<'cx>>,
+    pub scope: Scope<'cx>,
+
+    /// Comment *before* the block beginning.
+    pub comment_leading: Option<&'cx Comment<'cx>>,
+
+    /// Comment after the block ending.
+    pub comment_trailing: Option<&'cx Comment<'cx>>,
+
     pub start: usize,
     pub end: usize,
 }
 
 #[derive(Debug, PartialEq)]
-/// A comment in the code.
-///
-/// Comments are NOT ignored by the parser.
-pub struct Comment<'cx> {
-    pub content: &'cx str,
+/// A scope content can be a single statement or a block of statements.
+pub enum ScopeContent<'cx> {
+    Statement(&'cx Statement<'cx>),
+    Block(&'cx Block<'cx>),
+}
+
+#[derive(Debug, PartialEq)]
+/// A statement with optional comments and breaks.
+pub struct Statement<'cx> {
+    pub breaks: Option<()>,
+    pub content: Option<&'cx StatementKind<'cx>>,
+    pub comment_leading: Option<&'cx Comment<'cx>>,
+    pub comment_trailing: Option<&'cx Comment<'cx>>,
     pub start: usize,
     pub end: usize,
 }
 
-/// A reserved control statement.
 #[derive(Debug, PartialEq)]
-pub enum SingleStatement<'cx> {
+/// A statement kind.
+pub enum StatementKind<'cx> {
+    Let(Let<'cx>),
+    Expr(Expr<'cx>, Semi),
+    Return,
+}
+
+#[derive(Debug, PartialEq)]
+/// Reserved control statements.
+pub enum Control<'cx> {
     Call(Call<'cx>),
     Wait(Wait<'cx>),
     Assert(Assert<'cx>),
     AssertEq(AssertEq<'cx>),
     SendCommand(SendCommand<'cx>),
-    Let(Let<'cx>),
     Print(Print<'cx>),
     Set(Set<'cx>),
-    Return,
 }
 
 #[derive(Debug, PartialEq)]
@@ -146,23 +167,16 @@ pub struct AssertEq<'cx> {
 /// }
 /// ```
 pub struct SendCommand<'cx> {
-    pub destination: DestinationSpec<'cx>,
     pub name: &'cx str,
     pub args: &'cx [Expr<'cx>],
 }
 
 #[derive(Debug, PartialEq)]
-/// A specification of a destination for a command.
-///
-/// # Examples
-///
-/// - `@RT.MOBC` in `@RT.MOBC NOP`.
-/// - `@TL.MOBC 20` in `@TL.MOBC 20: NOP`.
-/// - `@TL.MOBC 20: @@AOBC NOP` in `@TL.MOBC 20: @@AOBC NOP`.
-pub struct DestinationSpec<'cx> {
-    pub receiver_component: Option<ReceiverComponent<'cx>>,
-    pub time_indicator: Option<Expr<'cx>>,
-    pub executor_component: Option<ExecutorComponent<'cx>>,
+/// A monoid act for a command.
+pub enum MonoidAct<'cx> {
+    ReceiverComponent(ReceiverComponent<'cx>),
+    TimeIndicator(Expr<'cx>),
+    ExecutorComponent(ExecutorComponent<'cx>),
 }
 
 #[derive(Debug, PartialEq)]
@@ -233,19 +247,23 @@ pub struct Set<'cx> {
 #[derive(Debug, PartialEq)]
 /// An expression.
 pub enum ExprKind<'cx> {
+    MonoidAct(MonoidAct<'cx>),
+    Control(Control<'cx>),
     Variable(Path<'cx>),
     Literal(Literal<'cx>),
     UnOp(UnOpKind, Expr<'cx>),
     BinOp(BinOpKind, Expr<'cx>, Expr<'cx>),
-    FunCall(Expr<'cx>, Vec<Expr<'cx>>),
+    Apply(Expr<'cx>, &'cx [Expr<'cx>]),
 }
+
 pub type Expr<'cx> = &'cx ExprKind<'cx>;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal<'cx> {
-    Array(Vec<Expr<'cx>>),
+    Array(&'cx [Expr<'cx>]),
     String(&'cx str),
     Numeric {
+        raw: &'cx str,
         value: Numeric,
         suffix: Option<NumericSuffix>,
     },

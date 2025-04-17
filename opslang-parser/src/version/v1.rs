@@ -10,31 +10,30 @@ use opslang_ast::di::Parse;
 
 type This = super::V1;
 
-pub struct ParserInput<'cx> {
-    pub string: &'cx str,
+pub struct ParserInput<'a> {
+    pub string: &'a str,
     pub file_name: String,
-    pub context: &'cx Context<'cx>,
 }
 
-impl Parse<This> for opslang_ast::v1::Program<'_> {
+impl<'cx> Parse<This> for opslang_ast::v1::Program<'cx> {
     type Format<'a>
         = ParserInput<'a>
     where
         Self: 'a;
 
+    type Context = &'cx Context<'cx>;
+
     type Error = parol_runtime::ParolError;
 
     fn parse<'a>(
-        ParserInput {
-            string,
-            file_name,
-            context,
-        }: Self::Format<'a>,
+        ParserInput { string, file_name }: Self::Format<'a>,
+        context: Self::Context,
     ) -> Result<Self, Self::Error>
     where
         Self: 'a,
     {
-        let mut action = parse::Action::new();
+        let mut action = parse::Action::new(context);
+        let string = context.alloc_str(string);
         let _ = generated::parser::parse(string, file_name, &mut action)?;
         todo!()
     }
