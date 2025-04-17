@@ -2,7 +2,10 @@
 resolver = "2"
 members = [
     "opslang-ast",
+    "opslang-ir",
     "opslang-parser",
+    "tools/opslang-migration",
+    "tools/opslang-formatter",
 ]
 
 [workspace.package]
