@@ -6,10 +6,11 @@ type This = super::V0;
 
 impl Parse<This> for opslang_ast::v0::SRow {
     type Format<'a> = &'a str;
+    type Context = ();
 
     type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
 
-    fn parse<'a>(from: Self::Format<'a>) -> Result<Self, Self::Error>
+    fn parse<'a>(from: Self::Format<'a>, _context: Self::Context) -> Result<Self, Self::Error>
     where
         Self: 'a,
     {
@@ -19,10 +20,11 @@ impl Parse<This> for opslang_ast::v0::SRow {
 
 impl Parse<This> for Vec<opslang_ast::v0::Statement> {
     type Format<'a> = &'a str;
+    type Context = ();
 
     type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
 
-    fn parse<'a>(from: Self::Format<'a>) -> Result<Self, Self::Error>
+    fn parse<'a>(from: Self::Format<'a>, _context: Self::Context) -> Result<Self, Self::Error>
     where
         Self: 'a,
     {

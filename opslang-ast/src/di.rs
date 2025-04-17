@@ -10,9 +10,10 @@ pub trait Parse<Parser>: Sized {
     type Format<'a>
     where
         Self: 'a;
+    type Context;
     type Error;
 
-    fn parse<'a>(from: Self::Format<'a>) -> Result<Self, Self::Error>
+    fn parse<'a>(from: Self::Format<'a>, context: Self::Context) -> Result<Self, Self::Error>
     where
         Self: 'a;
 }

@@ -28,11 +28,11 @@ impl<T, DiParser, Version: sealed::VersionMarker<DiParser>> Versioned<T, DiParse
 impl<T: crate::di::Parse<DiParser>, DiParser, Version: sealed::VersionMarker<DiParser>>
     Versioned<T, DiParser, Version>
 {
-    pub fn parse<'a>(from: T::Format<'a>) -> Result<Self, T::Error>
+    pub fn parse<'a>(from: T::Format<'a>, context: T::Context) -> Result<Self, T::Error>
     where
         Self: 'a,
     {
-        let value = T::parse(from)?;
+        let value = T::parse(from, context)?;
         Ok(Self::new(value))
     }
 }
