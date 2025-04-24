@@ -1,7 +1,132 @@
 %start Program
 %title "opslang v1 grammar"
 %grammar_type 'lalr(1)'
+%auto_newline_off
+%on BinaryInteger, HexadecimalInteger, Ieee754Float, OctalInteger %enter ReadNumericSuffix
+%on Hash %enter Cmnt
+
+%scanner ReadNumericSuffix {
+    %auto_newline_off
+    %auto_ws_off
+    %on Ident %enter INITIAL
+}
+%scanner Cmnt {
+    %auto_newline_off
+    %auto_ws_off
+    %on EndOfLine %enter INITIAL
+}
 
 %%
 
-/* 0 */ Program: "Hello world!";
+/*   0 */ EndOfLine: <INITIAL, Cmnt>/(?:\r?\n|\r)+/^ /* Clipped */;
+/*   1 */ Comment: Hash CommentOpt /* Option */;
+/*   2 */ CommentOpt /* Option<T>::Some */: CommentContent;
+/*   3 */ CommentOpt /* Option<T>::None */: ;
+/*   4 */ Hash: "#"^ /* Clipped */;
+/*   5 */ CommentContent: <Cmnt>/[^\r\n]+/;
+/*   6 */ Program: Scope;
+/*   7 */ Scope: ScopeList /* Vec */;
+/*   8 */ ScopeList /* Vec<T>::Push */: ScopeList ScopeContent;
+/*   9 */ ScopeList /* Vec<T>::New */: ;
+/*  10 */ ScopeContent: ScopeContentOpt /* Option */ ScopeContentOpt0 /* Option */ ScopeContentOpt1 /* Option */ EndOfLine;
+/*  11 */ ScopeContentOpt1 /* Option<T>::Some */: Comment;
+/*  12 */ ScopeContentOpt1 /* Option<T>::None */: ;
+/*  13 */ ScopeContentOpt0 /* Option<T>::Some */: ScopeContentKind;
+/*  14 */ ScopeContentOpt0 /* Option<T>::None */: ;
+/*  15 */ ScopeContentOpt /* Option<T>::Some */: Break;
+/*  16 */ ScopeContentOpt /* Option<T>::None */: ;
+/*  17 */ ScopeContentKind: Statement;
+/*  18 */ ScopeContentKind: Block;
+/*  19 */ Statement: StatementKind Semi;
+/*  20 */ Break: ".";
+/*  21 */ Semi: ";";
+/*  22 */ StatementKind: LetStmt;
+/*  23 */ StatementKind: Expr;
+/*  24 */ StatementKind: ReturnStmt;
+/*  25 */ LetStmt: "let" Ident "=" Expr;
+/*  26 */ Expr: InfixIfExpr;
+/*  27 */ InfixIfExpr: LogicalOrExpr InfixIfExprList /* Vec */;
+/*  28 */ InfixIfExprList /* Vec<T>::Push */: InfixIfExprList "if" LogicalOrExpr;
+/*  29 */ InfixIfExprList /* Vec<T>::New */: ;
+/*  30 */ LogicalOrExpr: LogicalAndExpr LogicalOrExprList /* Vec */;
+/*  31 */ LogicalOrExprList /* Vec<T>::Push */: LogicalOrExprList "||" LogicalAndExpr;
+/*  32 */ LogicalOrExprList /* Vec<T>::New */: ;
+/*  33 */ LogicalAndExpr: InfixInExpr LogicalAndExprList /* Vec */;
+/*  34 */ LogicalAndExprList /* Vec<T>::Push */: LogicalAndExprList "&&" InfixInExpr;
+/*  35 */ LogicalAndExprList /* Vec<T>::New */: ;
+/*  36 */ InfixInExpr: CompareExpr InfixInExprOpt /* Option */;
+/*  37 */ InfixInExprOpt /* Option<T>::Some */: "in" CompareExpr;
+/*  38 */ InfixInExprOpt /* Option<T>::None */: ;
+/*  39 */ CompareExpr: ArithmeticExpr CompareExprList /* Vec */;
+/*  40 */ CompareExprList /* Vec<T>::Push */: CompareExprList CompareOp ArithmeticExpr;
+/*  41 */ CompareExprList /* Vec<T>::New */: ;
+/*  42 */ CompareOp: ">=";
+/*  43 */ CompareOp: "<=";
+/*  44 */ CompareOp: ">";
+/*  45 */ CompareOp: "<";
+/*  46 */ CompareOp: "!=";
+/*  47 */ CompareOp: "/=";
+/*  48 */ CompareOp: "==";
+/*  49 */ ArithmeticExpr: FactorExpr ArithmeticExprList /* Vec */;
+/*  50 */ ArithmeticExprList /* Vec<T>::Push */: ArithmeticExprList ArithmeticOp FactorExpr;
+/*  51 */ ArithmeticExprList /* Vec<T>::New */: ;
+/*  52 */ ArithmeticOp: "+";
+/*  53 */ ArithmeticOp: "-";
+/*  54 */ FactorExpr: PrefixExpr FactorExprList /* Vec */;
+/*  55 */ FactorExprList /* Vec<T>::Push */: FactorExprList FactorOp PrefixExpr;
+/*  56 */ FactorExprList /* Vec<T>::New */: ;
+/*  57 */ FactorOp: "*";
+/*  58 */ FactorOp: "/";
+/*  59 */ FactorOp: "%";
+/*  60 */ PrefixExpr: PrefixExprOpt /* Option */ ApplyExpr;
+/*  61 */ PrefixExprOpt /* Option<T>::Some */: "-";
+/*  62 */ PrefixExprOpt /* Option<T>::None */: ;
+/*  63 */ ApplyExpr: AtomicExpr ApplyExprList /* Vec */;
+/*  64 */ ApplyExprList /* Vec<T>::Push */: ApplyExprList AtomicExpr;
+/*  65 */ ApplyExprList /* Vec<T>::New */: ;
+/*  66 */ AtomicExpr: Qualif;
+/*  67 */ AtomicExpr: Ident;
+/*  68 */ AtomicExpr: Literal;
+/*  69 */ AtomicExpr: "(" Expr ")";
+/*  70 */ Qualif: ReceiverComponent;
+/*  71 */ Qualif: ExecutorComponent;
+/*  72 */ Qualif: TimeIndicator;
+/*  73 */ ReceiverComponent: "@@" Path;
+/*  74 */ ExecutorComponent: "@" Path;
+/*  75 */ TimeIndicator: ":" AtomicExpr;
+/*  76 */ Path: PathSegment PathList /* Vec */;
+/*  77 */ PathList /* Vec<T>::Push */: PathList "." PathSegment;
+/*  78 */ PathList /* Vec<T>::New */: ;
+/*  79 */ PathSegment: Ident;
+/*  80 */ Ident: <INITIAL, ReadNumericSuffix>/[a-zA-Z][0-9a-zA-Z_\/-]*/;
+/*  81 */ Literal: Array;
+/*  82 */ Literal: String;
+/*  83 */ Literal: ByteLiteral;
+/*  84 */ Literal: HexByteLiteral;
+/*  85 */ Literal: Numeric Ident;
+/*  86 */ Literal: FilePathLiteral;
+/*  87 */ Literal: Rfc3339Time;
+/*  88 */ Array: "[" ArrayOpt /* Option */ "]";
+/*  89 */ ArrayOpt /* Option<T>::Some */: ArrayElements;
+/*  90 */ ArrayOpt /* Option<T>::None */: ;
+/*  91 */ ArrayElements: Expr ArrayElementsOpt /* Option */;
+/*  92 */ ArrayElementsOpt /* Option<T>::Some */: CommaExprList;
+/*  93 */ ArrayElementsOpt /* Option<T>::None */: ;
+/*  94 */ CommaExprList: "," CommaExprListOpt /* Option */;
+/*  95 */ CommaExprListOpt /* Option<T>::Some */: ArrayElements;
+/*  96 */ CommaExprListOpt /* Option<T>::None */: ;
+/*  97 */ String: /"(\\.|[^"])*"/;
+/*  98 */ ByteLiteral: /b"(\\.|[^"])*"/;
+/*  99 */ HexByteLiteral: /bx"[0-9a-fA-F_]*"/;
+/* 100 */ Numeric: BinaryInteger;
+/* 101 */ Numeric: OctalInteger;
+/* 102 */ Numeric: HexadecimalInteger;
+/* 103 */ Numeric: Ieee754Float;
+/* 104 */ BinaryInteger: /0b[01_]+/;
+/* 105 */ OctalInteger: /0o[0-7_]+/;
+/* 106 */ HexadecimalInteger: /0x[0-9a-fA-F_]+/;
+/* 107 */ Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?/;
+/* 108 */ FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
+/* 109 */ Rfc3339Time: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+/* 110 */ ReturnStmt: "return";
+/* 111 */ Block: "{" Scope "}";

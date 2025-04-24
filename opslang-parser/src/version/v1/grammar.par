@@ -1,7 +1,219 @@
 %start Program
 %title "opslang v1 grammar"
 %grammar_type 'LALR(1)'
+%auto_newline_off
+
+%on BinaryInteger, OctalInteger, HexadecimalInteger, Ieee754Float %enter ReadNumericSuffix
+%on Hash %enter Cmnt
+
+%scanner ReadNumericSuffix {
+    %auto_newline_off
+    %auto_ws_off
+    %on Ident %enter INITIAL
+}
+
+%scanner Cmnt {
+    %auto_newline_off
+    %auto_ws_off
+    %on EndOfLine %enter INITIAL
+}
 
 %%
 
-Program: "Hello world!";
+EndOfLine
+    : <INITIAL, Cmnt>/(?:\r?\n|\r)+/^
+    ;
+
+Comment: Hash [CommentContent];
+
+Hash: "#"^;
+
+CommentContent
+    : <Cmnt>/[^\r\n]+/
+    ;
+
+Program: Scope;
+
+Scope: { ScopeContent };
+
+ScopeContent
+    : [ Break ] [ ScopeContentKind ] [ Comment ] EndOfLine
+    ;
+
+ScopeContentKind
+    : Statement
+    | Block
+    ;
+
+Statement: StatementKind Semi;
+
+Break: ".";
+Semi: ";";
+
+StatementKind
+    : LetStmt
+    | Expr
+    | ReturnStmt
+    ;
+
+LetStmt
+    : "let" Ident "=" Expr
+    ;
+
+// Precedence climbing method
+Expr
+    : InfixIfExpr
+    ;
+
+// infix `if` : lower than `||`
+InfixIfExpr
+    : LogicalOrExpr { "if" LogicalOrExpr }
+    ;
+
+// `||` : lower than `&&`
+LogicalOrExpr
+    : LogicalAndExpr { "||" LogicalAndExpr }
+    ;
+
+// `&&` : lower then compare infix `in`
+LogicalAndExpr
+    : InfixInExpr { "&&" InfixInExpr }
+    ;
+
+// infix `in` : non-associative, lower then compare operators
+InfixInExpr
+    : CompareExpr [ "in" CompareExpr ]
+    ;
+
+// `>=`, `<=`, `>`, `<`, `!=` (`/=`), `==`
+//     : lower then arithmetic
+CompareExpr
+    : ArithmeticExpr { CompareOp ArithmeticExpr }
+    ;
+
+CompareOp
+    : ">="
+    | "<="
+    | ">"
+    | "<"
+    | "!="
+    | "/="
+    | "=="
+    ;
+
+// `+`, `-`
+//     : lower then factor
+ArithmeticExpr
+    : FactorExpr { ArithmeticOp FactorExpr }
+    ;
+
+ArithmeticOp
+    : "+"
+    | "-"
+    ;
+
+// `*`, `/`
+//     : lower then prefix
+FactorExpr
+    : PrefixExpr { FactorOp PrefixExpr }
+    ;
+
+FactorOp
+    : "*"
+    | "/"
+    | "%"
+    ;
+
+// `-`: lower than application
+PrefixExpr
+    : ["-"] ApplyExpr
+    ;
+
+// application: lower than `-`
+ApplyExpr
+    : AtomicExpr { AtomicExpr }
+    ;
+
+AtomicExpr
+    : Qualif
+    | Ident
+    | Literal
+    | "(" Expr ")"
+    ;
+
+Qualif
+    : ReceiverComponent
+    | ExecutorComponent
+    | TimeIndicator
+    ;
+
+ReceiverComponent: "@@" Path;
+ExecutorComponent: "@" Path;
+TimeIndicator: ":" AtomicExpr;
+
+Path: PathSegment { "." PathSegment };
+
+PathSegment: Ident;
+
+Ident: <INITIAL, ReadNumericSuffix> /[a-zA-Z][0-9a-zA-Z_\/-]*/;
+
+Literal
+    : Array
+    | String
+    | ByteLiteral
+    | HexByteLiteral
+    | Numeric Ident
+    | FilePathLiteral
+    | Rfc3339Time
+    ;
+
+Array
+    : "[" [ ArrayElements ] "]";
+
+ArrayElements
+    : Expr [ CommaExprList ]
+    ;
+
+CommaExprList
+    : "," [ ArrayElements ]
+    ;
+
+// String with permissive escapes
+String: /"(\\.|[^"])*"/;
+
+// Byte string with permissive escapes
+ByteLiteral: /b"(\\.|[^"])*"/;
+
+// Byte string in hexadecimal with permissive digit separators
+HexByteLiteral: /bx"[0-9a-fA-F_]*"/;
+
+Numeric
+    : BinaryInteger
+    | OctalInteger
+    | HexadecimalInteger
+    | Ieee754Float
+    ;
+
+// Binary integer with permissive digit separators
+BinaryInteger: /0b[01_]+/;
+
+// Octal integer with permissive digit separators
+OctalInteger: /0o[0-7_]+/;
+
+// Hexadecimal integer with permissive digit separators
+HexadecimalInteger: /0x[0-9a-fA-F_]+/;
+
+// IEEE 754 with permissive digit separators, without leading zeros
+Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?/;
+
+// Harmless charactors for file paths
+FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
+
+// `chrono`-crate version of RFC 3339
+Rfc3339Time: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+
+ReturnStmt: "return";
+
+Block
+    : "{" Scope "}"
+    ;

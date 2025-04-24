@@ -19,8 +19,253 @@ use parol_runtime::{ParserError, Result, Token};
 /// Semantic actions trait generated for the user grammar
 /// All functions have default implementations.
 pub trait ActionTrait<'t> {
+    /// Semantic action for non-terminal 'EndOfLine'
+    fn end_of_line(&mut self, _arg: &EndOfLine) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Comment'
+    fn comment(&mut self, _arg: &Comment<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Hash'
+    fn hash(&mut self, _arg: &Hash) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'CommentContent'
+    fn comment_content(&mut self, _arg: &CommentContent<'t>) -> Result<()> {
+        Ok(())
+    }
+
     /// Semantic action for non-terminal 'Program'
     fn program(&mut self, _arg: &Program<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Scope'
+    fn scope(&mut self, _arg: &Scope<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ScopeContent'
+    fn scope_content(&mut self, _arg: &ScopeContent<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ScopeContentKind'
+    fn scope_content_kind(&mut self, _arg: &ScopeContentKind<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Statement'
+    fn statement(&mut self, _arg: &Statement<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Break'
+    fn r#break(&mut self, _arg: &Break<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Semi'
+    fn semi(&mut self, _arg: &Semi<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'StatementKind'
+    fn statement_kind(&mut self, _arg: &StatementKind<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'LetStmt'
+    fn let_stmt(&mut self, _arg: &LetStmt<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Expr'
+    fn expr(&mut self, _arg: &Expr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'InfixIfExpr'
+    fn infix_if_expr(&mut self, _arg: &InfixIfExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'LogicalOrExpr'
+    fn logical_or_expr(&mut self, _arg: &LogicalOrExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'LogicalAndExpr'
+    fn logical_and_expr(&mut self, _arg: &LogicalAndExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'InfixInExpr'
+    fn infix_in_expr(&mut self, _arg: &InfixInExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'CompareExpr'
+    fn compare_expr(&mut self, _arg: &CompareExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'CompareOp'
+    fn compare_op(&mut self, _arg: &CompareOp<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ArithmeticExpr'
+    fn arithmetic_expr(&mut self, _arg: &ArithmeticExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ArithmeticOp'
+    fn arithmetic_op(&mut self, _arg: &ArithmeticOp<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'FactorExpr'
+    fn factor_expr(&mut self, _arg: &FactorExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'FactorOp'
+    fn factor_op(&mut self, _arg: &FactorOp<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'PrefixExpr'
+    fn prefix_expr(&mut self, _arg: &PrefixExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ApplyExpr'
+    fn apply_expr(&mut self, _arg: &ApplyExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'AtomicExpr'
+    fn atomic_expr(&mut self, _arg: &AtomicExpr<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Qualif'
+    fn qualif(&mut self, _arg: &Qualif<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ReceiverComponent'
+    fn receiver_component(&mut self, _arg: &ReceiverComponent<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ExecutorComponent'
+    fn executor_component(&mut self, _arg: &ExecutorComponent<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'TimeIndicator'
+    fn time_indicator(&mut self, _arg: &TimeIndicator<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Path'
+    fn path(&mut self, _arg: &Path<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'PathSegment'
+    fn path_segment(&mut self, _arg: &PathSegment<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Ident'
+    fn ident(&mut self, _arg: &Ident<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Literal'
+    fn literal(&mut self, _arg: &Literal<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Array'
+    fn array(&mut self, _arg: &Array<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ArrayElements'
+    fn array_elements(&mut self, _arg: &ArrayElements<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'CommaExprList'
+    fn comma_expr_list(&mut self, _arg: &CommaExprList<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'String'
+    fn string(&mut self, _arg: &String<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ByteLiteral'
+    fn byte_literal(&mut self, _arg: &ByteLiteral<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'HexByteLiteral'
+    fn hex_byte_literal(&mut self, _arg: &HexByteLiteral<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Numeric'
+    fn numeric(&mut self, _arg: &Numeric<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'BinaryInteger'
+    fn binary_integer(&mut self, _arg: &BinaryInteger<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'OctalInteger'
+    fn octal_integer(&mut self, _arg: &OctalInteger<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'HexadecimalInteger'
+    fn hexadecimal_integer(&mut self, _arg: &HexadecimalInteger<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Ieee754Float'
+    fn ieee754_float(&mut self, _arg: &Ieee754Float<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'FilePathLiteral'
+    fn file_path_literal(&mut self, _arg: &FilePathLiteral<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Rfc3339Time'
+    fn rfc3339_time(&mut self, _arg: &Rfc3339Time<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'ReturnStmt'
+    fn return_stmt(&mut self, _arg: &ReturnStmt<'t>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Semantic action for non-terminal 'Block'
+    fn block(&mut self, _arg: &Block<'t>) -> Result<()> {
         Ok(())
     }
 
@@ -34,10 +279,983 @@ pub trait ActionTrait<'t> {
 // Output Types of productions deduced from the structure of the transformed grammar
 //
 
+///
+/// Type derived for production 17
+///
+/// `ScopeContentKind: Statement;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ScopeContentKindStatement<'t> {
+    pub statement: Box<Statement<'t>>,
+}
+
+///
+/// Type derived for production 18
+///
+/// `ScopeContentKind: Block;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ScopeContentKindBlock<'t> {
+    pub block: Box<Block<'t>>,
+}
+
+///
+/// Type derived for production 22
+///
+/// `StatementKind: LetStmt;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct StatementKindLetStmt<'t> {
+    pub let_stmt: Box<LetStmt<'t>>,
+}
+
+///
+/// Type derived for production 23
+///
+/// `StatementKind: Expr;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct StatementKindExpr<'t> {
+    pub expr: Box<Expr<'t>>,
+}
+
+///
+/// Type derived for production 24
+///
+/// `StatementKind: ReturnStmt;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct StatementKindReturnStmt<'t> {
+    pub return_stmt: Box<ReturnStmt<'t>>,
+}
+
+///
+/// Type derived for production 42
+///
+/// `CompareOp: ">=";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareOpGTEqu<'t> {
+    pub g_t_equ: Token<'t>, /* >= */
+}
+
+///
+/// Type derived for production 43
+///
+/// `CompareOp: "<=";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareOpLTEqu<'t> {
+    pub l_t_equ: Token<'t>, /* <= */
+}
+
+///
+/// Type derived for production 44
+///
+/// `CompareOp: ">";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareOpGT<'t> {
+    pub g_t: Token<'t>, /* > */
+}
+
+///
+/// Type derived for production 45
+///
+/// `CompareOp: "<";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareOpLT<'t> {
+    pub l_t: Token<'t>, /* < */
+}
+
+///
+/// Type derived for production 46
+///
+/// `CompareOp: "!=";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareOpBangEqu<'t> {
+    pub bang_equ: Token<'t>, /* != */
+}
+
+///
+/// Type derived for production 47
+///
+/// `CompareOp: "/=";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareOpSlashEqu<'t> {
+    pub slash_equ: Token<'t>, /* /= */
+}
+
+///
+/// Type derived for production 48
+///
+/// `CompareOp: "==";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareOpEquEqu<'t> {
+    pub equ_equ: Token<'t>, /* == */
+}
+
+///
+/// Type derived for production 52
+///
+/// `ArithmeticOp: "+";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ArithmeticOpPlus<'t> {
+    pub plus: Token<'t>, /* + */
+}
+
+///
+/// Type derived for production 53
+///
+/// `ArithmeticOp: "-";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ArithmeticOpMinus<'t> {
+    pub minus: Token<'t>, /* - */
+}
+
+///
+/// Type derived for production 57
+///
+/// `FactorOp: "*";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct FactorOpStar<'t> {
+    pub star: Token<'t>, /* * */
+}
+
+///
+/// Type derived for production 58
+///
+/// `FactorOp: "/";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct FactorOpSlash<'t> {
+    pub slash: Token<'t>, /* / */
+}
+
+///
+/// Type derived for production 59
+///
+/// `FactorOp: "%";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct FactorOpPercent<'t> {
+    pub percent: Token<'t>, /* % */
+}
+
+///
+/// Type derived for production 66
+///
+/// `AtomicExpr: Qualif;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct AtomicExprQualif<'t> {
+    pub qualif: Box<Qualif<'t>>,
+}
+
+///
+/// Type derived for production 67
+///
+/// `AtomicExpr: Ident;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct AtomicExprIdent<'t> {
+    pub ident: Box<Ident<'t>>,
+}
+
+///
+/// Type derived for production 68
+///
+/// `AtomicExpr: Literal;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct AtomicExprLiteral<'t> {
+    pub literal: Box<Literal<'t>>,
+}
+
+///
+/// Type derived for production 69
+///
+/// `AtomicExpr: "(" Expr ")";`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct AtomicExprLParenExprRParen<'t> {
+    pub l_paren: Token<'t>, /* ( */
+    pub expr: Box<Expr<'t>>,
+    pub r_paren: Token<'t>, /* ) */
+}
+
+///
+/// Type derived for production 70
+///
+/// `Qualif: ReceiverComponent;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct QualifReceiverComponent<'t> {
+    pub receiver_component: Box<ReceiverComponent<'t>>,
+}
+
+///
+/// Type derived for production 71
+///
+/// `Qualif: ExecutorComponent;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct QualifExecutorComponent<'t> {
+    pub executor_component: Box<ExecutorComponent<'t>>,
+}
+
+///
+/// Type derived for production 72
+///
+/// `Qualif: TimeIndicator;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct QualifTimeIndicator<'t> {
+    pub time_indicator: Box<TimeIndicator<'t>>,
+}
+
+///
+/// Type derived for production 81
+///
+/// `Literal: Array;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LiteralArray<'t> {
+    pub array: Box<Array<'t>>,
+}
+
+///
+/// Type derived for production 82
+///
+/// `Literal: String;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LiteralString<'t> {
+    pub string: Box<String<'t>>,
+}
+
+///
+/// Type derived for production 83
+///
+/// `Literal: ByteLiteral;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LiteralByteLiteral<'t> {
+    pub byte_literal: Box<ByteLiteral<'t>>,
+}
+
+///
+/// Type derived for production 84
+///
+/// `Literal: HexByteLiteral;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LiteralHexByteLiteral<'t> {
+    pub hex_byte_literal: Box<HexByteLiteral<'t>>,
+}
+
+///
+/// Type derived for production 85
+///
+/// `Literal: Numeric Ident;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LiteralNumericIdent<'t> {
+    pub numeric: Box<Numeric<'t>>,
+    pub ident: Box<Ident<'t>>,
+}
+
+///
+/// Type derived for production 86
+///
+/// `Literal: FilePathLiteral;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LiteralFilePathLiteral<'t> {
+    pub file_path_literal: Box<FilePathLiteral<'t>>,
+}
+
+///
+/// Type derived for production 87
+///
+/// `Literal: Rfc3339Time;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LiteralRfc3339Time<'t> {
+    pub rfc3339_time: Box<Rfc3339Time<'t>>,
+}
+
+///
+/// Type derived for production 100
+///
+/// `Numeric: BinaryInteger;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct NumericBinaryInteger<'t> {
+    pub binary_integer: Box<BinaryInteger<'t>>,
+}
+
+///
+/// Type derived for production 101
+///
+/// `Numeric: OctalInteger;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct NumericOctalInteger<'t> {
+    pub octal_integer: Box<OctalInteger<'t>>,
+}
+
+///
+/// Type derived for production 102
+///
+/// `Numeric: HexadecimalInteger;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct NumericHexadecimalInteger<'t> {
+    pub hexadecimal_integer: Box<HexadecimalInteger<'t>>,
+}
+
+///
+/// Type derived for production 103
+///
+/// `Numeric: Ieee754Float;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct NumericIeee754Float<'t> {
+    pub ieee754_float: Box<Ieee754Float<'t>>,
+}
+
 // -------------------------------------------------------------------------------------------------
 //
 // Types of non-terminals deduced from the structure of the transformed grammar
 //
+
+///
+/// Type derived for non-terminal ApplyExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ApplyExpr<'t> {
+    pub atomic_expr: Box<AtomicExpr<'t>>,
+    pub apply_expr_list: Vec<ApplyExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal ApplyExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ApplyExprList<'t> {
+    pub atomic_expr: Box<AtomicExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal ArithmeticExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ArithmeticExpr<'t> {
+    pub factor_expr: Box<FactorExpr<'t>>,
+    pub arithmetic_expr_list: Vec<ArithmeticExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal ArithmeticExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ArithmeticExprList<'t> {
+    pub arithmetic_op: Box<ArithmeticOp<'t>>,
+    pub factor_expr: Box<FactorExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal ArithmeticOp
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum ArithmeticOp<'t> {
+    Plus(ArithmeticOpPlus<'t>),
+    Minus(ArithmeticOpMinus<'t>),
+}
+
+///
+/// Type derived for non-terminal Array
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Array<'t> {
+    pub l_bracket: Token<'t>, /* [ */
+    pub array_opt: Option<ArrayOpt<'t>>,
+    pub r_bracket: Token<'t>, /* ] */
+}
+
+///
+/// Type derived for non-terminal ArrayElements
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ArrayElements<'t> {
+    pub expr: Box<Expr<'t>>,
+    pub array_elements_opt: Option<ArrayElementsOpt<'t>>,
+}
+
+///
+/// Type derived for non-terminal ArrayElementsOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ArrayElementsOpt<'t> {
+    pub comma_expr_list: Box<CommaExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal ArrayOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ArrayOpt<'t> {
+    pub array_elements: Box<ArrayElements<'t>>,
+}
+
+///
+/// Type derived for non-terminal AtomicExpr
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum AtomicExpr<'t> {
+    Qualif(AtomicExprQualif<'t>),
+    Ident(AtomicExprIdent<'t>),
+    Literal(AtomicExprLiteral<'t>),
+    LParenExprRParen(AtomicExprLParenExprRParen<'t>),
+}
+
+///
+/// Type derived for non-terminal BinaryInteger
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct BinaryInteger<'t> {
+    pub binary_integer: Token<'t>, /* 0b[01_]+ */
+}
+
+///
+/// Type derived for non-terminal Block
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Block<'t> {
+    pub l_brace: Token<'t>, /* { */
+    pub scope: Box<Scope<'t>>,
+    pub r_brace: Token<'t>, /* } */
+}
+
+///
+/// Type derived for non-terminal Break
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Break<'t> {
+    pub r#break: Token<'t>, /* . */
+}
+
+///
+/// Type derived for non-terminal ByteLiteral
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ByteLiteral<'t> {
+    pub byte_literal: Token<'t>, /* b"(\\.|[^"])*" */
+}
+
+///
+/// Type derived for non-terminal CommaExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CommaExprList<'t> {
+    pub comma: Token<'t>, /* , */
+    pub comma_expr_list_opt: Option<CommaExprListOpt<'t>>,
+}
+
+///
+/// Type derived for non-terminal CommaExprListOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CommaExprListOpt<'t> {
+    pub array_elements: Box<ArrayElements<'t>>,
+}
+
+///
+/// Type derived for non-terminal Comment
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Comment<'t> {
+    pub hash: Box<Hash>,
+    pub comment_opt: Option<CommentOpt<'t>>,
+}
+
+///
+/// Type derived for non-terminal CommentContent
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CommentContent<'t> {
+    pub comment_content: Token<'t>, /* [^\r\n]+ */
+}
+
+///
+/// Type derived for non-terminal CommentOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CommentOpt<'t> {
+    pub comment_content: Box<CommentContent<'t>>,
+}
+
+///
+/// Type derived for non-terminal CompareExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareExpr<'t> {
+    pub arithmetic_expr: Box<ArithmeticExpr<'t>>,
+    pub compare_expr_list: Vec<CompareExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal CompareExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CompareExprList<'t> {
+    pub compare_op: Box<CompareOp<'t>>,
+    pub arithmetic_expr: Box<ArithmeticExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal CompareOp
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum CompareOp<'t> {
+    GTEqu(CompareOpGTEqu<'t>),
+    LTEqu(CompareOpLTEqu<'t>),
+    GT(CompareOpGT<'t>),
+    LT(CompareOpLT<'t>),
+    BangEqu(CompareOpBangEqu<'t>),
+    SlashEqu(CompareOpSlashEqu<'t>),
+    EquEqu(CompareOpEquEqu<'t>),
+}
+
+///
+/// Type derived for non-terminal EndOfLine
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct EndOfLine {}
+
+///
+/// Type derived for non-terminal ExecutorComponent
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ExecutorComponent<'t> {
+    pub at: Token<'t>, /* @ */
+    pub path: Box<Path<'t>>,
+}
+
+///
+/// Type derived for non-terminal Expr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Expr<'t> {
+    pub infix_if_expr: Box<InfixIfExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal FactorExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct FactorExpr<'t> {
+    pub prefix_expr: Box<PrefixExpr<'t>>,
+    pub factor_expr_list: Vec<FactorExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal FactorExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct FactorExprList<'t> {
+    pub factor_op: Box<FactorOp<'t>>,
+    pub prefix_expr: Box<PrefixExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal FactorOp
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum FactorOp<'t> {
+    Star(FactorOpStar<'t>),
+    Slash(FactorOpSlash<'t>),
+    Percent(FactorOpPercent<'t>),
+}
+
+///
+/// Type derived for non-terminal FilePathLiteral
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct FilePathLiteral<'t> {
+    pub file_path_literal: Token<'t>, /* os"[0-9a-zA-Z_.,-\/()\[\]]*" */
+}
+
+///
+/// Type derived for non-terminal Hash
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Hash {}
+
+///
+/// Type derived for non-terminal HexByteLiteral
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct HexByteLiteral<'t> {
+    pub hex_byte_literal: Token<'t>, /* bx"[0-9a-fA-F_]*" */
+}
+
+///
+/// Type derived for non-terminal HexadecimalInteger
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct HexadecimalInteger<'t> {
+    pub hexadecimal_integer: Token<'t>, /* 0x[0-9a-fA-F_]+ */
+}
+
+///
+/// Type derived for non-terminal Ident
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Ident<'t> {
+    pub ident: Token<'t>, /* [a-zA-Z][0-9a-zA-Z_\/-]* */
+}
+
+///
+/// Type derived for non-terminal Ieee754Float
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Ieee754Float<'t> {
+    pub ieee754_float: Token<'t>, /* [-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)? */
+}
+
+///
+/// Type derived for non-terminal InfixIfExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct InfixIfExpr<'t> {
+    pub logical_or_expr: Box<LogicalOrExpr<'t>>,
+    pub infix_if_expr_list: Vec<InfixIfExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal InfixIfExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct InfixIfExprList<'t> {
+    pub r#if: Token<'t>, /* if */
+    pub logical_or_expr: Box<LogicalOrExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal InfixInExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct InfixInExpr<'t> {
+    pub compare_expr: Box<CompareExpr<'t>>,
+    pub infix_in_expr_opt: Option<InfixInExprOpt<'t>>,
+}
+
+///
+/// Type derived for non-terminal InfixInExprOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct InfixInExprOpt<'t> {
+    pub r#in: Token<'t>, /* in */
+    pub compare_expr: Box<CompareExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal LetStmt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LetStmt<'t> {
+    pub r#let: Token<'t>, /* let */
+    pub ident: Box<Ident<'t>>,
+    pub equ: Token<'t>, /* = */
+    pub expr: Box<Expr<'t>>,
+}
+
+///
+/// Type derived for non-terminal Literal
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum Literal<'t> {
+    Array(LiteralArray<'t>),
+    String(LiteralString<'t>),
+    ByteLiteral(LiteralByteLiteral<'t>),
+    HexByteLiteral(LiteralHexByteLiteral<'t>),
+    NumericIdent(LiteralNumericIdent<'t>),
+    FilePathLiteral(LiteralFilePathLiteral<'t>),
+    Rfc3339Time(LiteralRfc3339Time<'t>),
+}
+
+///
+/// Type derived for non-terminal LogicalAndExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LogicalAndExpr<'t> {
+    pub infix_in_expr: Box<InfixInExpr<'t>>,
+    pub logical_and_expr_list: Vec<LogicalAndExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal LogicalAndExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LogicalAndExprList<'t> {
+    pub amp_amp: Token<'t>, /* && */
+    pub infix_in_expr: Box<InfixInExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal LogicalOrExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LogicalOrExpr<'t> {
+    pub logical_and_expr: Box<LogicalAndExpr<'t>>,
+    pub logical_or_expr_list: Vec<LogicalOrExprList<'t>>,
+}
+
+///
+/// Type derived for non-terminal LogicalOrExprList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct LogicalOrExprList<'t> {
+    pub or_or: Token<'t>, /* || */
+    pub logical_and_expr: Box<LogicalAndExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal Numeric
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum Numeric<'t> {
+    BinaryInteger(NumericBinaryInteger<'t>),
+    OctalInteger(NumericOctalInteger<'t>),
+    HexadecimalInteger(NumericHexadecimalInteger<'t>),
+    Ieee754Float(NumericIeee754Float<'t>),
+}
+
+///
+/// Type derived for non-terminal OctalInteger
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct OctalInteger<'t> {
+    pub octal_integer: Token<'t>, /* 0o[0-7_]+ */
+}
+
+///
+/// Type derived for non-terminal Path
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Path<'t> {
+    pub path_segment: Box<PathSegment<'t>>,
+    pub path_list: Vec<PathList<'t>>,
+}
+
+///
+/// Type derived for non-terminal PathList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct PathList<'t> {
+    pub r#break: Token<'t>, /* . */
+    pub path_segment: Box<PathSegment<'t>>,
+}
+
+///
+/// Type derived for non-terminal PathSegment
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct PathSegment<'t> {
+    pub ident: Box<Ident<'t>>,
+}
+
+///
+/// Type derived for non-terminal PrefixExpr
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct PrefixExpr<'t> {
+    pub prefix_expr_opt: Option<PrefixExprOpt<'t>>,
+    pub apply_expr: Box<ApplyExpr<'t>>,
+}
+
+///
+/// Type derived for non-terminal PrefixExprOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct PrefixExprOpt<'t> {
+    pub minus: Token<'t>, /* - */
+}
 
 ///
 /// Type derived for non-terminal Program
@@ -46,7 +1264,175 @@ pub trait ActionTrait<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct Program<'t> {
-    pub program: Token<'t>, /* Hello world! */
+    pub scope: Box<Scope<'t>>,
+}
+
+///
+/// Type derived for non-terminal Qualif
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum Qualif<'t> {
+    ReceiverComponent(QualifReceiverComponent<'t>),
+    ExecutorComponent(QualifExecutorComponent<'t>),
+    TimeIndicator(QualifTimeIndicator<'t>),
+}
+
+///
+/// Type derived for non-terminal ReceiverComponent
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ReceiverComponent<'t> {
+    pub at_at: Token<'t>, /* @@ */
+    pub path: Box<Path<'t>>,
+}
+
+///
+/// Type derived for non-terminal ReturnStmt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ReturnStmt<'t> {
+    pub return_stmt: Token<'t>, /* return */
+}
+
+///
+/// Type derived for non-terminal Rfc3339Time
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Rfc3339Time<'t> {
+    pub rfc3339_time: Token<'t>, /* \d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2}) */
+}
+
+///
+/// Type derived for non-terminal Scope
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Scope<'t> {
+    pub scope_list: Vec<ScopeList<'t>>,
+}
+
+///
+/// Type derived for non-terminal ScopeContent
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ScopeContent<'t> {
+    pub scope_content_opt: Option<ScopeContentOpt<'t>>,
+    pub scope_content_opt0: Option<ScopeContentOpt0<'t>>,
+    pub scope_content_opt1: Option<ScopeContentOpt1<'t>>,
+    pub end_of_line: Box<EndOfLine>,
+}
+
+///
+/// Type derived for non-terminal ScopeContentKind
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum ScopeContentKind<'t> {
+    Statement(ScopeContentKindStatement<'t>),
+    Block(ScopeContentKindBlock<'t>),
+}
+
+///
+/// Type derived for non-terminal ScopeContentOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ScopeContentOpt<'t> {
+    pub r#break: Box<Break<'t>>,
+}
+
+///
+/// Type derived for non-terminal ScopeContentOpt0
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ScopeContentOpt0<'t> {
+    pub scope_content_kind: Box<ScopeContentKind<'t>>,
+}
+
+///
+/// Type derived for non-terminal ScopeContentOpt1
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ScopeContentOpt1<'t> {
+    pub comment: Box<Comment<'t>>,
+}
+
+///
+/// Type derived for non-terminal ScopeList
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ScopeList<'t> {
+    pub scope_content: Box<ScopeContent<'t>>,
+}
+
+///
+/// Type derived for non-terminal Semi
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Semi<'t> {
+    pub semi: Token<'t>, /* ; */
+}
+
+///
+/// Type derived for non-terminal Statement
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Statement<'t> {
+    pub statement_kind: Box<StatementKind<'t>>,
+    pub semi: Box<Semi<'t>>,
+}
+
+///
+/// Type derived for non-terminal StatementKind
+///
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub enum StatementKind<'t> {
+    LetStmt(StatementKindLetStmt<'t>),
+    Expr(StatementKindExpr<'t>),
+    ReturnStmt(StatementKindReturnStmt<'t>),
+}
+
+///
+/// Type derived for non-terminal String
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct String<'t> {
+    pub string: Token<'t>, /* "(\\.|[^"])*" */
+}
+
+///
+/// Type derived for non-terminal TimeIndicator
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct TimeIndicator<'t> {
+    pub colon: Token<'t>, /* : */
+    pub atomic_expr: Box<AtomicExpr<'t>>,
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -57,7 +1443,74 @@ pub struct Program<'t> {
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum ASTType<'t> {
+    ApplyExpr(ApplyExpr<'t>),
+    ApplyExprList(Vec<ApplyExprList<'t>>),
+    ArithmeticExpr(ArithmeticExpr<'t>),
+    ArithmeticExprList(Vec<ArithmeticExprList<'t>>),
+    ArithmeticOp(ArithmeticOp<'t>),
+    Array(Array<'t>),
+    ArrayElements(ArrayElements<'t>),
+    ArrayElementsOpt(Option<ArrayElementsOpt<'t>>),
+    ArrayOpt(Option<ArrayOpt<'t>>),
+    AtomicExpr(AtomicExpr<'t>),
+    BinaryInteger(BinaryInteger<'t>),
+    Block(Block<'t>),
+    Break(Break<'t>),
+    ByteLiteral(ByteLiteral<'t>),
+    CommaExprList(CommaExprList<'t>),
+    CommaExprListOpt(Option<CommaExprListOpt<'t>>),
+    Comment(Comment<'t>),
+    CommentContent(CommentContent<'t>),
+    CommentOpt(Option<CommentOpt<'t>>),
+    CompareExpr(CompareExpr<'t>),
+    CompareExprList(Vec<CompareExprList<'t>>),
+    CompareOp(CompareOp<'t>),
+    EndOfLine(EndOfLine),
+    ExecutorComponent(ExecutorComponent<'t>),
+    Expr(Expr<'t>),
+    FactorExpr(FactorExpr<'t>),
+    FactorExprList(Vec<FactorExprList<'t>>),
+    FactorOp(FactorOp<'t>),
+    FilePathLiteral(FilePathLiteral<'t>),
+    Hash(Hash),
+    HexByteLiteral(HexByteLiteral<'t>),
+    HexadecimalInteger(HexadecimalInteger<'t>),
+    Ident(Ident<'t>),
+    Ieee754Float(Ieee754Float<'t>),
+    InfixIfExpr(InfixIfExpr<'t>),
+    InfixIfExprList(Vec<InfixIfExprList<'t>>),
+    InfixInExpr(InfixInExpr<'t>),
+    InfixInExprOpt(Option<InfixInExprOpt<'t>>),
+    LetStmt(LetStmt<'t>),
+    Literal(Literal<'t>),
+    LogicalAndExpr(LogicalAndExpr<'t>),
+    LogicalAndExprList(Vec<LogicalAndExprList<'t>>),
+    LogicalOrExpr(LogicalOrExpr<'t>),
+    LogicalOrExprList(Vec<LogicalOrExprList<'t>>),
+    Numeric(Numeric<'t>),
+    OctalInteger(OctalInteger<'t>),
+    Path(Path<'t>),
+    PathList(Vec<PathList<'t>>),
+    PathSegment(PathSegment<'t>),
+    PrefixExpr(PrefixExpr<'t>),
+    PrefixExprOpt(Option<PrefixExprOpt<'t>>),
     Program(Program<'t>),
+    Qualif(Qualif<'t>),
+    ReceiverComponent(ReceiverComponent<'t>),
+    ReturnStmt(ReturnStmt<'t>),
+    Rfc3339Time(Rfc3339Time<'t>),
+    Scope(Scope<'t>),
+    ScopeContent(ScopeContent<'t>),
+    ScopeContentKind(ScopeContentKind<'t>),
+    ScopeContentOpt(Option<ScopeContentOpt<'t>>),
+    ScopeContentOpt0(Option<ScopeContentOpt0<'t>>),
+    ScopeContentOpt1(Option<ScopeContentOpt1<'t>>),
+    ScopeList(Vec<ScopeList<'t>>),
+    Semi(Semi<'t>),
+    Statement(Statement<'t>),
+    StatementKind(StatementKind<'t>),
+    String(String<'t>),
+    TimeIndicator(TimeIndicator<'t>),
 }
 
 /// Auto-implemented adapter grammar
@@ -121,17 +1574,2168 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 0:
     ///
-    /// `Program: "Hello world!";`
+    /// `EndOfLine: <INITIAL, Cmnt>/(?:\r?\n|\r)+/^ /* Clipped */;`
     ///
     #[parol_runtime::function_name::named]
-    fn program(&mut self, program: &ParseTreeType<'t>) -> Result<()> {
+    fn end_of_line(&mut self, _end_of_line: &ParseTreeType<'t>) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let program = program.token()?.clone();
-        let program_built = Program { program };
+        let end_of_line_built = EndOfLine {};
+        // Calling user action here
+        self.user_grammar.end_of_line(&end_of_line_built)?;
+        self.push(ASTType::EndOfLine(end_of_line_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 1:
+    ///
+    /// `Comment: Hash CommentOpt /* Option */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn comment(
+        &mut self,
+        _hash: &ParseTreeType<'t>,
+        _comment_opt: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let comment_opt = pop_item!(self, comment_opt, CommentOpt, context);
+        let hash = pop_item!(self, hash, Hash, context);
+        let comment_built = Comment {
+            hash: Box::new(hash),
+            comment_opt,
+        };
+        // Calling user action here
+        self.user_grammar.comment(&comment_built)?;
+        self.push(ASTType::Comment(comment_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 2:
+    ///
+    /// `CommentOpt /* Option<T>::Some */: CommentContent;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn comment_opt_0(&mut self, _comment_content: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let comment_content = pop_item!(self, comment_content, CommentContent, context);
+        let comment_opt_0_built = CommentOpt {
+            comment_content: Box::new(comment_content),
+        };
+        self.push(ASTType::CommentOpt(Some(comment_opt_0_built)), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 3:
+    ///
+    /// `CommentOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn comment_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::CommentOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 4:
+    ///
+    /// `Hash: "#"^ /* Clipped */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn hash(&mut self, _hash: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let hash_built = Hash {};
+        // Calling user action here
+        self.user_grammar.hash(&hash_built)?;
+        self.push(ASTType::Hash(hash_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 5:
+    ///
+    /// `CommentContent: <Cmnt>/[^\r\n]+/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn comment_content(&mut self, comment_content: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let comment_content = comment_content.token()?.clone();
+        let comment_content_built = CommentContent { comment_content };
+        // Calling user action here
+        self.user_grammar.comment_content(&comment_content_built)?;
+        self.push(ASTType::CommentContent(comment_content_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 6:
+    ///
+    /// `Program: Scope;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn program(&mut self, _scope: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let scope = pop_item!(self, scope, Scope, context);
+        let program_built = Program {
+            scope: Box::new(scope),
+        };
         // Calling user action here
         self.user_grammar.program(&program_built)?;
         self.push(ASTType::Program(program_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 7:
+    ///
+    /// `Scope: ScopeList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope(&mut self, _scope_list: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let scope_list = pop_item!(self, scope_list, ScopeList, context);
+        let scope_built = Scope { scope_list };
+        // Calling user action here
+        self.user_grammar.scope(&scope_built)?;
+        self.push(ASTType::Scope(scope_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 8:
+    ///
+    /// `ScopeList /* Vec<T>::Push */: ScopeList ScopeContent;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_list_0(
+        &mut self,
+        _scope_list: &ParseTreeType<'t>,
+        _scope_content: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let scope_content = pop_item!(self, scope_content, ScopeContent, context);
+        let mut scope_list = pop_item!(self, scope_list, ScopeList, context);
+        let scope_list_0_built = ScopeList {
+            scope_content: Box::new(scope_content),
+        };
+        // Add an element to the vector
+        scope_list.push(scope_list_0_built);
+        self.push(ASTType::ScopeList(scope_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 9:
+    ///
+    /// `ScopeList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let scope_list_1_built = Vec::new();
+        self.push(ASTType::ScopeList(scope_list_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 10:
+    ///
+    /// `ScopeContent: ScopeContentOpt /* Option */ ScopeContentOpt0 /* Option */ ScopeContentOpt1 /* Option */ EndOfLine;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content(
+        &mut self,
+        _scope_content_opt: &ParseTreeType<'t>,
+        _scope_content_opt0: &ParseTreeType<'t>,
+        _scope_content_opt1: &ParseTreeType<'t>,
+        _end_of_line: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let end_of_line = pop_item!(self, end_of_line, EndOfLine, context);
+        let scope_content_opt1 = pop_item!(self, scope_content_opt1, ScopeContentOpt1, context);
+        let scope_content_opt0 = pop_item!(self, scope_content_opt0, ScopeContentOpt0, context);
+        let scope_content_opt = pop_item!(self, scope_content_opt, ScopeContentOpt, context);
+        let scope_content_built = ScopeContent {
+            scope_content_opt,
+            scope_content_opt0,
+            scope_content_opt1,
+            end_of_line: Box::new(end_of_line),
+        };
+        // Calling user action here
+        self.user_grammar.scope_content(&scope_content_built)?;
+        self.push(ASTType::ScopeContent(scope_content_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 11:
+    ///
+    /// `ScopeContentOpt1 /* Option<T>::Some */: Comment;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_opt1_0(&mut self, _comment: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let comment = pop_item!(self, comment, Comment, context);
+        let scope_content_opt1_0_built = ScopeContentOpt1 {
+            comment: Box::new(comment),
+        };
+        self.push(
+            ASTType::ScopeContentOpt1(Some(scope_content_opt1_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 12:
+    ///
+    /// `ScopeContentOpt1 /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_opt1_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::ScopeContentOpt1(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 13:
+    ///
+    /// `ScopeContentOpt0 /* Option<T>::Some */: ScopeContentKind;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_opt0_0(&mut self, _scope_content_kind: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let scope_content_kind = pop_item!(self, scope_content_kind, ScopeContentKind, context);
+        let scope_content_opt0_0_built = ScopeContentOpt0 {
+            scope_content_kind: Box::new(scope_content_kind),
+        };
+        self.push(
+            ASTType::ScopeContentOpt0(Some(scope_content_opt0_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 14:
+    ///
+    /// `ScopeContentOpt0 /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_opt0_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::ScopeContentOpt0(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 15:
+    ///
+    /// `ScopeContentOpt /* Option<T>::Some */: Break;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_opt_0(&mut self, _break: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let r#break = pop_item!(self, r#break, Break, context);
+        let scope_content_opt_0_built = ScopeContentOpt {
+            r#break: Box::new(r#break),
+        };
+        self.push(
+            ASTType::ScopeContentOpt(Some(scope_content_opt_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 16:
+    ///
+    /// `ScopeContentOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::ScopeContentOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 17:
+    ///
+    /// `ScopeContentKind: Statement;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_kind_0(&mut self, _statement: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let statement = pop_item!(self, statement, Statement, context);
+        let scope_content_kind_0_built = ScopeContentKindStatement {
+            statement: Box::new(statement),
+        };
+        let scope_content_kind_0_built = ScopeContentKind::Statement(scope_content_kind_0_built);
+        // Calling user action here
+        self.user_grammar
+            .scope_content_kind(&scope_content_kind_0_built)?;
+        self.push(
+            ASTType::ScopeContentKind(scope_content_kind_0_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 18:
+    ///
+    /// `ScopeContentKind: Block;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn scope_content_kind_1(&mut self, _block: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let block = pop_item!(self, block, Block, context);
+        let scope_content_kind_1_built = ScopeContentKindBlock {
+            block: Box::new(block),
+        };
+        let scope_content_kind_1_built = ScopeContentKind::Block(scope_content_kind_1_built);
+        // Calling user action here
+        self.user_grammar
+            .scope_content_kind(&scope_content_kind_1_built)?;
+        self.push(
+            ASTType::ScopeContentKind(scope_content_kind_1_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 19:
+    ///
+    /// `Statement: StatementKind Semi;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn statement(
+        &mut self,
+        _statement_kind: &ParseTreeType<'t>,
+        _semi: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let semi = pop_item!(self, semi, Semi, context);
+        let statement_kind = pop_item!(self, statement_kind, StatementKind, context);
+        let statement_built = Statement {
+            statement_kind: Box::new(statement_kind),
+            semi: Box::new(semi),
+        };
+        // Calling user action here
+        self.user_grammar.statement(&statement_built)?;
+        self.push(ASTType::Statement(statement_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 20:
+    ///
+    /// `Break: ".";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn r#break(&mut self, r#break: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let r#break = r#break.token()?.clone();
+        let r#break_built = Break { r#break };
+        // Calling user action here
+        self.user_grammar.r#break(&r#break_built)?;
+        self.push(ASTType::Break(r#break_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 21:
+    ///
+    /// `Semi: ";";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn semi(&mut self, semi: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let semi = semi.token()?.clone();
+        let semi_built = Semi { semi };
+        // Calling user action here
+        self.user_grammar.semi(&semi_built)?;
+        self.push(ASTType::Semi(semi_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 22:
+    ///
+    /// `StatementKind: LetStmt;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn statement_kind_0(&mut self, _let_stmt: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let let_stmt = pop_item!(self, let_stmt, LetStmt, context);
+        let statement_kind_0_built = StatementKindLetStmt {
+            let_stmt: Box::new(let_stmt),
+        };
+        let statement_kind_0_built = StatementKind::LetStmt(statement_kind_0_built);
+        // Calling user action here
+        self.user_grammar.statement_kind(&statement_kind_0_built)?;
+        self.push(ASTType::StatementKind(statement_kind_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 23:
+    ///
+    /// `StatementKind: Expr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn statement_kind_1(&mut self, _expr: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let expr = pop_item!(self, expr, Expr, context);
+        let statement_kind_1_built = StatementKindExpr {
+            expr: Box::new(expr),
+        };
+        let statement_kind_1_built = StatementKind::Expr(statement_kind_1_built);
+        // Calling user action here
+        self.user_grammar.statement_kind(&statement_kind_1_built)?;
+        self.push(ASTType::StatementKind(statement_kind_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 24:
+    ///
+    /// `StatementKind: ReturnStmt;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn statement_kind_2(&mut self, _return_stmt: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let return_stmt = pop_item!(self, return_stmt, ReturnStmt, context);
+        let statement_kind_2_built = StatementKindReturnStmt {
+            return_stmt: Box::new(return_stmt),
+        };
+        let statement_kind_2_built = StatementKind::ReturnStmt(statement_kind_2_built);
+        // Calling user action here
+        self.user_grammar.statement_kind(&statement_kind_2_built)?;
+        self.push(ASTType::StatementKind(statement_kind_2_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 25:
+    ///
+    /// `LetStmt: "let" Ident "=" Expr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn let_stmt(
+        &mut self,
+        r#let: &ParseTreeType<'t>,
+        _ident: &ParseTreeType<'t>,
+        equ: &ParseTreeType<'t>,
+        _expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let r#let = r#let.token()?.clone();
+        let equ = equ.token()?.clone();
+        let expr = pop_item!(self, expr, Expr, context);
+        let ident = pop_item!(self, ident, Ident, context);
+        let let_stmt_built = LetStmt {
+            r#let,
+            ident: Box::new(ident),
+            equ,
+            expr: Box::new(expr),
+        };
+        // Calling user action here
+        self.user_grammar.let_stmt(&let_stmt_built)?;
+        self.push(ASTType::LetStmt(let_stmt_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 26:
+    ///
+    /// `Expr: InfixIfExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn expr(&mut self, _infix_if_expr: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let infix_if_expr = pop_item!(self, infix_if_expr, InfixIfExpr, context);
+        let expr_built = Expr {
+            infix_if_expr: Box::new(infix_if_expr),
+        };
+        // Calling user action here
+        self.user_grammar.expr(&expr_built)?;
+        self.push(ASTType::Expr(expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 27:
+    ///
+    /// `InfixIfExpr: LogicalOrExpr InfixIfExprList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn infix_if_expr(
+        &mut self,
+        _logical_or_expr: &ParseTreeType<'t>,
+        _infix_if_expr_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let infix_if_expr_list = pop_item!(self, infix_if_expr_list, InfixIfExprList, context);
+        let logical_or_expr = pop_item!(self, logical_or_expr, LogicalOrExpr, context);
+        let infix_if_expr_built = InfixIfExpr {
+            logical_or_expr: Box::new(logical_or_expr),
+            infix_if_expr_list,
+        };
+        // Calling user action here
+        self.user_grammar.infix_if_expr(&infix_if_expr_built)?;
+        self.push(ASTType::InfixIfExpr(infix_if_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 28:
+    ///
+    /// `InfixIfExprList /* Vec<T>::Push */: InfixIfExprList "if" LogicalOrExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn infix_if_expr_list_0(
+        &mut self,
+        _infix_if_expr_list: &ParseTreeType<'t>,
+        r#if: &ParseTreeType<'t>,
+        _logical_or_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let r#if = r#if.token()?.clone();
+        let logical_or_expr = pop_item!(self, logical_or_expr, LogicalOrExpr, context);
+        let mut infix_if_expr_list = pop_item!(self, infix_if_expr_list, InfixIfExprList, context);
+        let infix_if_expr_list_0_built = InfixIfExprList {
+            logical_or_expr: Box::new(logical_or_expr),
+            r#if,
+        };
+        // Add an element to the vector
+        infix_if_expr_list.push(infix_if_expr_list_0_built);
+        self.push(ASTType::InfixIfExprList(infix_if_expr_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 29:
+    ///
+    /// `InfixIfExprList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn infix_if_expr_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let infix_if_expr_list_1_built = Vec::new();
+        self.push(
+            ASTType::InfixIfExprList(infix_if_expr_list_1_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 30:
+    ///
+    /// `LogicalOrExpr: LogicalAndExpr LogicalOrExprList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn logical_or_expr(
+        &mut self,
+        _logical_and_expr: &ParseTreeType<'t>,
+        _logical_or_expr_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let logical_or_expr_list =
+            pop_item!(self, logical_or_expr_list, LogicalOrExprList, context);
+        let logical_and_expr = pop_item!(self, logical_and_expr, LogicalAndExpr, context);
+        let logical_or_expr_built = LogicalOrExpr {
+            logical_and_expr: Box::new(logical_and_expr),
+            logical_or_expr_list,
+        };
+        // Calling user action here
+        self.user_grammar.logical_or_expr(&logical_or_expr_built)?;
+        self.push(ASTType::LogicalOrExpr(logical_or_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 31:
+    ///
+    /// `LogicalOrExprList /* Vec<T>::Push */: LogicalOrExprList "||" LogicalAndExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn logical_or_expr_list_0(
+        &mut self,
+        _logical_or_expr_list: &ParseTreeType<'t>,
+        or_or: &ParseTreeType<'t>,
+        _logical_and_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let or_or = or_or.token()?.clone();
+        let logical_and_expr = pop_item!(self, logical_and_expr, LogicalAndExpr, context);
+        let mut logical_or_expr_list =
+            pop_item!(self, logical_or_expr_list, LogicalOrExprList, context);
+        let logical_or_expr_list_0_built = LogicalOrExprList {
+            logical_and_expr: Box::new(logical_and_expr),
+            or_or,
+        };
+        // Add an element to the vector
+        logical_or_expr_list.push(logical_or_expr_list_0_built);
+        self.push(ASTType::LogicalOrExprList(logical_or_expr_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 32:
+    ///
+    /// `LogicalOrExprList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn logical_or_expr_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let logical_or_expr_list_1_built = Vec::new();
+        self.push(
+            ASTType::LogicalOrExprList(logical_or_expr_list_1_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 33:
+    ///
+    /// `LogicalAndExpr: InfixInExpr LogicalAndExprList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn logical_and_expr(
+        &mut self,
+        _infix_in_expr: &ParseTreeType<'t>,
+        _logical_and_expr_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let logical_and_expr_list =
+            pop_item!(self, logical_and_expr_list, LogicalAndExprList, context);
+        let infix_in_expr = pop_item!(self, infix_in_expr, InfixInExpr, context);
+        let logical_and_expr_built = LogicalAndExpr {
+            infix_in_expr: Box::new(infix_in_expr),
+            logical_and_expr_list,
+        };
+        // Calling user action here
+        self.user_grammar
+            .logical_and_expr(&logical_and_expr_built)?;
+        self.push(ASTType::LogicalAndExpr(logical_and_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 34:
+    ///
+    /// `LogicalAndExprList /* Vec<T>::Push */: LogicalAndExprList "&&" InfixInExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn logical_and_expr_list_0(
+        &mut self,
+        _logical_and_expr_list: &ParseTreeType<'t>,
+        amp_amp: &ParseTreeType<'t>,
+        _infix_in_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let amp_amp = amp_amp.token()?.clone();
+        let infix_in_expr = pop_item!(self, infix_in_expr, InfixInExpr, context);
+        let mut logical_and_expr_list =
+            pop_item!(self, logical_and_expr_list, LogicalAndExprList, context);
+        let logical_and_expr_list_0_built = LogicalAndExprList {
+            infix_in_expr: Box::new(infix_in_expr),
+            amp_amp,
+        };
+        // Add an element to the vector
+        logical_and_expr_list.push(logical_and_expr_list_0_built);
+        self.push(ASTType::LogicalAndExprList(logical_and_expr_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 35:
+    ///
+    /// `LogicalAndExprList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn logical_and_expr_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let logical_and_expr_list_1_built = Vec::new();
+        self.push(
+            ASTType::LogicalAndExprList(logical_and_expr_list_1_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 36:
+    ///
+    /// `InfixInExpr: CompareExpr InfixInExprOpt /* Option */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn infix_in_expr(
+        &mut self,
+        _compare_expr: &ParseTreeType<'t>,
+        _infix_in_expr_opt: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let infix_in_expr_opt = pop_item!(self, infix_in_expr_opt, InfixInExprOpt, context);
+        let compare_expr = pop_item!(self, compare_expr, CompareExpr, context);
+        let infix_in_expr_built = InfixInExpr {
+            compare_expr: Box::new(compare_expr),
+            infix_in_expr_opt,
+        };
+        // Calling user action here
+        self.user_grammar.infix_in_expr(&infix_in_expr_built)?;
+        self.push(ASTType::InfixInExpr(infix_in_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 37:
+    ///
+    /// `InfixInExprOpt /* Option<T>::Some */: "in" CompareExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn infix_in_expr_opt_0(
+        &mut self,
+        r#in: &ParseTreeType<'t>,
+        _compare_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let r#in = r#in.token()?.clone();
+        let compare_expr = pop_item!(self, compare_expr, CompareExpr, context);
+        let infix_in_expr_opt_0_built = InfixInExprOpt {
+            r#in,
+            compare_expr: Box::new(compare_expr),
+        };
+        self.push(
+            ASTType::InfixInExprOpt(Some(infix_in_expr_opt_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 38:
+    ///
+    /// `InfixInExprOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn infix_in_expr_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::InfixInExprOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 39:
+    ///
+    /// `CompareExpr: ArithmeticExpr CompareExprList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_expr(
+        &mut self,
+        _arithmetic_expr: &ParseTreeType<'t>,
+        _compare_expr_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let compare_expr_list = pop_item!(self, compare_expr_list, CompareExprList, context);
+        let arithmetic_expr = pop_item!(self, arithmetic_expr, ArithmeticExpr, context);
+        let compare_expr_built = CompareExpr {
+            arithmetic_expr: Box::new(arithmetic_expr),
+            compare_expr_list,
+        };
+        // Calling user action here
+        self.user_grammar.compare_expr(&compare_expr_built)?;
+        self.push(ASTType::CompareExpr(compare_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 40:
+    ///
+    /// `CompareExprList /* Vec<T>::Push */: CompareExprList CompareOp ArithmeticExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_expr_list_0(
+        &mut self,
+        _compare_expr_list: &ParseTreeType<'t>,
+        _compare_op: &ParseTreeType<'t>,
+        _arithmetic_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let arithmetic_expr = pop_item!(self, arithmetic_expr, ArithmeticExpr, context);
+        let compare_op = pop_item!(self, compare_op, CompareOp, context);
+        let mut compare_expr_list = pop_item!(self, compare_expr_list, CompareExprList, context);
+        let compare_expr_list_0_built = CompareExprList {
+            arithmetic_expr: Box::new(arithmetic_expr),
+            compare_op: Box::new(compare_op),
+        };
+        // Add an element to the vector
+        compare_expr_list.push(compare_expr_list_0_built);
+        self.push(ASTType::CompareExprList(compare_expr_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 41:
+    ///
+    /// `CompareExprList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_expr_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let compare_expr_list_1_built = Vec::new();
+        self.push(ASTType::CompareExprList(compare_expr_list_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 42:
+    ///
+    /// `CompareOp: ">=";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_op_0(&mut self, g_t_equ: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let g_t_equ = g_t_equ.token()?.clone();
+        let compare_op_0_built = CompareOpGTEqu { g_t_equ };
+        let compare_op_0_built = CompareOp::GTEqu(compare_op_0_built);
+        // Calling user action here
+        self.user_grammar.compare_op(&compare_op_0_built)?;
+        self.push(ASTType::CompareOp(compare_op_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 43:
+    ///
+    /// `CompareOp: "<=";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_op_1(&mut self, l_t_equ: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let l_t_equ = l_t_equ.token()?.clone();
+        let compare_op_1_built = CompareOpLTEqu { l_t_equ };
+        let compare_op_1_built = CompareOp::LTEqu(compare_op_1_built);
+        // Calling user action here
+        self.user_grammar.compare_op(&compare_op_1_built)?;
+        self.push(ASTType::CompareOp(compare_op_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 44:
+    ///
+    /// `CompareOp: ">";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_op_2(&mut self, g_t: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let g_t = g_t.token()?.clone();
+        let compare_op_2_built = CompareOpGT { g_t };
+        let compare_op_2_built = CompareOp::GT(compare_op_2_built);
+        // Calling user action here
+        self.user_grammar.compare_op(&compare_op_2_built)?;
+        self.push(ASTType::CompareOp(compare_op_2_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 45:
+    ///
+    /// `CompareOp: "<";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_op_3(&mut self, l_t: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let l_t = l_t.token()?.clone();
+        let compare_op_3_built = CompareOpLT { l_t };
+        let compare_op_3_built = CompareOp::LT(compare_op_3_built);
+        // Calling user action here
+        self.user_grammar.compare_op(&compare_op_3_built)?;
+        self.push(ASTType::CompareOp(compare_op_3_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 46:
+    ///
+    /// `CompareOp: "!=";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_op_4(&mut self, bang_equ: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let bang_equ = bang_equ.token()?.clone();
+        let compare_op_4_built = CompareOpBangEqu { bang_equ };
+        let compare_op_4_built = CompareOp::BangEqu(compare_op_4_built);
+        // Calling user action here
+        self.user_grammar.compare_op(&compare_op_4_built)?;
+        self.push(ASTType::CompareOp(compare_op_4_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 47:
+    ///
+    /// `CompareOp: "/=";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_op_5(&mut self, slash_equ: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let slash_equ = slash_equ.token()?.clone();
+        let compare_op_5_built = CompareOpSlashEqu { slash_equ };
+        let compare_op_5_built = CompareOp::SlashEqu(compare_op_5_built);
+        // Calling user action here
+        self.user_grammar.compare_op(&compare_op_5_built)?;
+        self.push(ASTType::CompareOp(compare_op_5_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 48:
+    ///
+    /// `CompareOp: "==";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn compare_op_6(&mut self, equ_equ: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let equ_equ = equ_equ.token()?.clone();
+        let compare_op_6_built = CompareOpEquEqu { equ_equ };
+        let compare_op_6_built = CompareOp::EquEqu(compare_op_6_built);
+        // Calling user action here
+        self.user_grammar.compare_op(&compare_op_6_built)?;
+        self.push(ASTType::CompareOp(compare_op_6_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 49:
+    ///
+    /// `ArithmeticExpr: FactorExpr ArithmeticExprList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn arithmetic_expr(
+        &mut self,
+        _factor_expr: &ParseTreeType<'t>,
+        _arithmetic_expr_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let arithmetic_expr_list =
+            pop_item!(self, arithmetic_expr_list, ArithmeticExprList, context);
+        let factor_expr = pop_item!(self, factor_expr, FactorExpr, context);
+        let arithmetic_expr_built = ArithmeticExpr {
+            factor_expr: Box::new(factor_expr),
+            arithmetic_expr_list,
+        };
+        // Calling user action here
+        self.user_grammar.arithmetic_expr(&arithmetic_expr_built)?;
+        self.push(ASTType::ArithmeticExpr(arithmetic_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 50:
+    ///
+    /// `ArithmeticExprList /* Vec<T>::Push */: ArithmeticExprList ArithmeticOp FactorExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn arithmetic_expr_list_0(
+        &mut self,
+        _arithmetic_expr_list: &ParseTreeType<'t>,
+        _arithmetic_op: &ParseTreeType<'t>,
+        _factor_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let factor_expr = pop_item!(self, factor_expr, FactorExpr, context);
+        let arithmetic_op = pop_item!(self, arithmetic_op, ArithmeticOp, context);
+        let mut arithmetic_expr_list =
+            pop_item!(self, arithmetic_expr_list, ArithmeticExprList, context);
+        let arithmetic_expr_list_0_built = ArithmeticExprList {
+            factor_expr: Box::new(factor_expr),
+            arithmetic_op: Box::new(arithmetic_op),
+        };
+        // Add an element to the vector
+        arithmetic_expr_list.push(arithmetic_expr_list_0_built);
+        self.push(ASTType::ArithmeticExprList(arithmetic_expr_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 51:
+    ///
+    /// `ArithmeticExprList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn arithmetic_expr_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let arithmetic_expr_list_1_built = Vec::new();
+        self.push(
+            ASTType::ArithmeticExprList(arithmetic_expr_list_1_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 52:
+    ///
+    /// `ArithmeticOp: "+";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn arithmetic_op_0(&mut self, plus: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let plus = plus.token()?.clone();
+        let arithmetic_op_0_built = ArithmeticOpPlus { plus };
+        let arithmetic_op_0_built = ArithmeticOp::Plus(arithmetic_op_0_built);
+        // Calling user action here
+        self.user_grammar.arithmetic_op(&arithmetic_op_0_built)?;
+        self.push(ASTType::ArithmeticOp(arithmetic_op_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 53:
+    ///
+    /// `ArithmeticOp: "-";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn arithmetic_op_1(&mut self, minus: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let minus = minus.token()?.clone();
+        let arithmetic_op_1_built = ArithmeticOpMinus { minus };
+        let arithmetic_op_1_built = ArithmeticOp::Minus(arithmetic_op_1_built);
+        // Calling user action here
+        self.user_grammar.arithmetic_op(&arithmetic_op_1_built)?;
+        self.push(ASTType::ArithmeticOp(arithmetic_op_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 54:
+    ///
+    /// `FactorExpr: PrefixExpr FactorExprList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn factor_expr(
+        &mut self,
+        _prefix_expr: &ParseTreeType<'t>,
+        _factor_expr_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let factor_expr_list = pop_item!(self, factor_expr_list, FactorExprList, context);
+        let prefix_expr = pop_item!(self, prefix_expr, PrefixExpr, context);
+        let factor_expr_built = FactorExpr {
+            prefix_expr: Box::new(prefix_expr),
+            factor_expr_list,
+        };
+        // Calling user action here
+        self.user_grammar.factor_expr(&factor_expr_built)?;
+        self.push(ASTType::FactorExpr(factor_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 55:
+    ///
+    /// `FactorExprList /* Vec<T>::Push */: FactorExprList FactorOp PrefixExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn factor_expr_list_0(
+        &mut self,
+        _factor_expr_list: &ParseTreeType<'t>,
+        _factor_op: &ParseTreeType<'t>,
+        _prefix_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let prefix_expr = pop_item!(self, prefix_expr, PrefixExpr, context);
+        let factor_op = pop_item!(self, factor_op, FactorOp, context);
+        let mut factor_expr_list = pop_item!(self, factor_expr_list, FactorExprList, context);
+        let factor_expr_list_0_built = FactorExprList {
+            prefix_expr: Box::new(prefix_expr),
+            factor_op: Box::new(factor_op),
+        };
+        // Add an element to the vector
+        factor_expr_list.push(factor_expr_list_0_built);
+        self.push(ASTType::FactorExprList(factor_expr_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 56:
+    ///
+    /// `FactorExprList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn factor_expr_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let factor_expr_list_1_built = Vec::new();
+        self.push(ASTType::FactorExprList(factor_expr_list_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 57:
+    ///
+    /// `FactorOp: "*";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn factor_op_0(&mut self, star: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let star = star.token()?.clone();
+        let factor_op_0_built = FactorOpStar { star };
+        let factor_op_0_built = FactorOp::Star(factor_op_0_built);
+        // Calling user action here
+        self.user_grammar.factor_op(&factor_op_0_built)?;
+        self.push(ASTType::FactorOp(factor_op_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 58:
+    ///
+    /// `FactorOp: "/";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn factor_op_1(&mut self, slash: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let slash = slash.token()?.clone();
+        let factor_op_1_built = FactorOpSlash { slash };
+        let factor_op_1_built = FactorOp::Slash(factor_op_1_built);
+        // Calling user action here
+        self.user_grammar.factor_op(&factor_op_1_built)?;
+        self.push(ASTType::FactorOp(factor_op_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 59:
+    ///
+    /// `FactorOp: "%";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn factor_op_2(&mut self, percent: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let percent = percent.token()?.clone();
+        let factor_op_2_built = FactorOpPercent { percent };
+        let factor_op_2_built = FactorOp::Percent(factor_op_2_built);
+        // Calling user action here
+        self.user_grammar.factor_op(&factor_op_2_built)?;
+        self.push(ASTType::FactorOp(factor_op_2_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 60:
+    ///
+    /// `PrefixExpr: PrefixExprOpt /* Option */ ApplyExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn prefix_expr(
+        &mut self,
+        _prefix_expr_opt: &ParseTreeType<'t>,
+        _apply_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let apply_expr = pop_item!(self, apply_expr, ApplyExpr, context);
+        let prefix_expr_opt = pop_item!(self, prefix_expr_opt, PrefixExprOpt, context);
+        let prefix_expr_built = PrefixExpr {
+            prefix_expr_opt,
+            apply_expr: Box::new(apply_expr),
+        };
+        // Calling user action here
+        self.user_grammar.prefix_expr(&prefix_expr_built)?;
+        self.push(ASTType::PrefixExpr(prefix_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 61:
+    ///
+    /// `PrefixExprOpt /* Option<T>::Some */: "-";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn prefix_expr_opt_0(&mut self, minus: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let minus = minus.token()?.clone();
+        let prefix_expr_opt_0_built = PrefixExprOpt { minus };
+        self.push(
+            ASTType::PrefixExprOpt(Some(prefix_expr_opt_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 62:
+    ///
+    /// `PrefixExprOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn prefix_expr_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::PrefixExprOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 63:
+    ///
+    /// `ApplyExpr: AtomicExpr ApplyExprList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn apply_expr(
+        &mut self,
+        _atomic_expr: &ParseTreeType<'t>,
+        _apply_expr_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let apply_expr_list = pop_item!(self, apply_expr_list, ApplyExprList, context);
+        let atomic_expr = pop_item!(self, atomic_expr, AtomicExpr, context);
+        let apply_expr_built = ApplyExpr {
+            atomic_expr: Box::new(atomic_expr),
+            apply_expr_list,
+        };
+        // Calling user action here
+        self.user_grammar.apply_expr(&apply_expr_built)?;
+        self.push(ASTType::ApplyExpr(apply_expr_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 64:
+    ///
+    /// `ApplyExprList /* Vec<T>::Push */: ApplyExprList AtomicExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn apply_expr_list_0(
+        &mut self,
+        _apply_expr_list: &ParseTreeType<'t>,
+        _atomic_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let atomic_expr = pop_item!(self, atomic_expr, AtomicExpr, context);
+        let mut apply_expr_list = pop_item!(self, apply_expr_list, ApplyExprList, context);
+        let apply_expr_list_0_built = ApplyExprList {
+            atomic_expr: Box::new(atomic_expr),
+        };
+        // Add an element to the vector
+        apply_expr_list.push(apply_expr_list_0_built);
+        self.push(ASTType::ApplyExprList(apply_expr_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 65:
+    ///
+    /// `ApplyExprList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn apply_expr_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let apply_expr_list_1_built = Vec::new();
+        self.push(ASTType::ApplyExprList(apply_expr_list_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 66:
+    ///
+    /// `AtomicExpr: Qualif;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn atomic_expr_0(&mut self, _qualif: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let qualif = pop_item!(self, qualif, Qualif, context);
+        let atomic_expr_0_built = AtomicExprQualif {
+            qualif: Box::new(qualif),
+        };
+        let atomic_expr_0_built = AtomicExpr::Qualif(atomic_expr_0_built);
+        // Calling user action here
+        self.user_grammar.atomic_expr(&atomic_expr_0_built)?;
+        self.push(ASTType::AtomicExpr(atomic_expr_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 67:
+    ///
+    /// `AtomicExpr: Ident;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn atomic_expr_1(&mut self, _ident: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let ident = pop_item!(self, ident, Ident, context);
+        let atomic_expr_1_built = AtomicExprIdent {
+            ident: Box::new(ident),
+        };
+        let atomic_expr_1_built = AtomicExpr::Ident(atomic_expr_1_built);
+        // Calling user action here
+        self.user_grammar.atomic_expr(&atomic_expr_1_built)?;
+        self.push(ASTType::AtomicExpr(atomic_expr_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 68:
+    ///
+    /// `AtomicExpr: Literal;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn atomic_expr_2(&mut self, _literal: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let literal = pop_item!(self, literal, Literal, context);
+        let atomic_expr_2_built = AtomicExprLiteral {
+            literal: Box::new(literal),
+        };
+        let atomic_expr_2_built = AtomicExpr::Literal(atomic_expr_2_built);
+        // Calling user action here
+        self.user_grammar.atomic_expr(&atomic_expr_2_built)?;
+        self.push(ASTType::AtomicExpr(atomic_expr_2_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 69:
+    ///
+    /// `AtomicExpr: "(" Expr ")";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn atomic_expr_3(
+        &mut self,
+        l_paren: &ParseTreeType<'t>,
+        _expr: &ParseTreeType<'t>,
+        r_paren: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let l_paren = l_paren.token()?.clone();
+        let r_paren = r_paren.token()?.clone();
+        let expr = pop_item!(self, expr, Expr, context);
+        let atomic_expr_3_built = AtomicExprLParenExprRParen {
+            l_paren,
+            expr: Box::new(expr),
+            r_paren,
+        };
+        let atomic_expr_3_built = AtomicExpr::LParenExprRParen(atomic_expr_3_built);
+        // Calling user action here
+        self.user_grammar.atomic_expr(&atomic_expr_3_built)?;
+        self.push(ASTType::AtomicExpr(atomic_expr_3_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 70:
+    ///
+    /// `Qualif: ReceiverComponent;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn qualif_0(&mut self, _receiver_component: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let receiver_component = pop_item!(self, receiver_component, ReceiverComponent, context);
+        let qualif_0_built = QualifReceiverComponent {
+            receiver_component: Box::new(receiver_component),
+        };
+        let qualif_0_built = Qualif::ReceiverComponent(qualif_0_built);
+        // Calling user action here
+        self.user_grammar.qualif(&qualif_0_built)?;
+        self.push(ASTType::Qualif(qualif_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 71:
+    ///
+    /// `Qualif: ExecutorComponent;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn qualif_1(&mut self, _executor_component: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let executor_component = pop_item!(self, executor_component, ExecutorComponent, context);
+        let qualif_1_built = QualifExecutorComponent {
+            executor_component: Box::new(executor_component),
+        };
+        let qualif_1_built = Qualif::ExecutorComponent(qualif_1_built);
+        // Calling user action here
+        self.user_grammar.qualif(&qualif_1_built)?;
+        self.push(ASTType::Qualif(qualif_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 72:
+    ///
+    /// `Qualif: TimeIndicator;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn qualif_2(&mut self, _time_indicator: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let time_indicator = pop_item!(self, time_indicator, TimeIndicator, context);
+        let qualif_2_built = QualifTimeIndicator {
+            time_indicator: Box::new(time_indicator),
+        };
+        let qualif_2_built = Qualif::TimeIndicator(qualif_2_built);
+        // Calling user action here
+        self.user_grammar.qualif(&qualif_2_built)?;
+        self.push(ASTType::Qualif(qualif_2_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 73:
+    ///
+    /// `ReceiverComponent: "@@" Path;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn receiver_component(
+        &mut self,
+        at_at: &ParseTreeType<'t>,
+        _path: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let at_at = at_at.token()?.clone();
+        let path = pop_item!(self, path, Path, context);
+        let receiver_component_built = ReceiverComponent {
+            at_at,
+            path: Box::new(path),
+        };
+        // Calling user action here
+        self.user_grammar
+            .receiver_component(&receiver_component_built)?;
+        self.push(
+            ASTType::ReceiverComponent(receiver_component_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 74:
+    ///
+    /// `ExecutorComponent: "@" Path;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn executor_component(
+        &mut self,
+        at: &ParseTreeType<'t>,
+        _path: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let at = at.token()?.clone();
+        let path = pop_item!(self, path, Path, context);
+        let executor_component_built = ExecutorComponent {
+            at,
+            path: Box::new(path),
+        };
+        // Calling user action here
+        self.user_grammar
+            .executor_component(&executor_component_built)?;
+        self.push(
+            ASTType::ExecutorComponent(executor_component_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 75:
+    ///
+    /// `TimeIndicator: ":" AtomicExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn time_indicator(
+        &mut self,
+        colon: &ParseTreeType<'t>,
+        _atomic_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let colon = colon.token()?.clone();
+        let atomic_expr = pop_item!(self, atomic_expr, AtomicExpr, context);
+        let time_indicator_built = TimeIndicator {
+            colon,
+            atomic_expr: Box::new(atomic_expr),
+        };
+        // Calling user action here
+        self.user_grammar.time_indicator(&time_indicator_built)?;
+        self.push(ASTType::TimeIndicator(time_indicator_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 76:
+    ///
+    /// `Path: PathSegment PathList /* Vec */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn path(
+        &mut self,
+        _path_segment: &ParseTreeType<'t>,
+        _path_list: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let path_list = pop_item!(self, path_list, PathList, context);
+        let path_segment = pop_item!(self, path_segment, PathSegment, context);
+        let path_built = Path {
+            path_segment: Box::new(path_segment),
+            path_list,
+        };
+        // Calling user action here
+        self.user_grammar.path(&path_built)?;
+        self.push(ASTType::Path(path_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 77:
+    ///
+    /// `PathList /* Vec<T>::Push */: PathList "." PathSegment;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn path_list_0(
+        &mut self,
+        _path_list: &ParseTreeType<'t>,
+        r#break: &ParseTreeType<'t>,
+        _path_segment: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let r#break = r#break.token()?.clone();
+        let path_segment = pop_item!(self, path_segment, PathSegment, context);
+        let mut path_list = pop_item!(self, path_list, PathList, context);
+        let path_list_0_built = PathList {
+            path_segment: Box::new(path_segment),
+            r#break,
+        };
+        // Add an element to the vector
+        path_list.push(path_list_0_built);
+        self.push(ASTType::PathList(path_list), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 78:
+    ///
+    /// `PathList /* Vec<T>::New */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn path_list_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let path_list_1_built = Vec::new();
+        self.push(ASTType::PathList(path_list_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 79:
+    ///
+    /// `PathSegment: Ident;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn path_segment(&mut self, _ident: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let ident = pop_item!(self, ident, Ident, context);
+        let path_segment_built = PathSegment {
+            ident: Box::new(ident),
+        };
+        // Calling user action here
+        self.user_grammar.path_segment(&path_segment_built)?;
+        self.push(ASTType::PathSegment(path_segment_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 80:
+    ///
+    /// `Ident: <INITIAL, ReadNumericSuffix>/[a-zA-Z][0-9a-zA-Z_\/-]*/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn ident(&mut self, ident: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let ident = ident.token()?.clone();
+        let ident_built = Ident { ident };
+        // Calling user action here
+        self.user_grammar.ident(&ident_built)?;
+        self.push(ASTType::Ident(ident_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 81:
+    ///
+    /// `Literal: Array;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn literal_0(&mut self, _array: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let array = pop_item!(self, array, Array, context);
+        let literal_0_built = LiteralArray {
+            array: Box::new(array),
+        };
+        let literal_0_built = Literal::Array(literal_0_built);
+        // Calling user action here
+        self.user_grammar.literal(&literal_0_built)?;
+        self.push(ASTType::Literal(literal_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 82:
+    ///
+    /// `Literal: String;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn literal_1(&mut self, _string: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let string = pop_item!(self, string, String, context);
+        let literal_1_built = LiteralString {
+            string: Box::new(string),
+        };
+        let literal_1_built = Literal::String(literal_1_built);
+        // Calling user action here
+        self.user_grammar.literal(&literal_1_built)?;
+        self.push(ASTType::Literal(literal_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 83:
+    ///
+    /// `Literal: ByteLiteral;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn literal_2(&mut self, _byte_literal: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let byte_literal = pop_item!(self, byte_literal, ByteLiteral, context);
+        let literal_2_built = LiteralByteLiteral {
+            byte_literal: Box::new(byte_literal),
+        };
+        let literal_2_built = Literal::ByteLiteral(literal_2_built);
+        // Calling user action here
+        self.user_grammar.literal(&literal_2_built)?;
+        self.push(ASTType::Literal(literal_2_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 84:
+    ///
+    /// `Literal: HexByteLiteral;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn literal_3(&mut self, _hex_byte_literal: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let hex_byte_literal = pop_item!(self, hex_byte_literal, HexByteLiteral, context);
+        let literal_3_built = LiteralHexByteLiteral {
+            hex_byte_literal: Box::new(hex_byte_literal),
+        };
+        let literal_3_built = Literal::HexByteLiteral(literal_3_built);
+        // Calling user action here
+        self.user_grammar.literal(&literal_3_built)?;
+        self.push(ASTType::Literal(literal_3_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 85:
+    ///
+    /// `Literal: Numeric Ident;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn literal_4(
+        &mut self,
+        _numeric: &ParseTreeType<'t>,
+        _ident: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let ident = pop_item!(self, ident, Ident, context);
+        let numeric = pop_item!(self, numeric, Numeric, context);
+        let literal_4_built = LiteralNumericIdent {
+            numeric: Box::new(numeric),
+            ident: Box::new(ident),
+        };
+        let literal_4_built = Literal::NumericIdent(literal_4_built);
+        // Calling user action here
+        self.user_grammar.literal(&literal_4_built)?;
+        self.push(ASTType::Literal(literal_4_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 86:
+    ///
+    /// `Literal: FilePathLiteral;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn literal_5(&mut self, _file_path_literal: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let file_path_literal = pop_item!(self, file_path_literal, FilePathLiteral, context);
+        let literal_5_built = LiteralFilePathLiteral {
+            file_path_literal: Box::new(file_path_literal),
+        };
+        let literal_5_built = Literal::FilePathLiteral(literal_5_built);
+        // Calling user action here
+        self.user_grammar.literal(&literal_5_built)?;
+        self.push(ASTType::Literal(literal_5_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 87:
+    ///
+    /// `Literal: Rfc3339Time;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn literal_6(&mut self, _rfc3339_time: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let rfc3339_time = pop_item!(self, rfc3339_time, Rfc3339Time, context);
+        let literal_6_built = LiteralRfc3339Time {
+            rfc3339_time: Box::new(rfc3339_time),
+        };
+        let literal_6_built = Literal::Rfc3339Time(literal_6_built);
+        // Calling user action here
+        self.user_grammar.literal(&literal_6_built)?;
+        self.push(ASTType::Literal(literal_6_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 88:
+    ///
+    /// `Array: "[" ArrayOpt /* Option */ "]";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn array(
+        &mut self,
+        l_bracket: &ParseTreeType<'t>,
+        _array_opt: &ParseTreeType<'t>,
+        r_bracket: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let l_bracket = l_bracket.token()?.clone();
+        let r_bracket = r_bracket.token()?.clone();
+        let array_opt = pop_item!(self, array_opt, ArrayOpt, context);
+        let array_built = Array {
+            l_bracket,
+            array_opt,
+            r_bracket,
+        };
+        // Calling user action here
+        self.user_grammar.array(&array_built)?;
+        self.push(ASTType::Array(array_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 89:
+    ///
+    /// `ArrayOpt /* Option<T>::Some */: ArrayElements;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn array_opt_0(&mut self, _array_elements: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let array_elements = pop_item!(self, array_elements, ArrayElements, context);
+        let array_opt_0_built = ArrayOpt {
+            array_elements: Box::new(array_elements),
+        };
+        self.push(ASTType::ArrayOpt(Some(array_opt_0_built)), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 90:
+    ///
+    /// `ArrayOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn array_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::ArrayOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 91:
+    ///
+    /// `ArrayElements: Expr ArrayElementsOpt /* Option */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn array_elements(
+        &mut self,
+        _expr: &ParseTreeType<'t>,
+        _array_elements_opt: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let array_elements_opt = pop_item!(self, array_elements_opt, ArrayElementsOpt, context);
+        let expr = pop_item!(self, expr, Expr, context);
+        let array_elements_built = ArrayElements {
+            expr: Box::new(expr),
+            array_elements_opt,
+        };
+        // Calling user action here
+        self.user_grammar.array_elements(&array_elements_built)?;
+        self.push(ASTType::ArrayElements(array_elements_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 92:
+    ///
+    /// `ArrayElementsOpt /* Option<T>::Some */: CommaExprList;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn array_elements_opt_0(&mut self, _comma_expr_list: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let comma_expr_list = pop_item!(self, comma_expr_list, CommaExprList, context);
+        let array_elements_opt_0_built = ArrayElementsOpt {
+            comma_expr_list: Box::new(comma_expr_list),
+        };
+        self.push(
+            ASTType::ArrayElementsOpt(Some(array_elements_opt_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 93:
+    ///
+    /// `ArrayElementsOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn array_elements_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::ArrayElementsOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 94:
+    ///
+    /// `CommaExprList: "," CommaExprListOpt /* Option */;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn comma_expr_list(
+        &mut self,
+        comma: &ParseTreeType<'t>,
+        _comma_expr_list_opt: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let comma = comma.token()?.clone();
+        let comma_expr_list_opt = pop_item!(self, comma_expr_list_opt, CommaExprListOpt, context);
+        let comma_expr_list_built = CommaExprList {
+            comma,
+            comma_expr_list_opt,
+        };
+        // Calling user action here
+        self.user_grammar.comma_expr_list(&comma_expr_list_built)?;
+        self.push(ASTType::CommaExprList(comma_expr_list_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 95:
+    ///
+    /// `CommaExprListOpt /* Option<T>::Some */: ArrayElements;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn comma_expr_list_opt_0(&mut self, _array_elements: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let array_elements = pop_item!(self, array_elements, ArrayElements, context);
+        let comma_expr_list_opt_0_built = CommaExprListOpt {
+            array_elements: Box::new(array_elements),
+        };
+        self.push(
+            ASTType::CommaExprListOpt(Some(comma_expr_list_opt_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 96:
+    ///
+    /// `CommaExprListOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn comma_expr_list_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::CommaExprListOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 97:
+    ///
+    /// `String: /"(\\.|[^"])*"/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn string(&mut self, string: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let string = string.token()?.clone();
+        let string_built = String { string };
+        // Calling user action here
+        self.user_grammar.string(&string_built)?;
+        self.push(ASTType::String(string_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 98:
+    ///
+    /// `ByteLiteral: /b"(\\.|[^"])*"/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn byte_literal(&mut self, byte_literal: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let byte_literal = byte_literal.token()?.clone();
+        let byte_literal_built = ByteLiteral { byte_literal };
+        // Calling user action here
+        self.user_grammar.byte_literal(&byte_literal_built)?;
+        self.push(ASTType::ByteLiteral(byte_literal_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 99:
+    ///
+    /// `HexByteLiteral: /bx"[0-9a-fA-F_]*"/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn hex_byte_literal(&mut self, hex_byte_literal: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let hex_byte_literal = hex_byte_literal.token()?.clone();
+        let hex_byte_literal_built = HexByteLiteral { hex_byte_literal };
+        // Calling user action here
+        self.user_grammar
+            .hex_byte_literal(&hex_byte_literal_built)?;
+        self.push(ASTType::HexByteLiteral(hex_byte_literal_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 100:
+    ///
+    /// `Numeric: BinaryInteger;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn numeric_0(&mut self, _binary_integer: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let binary_integer = pop_item!(self, binary_integer, BinaryInteger, context);
+        let numeric_0_built = NumericBinaryInteger {
+            binary_integer: Box::new(binary_integer),
+        };
+        let numeric_0_built = Numeric::BinaryInteger(numeric_0_built);
+        // Calling user action here
+        self.user_grammar.numeric(&numeric_0_built)?;
+        self.push(ASTType::Numeric(numeric_0_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 101:
+    ///
+    /// `Numeric: OctalInteger;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn numeric_1(&mut self, _octal_integer: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let octal_integer = pop_item!(self, octal_integer, OctalInteger, context);
+        let numeric_1_built = NumericOctalInteger {
+            octal_integer: Box::new(octal_integer),
+        };
+        let numeric_1_built = Numeric::OctalInteger(numeric_1_built);
+        // Calling user action here
+        self.user_grammar.numeric(&numeric_1_built)?;
+        self.push(ASTType::Numeric(numeric_1_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 102:
+    ///
+    /// `Numeric: HexadecimalInteger;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn numeric_2(&mut self, _hexadecimal_integer: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let hexadecimal_integer = pop_item!(self, hexadecimal_integer, HexadecimalInteger, context);
+        let numeric_2_built = NumericHexadecimalInteger {
+            hexadecimal_integer: Box::new(hexadecimal_integer),
+        };
+        let numeric_2_built = Numeric::HexadecimalInteger(numeric_2_built);
+        // Calling user action here
+        self.user_grammar.numeric(&numeric_2_built)?;
+        self.push(ASTType::Numeric(numeric_2_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 103:
+    ///
+    /// `Numeric: Ieee754Float;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn numeric_3(&mut self, _ieee754_float: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let ieee754_float = pop_item!(self, ieee754_float, Ieee754Float, context);
+        let numeric_3_built = NumericIeee754Float {
+            ieee754_float: Box::new(ieee754_float),
+        };
+        let numeric_3_built = Numeric::Ieee754Float(numeric_3_built);
+        // Calling user action here
+        self.user_grammar.numeric(&numeric_3_built)?;
+        self.push(ASTType::Numeric(numeric_3_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 104:
+    ///
+    /// `BinaryInteger: /0b[01_]+/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn binary_integer(&mut self, binary_integer: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let binary_integer = binary_integer.token()?.clone();
+        let binary_integer_built = BinaryInteger { binary_integer };
+        // Calling user action here
+        self.user_grammar.binary_integer(&binary_integer_built)?;
+        self.push(ASTType::BinaryInteger(binary_integer_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 105:
+    ///
+    /// `OctalInteger: /0o[0-7_]+/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn octal_integer(&mut self, octal_integer: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let octal_integer = octal_integer.token()?.clone();
+        let octal_integer_built = OctalInteger { octal_integer };
+        // Calling user action here
+        self.user_grammar.octal_integer(&octal_integer_built)?;
+        self.push(ASTType::OctalInteger(octal_integer_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 106:
+    ///
+    /// `HexadecimalInteger: /0x[0-9a-fA-F_]+/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn hexadecimal_integer(&mut self, hexadecimal_integer: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let hexadecimal_integer = hexadecimal_integer.token()?.clone();
+        let hexadecimal_integer_built = HexadecimalInteger {
+            hexadecimal_integer,
+        };
+        // Calling user action here
+        self.user_grammar
+            .hexadecimal_integer(&hexadecimal_integer_built)?;
+        self.push(
+            ASTType::HexadecimalInteger(hexadecimal_integer_built),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 107:
+    ///
+    /// `Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn ieee754_float(&mut self, ieee754_float: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let ieee754_float = ieee754_float.token()?.clone();
+        let ieee754_float_built = Ieee754Float { ieee754_float };
+        // Calling user action here
+        self.user_grammar.ieee754_float(&ieee754_float_built)?;
+        self.push(ASTType::Ieee754Float(ieee754_float_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 108:
+    ///
+    /// `FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn file_path_literal(&mut self, file_path_literal: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let file_path_literal = file_path_literal.token()?.clone();
+        let file_path_literal_built = FilePathLiteral { file_path_literal };
+        // Calling user action here
+        self.user_grammar
+            .file_path_literal(&file_path_literal_built)?;
+        self.push(ASTType::FilePathLiteral(file_path_literal_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 109:
+    ///
+    /// `Rfc3339Time: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn rfc3339_time(&mut self, rfc3339_time: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let rfc3339_time = rfc3339_time.token()?.clone();
+        let rfc3339_time_built = Rfc3339Time { rfc3339_time };
+        // Calling user action here
+        self.user_grammar.rfc3339_time(&rfc3339_time_built)?;
+        self.push(ASTType::Rfc3339Time(rfc3339_time_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 110:
+    ///
+    /// `ReturnStmt: "return";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn return_stmt(&mut self, return_stmt: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let return_stmt = return_stmt.token()?.clone();
+        let return_stmt_built = ReturnStmt { return_stmt };
+        // Calling user action here
+        self.user_grammar.return_stmt(&return_stmt_built)?;
+        self.push(ASTType::ReturnStmt(return_stmt_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 111:
+    ///
+    /// `Block: "{" Scope "}";`
+    ///
+    #[parol_runtime::function_name::named]
+    fn block(
+        &mut self,
+        l_brace: &ParseTreeType<'t>,
+        _scope: &ParseTreeType<'t>,
+        r_brace: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let l_brace = l_brace.token()?.clone();
+        let r_brace = r_brace.token()?.clone();
+        let scope = pop_item!(self, scope, Scope, context);
+        let block_built = Block {
+            l_brace,
+            scope: Box::new(scope),
+            r_brace,
+        };
+        // Calling user action here
+        self.user_grammar.block(&block_built)?;
+        self.push(ASTType::Block(block_built), context);
         Ok(())
     }
 }
@@ -146,7 +3750,118 @@ impl<'t> UserActionsTrait<'t> for ActionAuto<'t, '_> {
         children: &[ParseTreeType<'t>],
     ) -> Result<()> {
         match prod_num {
-            0 => self.program(&children[0]),
+            0 => self.end_of_line(&children[0]),
+            1 => self.comment(&children[0], &children[1]),
+            2 => self.comment_opt_0(&children[0]),
+            3 => self.comment_opt_1(),
+            4 => self.hash(&children[0]),
+            5 => self.comment_content(&children[0]),
+            6 => self.program(&children[0]),
+            7 => self.scope(&children[0]),
+            8 => self.scope_list_0(&children[0], &children[1]),
+            9 => self.scope_list_1(),
+            10 => self.scope_content(&children[0], &children[1], &children[2], &children[3]),
+            11 => self.scope_content_opt1_0(&children[0]),
+            12 => self.scope_content_opt1_1(),
+            13 => self.scope_content_opt0_0(&children[0]),
+            14 => self.scope_content_opt0_1(),
+            15 => self.scope_content_opt_0(&children[0]),
+            16 => self.scope_content_opt_1(),
+            17 => self.scope_content_kind_0(&children[0]),
+            18 => self.scope_content_kind_1(&children[0]),
+            19 => self.statement(&children[0], &children[1]),
+            20 => self.r#break(&children[0]),
+            21 => self.semi(&children[0]),
+            22 => self.statement_kind_0(&children[0]),
+            23 => self.statement_kind_1(&children[0]),
+            24 => self.statement_kind_2(&children[0]),
+            25 => self.let_stmt(&children[0], &children[1], &children[2], &children[3]),
+            26 => self.expr(&children[0]),
+            27 => self.infix_if_expr(&children[0], &children[1]),
+            28 => self.infix_if_expr_list_0(&children[0], &children[1], &children[2]),
+            29 => self.infix_if_expr_list_1(),
+            30 => self.logical_or_expr(&children[0], &children[1]),
+            31 => self.logical_or_expr_list_0(&children[0], &children[1], &children[2]),
+            32 => self.logical_or_expr_list_1(),
+            33 => self.logical_and_expr(&children[0], &children[1]),
+            34 => self.logical_and_expr_list_0(&children[0], &children[1], &children[2]),
+            35 => self.logical_and_expr_list_1(),
+            36 => self.infix_in_expr(&children[0], &children[1]),
+            37 => self.infix_in_expr_opt_0(&children[0], &children[1]),
+            38 => self.infix_in_expr_opt_1(),
+            39 => self.compare_expr(&children[0], &children[1]),
+            40 => self.compare_expr_list_0(&children[0], &children[1], &children[2]),
+            41 => self.compare_expr_list_1(),
+            42 => self.compare_op_0(&children[0]),
+            43 => self.compare_op_1(&children[0]),
+            44 => self.compare_op_2(&children[0]),
+            45 => self.compare_op_3(&children[0]),
+            46 => self.compare_op_4(&children[0]),
+            47 => self.compare_op_5(&children[0]),
+            48 => self.compare_op_6(&children[0]),
+            49 => self.arithmetic_expr(&children[0], &children[1]),
+            50 => self.arithmetic_expr_list_0(&children[0], &children[1], &children[2]),
+            51 => self.arithmetic_expr_list_1(),
+            52 => self.arithmetic_op_0(&children[0]),
+            53 => self.arithmetic_op_1(&children[0]),
+            54 => self.factor_expr(&children[0], &children[1]),
+            55 => self.factor_expr_list_0(&children[0], &children[1], &children[2]),
+            56 => self.factor_expr_list_1(),
+            57 => self.factor_op_0(&children[0]),
+            58 => self.factor_op_1(&children[0]),
+            59 => self.factor_op_2(&children[0]),
+            60 => self.prefix_expr(&children[0], &children[1]),
+            61 => self.prefix_expr_opt_0(&children[0]),
+            62 => self.prefix_expr_opt_1(),
+            63 => self.apply_expr(&children[0], &children[1]),
+            64 => self.apply_expr_list_0(&children[0], &children[1]),
+            65 => self.apply_expr_list_1(),
+            66 => self.atomic_expr_0(&children[0]),
+            67 => self.atomic_expr_1(&children[0]),
+            68 => self.atomic_expr_2(&children[0]),
+            69 => self.atomic_expr_3(&children[0], &children[1], &children[2]),
+            70 => self.qualif_0(&children[0]),
+            71 => self.qualif_1(&children[0]),
+            72 => self.qualif_2(&children[0]),
+            73 => self.receiver_component(&children[0], &children[1]),
+            74 => self.executor_component(&children[0], &children[1]),
+            75 => self.time_indicator(&children[0], &children[1]),
+            76 => self.path(&children[0], &children[1]),
+            77 => self.path_list_0(&children[0], &children[1], &children[2]),
+            78 => self.path_list_1(),
+            79 => self.path_segment(&children[0]),
+            80 => self.ident(&children[0]),
+            81 => self.literal_0(&children[0]),
+            82 => self.literal_1(&children[0]),
+            83 => self.literal_2(&children[0]),
+            84 => self.literal_3(&children[0]),
+            85 => self.literal_4(&children[0], &children[1]),
+            86 => self.literal_5(&children[0]),
+            87 => self.literal_6(&children[0]),
+            88 => self.array(&children[0], &children[1], &children[2]),
+            89 => self.array_opt_0(&children[0]),
+            90 => self.array_opt_1(),
+            91 => self.array_elements(&children[0], &children[1]),
+            92 => self.array_elements_opt_0(&children[0]),
+            93 => self.array_elements_opt_1(),
+            94 => self.comma_expr_list(&children[0], &children[1]),
+            95 => self.comma_expr_list_opt_0(&children[0]),
+            96 => self.comma_expr_list_opt_1(),
+            97 => self.string(&children[0]),
+            98 => self.byte_literal(&children[0]),
+            99 => self.hex_byte_literal(&children[0]),
+            100 => self.numeric_0(&children[0]),
+            101 => self.numeric_1(&children[0]),
+            102 => self.numeric_2(&children[0]),
+            103 => self.numeric_3(&children[0]),
+            104 => self.binary_integer(&children[0]),
+            105 => self.octal_integer(&children[0]),
+            106 => self.hexadecimal_integer(&children[0]),
+            107 => self.ieee754_float(&children[0]),
+            108 => self.file_path_literal(&children[0]),
+            109 => self.rfc3339_time(&children[0]),
+            110 => self.return_stmt(&children[0]),
+            111 => self.block(&children[0], &children[1], &children[2]),
             _ => Err(ParserError::InternalError(format!(
                 "Unhandled production number: {}",
                 prod_num

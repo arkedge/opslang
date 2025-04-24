@@ -5,13 +5,13 @@ pub trait Span {
     fn span(&self) -> Range<usize>;
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// A whole program. The program is a sequence of statements.
 pub struct Program<'cx> {
     pub content: Scope<'cx>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// A comment in the code.
 ///
 /// Comments are NOT ignored by the parser.
@@ -21,13 +21,19 @@ pub struct Comment<'cx> {
     pub end: usize,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// A semicolon in the code.
 pub struct Semi {
     pub start: usize,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A break token in the code.
+pub struct BreakToken {
+    pub start: usize,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Scope<'cx> {
     pub content: &'cx [ScopeContent<'cx>],
 }
@@ -47,7 +53,7 @@ pub struct Block<'cx> {
     pub scope: Scope<'cx>,
 
     /// Comment *before* the block beginning.
-    pub comment_leading: Option<&'cx Comment<'cx>>,
+    pub comment_leading: &'cx [&'cx Comment<'cx>],
 
     /// Comment after the block ending.
     pub comment_trailing: Option<&'cx Comment<'cx>>,
@@ -56,30 +62,85 @@ pub struct Block<'cx> {
     pub end: usize,
 }
 
-#[derive(Debug, PartialEq)]
-/// A scope content can be a single statement or a block of statements.
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A scope content can be a single statement or a block of statements, or a comment.
 pub enum ScopeContent<'cx> {
-    Statement(&'cx Statement<'cx>),
+    Row(&'cx Row<'cx>),
     Block(&'cx Block<'cx>),
 }
 
-#[derive(Debug, PartialEq)]
-/// A statement with optional comments and breaks.
-pub struct Statement<'cx> {
-    pub breaks: Option<()>,
-    pub content: Option<&'cx StatementKind<'cx>>,
-    pub comment_leading: Option<&'cx Comment<'cx>>,
-    pub comment_trailing: Option<&'cx Comment<'cx>>,
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A single row of code with optional comments and breaks.
+pub struct Row<'cx> {
+    pub breaks: Option<BreakToken>,
+    pub content: Option<StatementKind<'cx>>,
+    pub comment: Option<&'cx Comment<'cx>>,
     pub start: usize,
     pub end: usize,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
 pub enum StatementKind<'cx> {
     Let(Let<'cx>),
-    Expr(Expr<'cx>, Semi),
-    Return,
+    Expr(ExprStatement<'cx>),
+    Return(Return),
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A let statement.
+///
+/// # Examples
+///
+/// ```ops
+/// let d = 1s
+/// ```
+pub struct Let<'cx> {
+    pub variable: Ident<'cx>,
+    pub rhs: Expr<'cx>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A statement kind.
+pub struct ExprStatement<'cx> {
+    pub expr: Expr<'cx>,
+    pub semi: Semi,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A `return` statement.
+///
+/// # Examples
+///
+/// ```ops
+/// return;
+/// ```
+pub struct Return {
+    pub start: usize,
+    pub end: usize,
+}
+
+pub type Expr<'cx> = &'cx ExprKind<'cx>;
+
+#[derive(Debug, PartialEq)]
+/// An expression.
+pub enum ExprKind<'cx> {
+    Qualif(Qualification<'cx>),
+    Control(Control<'cx>),
+    Variable(Path<'cx>),
+    Literal(Literal<'cx>),
+    UnOp(UnOpKind, Expr<'cx>),
+    BinOp(BinOpKind, Expr<'cx>, Expr<'cx>),
+    Compare(Compare<'cx>),
+    Apply(Expr<'cx>, &'cx [Expr<'cx>]),
+}
+
+#[derive(Debug, PartialEq)]
+/// A qualification for a command.
+pub enum Qualification<'cx> {
+    ReceiverComponent(ReceiverComponent<'cx>),
+    TimeIndicator(Expr<'cx>),
+    ExecutorComponent(ExecutorComponent<'cx>),
 }
 
 #[derive(Debug, PartialEq)]
@@ -100,7 +161,7 @@ pub struct Path<'cx> {
     pub segments: &'cx [Ident<'cx>],
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Ident<'cx>(pub &'cx str);
 
 #[derive(Debug, PartialEq)]
@@ -172,14 +233,6 @@ pub struct SendCommand<'cx> {
 }
 
 #[derive(Debug, PartialEq)]
-/// A monoid act for a command.
-pub enum MonoidAct<'cx> {
-    ReceiverComponent(ReceiverComponent<'cx>),
-    TimeIndicator(Expr<'cx>),
-    ExecutorComponent(ExecutorComponent<'cx>),
-}
-
-#[derive(Debug, PartialEq)]
 /// A receiver component specification.
 ///
 /// # Examples
@@ -220,19 +273,6 @@ pub struct WaitInc<'cx> {
 }
 
 #[derive(Debug, PartialEq)]
-/// A let statement.
-///
-/// # Examples
-///
-/// ```ops
-/// let d = 1s
-/// ```
-pub struct Let<'cx> {
-    pub variable: Ident<'cx>,
-    pub rhs: Expr<'cx>,
-}
-
-#[derive(Debug, PartialEq)]
 /// A print statement.
 pub struct Print<'cx> {
     pub arg: Expr<'cx>,
@@ -245,45 +285,38 @@ pub struct Set<'cx> {
 }
 
 #[derive(Debug, PartialEq)]
-/// An expression.
-pub enum ExprKind<'cx> {
-    MonoidAct(MonoidAct<'cx>),
-    Control(Control<'cx>),
-    Variable(Path<'cx>),
-    Literal(Literal<'cx>),
-    UnOp(UnOpKind, Expr<'cx>),
-    BinOp(BinOpKind, Expr<'cx>, Expr<'cx>),
-    Apply(Expr<'cx>, &'cx [Expr<'cx>]),
+pub struct Compare<'cx> {
+    pub most_left: Expr<'cx>,
+    pub op_and_rights: &'cx [(CompareBinOpKind, Expr<'cx>)],
 }
-
-pub type Expr<'cx> = &'cx ExprKind<'cx>;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal<'cx> {
     Array(&'cx [Expr<'cx>]),
     String(&'cx str),
+    Bytes(&'cx [u8]),
     Numeric {
         raw: &'cx str,
         value: Numeric,
-        suffix: Option<NumericSuffix>,
+        suffix: Option<NumericSuffix<'cx>>,
     },
+    OsPath(FilePath<'cx>),
     DateTime(DateTime<Utc>),
+
+    /// FIXME: This variant should be removed, which requires a change in the type system.
     TlmId(&'cx str),
-    Bytes(&'cx [u8]),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Numeric {
     Integer(i64, IntegerPrefix),
     Float(f64),
 }
 
 #[derive(Debug, PartialEq)]
-pub enum NumericSuffix {
-    Second,
-}
+pub struct NumericSuffix<'cx>(pub &'cx str);
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum IntegerPrefix {
     Hexadecimal,
     Decimal,
@@ -291,12 +324,12 @@ pub enum IntegerPrefix {
     Binary,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum UnOpKind {
     Neg,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum CompareBinOpKind {
     GreaterEq,
     LessEq,
@@ -306,11 +339,8 @@ pub enum CompareBinOpKind {
     Equal,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum BinOpKind {
-    /// Compare operators.
-    Compare(CompareBinOpKind),
-
     /// `a if b` (it means `b implies a`).
     If,
 
