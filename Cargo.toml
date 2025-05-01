@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "opslang-ast",
+    "opslang-diag",
     "opslang-ir",
     "opslang-parser",
     "tools/opslang-migration",
