@@ -1,33 +1,25 @@
-use opslang_ast::{di::Parse, v0::Row};
-use peg::str::LineCol;
-use thiserror::Error;
+use opslang_ast::v0::Row;
+
+use crate::ParseOps;
 
 type This = super::V0;
 
-impl Parse<This> for opslang_ast::v0::SRow {
-    type Format<'a> = &'a str;
+impl<'a> ParseOps<&'a str, This> for opslang_ast::v0::SRow {
     type Context = ();
 
     type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
 
-    fn parse<'a>(from: Self::Format<'a>, _context: Self::Context) -> Result<Self, Self::Error>
-    where
-        Self: 'a,
-    {
+    fn parse(from: &'a str, _context: Self::Context) -> Result<Self, Self::Error> {
         ops_parser::row(from)
     }
 }
 
-impl Parse<This> for Vec<opslang_ast::v0::Statement> {
-    type Format<'a> = &'a str;
+impl<'a> ParseOps<&'a str, This> for Vec<opslang_ast::v0::Statement> {
     type Context = ();
 
     type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
 
-    fn parse<'a>(from: Self::Format<'a>, _context: Self::Context) -> Result<Self, Self::Error>
-    where
-        Self: 'a,
-    {
+    fn parse(from: &'a str, _context: Self::Context) -> Result<Self, Self::Error> {
         ops_parser::statements(from)
     }
 }
@@ -289,12 +281,6 @@ peg::parser! {
         rule spanned<T>(inner : rule<T>) -> Spanned<T>
             = b:position!() value:inner() e:position!() { Spanned { span: b..e, value } }
     }
-}
-
-#[derive(Debug, Error)]
-pub enum Error {
-    #[error("parse failed: {0}")]
-    ParseError(#[from] peg::error::ParseError<LineCol>),
 }
 
 #[cfg(test)]

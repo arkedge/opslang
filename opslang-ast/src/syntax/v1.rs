@@ -1,90 +1,117 @@
-use chrono::{DateTime, Utc};
-use std::ops::Range;
+use interner::Interner;
+use opslang_ast_macros::{OrderSpan, TrivialBridge};
 
-pub trait Span {
-    fn span(&self) -> Range<usize>;
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-/// A whole program. The program is a sequence of statements.
-pub struct Program<'cx> {
-    pub content: Scope<'cx>,
-}
+pub mod interner;
+pub mod loc;
+pub mod token;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// A comment in the code.
+pub struct BytePos(pub u32);
+pub type Position = BytePos;
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// Default value for each types in this crate, to allow this crate define an AST.
 ///
-/// Comments are NOT ignored by the parser.
-pub struct Comment<'cx> {
+/// This type does not take any lifetime parameters because [`Interner`] trait has them.
+pub struct DefaultInterner;
+
+impl<'cx> Interner<'cx> for DefaultInterner {
+    type Comment = &'cx Comment<'cx>;
+    type CommentSpan = Span;
+    type Row = &'cx Row<'cx>;
+    type RowContent = StatementKind<'cx>;
+    type Block = &'cx Block<'cx>;
+    type ScopeItem = ScopeItem<'cx>;
+    type ReturnStmt = ReturnStmt;
+
+    type Ident = Ident<'cx>;
+    type Path = Path<'cx>;
+
+    type SemiToken = token::Semi;
+    type BreakToken = token::Break;
+    type LetToken = token::Let;
+    type EqToken = token::Eq;
+    type AngleHyphenToken = token::AngleHyphen;
+
+    type Qualif = Qualif<'cx>;
+    type PreQualified = PreQualified<'cx>;
+    type Parened = Parened<'cx>;
+    type Literal = Literal<'cx>;
+    type Numeric = Numeric<'cx>;
+    type Apply = Apply<'cx>;
+
+    type UnOp = UnOp;
+    type CompareOp = CompareOp;
+    type BinOp = BinOp;
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, TrivialBridge)]
+/// A location in the code.
+pub struct Span {
+    pub start: Position,
+    pub end: Position,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// An overall program. A program is a sequence of statements.
+///
+/// This version of program contains only a body of the main function.
+pub struct Program<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub content: Scope<'cx, I>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// Sequence of statements.
+pub struct Scope<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub items: &'cx [I::ScopeItem],
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A scope item can be a single statement or a block of statements, or a comment.
+pub enum ScopeItem<'cx, I: Interner<'cx> = DefaultInterner> {
+    Row(I::Row),
+    Block(I::Block),
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A single row of program with optional comments and breaks.
+pub struct Row<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub breaks: Option<I::BreakToken>,
+    pub content: Option<I::RowContent>,
+    pub comment: Option<I::Comment>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A comment in a program.
+pub struct Comment<'cx, I: Interner<'cx> = DefaultInterner> {
     pub content: &'cx str,
-    pub start: usize,
-    pub end: usize,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-/// A semicolon in the code.
-pub struct Semi {
-    pub start: usize,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-/// A break token in the code.
-pub struct BreakToken {
-    pub start: usize,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Scope<'cx> {
-    pub content: &'cx [ScopeContent<'cx>],
+    pub span: I::CommentSpan,
 }
 
 #[derive(Debug, PartialEq)]
-/// A block of statements with optional comments and a default receiver component. The block can also have a delay.
+/// A block of statements with optional comments and a default receiver component. A block can also have a delay.
 ///
 /// # Examples
 ///
 /// ```ops
-/// @RT.MOBC delay=0.5s {
+/// {
 ///     NOP
 ///     NOP
 /// }
 /// ```
-pub struct Block<'cx> {
-    pub scope: Scope<'cx>,
-
-    /// Comment *before* the block beginning.
-    pub comment_leading: &'cx [&'cx Comment<'cx>],
+pub struct Block<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub scope: Scope<'cx, I>,
 
     /// Comment after the block ending.
-    pub comment_trailing: Option<&'cx Comment<'cx>>,
-
-    pub start: usize,
-    pub end: usize,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-/// A scope content can be a single statement or a block of statements, or a comment.
-pub enum ScopeContent<'cx> {
-    Row(&'cx Row<'cx>),
-    Block(&'cx Block<'cx>),
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-/// A single row of code with optional comments and breaks.
-pub struct Row<'cx> {
-    pub breaks: Option<BreakToken>,
-    pub content: Option<StatementKind<'cx>>,
-    pub comment: Option<&'cx Comment<'cx>>,
-    pub start: usize,
-    pub end: usize,
+    pub comment_trailing: Option<I::Comment>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
-pub enum StatementKind<'cx> {
-    Let(Let<'cx>),
-    Expr(ExprStatement<'cx>),
-    Return(Return),
+pub enum StatementKind<'cx, I: Interner<'cx> = DefaultInterner> {
+    Let(Let<'cx, I>),
+    Expr(ExprStatement<'cx, I>),
+    Return(I::ReturnStmt),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -95,16 +122,19 @@ pub enum StatementKind<'cx> {
 /// ```ops
 /// let d = 1s
 /// ```
-pub struct Let<'cx> {
-    pub variable: Ident<'cx>,
-    pub rhs: Expr<'cx>,
+pub struct Let<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub let_token: I::LetToken,
+    pub variable: I::Ident,
+    pub eq: I::EqToken,
+    pub rhs: Expr<'cx, I>,
+    pub semi: I::SemiToken,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
-pub struct ExprStatement<'cx> {
-    pub expr: Expr<'cx>,
-    pub semi: Semi,
+pub struct ExprStatement<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub expr: Expr<'cx, I>,
+    pub semi: I::SemiToken,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -115,134 +145,46 @@ pub struct ExprStatement<'cx> {
 /// ```ops
 /// return;
 /// ```
-pub struct Return {
-    pub start: usize,
-    pub end: usize,
+pub struct ReturnStmt {
+    pub return_token: token::Return,
+    pub semi: token::Semi,
 }
 
-pub type Expr<'cx> = &'cx ExprKind<'cx>;
+pub type OwnedExpr<'cx, I = DefaultInterner> = ExprKind<'cx, I>;
+pub type Expr<'cx, I = DefaultInterner> = &'cx OwnedExpr<'cx, I>;
 
 #[derive(Debug, PartialEq)]
 /// An expression.
-pub enum ExprKind<'cx> {
-    Qualif(Qualification<'cx>),
-    Control(Control<'cx>),
-    Variable(Path<'cx>),
-    Literal(Literal<'cx>),
-    UnOp(UnOpKind, Expr<'cx>),
-    BinOp(BinOpKind, Expr<'cx>, Expr<'cx>),
-    Compare(Compare<'cx>),
-    Apply(Expr<'cx>, &'cx [Expr<'cx>]),
+pub enum ExprKind<'cx, I: Interner<'cx> = DefaultInterner> {
+    Variable(I::Path),
+    Literal(I::Literal),
+    Parened(I::Parened),
+    Qualif(I::Qualif),
+    PreQualified(I::PreQualified),
+    Unary(Unary<'cx, I>),
+    Compare(Compare<'cx, I>),
+    Binary(Binary<'cx, I>),
+    Apply(I::Apply),
+    Set(Set<'cx, I>),
 }
 
-#[derive(Debug, PartialEq)]
-/// A qualification for a command.
-pub enum Qualification<'cx> {
-    ReceiverComponent(ReceiverComponent<'cx>),
-    TimeIndicator(Expr<'cx>),
-    ExecutorComponent(ExecutorComponent<'cx>),
-}
-
-#[derive(Debug, PartialEq)]
-/// Reserved control statements.
-pub enum Control<'cx> {
-    Call(Call<'cx>),
-    Wait(Wait<'cx>),
-    Assert(Assert<'cx>),
-    AssertEq(AssertEq<'cx>),
-    SendCommand(SendCommand<'cx>),
-    Print(Print<'cx>),
-    Set(Set<'cx>),
-}
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Path<'cx> {
     pub raw: &'cx str,
     pub segments: &'cx [Ident<'cx>],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Ident<'cx>(pub &'cx str);
-
-#[derive(Debug, PartialEq)]
-/// A file path.
-///
-/// The file path is a string that represents the location of a file.
-/// It can be a relative or absolute path.
-pub struct FilePath<'cx> {
-    pub full_name: &'cx str,
+pub struct Ident<'cx> {
+    pub raw: &'cx str,
+    pub span: Span,
 }
 
 #[derive(Debug, PartialEq)]
-/// An assertion that a condition is true.
-///
-/// # Examples
-///
-/// ```ops
-/// assert 2 == 2
-/// ```
-pub struct Assert<'cx> {
-    pub condition: Expr<'cx>,
-}
-
-#[derive(Debug, PartialEq)]
-/// An assertion that two expressions are equal within an optional tolerance.
-///
-/// # Examples
-///
-/// ```ops
-/// assert_eq 2 2
-/// ```
-///
-/// ```ops
-/// assert_approx_eq 1.0 1.0 0.001
-/// ```
-pub struct AssertEq<'cx> {
-    pub left: Expr<'cx>,
-    pub right: Expr<'cx>,
-    pub tolerance: Option<Expr<'cx>>,
-}
-
-#[derive(Debug, PartialEq)]
-/// A command to be sent to a component.
-///
-/// # Examples
-///
-/// ```ops
-/// @RT.MOBC NOP
-/// ```
-///
-/// parsed as:
-/// ```no_run
-/// SendCommand {
-///     destination: DestinationSpec {
-///         receiver_component: Some(ReceiverComponent {
-///             name: "MOBC",
-///             exec_method: "RT",
-///         }),
-///         time_indicator: None,
-///         executor_component: None,
-///     },
-///     name: "NOP",
-///     args: vec![],
-/// }
-/// ```
-pub struct SendCommand<'cx> {
-    pub name: &'cx str,
-    pub args: &'cx [Expr<'cx>],
-}
-
-#[derive(Debug, PartialEq)]
-/// A receiver component specification.
-///
-/// # Examples
-///
-/// - `RT.MOBC` in `@RT.MOBC NOP`.
-/// - `TL.MOBC` in `@TL.MOBC 20: NOP`.
-/// - `TL.MOBC` in `@TL.MOBC 20: @@AOBC NOP`.
-pub struct ReceiverComponent<'cx> {
-    pub name: &'cx str,
-    pub exec_method: &'cx str,
+/// A qualification for a command.
+pub enum Qualif<'cx, I: Interner<'cx> = DefaultInterner> {
+    TimeIndicator(Expr<'cx, I>),
+    ExecutorComponent(ExecutorComponent<'cx>),
 }
 
 #[derive(Debug, PartialEq)]
@@ -250,108 +192,194 @@ pub struct ReceiverComponent<'cx> {
 ///
 /// # Examples
 ///
-/// - `AOBC` in `@TL.MOBC 20: @@AOBC NOP`.
+/// - `AOBC` in `MOBC.TL.NOP :20 @AOBC`.
 pub struct ExecutorComponent<'cx> {
-    pub name: &'cx str,
+    pub at_token: token::Atmark,
+    pub name: Ident<'cx>,
 }
 
 #[derive(Debug, PartialEq)]
-/// A file call.
-pub struct Call<'cx> {
-    pub path: FilePath<'cx>,
+/// An executor component specification.
+///
+/// # Examples
+///
+/// - `:20` in `MOBC.TL.NOP :20 @AOBC` or `:20 @AOBC MOBC.TL.NOP`.
+pub struct TimeIndicator<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub value: Expr<'cx, I>,
+}
+
+pub use literal::*;
+
+pub mod literal {
+    use super::*;
+
+    #[derive(Debug, PartialEq)]
+    pub enum Literal<'cx, I: Interner<'cx> = DefaultInterner> {
+        Array(Array<'cx, I>),
+        String(String<'cx>),
+        Bytes(Bytes<'cx>),
+        Numeric(I::Numeric),
+        OsFilePath(OsFilePath<'cx>),
+        DateTime(DateTime<'cx>),
+    }
+
+    #[derive(Debug, PartialEq)]
+    pub struct Array<'cx, I: Interner<'cx> = DefaultInterner> {
+        pub left_bracket: token::OpenSquare,
+        pub exprs: &'cx [Expr<'cx, I>],
+        pub right_bracket: token::CloseSquare,
+    }
+
+    #[derive(Debug, PartialEq)]
+    pub struct String<'cx> {
+        pub raw: &'cx str,
+        pub span: Span,
+    }
+
+    #[derive(Debug, PartialEq)]
+    pub struct Bytes<'cx> {
+        pub raw: &'cx [u8],
+        pub span: Span,
+    }
+
+    #[derive(Debug, PartialEq)]
+    pub struct Numeric<'cx> {
+        /// The raw string representation of the numeric value, without any prefix or suffix.
+        pub raw: &'cx str,
+
+        pub kind: NumericKind,
+        pub suffix: Option<NumericSuffix<'cx>>,
+    }
+
+    #[derive(Debug, PartialEq, Clone, Copy)]
+    pub enum NumericKind {
+        Integer(IntegerPrefix),
+        Float,
+    }
+
+    #[derive(Debug, PartialEq)]
+    /// Suffix of numeral value. Allows any ident at this point.
+    pub struct NumericSuffix<'cx>(pub Ident<'cx>);
+
+    #[derive(Debug, PartialEq, Clone, Copy)]
+    pub enum IntegerPrefix {
+        /// `0x`
+        Hexadecimal,
+
+        /// `0o`
+        Octal,
+
+        /// `0b`
+        Binary,
+    }
+
+    #[derive(Debug, PartialEq)]
+    /// A file path.
+    ///
+    /// The file path is a string that represents the location of a file.
+    /// It can be a relative or absolute path.
+    pub struct OsFilePath<'cx> {
+        pub path: &'cx str,
+        pub span: Span,
+    }
+
+    #[derive(Debug, PartialEq)]
+    /// A date-time value.
+    pub struct DateTime<'cx> {
+        pub raw: &'cx str,
+        pub span: Span,
+    }
 }
 
 #[derive(Debug, PartialEq)]
-/// A wait statement.
-pub struct Wait<'cx> {
-    pub condition: Expr<'cx>,
+pub struct Parened<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub left_paren: token::OpenParen,
+    pub expr: Expr<'cx, I>,
+    pub right_paren: token::CloseParen,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct WaitInc<'cx> {
-    pub condition: Expr<'cx>,
+pub struct PreQualified<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub qualifs: &'cx [I::Qualif],
+    pub expr: Expr<'cx, I>,
 }
 
 #[derive(Debug, PartialEq)]
-/// A print statement.
-pub struct Print<'cx> {
-    pub arg: Expr<'cx>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Set<'cx> {
-    pub name: Path<'cx>,
-    pub expr: Expr<'cx>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Compare<'cx> {
-    pub most_left: Expr<'cx>,
-    pub op_and_rights: &'cx [(CompareBinOpKind, Expr<'cx>)],
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Literal<'cx> {
-    Array(&'cx [Expr<'cx>]),
-    String(&'cx str),
-    Bytes(&'cx [u8]),
-    Numeric {
-        raw: &'cx str,
-        value: Numeric,
-        suffix: Option<NumericSuffix<'cx>>,
-    },
-    OsPath(FilePath<'cx>),
-    DateTime(DateTime<Utc>),
-
-    /// FIXME: This variant should be removed, which requires a change in the type system.
-    TlmId(&'cx str),
+pub struct Unary<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub op: I::UnOp,
+    pub expr: Expr<'cx, I>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum Numeric {
-    Integer(i64, IntegerPrefix),
-    Float(f64),
+pub enum UnOp {
+    /// Negates an expression.
+    Neg(token::Hyphen),
+
+    /// Create a reference of an expression.
+    ///
+    /// This is a temporal solution for accepting the old `tlmid!` functionality.
+    Ref(token::Ampersand),
 }
 
 #[derive(Debug, PartialEq)]
-pub struct NumericSuffix<'cx>(pub &'cx str);
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum IntegerPrefix {
-    Hexadecimal,
-    Decimal,
-    Octal,
-    Binary,
+pub struct Compare<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub head: Expr<'cx, I>,
+    pub tail_with_op: &'cx [(I::CompareOp, Expr<'cx, I>)],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum UnOpKind {
-    Neg,
+pub enum CompareOp {
+    GreaterEq(token::RightAngleEq),
+    LessEq(token::AngleEq),
+    Greater(token::RightAngle),
+    Less(token::Angle),
+    NotEqual(token::BangEqual),
+    NotEqual2(token::SlashEqual),
+    Equal(token::EqualEqual),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Binary<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub op: I::BinOp,
+    pub expr: Expr<'cx, I>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum CompareBinOpKind {
-    GreaterEq,
-    LessEq,
-    Greater,
-    Less,
-    NotEqual,
-    Equal,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum BinOpKind {
+pub enum BinOp {
     /// `a if b` (it means `b implies a`).
+    ///
+    /// It will be deleted and replaced by `if b then a else ..` in the future.
     If,
 
+    /// `&&`
     And,
+    /// `||`
     Or,
 
+    /// `in`
     In,
 
+    /// `*`
     Mul,
+    /// `/`
     Div,
+    /// `%`
     Mod,
+    /// `+`
     Add,
+    /// `-`
     Sub,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Apply<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub function: Expr<'cx, I>,
+    pub args: &'cx [Expr<'cx, I>],
+}
+
+#[derive(Debug, PartialEq, OrderSpan)]
+pub struct Set<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub name: I::Path,
+    pub angle_hyphen: I::AngleHyphenToken,
+    pub expr: Expr<'cx, I>,
 }

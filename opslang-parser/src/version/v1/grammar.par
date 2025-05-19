@@ -9,7 +9,7 @@
 %scanner ReadNumericSuffix {
     %auto_newline_off
     %auto_ws_off
-    %on Ident %enter INITIAL
+    %on Ident, WhiteSpace %enter INITIAL
 }
 
 %scanner Cmnt {
@@ -21,15 +21,19 @@
 %%
 
 EndOfLine
-    : <INITIAL, Cmnt>/(?:\r?\n|\r)+/^
+    : <INITIAL, Cmnt>/(?:\r?\n|\r)+/
     ;
 
-Comment: Hash [CommentContent];
+WhiteSpace
+    : <ReadNumericSuffix>/\s+/^
+    ;
 
-Hash: "#"^;
+Comment: Hash^ CommentContent;
+
+Hash: "#";
 
 CommentContent
-    : <Cmnt>/[^\r\n]+/
+    : <Cmnt>/[^\r\n]*/
     ;
 
 Program: Scope;
@@ -62,12 +66,17 @@ LetStmt
 
 // Precedence climbing method
 Expr
-    : InfixIfExpr
+    : SetExpr
+    ;
+
+// `:=`: lower than `if`
+SetExpr
+    : InfixIfExpr [ ":=" InfixIfExpr ]
     ;
 
 // infix `if` : lower than `||`
 InfixIfExpr
-    : LogicalOrExpr { "if" LogicalOrExpr }
+    : LogicalOrExpr [ "if" LogicalOrExpr ]
     ;
 
 // `||` : lower than `&&`
@@ -126,34 +135,42 @@ FactorOp
 
 // `-`: lower than application
 PrefixExpr
-    : ["-"] ApplyExpr
+    : PrefixOp ApplyExpr
+    | { Qualif } ApplyExpr
+    ;
+
+PrefixOp
+    : "-"
+    | "&"
     ;
 
 // application: lower than `-`
 ApplyExpr
-    : AtomicExpr { AtomicExpr }
+    : Callable { AtomicExpr }
     ;
 
-AtomicExpr
-    : Qualif
-    | Ident
+Callable
+    : Path
     | Literal
     | "(" Expr ")"
     ;
 
+// expressions with clear space delimitation
+AtomicExpr
+    : Qualif
+    | Callable
+    ;
+
+// Qualification for sending a command
 Qualif
-    : ReceiverComponent
-    | ExecutorComponent
+    : ExecutorComponent
     | TimeIndicator
     ;
 
-ReceiverComponent: "@@" Path;
 ExecutorComponent: "@" Path;
-TimeIndicator: ":" AtomicExpr;
+TimeIndicator: ":" Callable;
 
-Path: PathSegment { "." PathSegment };
-
-PathSegment: Ident;
+Path: Ident { "." Ident };
 
 Ident: <INITIAL, ReadNumericSuffix> /[a-zA-Z][0-9a-zA-Z_\/-]*/;
 
@@ -162,20 +179,20 @@ Literal
     | String
     | ByteLiteral
     | HexByteLiteral
-    | Numeric Ident
+    | SuffixedNumeric
     | FilePathLiteral
     | Rfc3339Time
     ;
 
 Array
-    : "[" [ ArrayElements ] "]";
+    : "[" [ CommaSepElements ] "]";
 
-ArrayElements
+CommaSepElements
     : Expr [ CommaExprList ]
     ;
 
 CommaExprList
-    : "," [ ArrayElements ]
+    : "," [ CommaSepElements ]
     ;
 
 // String with permissive escapes
@@ -192,6 +209,11 @@ Numeric
     | OctalInteger
     | HexadecimalInteger
     | Ieee754Float
+    ;
+
+SuffixedNumeric
+    : Numeric Ident
+    | Numeric WhiteSpace^
     ;
 
 // Binary integer with permissive digit separators
