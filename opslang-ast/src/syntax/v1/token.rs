@@ -99,7 +99,7 @@ declare_token! {
     pub struct EqualEqual/2
     pub struct RightAngleEq/2
     pub struct AngleEq/2
-    pub struct AngleHyphen/2
+    pub struct ColonEq/2
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Span)]

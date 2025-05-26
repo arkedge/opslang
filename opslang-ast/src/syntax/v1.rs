@@ -31,7 +31,7 @@ impl<'cx> Interner<'cx> for DefaultInterner {
     type BreakToken = token::Break;
     type LetToken = token::Let;
     type EqToken = token::Eq;
-    type AngleHyphenToken = token::AngleHyphen;
+    type ColonEqToken = token::ColonEq;
 
     type Qualif = Qualif<'cx>;
     type PreQualified = PreQualified<'cx>;
@@ -88,7 +88,7 @@ pub struct Comment<'cx, I: Interner<'cx> = DefaultInterner> {
     pub span: I::CommentSpan,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// A block of statements with optional comments and a default receiver component. A block can also have a delay.
 ///
 /// # Examples
@@ -100,10 +100,9 @@ pub struct Comment<'cx, I: Interner<'cx> = DefaultInterner> {
 /// }
 /// ```
 pub struct Block<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub left_brace: token::OpenBrace,
     pub scope: Scope<'cx, I>,
-
-    /// Comment after the block ending.
-    pub comment_trailing: Option<I::Comment>,
+    pub right_brace: token::CloseBrace,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -153,7 +152,7 @@ pub struct ReturnStmt {
 pub type OwnedExpr<'cx, I = DefaultInterner> = ExprKind<'cx, I>;
 pub type Expr<'cx, I = DefaultInterner> = &'cx OwnedExpr<'cx, I>;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// An expression.
 pub enum ExprKind<'cx, I: Interner<'cx> = DefaultInterner> {
     Variable(I::Path),
@@ -180,14 +179,14 @@ pub struct Ident<'cx> {
     pub span: Span,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// A qualification for a command.
 pub enum Qualif<'cx, I: Interner<'cx> = DefaultInterner> {
     TimeIndicator(Expr<'cx, I>),
     ExecutorComponent(ExecutorComponent<'cx>),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// An executor component specification.
 ///
 /// # Examples
@@ -195,10 +194,10 @@ pub enum Qualif<'cx, I: Interner<'cx> = DefaultInterner> {
 /// - `AOBC` in `MOBC.TL.NOP :20 @AOBC`.
 pub struct ExecutorComponent<'cx> {
     pub at_token: token::Atmark,
-    pub name: Ident<'cx>,
+    pub name: Path<'cx>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// An executor component specification.
 ///
 /// # Examples
@@ -213,36 +212,43 @@ pub use literal::*;
 pub mod literal {
     use super::*;
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
     pub enum Literal<'cx, I: Interner<'cx> = DefaultInterner> {
         Array(Array<'cx, I>),
         String(String<'cx>),
         Bytes(Bytes<'cx>),
+        HexBytes(HexBytes<'cx>),
         Numeric(I::Numeric),
         OsFilePath(OsFilePath<'cx>),
         DateTime(DateTime<'cx>),
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct Array<'cx, I: Interner<'cx> = DefaultInterner> {
         pub left_bracket: token::OpenSquare,
         pub exprs: &'cx [Expr<'cx, I>],
         pub right_bracket: token::CloseSquare,
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct String<'cx> {
         pub raw: &'cx str,
         pub span: Span,
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct Bytes<'cx> {
-        pub raw: &'cx [u8],
+        pub raw: &'cx str,
         pub span: Span,
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
+    pub struct HexBytes<'cx> {
+        pub raw: &'cx str,
+        pub span: Span,
+    }
+
+    #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct Numeric<'cx> {
         /// The raw string representation of the numeric value, without any prefix or suffix.
         pub raw: &'cx str,
@@ -257,7 +263,7 @@ pub mod literal {
         Float,
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
     /// Suffix of numeral value. Allows any ident at this point.
     pub struct NumericSuffix<'cx>(pub Ident<'cx>);
 
@@ -273,17 +279,17 @@ pub mod literal {
         Binary,
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
     /// A file path.
     ///
     /// The file path is a string that represents the location of a file.
     /// It can be a relative or absolute path.
     pub struct OsFilePath<'cx> {
-        pub path: &'cx str,
+        pub raw: &'cx str,
         pub span: Span,
     }
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Clone, Copy)]
     /// A date-time value.
     pub struct DateTime<'cx> {
         pub raw: &'cx str,
@@ -291,20 +297,20 @@ pub mod literal {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Parened<'cx, I: Interner<'cx> = DefaultInterner> {
     pub left_paren: token::OpenParen,
     pub expr: Expr<'cx, I>,
     pub right_paren: token::CloseParen,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct PreQualified<'cx, I: Interner<'cx> = DefaultInterner> {
     pub qualifs: &'cx [I::Qualif],
     pub expr: Expr<'cx, I>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Unary<'cx, I: Interner<'cx> = DefaultInterner> {
     pub op: I::UnOp,
     pub expr: Expr<'cx, I>,
@@ -321,7 +327,7 @@ pub enum UnOp {
     Ref(token::Ampersand),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Compare<'cx, I: Interner<'cx> = DefaultInterner> {
     pub head: Expr<'cx, I>,
     pub tail_with_op: &'cx [(I::CompareOp, Expr<'cx, I>)],
@@ -333,15 +339,23 @@ pub enum CompareOp {
     LessEq(token::AngleEq),
     Greater(token::RightAngle),
     Less(token::Angle),
-    NotEqual(token::BangEqual),
-    NotEqual2(token::SlashEqual),
+    NotEqual(NotEqualToken),
     Equal(token::EqualEqual),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum NotEqualToken {
+    /// `!=`
+    BangEqual(token::BangEqual),
+    /// `/=`
+    SlashEqual(token::SlashEqual),
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Binary<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub lhs: Expr<'cx, I>,
     pub op: I::BinOp,
-    pub expr: Expr<'cx, I>,
+    pub rhs: Expr<'cx, I>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -371,15 +385,15 @@ pub enum BinOp {
     Sub,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Apply<'cx, I: Interner<'cx> = DefaultInterner> {
     pub function: Expr<'cx, I>,
     pub args: &'cx [Expr<'cx, I>],
 }
 
-#[derive(Debug, PartialEq, OrderSpan)]
+#[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
 pub struct Set<'cx, I: Interner<'cx> = DefaultInterner> {
-    pub name: I::Path,
-    pub angle_hyphen: I::AngleHyphenToken,
-    pub expr: Expr<'cx, I>,
+    pub lhs: Expr<'cx, I>,
+    pub colon_eq: I::ColonEqToken,
+    pub rhs: Expr<'cx, I>,
 }

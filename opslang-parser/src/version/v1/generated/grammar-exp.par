@@ -108,7 +108,7 @@
 /*  87 */ Literal: HexByteLiteral;
 /*  88 */ Literal: SuffixedNumeric;
 /*  89 */ Literal: FilePathLiteral;
-/*  90 */ Literal: Rfc3339Time;
+/*  90 */ Literal: Rfc3339DateTime;
 /*  91 */ Array: "[" ArrayOpt /* Option */ "]";
 /*  92 */ ArrayOpt /* Option<T>::Some */: CommaSepElements;
 /*  93 */ ArrayOpt /* Option<T>::None */: ;
@@ -132,6 +132,6 @@
 /* 111 */ HexadecimalInteger: /0x[0-9a-fA-F_]+/;
 /* 112 */ Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?/;
 /* 113 */ FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
-/* 114 */ Rfc3339Time: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+/* 114 */ Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
 /* 115 */ ReturnStmt: "return";
 /* 116 */ Block: "{" Scope "}";

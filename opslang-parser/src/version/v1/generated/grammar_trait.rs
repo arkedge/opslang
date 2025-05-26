@@ -269,8 +269,8 @@ pub trait ActionTrait<'t> {
         Ok(())
     }
 
-    /// Semantic action for non-terminal 'Rfc3339Time'
-    fn rfc3339_time(&mut self, _arg: &Rfc3339Time<'t>) -> Result<()> {
+    /// Semantic action for non-terminal 'Rfc3339DateTime'
+    fn rfc3339_date_time(&mut self, _arg: &Rfc3339DateTime<'t>) -> Result<()> {
         Ok(())
     }
 
@@ -709,13 +709,13 @@ pub struct LiteralFilePathLiteral<'t> {
 ///
 /// Type derived for production 90
 ///
-/// `Literal: Rfc3339Time;`
+/// `Literal: Rfc3339DateTime;`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
-pub struct LiteralRfc3339Time<'t> {
-    pub rfc3339_time: Box<Rfc3339Time<'t>>,
+pub struct LiteralRfc3339DateTime<'t> {
+    pub rfc3339_date_time: Box<Rfc3339DateTime<'t>>,
 }
 
 ///
@@ -1226,7 +1226,7 @@ pub enum Literal<'t> {
     HexByteLiteral(LiteralHexByteLiteral<'t>),
     SuffixedNumeric(LiteralSuffixedNumeric<'t>),
     FilePathLiteral(LiteralFilePathLiteral<'t>),
-    Rfc3339Time(LiteralRfc3339Time<'t>),
+    Rfc3339DateTime(LiteralRfc3339DateTime<'t>),
 }
 
 ///
@@ -1378,13 +1378,13 @@ pub struct ReturnStmt<'t> {
 }
 
 ///
-/// Type derived for non-terminal Rfc3339Time
+/// Type derived for non-terminal Rfc3339DateTime
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
-pub struct Rfc3339Time<'t> {
-    pub rfc3339_time: Token<'t>, /* \d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2}) */
+pub struct Rfc3339DateTime<'t> {
+    pub rfc3339_date_time: Token<'t>, /* \d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2}) */
 }
 
 ///
@@ -1615,7 +1615,7 @@ pub enum ASTType<'t> {
     Program(Program<'t>),
     Qualif(Qualif<'t>),
     ReturnStmt(ReturnStmt<'t>),
-    Rfc3339Time(Rfc3339Time<'t>),
+    Rfc3339DateTime(Rfc3339DateTime<'t>),
     Scope(Scope<'t>),
     ScopeContent(ScopeContent<'t>),
     ScopeContentKind(ScopeContentKind<'t>),
@@ -3459,17 +3459,17 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 90:
     ///
-    /// `Literal: Rfc3339Time;`
+    /// `Literal: Rfc3339DateTime;`
     ///
     #[parol_runtime::function_name::named]
-    fn literal_6(&mut self, _rfc3339_time: &ParseTreeType<'t>) -> Result<()> {
+    fn literal_6(&mut self, _rfc3339_date_time: &ParseTreeType<'t>) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let rfc3339_time = pop_item!(self, rfc3339_time, Rfc3339Time, context);
-        let literal_6_built = LiteralRfc3339Time {
-            rfc3339_time: Box::new(rfc3339_time),
+        let rfc3339_date_time = pop_item!(self, rfc3339_date_time, Rfc3339DateTime, context);
+        let literal_6_built = LiteralRfc3339DateTime {
+            rfc3339_date_time: Box::new(rfc3339_date_time),
         };
-        let literal_6_built = Literal::Rfc3339Time(literal_6_built);
+        let literal_6_built = Literal::Rfc3339DateTime(literal_6_built);
         // Calling user action here
         self.user_grammar.literal(&literal_6_built)?;
         self.push(ASTType::Literal(literal_6_built), context);
@@ -3908,17 +3908,18 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 114:
     ///
-    /// `Rfc3339Time: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;`
+    /// `Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;`
     ///
     #[parol_runtime::function_name::named]
-    fn rfc3339_time(&mut self, rfc3339_time: &ParseTreeType<'t>) -> Result<()> {
+    fn rfc3339_date_time(&mut self, rfc3339_date_time: &ParseTreeType<'t>) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let rfc3339_time = rfc3339_time.token()?.clone();
-        let rfc3339_time_built = Rfc3339Time { rfc3339_time };
+        let rfc3339_date_time = rfc3339_date_time.token()?.clone();
+        let rfc3339_date_time_built = Rfc3339DateTime { rfc3339_date_time };
         // Calling user action here
-        self.user_grammar.rfc3339_time(&rfc3339_time_built)?;
-        self.push(ASTType::Rfc3339Time(rfc3339_time_built), context);
+        self.user_grammar
+            .rfc3339_date_time(&rfc3339_date_time_built)?;
+        self.push(ASTType::Rfc3339DateTime(rfc3339_date_time_built), context);
         Ok(())
     }
 
@@ -4090,7 +4091,7 @@ impl<'t> UserActionsTrait<'t> for ActionAuto<'t, '_> {
             111 => self.hexadecimal_integer(&children[0]),
             112 => self.ieee754_float(&children[0]),
             113 => self.file_path_literal(&children[0]),
-            114 => self.rfc3339_time(&children[0]),
+            114 => self.rfc3339_date_time(&children[0]),
             115 => self.return_stmt(&children[0]),
             116 => self.block(&children[0], &children[1], &children[2]),
             _ => Err(ParserError::InternalError(format!(

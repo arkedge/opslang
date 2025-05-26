@@ -22,6 +22,9 @@ impl<'cx> ParseContext<'cx> {
         }
         self.str_arena.alloc_str(string)
     }
+    pub fn alloc_bytes<'any>(&'cx self, bytes: &'any [u8]) -> &'cx [u8] {
+        self.str_arena.alloc_extend(bytes.iter().copied())
+    }
 
     pub fn alloc_expr(&'cx self, expr: ExprKind<'cx>) -> &'cx ExprKind<'cx> {
         self.expr_arena.alloc(expr)

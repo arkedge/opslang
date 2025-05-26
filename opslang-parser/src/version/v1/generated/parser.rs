@@ -128,7 +128,7 @@ pub const TERMINAL_NAMES: &[&str; 52] = &[
     /* 44 */ "HexadecimalInteger",
     /* 45 */ "Ieee754Float",
     /* 46 */ "FilePathLiteral",
-    /* 47 */ "Rfc3339Time",
+    /* 47 */ "Rfc3339DateTime",
     /* 48 */ "ReturnStmt",
     /* 49 */ "LBrace",
     /* 50 */ "RBrace",
@@ -185,7 +185,7 @@ const SCANNER_0: (&[&str; 5], &[TerminalIndex; 44]) = (
         44, /* HexadecimalInteger */
         45, /* Ieee754Float */
         46, /* FilePathLiteral */
-        47, /* Rfc3339Time */
+        47, /* Rfc3339DateTime */
         48, /* ReturnStmt */
         49, /* LBrace */
         50, /* RBrace */
@@ -271,7 +271,7 @@ pub const NON_TERMINALS: &[&str; 71] = &[
     /* 51 */ "Program",
     /* 52 */ "Qualif",
     /* 53 */ "ReturnStmt",
-    /* 54 */ "Rfc3339Time",
+    /* 54 */ "Rfc3339DateTime",
     /* 55 */ "Scope",
     /* 56 */ "ScopeContent",
     /* 57 */ "ScopeContentKind",
@@ -430,7 +430,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         /* 135 */ LRAction::Reduce(52 /* Qualif */, 76),
         /* 136 */ LRAction::Reduce(52 /* Qualif */, 77),
         /* 137 */ LRAction::Reduce(53 /* ReturnStmt */, 115),
-        /* 138 */ LRAction::Reduce(54 /* Rfc3339Time */, 114),
+        /* 138 */ LRAction::Reduce(54 /* Rfc3339DateTime */, 114),
         /* 139 */ LRAction::Reduce(55 /* Scope */, 6),
         /* 140 */ LRAction::Reduce(56 /* ScopeContent */, 9),
         /* 141 */ LRAction::Reduce(57 /* ScopeContentKind */, 16),
@@ -938,7 +938,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (45, 71), /* OctalInteger => 71 */
                 (46, 72), /* Path => 72 */
                 (52, 73), /* Qualif => 73 */
-                (54, 74), /* Rfc3339Time => 74 */
+                (54, 74), /* Rfc3339DateTime => 74 */
                 (67, 75), /* String => 75 */
                 (68, 76), /* SuffixedNumeric => 76 */
                 (69, 77), /* TimeIndicator => 77 */
@@ -975,7 +975,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 70), /* Numeric => 70 */
                 (45, 71), /* OctalInteger => 71 */
                 (46, 72), /* Path => 72 */
-                (54, 74), /* Rfc3339Time => 74 */
+                (54, 74), /* Rfc3339DateTime => 74 */
                 (67, 75), /* String => 75 */
                 (68, 76), /* SuffixedNumeric => 76 */
             ],
@@ -1387,7 +1387,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 70),  /* Numeric => 70 */
                 (45, 71),  /* OctalInteger => 71 */
                 (46, 72),  /* Path => 72 */
-                (54, 74),  /* Rfc3339Time => 74 */
+                (54, 74),  /* Rfc3339DateTime => 74 */
                 (67, 75),  /* String => 75 */
                 (68, 76),  /* SuffixedNumeric => 76 */
             ],
@@ -1629,41 +1629,41 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 57
         LR1State {
             actions: &[
-                (10, 138), /* ';' => LRAction::Reduce(Rfc3339Time, 114) */
-                (13, 138), /* ':=' => LRAction::Reduce(Rfc3339Time, 114) */
-                (14, 138), /* 'if' => LRAction::Reduce(Rfc3339Time, 114) */
-                (15, 138), /* '||' => LRAction::Reduce(Rfc3339Time, 114) */
-                (16, 138), /* '&&' => LRAction::Reduce(Rfc3339Time, 114) */
-                (17, 138), /* 'in' => LRAction::Reduce(Rfc3339Time, 114) */
-                (18, 138), /* '>=' => LRAction::Reduce(Rfc3339Time, 114) */
-                (19, 138), /* '<=' => LRAction::Reduce(Rfc3339Time, 114) */
-                (20, 138), /* '>' => LRAction::Reduce(Rfc3339Time, 114) */
-                (21, 138), /* '<' => LRAction::Reduce(Rfc3339Time, 114) */
-                (22, 138), /* '!=' => LRAction::Reduce(Rfc3339Time, 114) */
-                (23, 138), /* '/=' => LRAction::Reduce(Rfc3339Time, 114) */
-                (24, 138), /* '==' => LRAction::Reduce(Rfc3339Time, 114) */
-                (25, 138), /* '+' => LRAction::Reduce(Rfc3339Time, 114) */
-                (26, 138), /* '-' => LRAction::Reduce(Rfc3339Time, 114) */
-                (27, 138), /* '*' => LRAction::Reduce(Rfc3339Time, 114) */
-                (28, 138), /* '/' => LRAction::Reduce(Rfc3339Time, 114) */
-                (29, 138), /* '%' => LRAction::Reduce(Rfc3339Time, 114) */
-                (31, 138), /* '(' => LRAction::Reduce(Rfc3339Time, 114) */
-                (32, 138), /* ')' => LRAction::Reduce(Rfc3339Time, 114) */
-                (33, 138), /* '@' => LRAction::Reduce(Rfc3339Time, 114) */
-                (34, 138), /* ':' => LRAction::Reduce(Rfc3339Time, 114) */
-                (35, 138), /* '[a-zA-Z][0-9a-zA-Z_\/-]*' => LRAction::Reduce(Rfc3339Time, 114) */
-                (36, 138), /* '[' => LRAction::Reduce(Rfc3339Time, 114) */
-                (37, 138), /* ']' => LRAction::Reduce(Rfc3339Time, 114) */
-                (38, 138), /* ',' => LRAction::Reduce(Rfc3339Time, 114) */
-                (39, 138), /* '"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339Time, 114) */
-                (40, 138), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339Time, 114) */
-                (41, 138), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Rfc3339Time, 114) */
-                (42, 138), /* '0b[01_]+' => LRAction::Reduce(Rfc3339Time, 114) */
-                (43, 138), /* '0o[0-7_]+' => LRAction::Reduce(Rfc3339Time, 114) */
-                (44, 138), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Rfc3339Time, 114) */
-                (45, 138), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Rfc3339Time, 114) */
-                (46, 138), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Rfc3339Time, 114) */
-                (47, 138), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Rfc3339Time, 114) */
+                (10, 138), /* ';' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (13, 138), /* ':=' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (14, 138), /* 'if' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (15, 138), /* '||' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (16, 138), /* '&&' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (17, 138), /* 'in' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (18, 138), /* '>=' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (19, 138), /* '<=' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (20, 138), /* '>' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (21, 138), /* '<' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (22, 138), /* '!=' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (23, 138), /* '/=' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (24, 138), /* '==' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (25, 138), /* '+' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (26, 138), /* '-' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (27, 138), /* '*' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (28, 138), /* '/' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (29, 138), /* '%' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (31, 138), /* '(' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (32, 138), /* ')' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (33, 138), /* '@' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (34, 138), /* ':' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (35, 138), /* '[a-zA-Z][0-9a-zA-Z_\/-]*' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (36, 138), /* '[' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (37, 138), /* ']' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (38, 138), /* ',' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (39, 138), /* '"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (40, 138), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (41, 138), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (42, 138), /* '0b[01_]+' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (43, 138), /* '0o[0-7_]+' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (44, 138), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (45, 138), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (46, 138), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (47, 138), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Rfc3339DateTime, 114) */
             ],
             gotos: &[],
         },
@@ -3004,7 +3004,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (45, 71),  /* OctalInteger => 71 */
                 (46, 72),  /* Path => 72 */
                 (52, 135), /* Qualif => 135 */
-                (54, 74),  /* Rfc3339Time => 74 */
+                (54, 74),  /* Rfc3339DateTime => 74 */
                 (67, 75),  /* String => 75 */
                 (68, 76),  /* SuffixedNumeric => 76 */
                 (69, 77),  /* TimeIndicator => 77 */
@@ -3858,7 +3858,7 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 39, len: 1 },
     // 89 - Literal: FilePathLiteral;
     LRProduction { lhs: 39, len: 1 },
-    // 90 - Literal: Rfc3339Time;
+    // 90 - Literal: Rfc3339DateTime;
     LRProduction { lhs: 39, len: 1 },
     // 91 - Array: "[" ArrayOpt /* Option */ "]";
     LRProduction { lhs: 5, len: 3 },
@@ -3906,7 +3906,7 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 33, len: 1 },
     // 113 - FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
     LRProduction { lhs: 28, len: 1 },
-    // 114 - Rfc3339Time: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+    // 114 - Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
     LRProduction { lhs: 54, len: 1 },
     // 115 - ReturnStmt: "return";
     LRProduction { lhs: 53, len: 1 },

@@ -28,7 +28,7 @@ pub trait Interner<'cx> {
     type SemiToken: InternerMember;
     type LetToken: InternerMember;
     type EqToken: InternerMember;
-    type AngleHyphenToken: InternerMember;
+    type ColonEqToken: InternerMember;
 
     // Expression interner
 
@@ -45,7 +45,7 @@ pub trait Interner<'cx> {
 }
 
 pub trait InternerMember = std::fmt::Debug + PartialEq + Clone + Copy;
-pub trait ExprInternerMember = std::fmt::Debug + PartialEq;
+pub trait ExprInternerMember = std::fmt::Debug + PartialEq + Clone + Copy;
 
 macro_rules! declare_compat {
     () => {};

@@ -181,7 +181,7 @@ Literal
     | HexByteLiteral
     | SuffixedNumeric
     | FilePathLiteral
-    | Rfc3339Time
+    | Rfc3339DateTime
     ;
 
 Array
@@ -232,7 +232,7 @@ Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?/;
 FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
 
 // `chrono`-crate version of RFC 3339
-Rfc3339Time: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
 
 ReturnStmt: "return";
 
