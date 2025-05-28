@@ -30,3 +30,26 @@ impl<'a, 'cx> ParseOps<ParserInput<'a>, This> for opslang_ast::v1::Program<'cx> 
         todo!()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_file() {
+        let input_str = include_str!("../../tests/test_v1.ops");
+        let context = ParseContext::new();
+        let result = opslang_ast::v1::Program::parse(
+            ParserInput {
+                string: input_str,
+                file_name: "test_v1.ops".to_string(),
+            },
+            &context,
+        );
+        assert!(
+            result.is_ok(),
+            "Failed to parse test_v1.ops: {:?}",
+            result.err()
+        );
+    }
+}

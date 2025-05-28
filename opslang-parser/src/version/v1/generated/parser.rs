@@ -25,16 +25,16 @@ pub const TERMINALS: &[(&str, Option<(bool, &str)>); 52] = &[
     /*  4 */ (UNMATCHABLE_TOKEN, None),
     /*  5 */ (r"(?:\r?\n|\r)+", None),
     /*  6 */ (r"\s+", None),
-    /*  7 */ (r"#", None),
+    /*  7 */ (r"\#", None),
     /*  8 */ (r"[^\r\n]*", None),
-    /*  9 */ (r".", None),
+    /*  9 */ (r"\.", None),
     /* 10 */ (r";", None),
     /* 11 */ (r"let", None),
     /* 12 */ (r"=", None),
     /* 13 */ (r":=", None),
     /* 14 */ (r"if", None),
-    /* 15 */ (r"||", None),
-    /* 16 */ (r"&&", None),
+    /* 15 */ (r"\|\|", None),
+    /* 16 */ (r"\&\&", None),
     /* 17 */ (r"in", None),
     /* 18 */ (r">=", None),
     /* 19 */ (r"<=", None),
@@ -43,19 +43,19 @@ pub const TERMINALS: &[(&str, Option<(bool, &str)>); 52] = &[
     /* 22 */ (r"!=", None),
     /* 23 */ (r"/=", None),
     /* 24 */ (r"==", None),
-    /* 25 */ (r"+", None),
-    /* 26 */ (r"-", None),
-    /* 27 */ (r"*", None),
+    /* 25 */ (r"\+", None),
+    /* 26 */ (r"\-", None),
+    /* 27 */ (r"\*", None),
     /* 28 */ (r"/", None),
     /* 29 */ (r"%", None),
-    /* 30 */ (r"&", None),
-    /* 31 */ (r"(", None),
-    /* 32 */ (r")", None),
+    /* 30 */ (r"\&", None),
+    /* 31 */ (r"\(", None),
+    /* 32 */ (r"\)", None),
     /* 33 */ (r"@", None),
     /* 34 */ (r":", None),
     /* 35 */ (r"[a-zA-Z][0-9a-zA-Z_\/-]*", None),
-    /* 36 */ (r"[", None),
-    /* 37 */ (r"]", None),
+    /* 36 */ (r"\[", None),
+    /* 37 */ (r"\]", None),
     /* 38 */ (r",", None),
     /* 39 */ (r#""(\\.|[^"])*""#, None),
     /* 40 */ (r#"b"(\\.|[^"])*""#, None),
@@ -75,8 +75,8 @@ pub const TERMINALS: &[(&str, Option<(bool, &str)>); 52] = &[
         None,
     ),
     /* 48 */ (r"return", None),
-    /* 49 */ (r"{", None),
-    /* 50 */ (r"}", None),
+    /* 49 */ (r"\{", None),
+    /* 50 */ (r"\}", None),
     /* 51 */ (ERROR_TOKEN, None),
 ];
 
@@ -3684,7 +3684,7 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 70, len: 1 },
     // 2 - Comment: Hash^ /* Clipped */ CommentContent;
     LRProduction { lhs: 17, len: 2 },
-    // 3 - Hash: "#";
+    // 3 - Hash: '#';
     LRProduction { lhs: 29, len: 1 },
     // 4 - CommentContent: /[^\r\n]*/;
     LRProduction { lhs: 18, len: 1 },
@@ -3716,9 +3716,9 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 57, len: 1 },
     // 18 - Statement: StatementKind Semi;
     LRProduction { lhs: 65, len: 2 },
-    // 19 - Break: ".";
+    // 19 - Break: '.';
     LRProduction { lhs: 10, len: 1 },
-    // 20 - Semi: ";";
+    // 20 - Semi: ';';
     LRProduction { lhs: 62, len: 1 },
     // 21 - StatementKind: LetStmt;
     LRProduction { lhs: 66, len: 1 },
@@ -3726,37 +3726,37 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 66, len: 1 },
     // 23 - StatementKind: ReturnStmt;
     LRProduction { lhs: 66, len: 1 },
-    // 24 - LetStmt: "let" Ident "=" Expr;
+    // 24 - LetStmt: 'let' Ident '=' Expr;
     LRProduction { lhs: 38, len: 4 },
     // 25 - Expr: SetExpr;
     LRProduction { lhs: 24, len: 1 },
     // 26 - SetExpr: InfixIfExpr SetExprOpt /* Option */;
     LRProduction { lhs: 63, len: 2 },
-    // 27 - SetExprOpt: ":=" InfixIfExpr;
+    // 27 - SetExprOpt: ':=' InfixIfExpr;
     LRProduction { lhs: 64, len: 2 },
     // 28 - SetExprOpt: ;
     LRProduction { lhs: 64, len: 0 },
     // 29 - InfixIfExpr: LogicalOrExpr InfixIfExprOpt /* Option */;
     LRProduction { lhs: 34, len: 2 },
-    // 30 - InfixIfExprOpt: "if" LogicalOrExpr;
+    // 30 - InfixIfExprOpt: 'if' LogicalOrExpr;
     LRProduction { lhs: 35, len: 2 },
     // 31 - InfixIfExprOpt: ;
     LRProduction { lhs: 35, len: 0 },
     // 32 - LogicalOrExpr: LogicalAndExpr LogicalOrExprList /* Vec */;
     LRProduction { lhs: 42, len: 2 },
-    // 33 - LogicalOrExprList: LogicalOrExprList "||" LogicalAndExpr;
+    // 33 - LogicalOrExprList: LogicalOrExprList '||' LogicalAndExpr;
     LRProduction { lhs: 43, len: 3 },
     // 34 - LogicalOrExprList: ;
     LRProduction { lhs: 43, len: 0 },
     // 35 - LogicalAndExpr: InfixInExpr LogicalAndExprList /* Vec */;
     LRProduction { lhs: 40, len: 2 },
-    // 36 - LogicalAndExprList: LogicalAndExprList "&&" InfixInExpr;
+    // 36 - LogicalAndExprList: LogicalAndExprList '&&' InfixInExpr;
     LRProduction { lhs: 41, len: 3 },
     // 37 - LogicalAndExprList: ;
     LRProduction { lhs: 41, len: 0 },
     // 38 - InfixInExpr: CompareExpr InfixInExprOpt /* Option */;
     LRProduction { lhs: 36, len: 2 },
-    // 39 - InfixInExprOpt: "in" CompareExpr;
+    // 39 - InfixInExprOpt: 'in' CompareExpr;
     LRProduction { lhs: 37, len: 2 },
     // 40 - InfixInExprOpt: ;
     LRProduction { lhs: 37, len: 0 },
@@ -3766,19 +3766,19 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 20, len: 3 },
     // 43 - CompareExprList: ;
     LRProduction { lhs: 20, len: 0 },
-    // 44 - CompareOp: ">=";
+    // 44 - CompareOp: '>=';
     LRProduction { lhs: 21, len: 1 },
-    // 45 - CompareOp: "<=";
+    // 45 - CompareOp: '<=';
     LRProduction { lhs: 21, len: 1 },
-    // 46 - CompareOp: ">";
+    // 46 - CompareOp: '>';
     LRProduction { lhs: 21, len: 1 },
-    // 47 - CompareOp: "<";
+    // 47 - CompareOp: '<';
     LRProduction { lhs: 21, len: 1 },
-    // 48 - CompareOp: "!=";
+    // 48 - CompareOp: '!=';
     LRProduction { lhs: 21, len: 1 },
-    // 49 - CompareOp: "/=";
+    // 49 - CompareOp: '/=';
     LRProduction { lhs: 21, len: 1 },
-    // 50 - CompareOp: "==";
+    // 50 - CompareOp: '==';
     LRProduction { lhs: 21, len: 1 },
     // 51 - ArithmeticExpr: FactorExpr ArithmeticExprList /* Vec */;
     LRProduction { lhs: 2, len: 2 },
@@ -3786,9 +3786,9 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 3, len: 3 },
     // 53 - ArithmeticExprList: ;
     LRProduction { lhs: 3, len: 0 },
-    // 54 - ArithmeticOp: "+";
+    // 54 - ArithmeticOp: '+';
     LRProduction { lhs: 4, len: 1 },
-    // 55 - ArithmeticOp: "-";
+    // 55 - ArithmeticOp: '-';
     LRProduction { lhs: 4, len: 1 },
     // 56 - FactorExpr: PrefixExpr FactorExprList /* Vec */;
     LRProduction { lhs: 25, len: 2 },
@@ -3796,11 +3796,11 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 26, len: 3 },
     // 58 - FactorExprList: ;
     LRProduction { lhs: 26, len: 0 },
-    // 59 - FactorOp: "*";
+    // 59 - FactorOp: '*';
     LRProduction { lhs: 27, len: 1 },
-    // 60 - FactorOp: "/";
+    // 60 - FactorOp: '/';
     LRProduction { lhs: 27, len: 1 },
-    // 61 - FactorOp: "%";
+    // 61 - FactorOp: '%';
     LRProduction { lhs: 27, len: 1 },
     // 62 - PrefixExpr: PrefixOp ApplyExpr;
     LRProduction { lhs: 48, len: 2 },
@@ -3810,9 +3810,9 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 49, len: 2 },
     // 65 - PrefixExprList: ;
     LRProduction { lhs: 49, len: 0 },
-    // 66 - PrefixOp: "-";
+    // 66 - PrefixOp: '-';
     LRProduction { lhs: 50, len: 1 },
-    // 67 - PrefixOp: "&";
+    // 67 - PrefixOp: '&';
     LRProduction { lhs: 50, len: 1 },
     // 68 - ApplyExpr: Callable ApplyExprList /* Vec */;
     LRProduction { lhs: 0, len: 2 },
@@ -3824,7 +3824,7 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 12, len: 1 },
     // 72 - Callable: Literal;
     LRProduction { lhs: 12, len: 1 },
-    // 73 - Callable: "(" Expr ")";
+    // 73 - Callable: '(' Expr ')';
     LRProduction { lhs: 12, len: 3 },
     // 74 - AtomicExpr: Qualif;
     LRProduction { lhs: 7, len: 1 },
@@ -3834,13 +3834,13 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 52, len: 1 },
     // 77 - Qualif: TimeIndicator;
     LRProduction { lhs: 52, len: 1 },
-    // 78 - ExecutorComponent: "@" Path;
+    // 78 - ExecutorComponent: '@' Path;
     LRProduction { lhs: 23, len: 2 },
-    // 79 - TimeIndicator: ":" Callable;
+    // 79 - TimeIndicator: ':' Callable;
     LRProduction { lhs: 69, len: 2 },
     // 80 - Path: Ident PathList /* Vec */;
     LRProduction { lhs: 46, len: 2 },
-    // 81 - PathList: PathList "." Ident;
+    // 81 - PathList: PathList '.' Ident;
     LRProduction { lhs: 47, len: 3 },
     // 82 - PathList: ;
     LRProduction { lhs: 47, len: 0 },
@@ -3860,7 +3860,7 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 39, len: 1 },
     // 90 - Literal: Rfc3339DateTime;
     LRProduction { lhs: 39, len: 1 },
-    // 91 - Array: "[" ArrayOpt /* Option */ "]";
+    // 91 - Array: '[' ArrayOpt /* Option */ ']';
     LRProduction { lhs: 5, len: 3 },
     // 92 - ArrayOpt: CommaSepElements;
     LRProduction { lhs: 6, len: 1 },
@@ -3872,7 +3872,7 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 16, len: 1 },
     // 96 - CommaSepElementsOpt: ;
     LRProduction { lhs: 16, len: 0 },
-    // 97 - CommaExprList: "," CommaExprListOpt /* Option */;
+    // 97 - CommaExprList: ',' CommaExprListOpt /* Option */;
     LRProduction { lhs: 13, len: 2 },
     // 98 - CommaExprListOpt: CommaSepElements;
     LRProduction { lhs: 14, len: 1 },
@@ -3908,9 +3908,9 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 28, len: 1 },
     // 114 - Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
     LRProduction { lhs: 54, len: 1 },
-    // 115 - ReturnStmt: "return";
+    // 115 - ReturnStmt: 'return';
     LRProduction { lhs: 53, len: 1 },
-    // 116 - Block: "{" Scope "}";
+    // 116 - Block: '{' Scope '}';
     LRProduction { lhs: 9, len: 3 },
 ];
 

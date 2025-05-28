@@ -30,7 +30,7 @@ WhiteSpace
 
 Comment: Hash^ CommentContent;
 
-Hash: "#";
+Hash: '#';
 
 CommentContent
     : <Cmnt>/[^\r\n]*/
@@ -51,8 +51,8 @@ ScopeContentKind
 
 Statement: StatementKind Semi;
 
-Break: ".";
-Semi: ";";
+Break: '.';
+Semi: ';';
 
 StatementKind
     : LetStmt
@@ -61,7 +61,7 @@ StatementKind
     ;
 
 LetStmt
-    : "let" Ident "=" Expr
+    : 'let' Ident '=' Expr
     ;
 
 // Precedence climbing method
@@ -71,27 +71,27 @@ Expr
 
 // `:=`: lower than `if`
 SetExpr
-    : InfixIfExpr [ ":=" InfixIfExpr ]
+    : InfixIfExpr [ ':=' InfixIfExpr ]
     ;
 
 // infix `if` : lower than `||`
 InfixIfExpr
-    : LogicalOrExpr [ "if" LogicalOrExpr ]
+    : LogicalOrExpr [ 'if' LogicalOrExpr ]
     ;
 
 // `||` : lower than `&&`
 LogicalOrExpr
-    : LogicalAndExpr { "||" LogicalAndExpr }
+    : LogicalAndExpr { '||' LogicalAndExpr }
     ;
 
 // `&&` : lower then compare infix `in`
 LogicalAndExpr
-    : InfixInExpr { "&&" InfixInExpr }
+    : InfixInExpr { '&&' InfixInExpr }
     ;
 
 // infix `in` : non-associative, lower then compare operators
 InfixInExpr
-    : CompareExpr [ "in" CompareExpr ]
+    : CompareExpr [ 'in' CompareExpr ]
     ;
 
 // `>=`, `<=`, `>`, `<`, `!=` (`/=`), `==`
@@ -101,13 +101,13 @@ CompareExpr
     ;
 
 CompareOp
-    : ">="
-    | "<="
-    | ">"
-    | "<"
-    | "!="
-    | "/="
-    | "=="
+    : '>='
+    | '<='
+    | '>'
+    | '<'
+    | '!='
+    | '/='
+    | '=='
     ;
 
 // `+`, `-`
@@ -117,8 +117,8 @@ ArithmeticExpr
     ;
 
 ArithmeticOp
-    : "+"
-    | "-"
+    : '+'
+    | '-'
     ;
 
 // `*`, `/`
@@ -128,9 +128,9 @@ FactorExpr
     ;
 
 FactorOp
-    : "*"
-    | "/"
-    | "%"
+    : '*'
+    | '/'
+    | '%'
     ;
 
 // `-`: lower than application
@@ -140,8 +140,8 @@ PrefixExpr
     ;
 
 PrefixOp
-    : "-"
-    | "&"
+    : '-'
+    | '&'
     ;
 
 // application: lower than `-`
@@ -152,7 +152,7 @@ ApplyExpr
 Callable
     : Path
     | Literal
-    | "(" Expr ")"
+    | '(' Expr ')'
     ;
 
 // expressions with clear space delimitation
@@ -167,10 +167,10 @@ Qualif
     | TimeIndicator
     ;
 
-ExecutorComponent: "@" Path;
-TimeIndicator: ":" Callable;
+ExecutorComponent: '@' Path;
+TimeIndicator: ':' Callable;
 
-Path: Ident { "." Ident };
+Path: Ident { '.' Ident };
 
 Ident: <INITIAL, ReadNumericSuffix> /[a-zA-Z][0-9a-zA-Z_\/-]*/;
 
@@ -185,14 +185,14 @@ Literal
     ;
 
 Array
-    : "[" [ CommaSepElements ] "]";
+    : '[' [ CommaSepElements ] ']';
 
 CommaSepElements
     : Expr [ CommaExprList ]
     ;
 
 CommaExprList
-    : "," [ CommaSepElements ]
+    : ',' [ CommaSepElements ]
     ;
 
 // String with permissive escapes
@@ -234,8 +234,8 @@ FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
 // `chrono`-crate version of RFC 3339
 Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
 
-ReturnStmt: "return";
+ReturnStmt: 'return';
 
 Block
-    : "{" Scope "}"
+    : '{' Scope '}'
     ;

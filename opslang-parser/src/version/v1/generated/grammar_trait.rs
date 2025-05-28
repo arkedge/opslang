@@ -357,7 +357,7 @@ pub struct StatementKindReturnStmt<'t> {
 ///
 /// Type derived for production 44
 ///
-/// `CompareOp: ">=";`
+/// `CompareOp: '>=';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -369,7 +369,7 @@ pub struct CompareOpGTEqu<'t> {
 ///
 /// Type derived for production 45
 ///
-/// `CompareOp: "<=";`
+/// `CompareOp: '<=';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -381,7 +381,7 @@ pub struct CompareOpLTEqu<'t> {
 ///
 /// Type derived for production 46
 ///
-/// `CompareOp: ">";`
+/// `CompareOp: '>';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -393,7 +393,7 @@ pub struct CompareOpGT<'t> {
 ///
 /// Type derived for production 47
 ///
-/// `CompareOp: "<";`
+/// `CompareOp: '<';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -405,7 +405,7 @@ pub struct CompareOpLT<'t> {
 ///
 /// Type derived for production 48
 ///
-/// `CompareOp: "!=";`
+/// `CompareOp: '!=';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -417,7 +417,7 @@ pub struct CompareOpBangEqu<'t> {
 ///
 /// Type derived for production 49
 ///
-/// `CompareOp: "/=";`
+/// `CompareOp: '/=';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -429,7 +429,7 @@ pub struct CompareOpSlashEqu<'t> {
 ///
 /// Type derived for production 50
 ///
-/// `CompareOp: "==";`
+/// `CompareOp: '==';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -441,7 +441,7 @@ pub struct CompareOpEquEqu<'t> {
 ///
 /// Type derived for production 54
 ///
-/// `ArithmeticOp: "+";`
+/// `ArithmeticOp: '+';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -453,7 +453,7 @@ pub struct ArithmeticOpPlus<'t> {
 ///
 /// Type derived for production 55
 ///
-/// `ArithmeticOp: "-";`
+/// `ArithmeticOp: '-';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -465,7 +465,7 @@ pub struct ArithmeticOpMinus<'t> {
 ///
 /// Type derived for production 59
 ///
-/// `FactorOp: "*";`
+/// `FactorOp: '*';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -477,7 +477,7 @@ pub struct FactorOpStar<'t> {
 ///
 /// Type derived for production 60
 ///
-/// `FactorOp: "/";`
+/// `FactorOp: '/';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -489,7 +489,7 @@ pub struct FactorOpSlash<'t> {
 ///
 /// Type derived for production 61
 ///
-/// `FactorOp: "%";`
+/// `FactorOp: '%';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -527,7 +527,7 @@ pub struct PrefixExprPrefixExprListApplyExpr<'t> {
 ///
 /// Type derived for production 66
 ///
-/// `PrefixOp: "-";`
+/// `PrefixOp: '-';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -539,7 +539,7 @@ pub struct PrefixOpMinus<'t> {
 ///
 /// Type derived for production 67
 ///
-/// `PrefixOp: "&";`
+/// `PrefixOp: '&';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -575,7 +575,7 @@ pub struct CallableLiteral<'t> {
 ///
 /// Type derived for production 73
 ///
-/// `Callable: "(" Expr ")";`
+/// `Callable: '(' Expr ')';`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
@@ -1749,7 +1749,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 3:
     ///
-    /// `Hash: "#";`
+    /// `Hash: '#';`
     ///
     #[parol_runtime::function_name::named]
     fn hash(&mut self, hash: &ParseTreeType<'t>) -> Result<()> {
@@ -2044,7 +2044,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 19:
     ///
-    /// `Break: ".";`
+    /// `Break: '.';`
     ///
     #[parol_runtime::function_name::named]
     fn r#break(&mut self, r#break: &ParseTreeType<'t>) -> Result<()> {
@@ -2060,7 +2060,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 20:
     ///
-    /// `Semi: ";";`
+    /// `Semi: ';';`
     ///
     #[parol_runtime::function_name::named]
     fn semi(&mut self, semi: &ParseTreeType<'t>) -> Result<()> {
@@ -2133,7 +2133,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 24:
     ///
-    /// `LetStmt: "let" Ident "=" Expr;`
+    /// `LetStmt: 'let' Ident '=' Expr;`
     ///
     #[parol_runtime::function_name::named]
     fn let_stmt(
@@ -2205,7 +2205,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 27:
     ///
-    /// `SetExprOpt /* Option<T>::Some */: ":=" InfixIfExpr;`
+    /// `SetExprOpt /* Option<T>::Some */: ':=' InfixIfExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn set_expr_opt_0(
@@ -2263,7 +2263,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 30:
     ///
-    /// `InfixIfExprOpt /* Option<T>::Some */: "if" LogicalOrExpr;`
+    /// `InfixIfExprOpt /* Option<T>::Some */: 'if' LogicalOrExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn infix_if_expr_opt_0(
@@ -2325,7 +2325,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 33:
     ///
-    /// `LogicalOrExprList /* Vec<T>::Push */: LogicalOrExprList "||" LogicalAndExpr;`
+    /// `LogicalOrExprList /* Vec<T>::Push */: LogicalOrExprList '||' LogicalAndExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn logical_or_expr_list_0(
@@ -2394,7 +2394,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 36:
     ///
-    /// `LogicalAndExprList /* Vec<T>::Push */: LogicalAndExprList "&&" InfixInExpr;`
+    /// `LogicalAndExprList /* Vec<T>::Push */: LogicalAndExprList '&&' InfixInExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn logical_and_expr_list_0(
@@ -2461,7 +2461,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 39:
     ///
-    /// `InfixInExprOpt /* Option<T>::Some */: "in" CompareExpr;`
+    /// `InfixInExprOpt /* Option<T>::Some */: 'in' CompareExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn infix_in_expr_opt_0(
@@ -2561,7 +2561,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 44:
     ///
-    /// `CompareOp: ">=";`
+    /// `CompareOp: '>=';`
     ///
     #[parol_runtime::function_name::named]
     fn compare_op_0(&mut self, g_t_equ: &ParseTreeType<'t>) -> Result<()> {
@@ -2578,7 +2578,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 45:
     ///
-    /// `CompareOp: "<=";`
+    /// `CompareOp: '<=';`
     ///
     #[parol_runtime::function_name::named]
     fn compare_op_1(&mut self, l_t_equ: &ParseTreeType<'t>) -> Result<()> {
@@ -2595,7 +2595,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 46:
     ///
-    /// `CompareOp: ">";`
+    /// `CompareOp: '>';`
     ///
     #[parol_runtime::function_name::named]
     fn compare_op_2(&mut self, g_t: &ParseTreeType<'t>) -> Result<()> {
@@ -2612,7 +2612,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 47:
     ///
-    /// `CompareOp: "<";`
+    /// `CompareOp: '<';`
     ///
     #[parol_runtime::function_name::named]
     fn compare_op_3(&mut self, l_t: &ParseTreeType<'t>) -> Result<()> {
@@ -2629,7 +2629,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 48:
     ///
-    /// `CompareOp: "!=";`
+    /// `CompareOp: '!=';`
     ///
     #[parol_runtime::function_name::named]
     fn compare_op_4(&mut self, bang_equ: &ParseTreeType<'t>) -> Result<()> {
@@ -2646,7 +2646,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 49:
     ///
-    /// `CompareOp: "/=";`
+    /// `CompareOp: '/=';`
     ///
     #[parol_runtime::function_name::named]
     fn compare_op_5(&mut self, slash_equ: &ParseTreeType<'t>) -> Result<()> {
@@ -2663,7 +2663,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 50:
     ///
-    /// `CompareOp: "==";`
+    /// `CompareOp: '==';`
     ///
     #[parol_runtime::function_name::named]
     fn compare_op_6(&mut self, equ_equ: &ParseTreeType<'t>) -> Result<()> {
@@ -2748,7 +2748,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 54:
     ///
-    /// `ArithmeticOp: "+";`
+    /// `ArithmeticOp: '+';`
     ///
     #[parol_runtime::function_name::named]
     fn arithmetic_op_0(&mut self, plus: &ParseTreeType<'t>) -> Result<()> {
@@ -2765,7 +2765,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 55:
     ///
-    /// `ArithmeticOp: "-";`
+    /// `ArithmeticOp: '-';`
     ///
     #[parol_runtime::function_name::named]
     fn arithmetic_op_1(&mut self, minus: &ParseTreeType<'t>) -> Result<()> {
@@ -2845,7 +2845,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 59:
     ///
-    /// `FactorOp: "*";`
+    /// `FactorOp: '*';`
     ///
     #[parol_runtime::function_name::named]
     fn factor_op_0(&mut self, star: &ParseTreeType<'t>) -> Result<()> {
@@ -2862,7 +2862,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 60:
     ///
-    /// `FactorOp: "/";`
+    /// `FactorOp: '/';`
     ///
     #[parol_runtime::function_name::named]
     fn factor_op_1(&mut self, slash: &ParseTreeType<'t>) -> Result<()> {
@@ -2879,7 +2879,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 61:
     ///
-    /// `FactorOp: "%";`
+    /// `FactorOp: '%';`
     ///
     #[parol_runtime::function_name::named]
     fn factor_op_2(&mut self, percent: &ParseTreeType<'t>) -> Result<()> {
@@ -2982,7 +2982,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 66:
     ///
-    /// `PrefixOp: "-";`
+    /// `PrefixOp: '-';`
     ///
     #[parol_runtime::function_name::named]
     fn prefix_op_0(&mut self, minus: &ParseTreeType<'t>) -> Result<()> {
@@ -2999,7 +2999,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 67:
     ///
-    /// `PrefixOp: "&";`
+    /// `PrefixOp: '&';`
     ///
     #[parol_runtime::function_name::named]
     fn prefix_op_1(&mut self, amp: &ParseTreeType<'t>) -> Result<()> {
@@ -3114,7 +3114,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 73:
     ///
-    /// `Callable: "(" Expr ")";`
+    /// `Callable: '(' Expr ')';`
     ///
     #[parol_runtime::function_name::named]
     fn callable_2(
@@ -3218,7 +3218,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 78:
     ///
-    /// `ExecutorComponent: "@" Path;`
+    /// `ExecutorComponent: '@' Path;`
     ///
     #[parol_runtime::function_name::named]
     fn executor_component(
@@ -3246,7 +3246,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 79:
     ///
-    /// `TimeIndicator: ":" Callable;`
+    /// `TimeIndicator: ':' Callable;`
     ///
     #[parol_runtime::function_name::named]
     fn time_indicator(
@@ -3290,7 +3290,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 81:
     ///
-    /// `PathList /* Vec<T>::Push */: PathList "." Ident;`
+    /// `PathList /* Vec<T>::Push */: PathList '.' Ident;`
     ///
     #[parol_runtime::function_name::named]
     fn path_list_0(
@@ -3478,7 +3478,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 91:
     ///
-    /// `Array: "[" ArrayOpt /* Option */ "]";`
+    /// `Array: '[' ArrayOpt /* Option */ ']';`
     ///
     #[parol_runtime::function_name::named]
     fn array(
@@ -3590,7 +3590,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 97:
     ///
-    /// `CommaExprList: "," CommaExprListOpt /* Option */;`
+    /// `CommaExprList: ',' CommaExprListOpt /* Option */;`
     ///
     #[parol_runtime::function_name::named]
     fn comma_expr_list(
@@ -3925,7 +3925,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 115:
     ///
-    /// `ReturnStmt: "return";`
+    /// `ReturnStmt: 'return';`
     ///
     #[parol_runtime::function_name::named]
     fn return_stmt(&mut self, return_stmt: &ParseTreeType<'t>) -> Result<()> {
@@ -3941,7 +3941,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 116:
     ///
-    /// `Block: "{" Scope "}";`
+    /// `Block: '{' Scope '}';`
     ///
     #[parol_runtime::function_name::named]
     fn block(
