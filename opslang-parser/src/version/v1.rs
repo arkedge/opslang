@@ -27,7 +27,7 @@ impl<'a, 'cx> ParseOps<ParserInput<'a>, This> for opslang_ast::v1::Program<'cx> 
         let mut action = parse::Action::new(context);
         let string = context.alloc_str(string);
         let _ = generated::parser::parse(string, file_name, &mut action)?;
-        todo!()
+        Ok(action.finish())
     }
 }
 

@@ -19,6 +19,10 @@ impl<'cx> Action<'cx> {
     pub fn new(cx: &'cx ParseContext<'cx>) -> Self {
         Self { cx, parsed: None }
     }
+
+    pub fn finish(self) -> syn::Program<'cx> {
+        self.parsed.expect("Action was not parsed")
+    }
 }
 
 /// Linking the [`Action`] type to the [`ActionTrait`] trait.
@@ -714,10 +718,10 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::SuffixedNumeric<'_> {
                     suffixed_numeric_numeric_ident.ident.process_token(cx),
                 ));
             }
-            grammar_trait::SuffixedNumeric::NumericWhiteSpace(
-                suffixed_numeric_numeric_white_space,
+            grammar_trait::SuffixedNumeric::NumericWordBoundary(
+                suffixed_numeric_numeric_word_boundary,
             ) => {
-                numeric = &suffixed_numeric_numeric_white_space.numeric;
+                numeric = &suffixed_numeric_numeric_word_boundary.numeric;
                 suffix = None;
             }
         }
