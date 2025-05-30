@@ -71,7 +71,7 @@ pub const TERMINALS: &[(&str, Option<(bool, &str)>); 52] = &[
     /* 46 */ (r#"os"[0-9a-zA-Z_.,-\/()\[\]]*""#, None),
     /* 47 */
     (
-        r"\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})",
+        r"\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})",
         None,
     ),
     /* 48 */ (r"return", None),
@@ -482,7 +482,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 150), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ScopeList, 8) */
                 (45, 150), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ScopeList, 8) */
                 (46, 150), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 8) */
-                (47, 150), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 8) */
+                (47, 150), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 8) */
                 (48, 150), /* 'return' => LRAction::Reduce(ScopeList, 8) */
                 (49, 150), /* '{' => LRAction::Reduce(ScopeList, 8) */
             ],
@@ -519,7 +519,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 144), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ScopeContentOpt, 15) */
                 (45, 144), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ScopeContentOpt, 15) */
                 (46, 144), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContentOpt, 15) */
-                (47, 144), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 15) */
+                (47, 144), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 15) */
                 (48, 144), /* 'return' => LRAction::Reduce(ScopeContentOpt, 15) */
                 (49, 144), /* '{' => LRAction::Reduce(ScopeContentOpt, 15) */
                 (50, 139), /* '}' => LRAction::Reduce(Scope, 6) */
@@ -551,7 +551,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 63), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Break, 19) */
                 (45, 63), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Break, 19) */
                 (46, 63), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Break, 19) */
-                (47, 63), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Break, 19) */
+                (47, 63), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Break, 19) */
                 (48, 63), /* 'return' => LRAction::Reduce(Break, 19) */
                 (49, 63), /* '{' => LRAction::Reduce(Break, 19) */
             ],
@@ -578,7 +578,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 143), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ScopeContentOpt, 14) */
                 (45, 143), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ScopeContentOpt, 14) */
                 (46, 143), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (47, 143), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (47, 143), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 14) */
                 (48, 143), /* 'return' => LRAction::Reduce(ScopeContentOpt, 14) */
                 (49, 143), /* '{' => LRAction::Reduce(ScopeContentOpt, 14) */
             ],
@@ -607,7 +607,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 149), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ScopeList, 7) */
                 (45, 149), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ScopeList, 7) */
                 (46, 149), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 7) */
-                (47, 149), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 7) */
+                (47, 149), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 7) */
                 (48, 149), /* 'return' => LRAction::Reduce(ScopeList, 7) */
                 (49, 149), /* '{' => LRAction::Reduce(ScopeList, 7) */
                 (50, 149), /* '}' => LRAction::Reduce(ScopeList, 7) */
@@ -635,7 +635,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
                 (48, 4),   /* 'return' => LRAction::Shift(10) */
                 (49, 5),   /* '{' => LRAction::Shift(11) */
             ],
@@ -682,7 +682,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 133), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixOp, 66) */
                 (45, 133), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixOp, 66) */
                 (46, 133), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixOp, 66) */
-                (47, 133), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixOp, 66) */
+                (47, 133), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixOp, 66) */
             ],
             gotos: &[],
         },
@@ -700,7 +700,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 134), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixOp, 67) */
                 (45, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixOp, 67) */
                 (46, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixOp, 67) */
-                (47, 134), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixOp, 67) */
+                (47, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixOp, 67) */
             ],
             gotos: &[],
         },
@@ -733,7 +733,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 150), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ScopeList, 8) */
                 (45, 150), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ScopeList, 8) */
                 (46, 150), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 8) */
-                (47, 150), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 8) */
+                (47, 150), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 8) */
                 (48, 150), /* 'return' => LRAction::Reduce(ScopeList, 8) */
                 (49, 150), /* '{' => LRAction::Reduce(ScopeList, 8) */
                 (50, 150), /* '}' => LRAction::Reduce(ScopeList, 8) */
@@ -919,7 +919,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 19), /* '0x[0-9a-fA-F_]+' => LRAction::Shift(54) */
                 (45, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Shift(55) */
                 (46, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (47, 22), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
+                (47, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
             ],
             gotos: &[
                 (0, 58),  /* ApplyExpr => 58 */
@@ -958,7 +958,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 19), /* '0x[0-9a-fA-F_]+' => LRAction::Shift(54) */
                 (45, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Shift(55) */
                 (46, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (47, 22), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
+                (47, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
             ],
             gotos: &[
                 (0, 78),  /* ApplyExpr => 78 */
@@ -1069,7 +1069,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 99), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Ident, 83) */
                 (45, 99), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Ident, 83) */
                 (46, 99), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Ident, 83) */
-                (47, 99), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Ident, 83) */
+                (47, 99), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Ident, 83) */
             ],
             gotos: &[],
         },
@@ -1123,7 +1123,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),  /* ArithmeticExpr => 12 */
@@ -1190,7 +1190,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),  /* ArithmeticExpr => 12 */
@@ -1260,7 +1260,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),   /* ArithmeticExpr => 12 */
@@ -1330,7 +1330,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),   /* ArithmeticExpr => 12 */
@@ -1371,7 +1371,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 19), /* '0x[0-9a-fA-F_]+' => LRAction::Shift(54) */
                 (45, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Shift(55) */
                 (46, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (47, 22), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
+                (47, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
             ],
             gotos: &[
                 (5, 59),   /* Array => 59 */
@@ -1411,7 +1411,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),   /* ArithmeticExpr => 12 */
@@ -1467,7 +1467,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 159), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(String, 100) */
                 (45, 159), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(String, 100) */
                 (46, 159), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(String, 100) */
-                (47, 159), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(String, 100) */
+                (47, 159), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(String, 100) */
             ],
             gotos: &[],
         },
@@ -1508,7 +1508,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 64), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ByteLiteral, 101) */
                 (45, 64), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ByteLiteral, 101) */
                 (46, 64), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ByteLiteral, 101) */
-                (47, 64), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ByteLiteral, 101) */
+                (47, 64), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ByteLiteral, 101) */
             ],
             gotos: &[],
         },
@@ -1549,7 +1549,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 97), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(HexByteLiteral, 102) */
                 (45, 97), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(HexByteLiteral, 102) */
                 (46, 97), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(HexByteLiteral, 102) */
-                (47, 97), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(HexByteLiteral, 102) */
+                (47, 97), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(HexByteLiteral, 102) */
             ],
             gotos: &[],
         },
@@ -1622,7 +1622,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 95), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(FilePathLiteral, 113) */
                 (45, 95), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(FilePathLiteral, 113) */
                 (46, 95), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(FilePathLiteral, 113) */
-                (47, 95), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FilePathLiteral, 113) */
+                (47, 95), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FilePathLiteral, 113) */
             ],
             gotos: &[],
         },
@@ -1663,7 +1663,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 138), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Rfc3339DateTime, 114) */
                 (45, 138), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Rfc3339DateTime, 114) */
                 (46, 138), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Rfc3339DateTime, 114) */
-                (47, 138), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Rfc3339DateTime, 114) */
+                (47, 138), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Rfc3339DateTime, 114) */
             ],
             gotos: &[],
         },
@@ -1731,7 +1731,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 108), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Literal, 84) */
                 (45, 108), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Literal, 84) */
                 (46, 108), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 84) */
-                (47, 108), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 84) */
+                (47, 108), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 84) */
             ],
             gotos: &[],
         },
@@ -1780,7 +1780,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 110), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Literal, 86) */
                 (45, 110), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Literal, 86) */
                 (46, 110), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 86) */
-                (47, 110), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 86) */
+                (47, 110), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 86) */
             ],
             gotos: &[],
         },
@@ -1821,7 +1821,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 50), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ApplyExprList, 70) */
                 (45, 50), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ApplyExprList, 70) */
                 (46, 50), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ApplyExprList, 70) */
-                (47, 50), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 70) */
+                (47, 50), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 70) */
             ],
             gotos: &[(1, 113) /* ApplyExprList => 113 */],
         },
@@ -1862,7 +1862,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 135), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Qualif, 76) */
                 (45, 135), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Qualif, 76) */
                 (46, 135), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Qualif, 76) */
-                (47, 135), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Qualif, 76) */
+                (47, 135), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Qualif, 76) */
             ],
             gotos: &[],
         },
@@ -1903,7 +1903,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 113), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Literal, 89) */
                 (45, 113), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Literal, 89) */
                 (46, 113), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 89) */
-                (47, 113), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 89) */
+                (47, 113), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 89) */
             ],
             gotos: &[],
         },
@@ -1944,7 +1944,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 111), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Literal, 87) */
                 (45, 111), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Literal, 87) */
                 (46, 111), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 87) */
-                (47, 111), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 87) */
+                (47, 111), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 87) */
             ],
             gotos: &[],
         },
@@ -1994,7 +1994,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 128), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PathList, 82) */
                 (45, 128), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PathList, 82) */
                 (46, 128), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PathList, 82) */
-                (47, 128), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 82) */
+                (47, 128), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 82) */
             ],
             gotos: &[(47, 114) /* PathList => 114 */],
         },
@@ -2043,7 +2043,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 66), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Callable, 72) */
                 (45, 66), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Callable, 72) */
                 (46, 66), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 72) */
-                (47, 66), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 72) */
+                (47, 66), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 72) */
             ],
             gotos: &[],
         },
@@ -2103,7 +2103,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 65), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Callable, 71) */
                 (45, 65), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Callable, 71) */
                 (46, 65), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 71) */
-                (47, 65), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 71) */
+                (47, 65), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 71) */
             ],
             gotos: &[],
         },
@@ -2123,7 +2123,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 131), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 64) */
                 (45, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 64) */
                 (46, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (47, 131), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (47, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
             ],
             gotos: &[],
         },
@@ -2164,7 +2164,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 114), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Literal, 90) */
                 (45, 114), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Literal, 90) */
                 (46, 114), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 90) */
-                (47, 114), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 90) */
+                (47, 114), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 90) */
             ],
             gotos: &[],
         },
@@ -2205,7 +2205,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 109), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Literal, 85) */
                 (45, 109), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Literal, 85) */
                 (46, 109), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 85) */
-                (47, 109), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 85) */
+                (47, 109), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 85) */
             ],
             gotos: &[],
         },
@@ -2246,7 +2246,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 112), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Literal, 88) */
                 (45, 112), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Literal, 88) */
                 (46, 112), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 88) */
-                (47, 112), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 88) */
+                (47, 112), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 88) */
             ],
             gotos: &[],
         },
@@ -2287,7 +2287,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 136), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Qualif, 77) */
                 (45, 136), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Qualif, 77) */
                 (46, 136), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Qualif, 77) */
-                (47, 136), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Qualif, 77) */
+                (47, 136), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Qualif, 77) */
             ],
             gotos: &[],
         },
@@ -2374,7 +2374,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),   /* ArithmeticExpr => 12 */
@@ -2417,7 +2417,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 79), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(CompareOp, 44) */
                 (45, 79), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(CompareOp, 44) */
                 (46, 79), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(CompareOp, 44) */
-                (47, 79), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 44) */
+                (47, 79), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 44) */
             ],
             gotos: &[],
         },
@@ -2439,7 +2439,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 80), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(CompareOp, 45) */
                 (45, 80), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(CompareOp, 45) */
                 (46, 80), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(CompareOp, 45) */
-                (47, 80), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 45) */
+                (47, 80), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 45) */
             ],
             gotos: &[],
         },
@@ -2461,7 +2461,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 81), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(CompareOp, 46) */
                 (45, 81), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(CompareOp, 46) */
                 (46, 81), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(CompareOp, 46) */
-                (47, 81), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 46) */
+                (47, 81), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 46) */
             ],
             gotos: &[],
         },
@@ -2483,7 +2483,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 82), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(CompareOp, 47) */
                 (45, 82), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(CompareOp, 47) */
                 (46, 82), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(CompareOp, 47) */
-                (47, 82), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 47) */
+                (47, 82), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 47) */
             ],
             gotos: &[],
         },
@@ -2505,7 +2505,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 83), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(CompareOp, 48) */
                 (45, 83), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(CompareOp, 48) */
                 (46, 83), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(CompareOp, 48) */
-                (47, 83), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 48) */
+                (47, 83), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 48) */
             ],
             gotos: &[],
         },
@@ -2527,7 +2527,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 84), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(CompareOp, 49) */
                 (45, 84), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(CompareOp, 49) */
                 (46, 84), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(CompareOp, 49) */
-                (47, 84), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 49) */
+                (47, 84), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 49) */
             ],
             gotos: &[],
         },
@@ -2549,7 +2549,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 85), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(CompareOp, 50) */
                 (45, 85), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(CompareOp, 50) */
                 (46, 85), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(CompareOp, 50) */
-                (47, 85), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 50) */
+                (47, 85), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(CompareOp, 50) */
             ],
             gotos: &[],
         },
@@ -2571,7 +2571,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 123), /* ArithmeticExpr => 123 */
@@ -2613,7 +2613,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 54), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ArithmeticOp, 54) */
                 (45, 54), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ArithmeticOp, 54) */
                 (46, 54), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ArithmeticOp, 54) */
-                (47, 54), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ArithmeticOp, 54) */
+                (47, 54), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ArithmeticOp, 54) */
             ],
             gotos: &[],
         },
@@ -2635,7 +2635,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 55), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ArithmeticOp, 55) */
                 (45, 55), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ArithmeticOp, 55) */
                 (46, 55), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ArithmeticOp, 55) */
-                (47, 55), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ArithmeticOp, 55) */
+                (47, 55), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ArithmeticOp, 55) */
             ],
             gotos: &[],
         },
@@ -2657,7 +2657,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (25, 124), /* FactorExpr => 124 */
@@ -2694,7 +2694,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),   /* ArithmeticExpr => 12 */
@@ -2724,7 +2724,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),   /* ArithmeticExpr => 12 */
@@ -2766,7 +2766,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 92), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(FactorOp, 59) */
                 (45, 92), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(FactorOp, 59) */
                 (46, 92), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(FactorOp, 59) */
-                (47, 92), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FactorOp, 59) */
+                (47, 92), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FactorOp, 59) */
             ],
             gotos: &[],
         },
@@ -2788,7 +2788,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 93), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(FactorOp, 60) */
                 (45, 93), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(FactorOp, 60) */
                 (46, 93), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(FactorOp, 60) */
-                (47, 93), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FactorOp, 60) */
+                (47, 93), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FactorOp, 60) */
             ],
             gotos: &[],
         },
@@ -2810,7 +2810,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 94), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(FactorOp, 61) */
                 (45, 94), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(FactorOp, 61) */
                 (46, 94), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(FactorOp, 61) */
-                (47, 94), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FactorOp, 61) */
+                (47, 94), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FactorOp, 61) */
             ],
             gotos: &[],
         },
@@ -2832,7 +2832,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (48, 127), /* PrefixExpr => 127 */
@@ -2882,7 +2882,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 87), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ExecutorComponent, 78) */
                 (45, 87), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ExecutorComponent, 78) */
                 (46, 87), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ExecutorComponent, 78) */
-                (47, 87), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ExecutorComponent, 78) */
+                (47, 87), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ExecutorComponent, 78) */
             ],
             gotos: &[],
         },
@@ -2923,7 +2923,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 162), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(TimeIndicator, 79) */
                 (45, 162), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(TimeIndicator, 79) */
                 (46, 162), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(TimeIndicator, 79) */
-                (47, 162), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(TimeIndicator, 79) */
+                (47, 162), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(TimeIndicator, 79) */
             ],
             gotos: &[],
         },
@@ -2985,7 +2985,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 19), /* '0x[0-9a-fA-F_]+' => LRAction::Shift(54) */
                 (45, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Shift(55) */
                 (46, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (47, 22), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
+                (47, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
             ],
             gotos: &[
                 (5, 59),   /* Array => 59 */
@@ -3048,7 +3048,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 126), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Path, 80) */
                 (45, 126), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Path, 80) */
                 (46, 126), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Path, 80) */
-                (47, 126), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Path, 80) */
+                (47, 126), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Path, 80) */
             ],
             gotos: &[],
         },
@@ -3089,7 +3089,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 163), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(WhiteSpace, 1) */
                 (45, 163), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(WhiteSpace, 1) */
                 (46, 163), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(WhiteSpace, 1) */
-                (47, 163), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(WhiteSpace, 1) */
+                (47, 163), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(WhiteSpace, 1) */
             ],
             gotos: &[],
         },
@@ -3130,7 +3130,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 160), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(SuffixedNumeric, 107) */
                 (45, 160), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(SuffixedNumeric, 107) */
                 (46, 160), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(SuffixedNumeric, 107) */
-                (47, 160), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(SuffixedNumeric, 107) */
+                (47, 160), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(SuffixedNumeric, 107) */
             ],
             gotos: &[],
         },
@@ -3171,7 +3171,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 161), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(SuffixedNumeric, 108) */
                 (45, 161), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(SuffixedNumeric, 108) */
                 (46, 161), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(SuffixedNumeric, 108) */
-                (47, 161), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(SuffixedNumeric, 108) */
+                (47, 161), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(SuffixedNumeric, 108) */
             ],
             gotos: &[],
         },
@@ -3212,7 +3212,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 86), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(EndOfLine, 0) */
                 (45, 86), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(EndOfLine, 0) */
                 (46, 86), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(EndOfLine, 0) */
-                (47, 86), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(EndOfLine, 0) */
+                (47, 86), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(EndOfLine, 0) */
                 (48, 86), /* 'return' => LRAction::Reduce(EndOfLine, 0) */
                 (49, 86), /* '{' => LRAction::Reduce(EndOfLine, 0) */
                 (50, 86), /* '}' => LRAction::Reduce(EndOfLine, 0) */
@@ -3242,7 +3242,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 140), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ScopeContent, 9) */
                 (45, 140), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ScopeContent, 9) */
                 (46, 140), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContent, 9) */
-                (47, 140), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContent, 9) */
+                (47, 140), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContent, 9) */
                 (48, 140), /* 'return' => LRAction::Reduce(ScopeContent, 9) */
                 (49, 140), /* '{' => LRAction::Reduce(ScopeContent, 9) */
                 (50, 140), /* '}' => LRAction::Reduce(ScopeContent, 9) */
@@ -3391,7 +3391,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 67), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Callable, 73) */
                 (45, 67), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Callable, 73) */
                 (46, 67), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 73) */
-                (47, 67), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 73) */
+                (47, 67), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 73) */
             ],
             gotos: &[],
         },
@@ -3432,7 +3432,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 56), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(Array, 91) */
                 (45, 56), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(Array, 91) */
                 (46, 56), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Array, 91) */
-                (47, 56), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Array, 91) */
+                (47, 56), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Array, 91) */
             ],
             gotos: &[],
         },
@@ -3455,7 +3455,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 132), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PrefixExprList, 65) */
                 (45, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PrefixExprList, 65) */
                 (46, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 65) */
-                (47, 132), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
+                (47, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 65) */
             ],
             gotos: &[
                 (2, 12),   /* ArithmeticExpr => 12 */
@@ -3525,7 +3525,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 49), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(ApplyExprList, 69) */
                 (45, 49), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(ApplyExprList, 69) */
                 (46, 49), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ApplyExprList, 69) */
-                (47, 49), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 69) */
+                (47, 49), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 69) */
             ],
             gotos: &[],
         },
@@ -3566,7 +3566,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 60), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(AtomicExpr, 75) */
                 (45, 60), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(AtomicExpr, 75) */
                 (46, 60), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(AtomicExpr, 75) */
-                (47, 60), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 75) */
+                (47, 60), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 75) */
             ],
             gotos: &[],
         },
@@ -3607,7 +3607,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 59), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(AtomicExpr, 74) */
                 (45, 59), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(AtomicExpr, 74) */
                 (46, 59), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(AtomicExpr, 74) */
-                (47, 59), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 74) */
+                (47, 59), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 74) */
             ],
             gotos: &[],
         },
@@ -3670,7 +3670,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 127), /* '0x[0-9a-fA-F_]+' => LRAction::Reduce(PathList, 81) */
                 (45, 127), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?' => LRAction::Reduce(PathList, 81) */
                 (46, 127), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PathList, 81) */
-                (47, 127), /* '\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 81) */
+                (47, 127), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 81) */
             ],
             gotos: &[],
         },
@@ -3906,7 +3906,7 @@ pub const PRODUCTIONS: &[LRProduction; 117] = &[
     LRProduction { lhs: 33, len: 1 },
     // 113 - FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
     LRProduction { lhs: 28, len: 1 },
-    // 114 - Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+    // 114 - Rfc3339DateTime: /\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
     LRProduction { lhs: 54, len: 1 },
     // 115 - ReturnStmt: 'return';
     LRProduction { lhs: 53, len: 1 },

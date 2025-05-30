@@ -1384,7 +1384,7 @@ pub struct ReturnStmt<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct Rfc3339DateTime<'t> {
-    pub rfc3339_date_time: Token<'t>, /* \d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2}) */
+    pub rfc3339_date_time: Token<'t>, /* \d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2}) */
 }
 
 ///
@@ -3908,7 +3908,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 114:
     ///
-    /// `Rfc3339DateTime: /\d{4}-\d{4}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;`
+    /// `Rfc3339DateTime: /\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;`
     ///
     #[parol_runtime::function_name::named]
     fn rfc3339_date_time(&mut self, rfc3339_date_time: &ParseTreeType<'t>) -> Result<()> {
