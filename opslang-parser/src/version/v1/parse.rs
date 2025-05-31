@@ -647,12 +647,19 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                 },
             }),
             grammar_trait::Literal::String(literal_string) => syn::Literal::String(syn::String {
-                raw: cx.alloc_str(literal_string.string.string.text()),
+                raw: cx.alloc_str(literal_string.string.string.text().trim_matches('"')),
                 span: literal_string.string.string.span(),
             }),
             grammar_trait::Literal::ByteLiteral(literal_byte_literal) => {
                 syn::Literal::Bytes(syn::Bytes {
-                    raw: cx.alloc_str(literal_byte_literal.byte_literal.byte_literal.text()),
+                    raw: cx.alloc_str(
+                        literal_byte_literal
+                            .byte_literal
+                            .byte_literal
+                            .text()
+                            .trim_start_matches('b')
+                            .trim_matches('"'),
+                    ),
                     span: literal_byte_literal.byte_literal.byte_literal.span(),
                 })
             }
@@ -662,7 +669,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                         literal_hex_byte_literal
                             .hex_byte_literal
                             .hex_byte_literal
-                            .text(),
+                            .text()
+                            .trim_start_matches("bx")
+                            .trim_matches('"'),
                     ),
                     span: literal_hex_byte_literal
                         .hex_byte_literal
@@ -679,7 +688,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                         literal_file_path_literal
                             .file_path_literal
                             .file_path_literal
-                            .text(),
+                            .text()
+                            .trim_start_matches("os")
+                            .trim_matches('"'),
                     ),
                     span: literal_file_path_literal
                         .file_path_literal
@@ -726,25 +737,32 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
             }};
         }
 
-        let ((raw, suffix), kind) = match self {
+        let (raw, suffix, kind) = match self {
             grammar_trait::Numeric::BinaryInteger(binary_integer) => {
                 let token = &binary_integer.binary_integer.binary_integer;
+                let (raw, suffix) = extract_suffix!(token, |c: char| c.is_alphabetic());
                 (
-                    extract_suffix!(token, |c: char| c.is_alphabetic()),
+                    raw.trim_start_matches("0b"),
+                    suffix,
                     syn::NumericKind::Integer(syn::IntegerPrefix::Binary),
                 )
             }
             grammar_trait::Numeric::OctalInteger(octal_integer) => {
                 let token = &octal_integer.octal_integer.octal_integer;
+                let (raw, suffix) = extract_suffix!(token, |c: char| c.is_alphabetic());
                 (
-                    extract_suffix!(token, |c: char| c.is_alphabetic()),
+                    raw.trim_start_matches("0o"),
+                    suffix,
                     syn::NumericKind::Integer(syn::IntegerPrefix::Octal),
                 )
             }
             grammar_trait::Numeric::HexadecimalInteger(hexadecimal_integer) => {
                 let token = &hexadecimal_integer.hexadecimal_integer.hexadecimal_integer;
+                let (raw, suffix) =
+                    extract_suffix!(token, |c: char| c.is_alphabetic() && !c.is_ascii_hexdigit());
                 (
-                    extract_suffix!(token, |c: char| c.is_alphabetic() && !c.is_ascii_hexdigit()),
+                    raw.trim_start_matches("0x"),
+                    suffix,
                     syn::NumericKind::Integer(syn::IntegerPrefix::Hexadecimal),
                 )
             }
@@ -754,7 +772,8 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
                     c.is_alphabetic() && !matches!(c, 'e' | 'E')
                 });
                 (
-                    (raw, suffix),
+                    raw,
+                    suffix,
                     if raw.contains('.') || raw.contains(['e', 'E']) {
                         syn::NumericKind::Float
                     } else {
