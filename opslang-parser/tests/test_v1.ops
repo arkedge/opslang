@@ -13,7 +13,7 @@ wait 5s;                            # WINGS: wait_sec
 wait 1 == 1 && 2 <= 2;              # WINGS: wait_until
 wait 0 == 1 || 5s;                  # タイムアウトつき
 
-print &MOBC.HK;                     # telemetry id 参照
+print (&MOBC.HK);                   # telemetry id 参照
 print MOBC.HK.XX.YY;
 let hk = MOBC.HK;                   # テレメトリ集合型
 print hk.OBC.XX.YY;                 # テレメトリ集合型は構造体のように参照できる
@@ -22,5 +22,5 @@ MOBC.RT.NOP;                        # Time Indicator をとらないコマンド
 MOBC.TL.NOP :20;                    # ステップ単位のTime Indicatorをとるコマンド
 :20 MOBC.TL.NOP;                    # Time Indicatorは前置が可能
 MOBC.BL.NOP :30;
-MOBC.UTL.NOP :2024-01-01T00:00:00Z  # 時刻をTime Indicatorとしてとるコマンド
-MOBC.TL.NOP :20 @AOBC               # 最終的な実行コンポーネントが異なるコマンド (WINGSのMOBC_TL.AOBC_RTに相当)
+MOBC.UTL.NOP :2024-01-01T00:00:00Z; # 時刻をTime Indicatorとしてとるコマンド
+MOBC.TL.NOP :20 @AOBC;              # 最終的な実行コンポーネントが異なるコマンド (WINGSのMOBC_TL.AOBC_RTに相当)

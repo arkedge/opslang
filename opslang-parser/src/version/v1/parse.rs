@@ -670,8 +670,8 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                         .span(),
                 })
             }
-            grammar_trait::Literal::SuffixedNumeric(literal_suffixed_numeric) => {
-                syn::Literal::Numeric(literal_suffixed_numeric.suffixed_numeric.process_token(cx))
+            grammar_trait::Literal::Numeric(literal_numeric) => {
+                syn::Literal::Numeric(literal_numeric.numeric.process_token(cx))
             }
             grammar_trait::Literal::FilePathLiteral(literal_file_path_literal) => {
                 syn::Literal::OsFilePath(syn::OsFilePath {
@@ -705,73 +705,64 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
     }
 }
 
-impl<'cx> ProcessToken<'cx> for grammar_trait::SuffixedNumeric<'_> {
+impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
     type Output = syn::Numeric<'cx>;
 
     fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
-        let numeric;
-        let suffix;
-        match self {
-            grammar_trait::SuffixedNumeric::NumericIdent(suffixed_numeric_numeric_ident) => {
-                numeric = &suffixed_numeric_numeric_ident.numeric;
-                suffix = Some(syn::NumericSuffix(
-                    suffixed_numeric_numeric_ident.ident.process_token(cx),
-                ));
-            }
-            grammar_trait::SuffixedNumeric::NumericWordBoundary(
-                suffixed_numeric_numeric_word_boundary,
-            ) => {
-                numeric = &suffixed_numeric_numeric_word_boundary.numeric;
-                suffix = None;
-            }
+        macro_rules! extract_suffix {
+            ($token:ident, $delimiter:expr) => {{
+                let input = $token.text();
+                if let Some((start, end)) = input.split_once($delimiter) {
+                    (
+                        start,
+                        Some(syn::NumericSuffix(syn::Ident {
+                            raw: cx.alloc_str(end),
+                            span: $token.location.span(),
+                        })),
+                    )
+                } else {
+                    (input, None)
+                }
+            }};
         }
-        match &**numeric {
+
+        let ((raw, suffix), kind) = match self {
             grammar_trait::Numeric::BinaryInteger(binary_integer) => {
                 let token = &binary_integer.binary_integer.binary_integer;
-                let prefix = syn::IntegerPrefix::Binary;
-                syn::Numeric {
-                    raw: cx.alloc_str(token.text()),
-                    kind: syn::NumericKind::Integer(prefix),
-                    suffix,
-                }
+                (
+                    extract_suffix!(token, |c: char| c.is_alphabetic()),
+                    syn::NumericKind::Integer(syn::IntegerPrefix::Binary),
+                )
             }
             grammar_trait::Numeric::OctalInteger(octal_integer) => {
                 let token = &octal_integer.octal_integer.octal_integer;
-                let prefix = syn::IntegerPrefix::Octal;
-                syn::Numeric {
-                    raw: cx.alloc_str(token.text()),
-                    kind: syn::NumericKind::Integer(prefix),
-                    suffix,
-                }
+                (
+                    extract_suffix!(token, |c: char| c.is_alphabetic()),
+                    syn::NumericKind::Integer(syn::IntegerPrefix::Octal),
+                )
             }
             grammar_trait::Numeric::HexadecimalInteger(hexadecimal_integer) => {
                 let token = &hexadecimal_integer.hexadecimal_integer.hexadecimal_integer;
-                let prefix = syn::IntegerPrefix::Hexadecimal;
-                syn::Numeric {
-                    raw: cx.alloc_str(token.text()),
-                    kind: syn::NumericKind::Integer(prefix),
-                    suffix,
-                }
+                (
+                    extract_suffix!(token, |c: char| c.is_alphabetic() && !c.is_ascii_hexdigit()),
+                    syn::NumericKind::Integer(syn::IntegerPrefix::Hexadecimal),
+                )
             }
             grammar_trait::Numeric::Ieee754Float(ieee754_float) => {
                 let token = &ieee754_float.ieee754_float.ieee754_float;
-                syn::Numeric {
-                    raw: cx.alloc_str(token.text()),
-                    kind: syn::NumericKind::Float,
-                    suffix,
-                }
+                (
+                    extract_suffix!(token, |c: char| {
+                        c.is_alphabetic() && !matches!(c, 'e' | 'E')
+                    }),
+                    syn::NumericKind::Float,
+                )
             }
-        }
-    }
-}
+        };
 
-impl<'cx> ProcessToken<'cx> for parol_runtime::Location {
-    type Output = syn::Span;
-
-    fn process_token(&self, _cx: &'cx ParseContext<'cx>) -> Self::Output {
-        syn::Span {
-            start: syn::BytePos(self.start),
-            end: syn::BytePos(self.end),
+        syn::Numeric {
+            raw: cx.alloc_str(raw),
+            kind,
+            suffix,
         }
     }
 }
@@ -783,7 +774,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Comment<'_> {
         let token = &self.comment_content.comment_content;
         cx.alloc_comment(syn::Comment {
             content: cx.alloc_str(token.text()),
-            span: token.location.process_token(cx),
+            span: token.location.span(),
         })
     }
 }

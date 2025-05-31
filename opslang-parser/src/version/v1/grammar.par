@@ -3,14 +3,7 @@
 %grammar_type 'LALR(1)'
 %auto_newline_off
 
-%on BinaryInteger, OctalInteger, HexadecimalInteger, Ieee754Float %enter ReadNumericSuffix
 %on Hash %enter Cmnt
-
-%scanner ReadNumericSuffix {
-    %auto_newline_off
-    %auto_ws_off
-    %on Ident, WhiteSpace %enter INITIAL
-}
 
 %scanner Cmnt {
     %auto_newline_off
@@ -22,10 +15,6 @@
 
 EndOfLine
     : <INITIAL, Cmnt>/(?:\r?\n|\r)+/
-    ;
-
-WhiteSpace
-    : <ReadNumericSuffix>/\s+/^
     ;
 
 Comment: Hash^ CommentContent;
@@ -172,14 +161,14 @@ TimeIndicator: ':' Callable;
 
 Path: Ident { '.' Ident };
 
-Ident: <INITIAL, ReadNumericSuffix> /[a-zA-Z][0-9a-zA-Z_\/-]*/;
+Ident: /[_a-zA-Z](\w|[\/-])*/;
 
 Literal
     : Array
     | String
     | ByteLiteral
     | HexByteLiteral
-    | SuffixedNumeric
+    | Numeric
     | FilePathLiteral
     | Rfc3339DateTime
     ;
@@ -211,22 +200,17 @@ Numeric
     | Ieee754Float
     ;
 
-SuffixedNumeric
-    : Numeric Ident
-    | Numeric WhiteSpace^
-    ;
-
 // Binary integer with permissive digit separators
-BinaryInteger: /0b[01_]+/;
+BinaryInteger: /0b[01_]+([a-zA-Z](\w|[\/-])*)?/;
 
 // Octal integer with permissive digit separators
-OctalInteger: /0o[0-7_]+/;
+OctalInteger: /0o[0-7_]+([a-zA-Z](\w|[\/-])*)?/;
 
 // Hexadecimal integer with permissive digit separators
-HexadecimalInteger: /0x[0-9a-fA-F_]+/;
+HexadecimalInteger: /0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?/;
 
 // IEEE 754 with permissive digit separators, without leading zeros
-Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?/;
+Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?/;
 
 // Harmless charactors for file paths
 FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
