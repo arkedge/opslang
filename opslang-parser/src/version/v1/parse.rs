@@ -750,11 +750,16 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
             }
             grammar_trait::Numeric::Ieee754Float(ieee754_float) => {
                 let token = &ieee754_float.ieee754_float.ieee754_float;
+                let (raw, suffix) = extract_suffix!(token, |c: char| {
+                    c.is_alphabetic() && !matches!(c, 'e' | 'E')
+                });
                 (
-                    extract_suffix!(token, |c: char| {
-                        c.is_alphabetic() && !matches!(c, 'e' | 'E')
-                    }),
-                    syn::NumericKind::Float,
+                    (raw, suffix),
+                    if raw.contains('.') || raw.contains(['e', 'E']) {
+                        syn::NumericKind::Float
+                    } else {
+                        syn::NumericKind::Integer(syn::IntegerPrefix::None)
+                    },
                 )
             }
         };

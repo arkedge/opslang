@@ -277,6 +277,8 @@ pub mod literal {
 
         /// `0b`
         Binary,
+
+        None,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
