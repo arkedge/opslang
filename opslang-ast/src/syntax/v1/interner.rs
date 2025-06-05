@@ -1,5 +1,14 @@
 use crate::{Bridge, derive_trivial_bridge};
 
+macro_rules! declare_interner {
+    () => {};
+    ($(type $ident:ident;)*) => {
+        $(
+            type $ident: std::fmt::Debug + PartialEq + Clone + Copy;
+        )*
+    };
+}
+
 /// Type family that interns almost every types, to allow global type substitution.
 /// It is known as "trees that grow".
 ///
@@ -11,47 +20,47 @@ use crate::{Bridge, derive_trivial_bridge};
 ///
 /// This trait carries all of possible substitution, including recursive elements.
 pub trait Interner<'cx> {
-    type Comment: InternerMember;
-    type CommentSpan: InternerMember;
-    type ScopeItem: InternerMember;
-    type Row: InternerMember;
-    type RowContent: InternerMember;
-    type Block: InternerMember;
-    type ReturnStmt: InternerMember;
+    declare_interner! {
+        type Comment;
+        type CommentSpan;
+        type ScopeItem;
+        type Row;
+        type RowContent;
+        type Block;
+        type ReturnStmt;
 
-    type Ident: InternerMember;
-    type Path: InternerMember;
+        type Ident;
+        type Path;
 
-    // Tokens
+        // Tokens
 
-    type BreakToken: InternerMember;
-    type SemiToken: InternerMember;
-    type LetToken: InternerMember;
-    type EqToken: InternerMember;
-    type ColonEqToken: InternerMember;
+        type BreakToken;
+        type SemiToken;
+        type LetToken;
+        type EqToken;
+        type ColonEqToken;
 
-    // Expression interner
+        // Expression interner
 
-    type Literal: ExprInternerMember;
-    type Parened: ExprInternerMember;
-    type Qualif: ExprInternerMember;
-    type PreQualified: ExprInternerMember;
-    type Numeric: ExprInternerMember;
-    type Apply: ExprInternerMember;
+        type Literal;
+        type Parened;
+        type Qualif;
+        type PreQualified;
+        type Numeric;
+        type Apply;
 
-    type UnOp: ExprInternerMember;
-    type CompareOp: ExprInternerMember;
-    type BinOp: ExprInternerMember;
+        type UnOp;
+        type CompareOp;
+        type BinOp;
+    }
 }
-
-pub trait InternerMember = std::fmt::Debug + PartialEq + Clone + Copy;
-pub trait ExprInternerMember = std::fmt::Debug + PartialEq + Clone + Copy;
 
 macro_rules! declare_compat {
     () => {};
-    (type $ident:ident; $($rest:tt)*) => {
-        type $ident: Bridge<Full = <super::DefaultInterner as Interner<'cx>>::$ident>;
-        declare_compat!{ $($rest)* }
+    ($(type $ident:ident;)*) => {
+        $(
+            type $ident: Bridge<Full = <super::DefaultInterner as Interner<'cx>>::$ident>;
+        )*
     };
 }
 

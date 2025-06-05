@@ -1,5 +1,3 @@
-#![feature(iterator_try_collect)]
-
 pub mod version;
 pub use version::*;
 
