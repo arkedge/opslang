@@ -202,7 +202,7 @@ const SCANNER_1: (&[&str; 5], &[TerminalIndex; 2]) = (
     &[5 /* EndOfLine */, 7 /* CommentContent */],
 );
 
-pub const NON_TERMINALS: &[&str; 69] = &[
+pub const NON_TERMINALS: &[&str; 70] = &[
     /*  0 */ "ApplyExpr",
     /*  1 */ "ApplyExprList",
     /*  2 */ "ArithmeticExpr",
@@ -247,31 +247,32 @@ pub const NON_TERMINALS: &[&str; 69] = &[
     /* 41 */ "LogicalAndExprList",
     /* 42 */ "LogicalOrExpr",
     /* 43 */ "LogicalOrExprList",
-    /* 44 */ "Numeric",
-    /* 45 */ "OctalInteger",
-    /* 46 */ "Path",
-    /* 47 */ "PathList",
-    /* 48 */ "PrefixExpr",
-    /* 49 */ "PrefixExprList",
-    /* 50 */ "PrefixOp",
-    /* 51 */ "Program",
-    /* 52 */ "Qualif",
-    /* 53 */ "ReturnStmt",
-    /* 54 */ "Rfc3339DateTime",
-    /* 55 */ "Scope",
-    /* 56 */ "ScopeContent",
-    /* 57 */ "ScopeContentKind",
-    /* 58 */ "ScopeContentOpt",
-    /* 59 */ "ScopeContentOpt0",
-    /* 60 */ "ScopeContentOpt1",
-    /* 61 */ "ScopeList",
-    /* 62 */ "Semi",
-    /* 63 */ "SetExpr",
-    /* 64 */ "SetExprOpt",
-    /* 65 */ "Statement",
-    /* 66 */ "StatementKind",
-    /* 67 */ "String",
-    /* 68 */ "TimeIndicator",
+    /* 44 */ "LowerPrefixExpr",
+    /* 45 */ "LowerPrefixExprOpt",
+    /* 46 */ "Numeric",
+    /* 47 */ "OctalInteger",
+    /* 48 */ "Path",
+    /* 49 */ "PathList",
+    /* 50 */ "PrefixExpr",
+    /* 51 */ "PrefixExprList",
+    /* 52 */ "Program",
+    /* 53 */ "Qualif",
+    /* 54 */ "ReturnStmt",
+    /* 55 */ "Rfc3339DateTime",
+    /* 56 */ "Scope",
+    /* 57 */ "ScopeContent",
+    /* 58 */ "ScopeContentKind",
+    /* 59 */ "ScopeContentOpt",
+    /* 60 */ "ScopeContentOpt0",
+    /* 61 */ "ScopeContentOpt1",
+    /* 62 */ "ScopeList",
+    /* 63 */ "Semi",
+    /* 64 */ "SetExpr",
+    /* 65 */ "SetExprOpt",
+    /* 66 */ "Statement",
+    /* 67 */ "StatementKind",
+    /* 68 */ "String",
+    /* 69 */ "TimeIndicator",
 ];
 
 static PARSE_TABLE: LRParseTable = LRParseTable {
@@ -281,74 +282,74 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         /* 2 */ LRAction::Shift(8),
         /* 3 */ LRAction::Shift(9),
         /* 4 */ LRAction::Shift(10),
-        /* 5 */ LRAction::Shift(11),
+        /* 5 */ LRAction::Shift(29),
         /* 6 */ LRAction::Shift(31),
-        /* 7 */ LRAction::Shift(35),
-        /* 8 */ LRAction::Shift(38),
-        /* 9 */ LRAction::Shift(42),
-        /* 10 */ LRAction::Shift(45),
-        /* 11 */ LRAction::Shift(46),
-        /* 12 */ LRAction::Shift(47),
-        /* 13 */ LRAction::Shift(48),
-        /* 14 */ LRAction::Shift(49),
-        /* 15 */ LRAction::Shift(50),
-        /* 16 */ LRAction::Shift(51),
-        /* 17 */ LRAction::Shift(52),
-        /* 18 */ LRAction::Shift(53),
-        /* 19 */ LRAction::Shift(54),
-        /* 20 */ LRAction::Shift(55),
-        /* 21 */ LRAction::Shift(56),
-        /* 22 */ LRAction::Shift(57),
-        /* 23 */ LRAction::Shift(78),
-        /* 24 */ LRAction::Shift(82),
-        /* 25 */ LRAction::Shift(84),
-        /* 26 */ LRAction::Shift(85),
-        /* 27 */ LRAction::Shift(86),
-        /* 28 */ LRAction::Shift(87),
-        /* 29 */ LRAction::Shift(88),
-        /* 30 */ LRAction::Shift(89),
-        /* 31 */ LRAction::Shift(90),
-        /* 32 */ LRAction::Shift(91),
-        /* 33 */ LRAction::Shift(92),
-        /* 34 */ LRAction::Shift(95),
-        /* 35 */ LRAction::Shift(96),
-        /* 36 */ LRAction::Shift(99),
-        /* 37 */ LRAction::Shift(100),
-        /* 38 */ LRAction::Shift(102),
-        /* 39 */ LRAction::Shift(103),
-        /* 40 */ LRAction::Shift(104),
-        /* 41 */ LRAction::Shift(114),
-        /* 42 */ LRAction::Shift(116),
-        /* 43 */ LRAction::Shift(124),
-        /* 44 */ LRAction::Shift(125),
-        /* 45 */ LRAction::Shift(126),
-        /* 46 */ LRAction::Shift(132),
-        /* 47 */ LRAction::Reduce(0 /* ApplyExpr */, 67),
-        /* 48 */ LRAction::Reduce(1 /* ApplyExprList */, 68),
-        /* 49 */ LRAction::Reduce(1 /* ApplyExprList */, 69),
+        /* 7 */ LRAction::Shift(37),
+        /* 8 */ LRAction::Shift(40),
+        /* 9 */ LRAction::Shift(44),
+        /* 10 */ LRAction::Shift(47),
+        /* 11 */ LRAction::Shift(48),
+        /* 12 */ LRAction::Shift(53),
+        /* 13 */ LRAction::Shift(57),
+        /* 14 */ LRAction::Shift(59),
+        /* 15 */ LRAction::Shift(61),
+        /* 16 */ LRAction::Shift(62),
+        /* 17 */ LRAction::Shift(63),
+        /* 18 */ LRAction::Shift(64),
+        /* 19 */ LRAction::Shift(65),
+        /* 20 */ LRAction::Shift(66),
+        /* 21 */ LRAction::Shift(67),
+        /* 22 */ LRAction::Shift(68),
+        /* 23 */ LRAction::Shift(69),
+        /* 24 */ LRAction::Shift(70),
+        /* 25 */ LRAction::Shift(71),
+        /* 26 */ LRAction::Shift(87),
+        /* 27 */ LRAction::Shift(88),
+        /* 28 */ LRAction::Shift(89),
+        /* 29 */ LRAction::Shift(90),
+        /* 30 */ LRAction::Shift(91),
+        /* 31 */ LRAction::Shift(92),
+        /* 32 */ LRAction::Shift(93),
+        /* 33 */ LRAction::Shift(94),
+        /* 34 */ LRAction::Shift(97),
+        /* 35 */ LRAction::Shift(98),
+        /* 36 */ LRAction::Shift(101),
+        /* 37 */ LRAction::Shift(102),
+        /* 38 */ LRAction::Shift(104),
+        /* 39 */ LRAction::Shift(105),
+        /* 40 */ LRAction::Shift(106),
+        /* 41 */ LRAction::Shift(110),
+        /* 42 */ LRAction::Shift(112),
+        /* 43 */ LRAction::Shift(128),
+        /* 44 */ LRAction::Shift(129),
+        /* 45 */ LRAction::Shift(130),
+        /* 46 */ LRAction::Shift(133),
+        /* 47 */ LRAction::Reduce(0 /* ApplyExpr */, 65),
+        /* 48 */ LRAction::Reduce(1 /* ApplyExprList */, 66),
+        /* 49 */ LRAction::Reduce(1 /* ApplyExprList */, 67),
         /* 50 */ LRAction::Reduce(2 /* ArithmeticExpr */, 50),
         /* 51 */ LRAction::Reduce(3 /* ArithmeticExprList */, 51),
         /* 52 */ LRAction::Reduce(3 /* ArithmeticExprList */, 52),
         /* 53 */ LRAction::Reduce(4 /* ArithmeticOp */, 53),
         /* 54 */ LRAction::Reduce(4 /* ArithmeticOp */, 54),
-        /* 55 */ LRAction::Reduce(5 /* Array */, 90),
-        /* 56 */ LRAction::Reduce(6 /* ArrayOpt */, 91),
-        /* 57 */ LRAction::Reduce(6 /* ArrayOpt */, 92),
-        /* 58 */ LRAction::Reduce(7 /* AtomicExpr */, 73),
-        /* 59 */ LRAction::Reduce(7 /* AtomicExpr */, 74),
-        /* 60 */ LRAction::Reduce(8 /* BinaryInteger */, 106),
-        /* 61 */ LRAction::Reduce(9 /* Block */, 113),
+        /* 55 */ LRAction::Reduce(5 /* Array */, 91),
+        /* 56 */ LRAction::Reduce(6 /* ArrayOpt */, 92),
+        /* 57 */ LRAction::Reduce(6 /* ArrayOpt */, 93),
+        /* 58 */ LRAction::Reduce(7 /* AtomicExpr */, 74),
+        /* 59 */ LRAction::Reduce(7 /* AtomicExpr */, 75),
+        /* 60 */ LRAction::Reduce(8 /* BinaryInteger */, 107),
+        /* 61 */ LRAction::Reduce(9 /* Block */, 114),
         /* 62 */ LRAction::Reduce(10 /* Break */, 18),
-        /* 63 */ LRAction::Reduce(11 /* ByteLiteral */, 100),
-        /* 64 */ LRAction::Reduce(12 /* Callable */, 70),
-        /* 65 */ LRAction::Reduce(12 /* Callable */, 71),
-        /* 66 */ LRAction::Reduce(12 /* Callable */, 72),
-        /* 67 */ LRAction::Reduce(13 /* CommaExprList */, 96),
-        /* 68 */ LRAction::Reduce(14 /* CommaExprListOpt */, 97),
-        /* 69 */ LRAction::Reduce(14 /* CommaExprListOpt */, 98),
-        /* 70 */ LRAction::Reduce(15 /* CommaSepElements */, 93),
-        /* 71 */ LRAction::Reduce(16 /* CommaSepElementsOpt */, 94),
-        /* 72 */ LRAction::Reduce(16 /* CommaSepElementsOpt */, 95),
+        /* 63 */ LRAction::Reduce(11 /* ByteLiteral */, 101),
+        /* 64 */ LRAction::Reduce(12 /* Callable */, 71),
+        /* 65 */ LRAction::Reduce(12 /* Callable */, 72),
+        /* 66 */ LRAction::Reduce(12 /* Callable */, 73),
+        /* 67 */ LRAction::Reduce(13 /* CommaExprList */, 97),
+        /* 68 */ LRAction::Reduce(14 /* CommaExprListOpt */, 98),
+        /* 69 */ LRAction::Reduce(14 /* CommaExprListOpt */, 99),
+        /* 70 */ LRAction::Reduce(15 /* CommaSepElements */, 94),
+        /* 71 */ LRAction::Reduce(16 /* CommaSepElementsOpt */, 95),
+        /* 72 */ LRAction::Reduce(16 /* CommaSepElementsOpt */, 96),
         /* 73 */ LRAction::Reduce(17 /* Comment */, 1),
         /* 74 */ LRAction::Reduce(18 /* CommentContent */, 3),
         /* 75 */ LRAction::Reduce(19 /* CompareExpr */, 40),
@@ -362,7 +363,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         /* 83 */ LRAction::Reduce(21 /* CompareOp */, 48),
         /* 84 */ LRAction::Reduce(21 /* CompareOp */, 49),
         /* 85 */ LRAction::Reduce(22 /* EndOfLine */, 0),
-        /* 86 */ LRAction::Reduce(23 /* ExecutorComponent */, 77),
+        /* 86 */ LRAction::Reduce(23 /* ExecutorComponent */, 78),
         /* 87 */ LRAction::Reduce(24 /* Expr */, 24),
         /* 88 */ LRAction::Reduce(25 /* FactorExpr */, 55),
         /* 89 */ LRAction::Reduce(26 /* FactorExprList */, 56),
@@ -370,12 +371,12 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         /* 91 */ LRAction::Reduce(27 /* FactorOp */, 58),
         /* 92 */ LRAction::Reduce(27 /* FactorOp */, 59),
         /* 93 */ LRAction::Reduce(27 /* FactorOp */, 60),
-        /* 94 */ LRAction::Reduce(28 /* FilePathLiteral */, 110),
+        /* 94 */ LRAction::Reduce(28 /* FilePathLiteral */, 111),
         /* 95 */ LRAction::Reduce(29 /* Hash */, 2),
-        /* 96 */ LRAction::Reduce(30 /* HexByteLiteral */, 101),
-        /* 97 */ LRAction::Reduce(31 /* HexadecimalInteger */, 108),
-        /* 98 */ LRAction::Reduce(32 /* Ident */, 82),
-        /* 99 */ LRAction::Reduce(33 /* Ieee754Float */, 109),
+        /* 96 */ LRAction::Reduce(30 /* HexByteLiteral */, 102),
+        /* 97 */ LRAction::Reduce(31 /* HexadecimalInteger */, 109),
+        /* 98 */ LRAction::Reduce(32 /* Ident */, 83),
+        /* 99 */ LRAction::Reduce(33 /* Ieee754Float */, 110),
         /* 100 */ LRAction::Reduce(34 /* InfixIfExpr */, 28),
         /* 101 */ LRAction::Reduce(35 /* InfixIfExprOpt */, 29),
         /* 102 */ LRAction::Reduce(35 /* InfixIfExprOpt */, 30),
@@ -383,131 +384,132 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         /* 104 */ LRAction::Reduce(37 /* InfixInExprOpt */, 38),
         /* 105 */ LRAction::Reduce(37 /* InfixInExprOpt */, 39),
         /* 106 */ LRAction::Reduce(38 /* LetStmt */, 23),
-        /* 107 */ LRAction::Reduce(39 /* Literal */, 83),
-        /* 108 */ LRAction::Reduce(39 /* Literal */, 84),
-        /* 109 */ LRAction::Reduce(39 /* Literal */, 85),
-        /* 110 */ LRAction::Reduce(39 /* Literal */, 86),
-        /* 111 */ LRAction::Reduce(39 /* Literal */, 87),
-        /* 112 */ LRAction::Reduce(39 /* Literal */, 88),
-        /* 113 */ LRAction::Reduce(39 /* Literal */, 89),
+        /* 107 */ LRAction::Reduce(39 /* Literal */, 84),
+        /* 108 */ LRAction::Reduce(39 /* Literal */, 85),
+        /* 109 */ LRAction::Reduce(39 /* Literal */, 86),
+        /* 110 */ LRAction::Reduce(39 /* Literal */, 87),
+        /* 111 */ LRAction::Reduce(39 /* Literal */, 88),
+        /* 112 */ LRAction::Reduce(39 /* Literal */, 89),
+        /* 113 */ LRAction::Reduce(39 /* Literal */, 90),
         /* 114 */ LRAction::Reduce(40 /* LogicalAndExpr */, 34),
         /* 115 */ LRAction::Reduce(41 /* LogicalAndExprList */, 35),
         /* 116 */ LRAction::Reduce(41 /* LogicalAndExprList */, 36),
         /* 117 */ LRAction::Reduce(42 /* LogicalOrExpr */, 31),
         /* 118 */ LRAction::Reduce(43 /* LogicalOrExprList */, 32),
         /* 119 */ LRAction::Reduce(43 /* LogicalOrExprList */, 33),
-        /* 120 */ LRAction::Reduce(44 /* Numeric */, 102),
-        /* 121 */ LRAction::Reduce(44 /* Numeric */, 103),
-        /* 122 */ LRAction::Reduce(44 /* Numeric */, 104),
-        /* 123 */ LRAction::Reduce(44 /* Numeric */, 105),
-        /* 124 */ LRAction::Reduce(45 /* OctalInteger */, 107),
-        /* 125 */ LRAction::Reduce(46 /* Path */, 79),
-        /* 126 */ LRAction::Reduce(47 /* PathList */, 80),
-        /* 127 */ LRAction::Reduce(47 /* PathList */, 81),
-        /* 128 */ LRAction::Reduce(48 /* PrefixExpr */, 61),
-        /* 129 */ LRAction::Reduce(48 /* PrefixExpr */, 62),
-        /* 130 */ LRAction::Reduce(49 /* PrefixExprList */, 63),
-        /* 131 */ LRAction::Reduce(49 /* PrefixExprList */, 64),
-        /* 132 */ LRAction::Reduce(50 /* PrefixOp */, 65),
-        /* 133 */ LRAction::Reduce(50 /* PrefixOp */, 66),
-        /* 134 */ LRAction::Reduce(52 /* Qualif */, 75),
-        /* 135 */ LRAction::Reduce(52 /* Qualif */, 76),
-        /* 136 */ LRAction::Reduce(53 /* ReturnStmt */, 112),
-        /* 137 */ LRAction::Reduce(54 /* Rfc3339DateTime */, 111),
-        /* 138 */ LRAction::Reduce(55 /* Scope */, 5),
-        /* 139 */ LRAction::Reduce(56 /* ScopeContent */, 8),
-        /* 140 */ LRAction::Reduce(57 /* ScopeContentKind */, 15),
-        /* 141 */ LRAction::Reduce(57 /* ScopeContentKind */, 16),
-        /* 142 */ LRAction::Reduce(58 /* ScopeContentOpt */, 13),
-        /* 143 */ LRAction::Reduce(58 /* ScopeContentOpt */, 14),
-        /* 144 */ LRAction::Reduce(59 /* ScopeContentOpt0 */, 11),
-        /* 145 */ LRAction::Reduce(59 /* ScopeContentOpt0 */, 12),
-        /* 146 */ LRAction::Reduce(60 /* ScopeContentOpt1 */, 9),
-        /* 147 */ LRAction::Reduce(60 /* ScopeContentOpt1 */, 10),
-        /* 148 */ LRAction::Reduce(61 /* ScopeList */, 6),
-        /* 149 */ LRAction::Reduce(61 /* ScopeList */, 7),
-        /* 150 */ LRAction::Reduce(62 /* Semi */, 19),
-        /* 151 */ LRAction::Reduce(63 /* SetExpr */, 25),
-        /* 152 */ LRAction::Reduce(64 /* SetExprOpt */, 26),
-        /* 153 */ LRAction::Reduce(64 /* SetExprOpt */, 27),
-        /* 154 */ LRAction::Reduce(65 /* Statement */, 17),
-        /* 155 */ LRAction::Reduce(66 /* StatementKind */, 20),
-        /* 156 */ LRAction::Reduce(66 /* StatementKind */, 21),
-        /* 157 */ LRAction::Reduce(66 /* StatementKind */, 22),
-        /* 158 */ LRAction::Reduce(67 /* String */, 99),
-        /* 159 */ LRAction::Reduce(68 /* TimeIndicator */, 78),
-        /* 160 */ LRAction::Accept,
+        /* 120 */ LRAction::Reduce(44 /* LowerPrefixExpr */, 68),
+        /* 121 */ LRAction::Reduce(45 /* LowerPrefixExprOpt */, 69),
+        /* 122 */ LRAction::Reduce(45 /* LowerPrefixExprOpt */, 70),
+        /* 123 */ LRAction::Reduce(46 /* Numeric */, 103),
+        /* 124 */ LRAction::Reduce(46 /* Numeric */, 104),
+        /* 125 */ LRAction::Reduce(46 /* Numeric */, 105),
+        /* 126 */ LRAction::Reduce(46 /* Numeric */, 106),
+        /* 127 */ LRAction::Reduce(47 /* OctalInteger */, 108),
+        /* 128 */ LRAction::Reduce(48 /* Path */, 80),
+        /* 129 */ LRAction::Reduce(49 /* PathList */, 81),
+        /* 130 */ LRAction::Reduce(49 /* PathList */, 82),
+        /* 131 */ LRAction::Reduce(50 /* PrefixExpr */, 61),
+        /* 132 */ LRAction::Reduce(50 /* PrefixExpr */, 62),
+        /* 133 */ LRAction::Reduce(51 /* PrefixExprList */, 63),
+        /* 134 */ LRAction::Reduce(51 /* PrefixExprList */, 64),
+        /* 135 */ LRAction::Reduce(53 /* Qualif */, 76),
+        /* 136 */ LRAction::Reduce(53 /* Qualif */, 77),
+        /* 137 */ LRAction::Reduce(54 /* ReturnStmt */, 113),
+        /* 138 */ LRAction::Reduce(55 /* Rfc3339DateTime */, 112),
+        /* 139 */ LRAction::Reduce(56 /* Scope */, 5),
+        /* 140 */ LRAction::Reduce(57 /* ScopeContent */, 8),
+        /* 141 */ LRAction::Reduce(58 /* ScopeContentKind */, 15),
+        /* 142 */ LRAction::Reduce(58 /* ScopeContentKind */, 16),
+        /* 143 */ LRAction::Reduce(59 /* ScopeContentOpt */, 13),
+        /* 144 */ LRAction::Reduce(59 /* ScopeContentOpt */, 14),
+        /* 145 */ LRAction::Reduce(60 /* ScopeContentOpt0 */, 11),
+        /* 146 */ LRAction::Reduce(60 /* ScopeContentOpt0 */, 12),
+        /* 147 */ LRAction::Reduce(61 /* ScopeContentOpt1 */, 9),
+        /* 148 */ LRAction::Reduce(61 /* ScopeContentOpt1 */, 10),
+        /* 149 */ LRAction::Reduce(62 /* ScopeList */, 6),
+        /* 150 */ LRAction::Reduce(62 /* ScopeList */, 7),
+        /* 151 */ LRAction::Reduce(63 /* Semi */, 19),
+        /* 152 */ LRAction::Reduce(64 /* SetExpr */, 25),
+        /* 153 */ LRAction::Reduce(65 /* SetExprOpt */, 26),
+        /* 154 */ LRAction::Reduce(65 /* SetExprOpt */, 27),
+        /* 155 */ LRAction::Reduce(66 /* Statement */, 17),
+        /* 156 */ LRAction::Reduce(67 /* StatementKind */, 20),
+        /* 157 */ LRAction::Reduce(67 /* StatementKind */, 21),
+        /* 158 */ LRAction::Reduce(67 /* StatementKind */, 22),
+        /* 159 */ LRAction::Reduce(68 /* String */, 100),
+        /* 160 */ LRAction::Reduce(69 /* TimeIndicator */, 79),
+        /* 161 */ LRAction::Accept,
     ],
     states: &[
         // State 0
         LR1State {
             actions: &[
-                (0, 149),  /* '<$>' => LRAction::Reduce(ScopeList, 7) */
-                (5, 149),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 7) */
-                (6, 149),  /* '#' => LRAction::Reduce(ScopeList, 7) */
-                (8, 149),  /* '.' => LRAction::Reduce(ScopeList, 7) */
-                (10, 149), /* 'let' => LRAction::Reduce(ScopeList, 7) */
-                (25, 149), /* '-' => LRAction::Reduce(ScopeList, 7) */
-                (29, 149), /* '&' => LRAction::Reduce(ScopeList, 7) */
-                (30, 149), /* '(' => LRAction::Reduce(ScopeList, 7) */
-                (32, 149), /* '@' => LRAction::Reduce(ScopeList, 7) */
-                (33, 149), /* ':' => LRAction::Reduce(ScopeList, 7) */
-                (34, 149), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeList, 7) */
-                (35, 149), /* '[' => LRAction::Reduce(ScopeList, 7) */
-                (38, 149), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
-                (39, 149), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
-                (40, 149), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeList, 7) */
-                (41, 149), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (42, 149), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (43, 149), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (44, 149), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (45, 149), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 7) */
-                (46, 149), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 7) */
-                (47, 149), /* 'return' => LRAction::Reduce(ScopeList, 7) */
-                (48, 149), /* '{' => LRAction::Reduce(ScopeList, 7) */
+                (0, 150),  /* '<$>' => LRAction::Reduce(ScopeList, 7) */
+                (5, 150),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 7) */
+                (6, 150),  /* '#' => LRAction::Reduce(ScopeList, 7) */
+                (8, 150),  /* '.' => LRAction::Reduce(ScopeList, 7) */
+                (10, 150), /* 'let' => LRAction::Reduce(ScopeList, 7) */
+                (25, 150), /* '-' => LRAction::Reduce(ScopeList, 7) */
+                (29, 150), /* '&' => LRAction::Reduce(ScopeList, 7) */
+                (30, 150), /* '(' => LRAction::Reduce(ScopeList, 7) */
+                (32, 150), /* '@' => LRAction::Reduce(ScopeList, 7) */
+                (33, 150), /* ':' => LRAction::Reduce(ScopeList, 7) */
+                (34, 150), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeList, 7) */
+                (35, 150), /* '[' => LRAction::Reduce(ScopeList, 7) */
+                (38, 150), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
+                (39, 150), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
+                (40, 150), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeList, 7) */
+                (41, 150), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (42, 150), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (43, 150), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (44, 150), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (45, 150), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 7) */
+                (46, 150), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 7) */
+                (47, 150), /* 'return' => LRAction::Reduce(ScopeList, 7) */
+                (48, 150), /* '{' => LRAction::Reduce(ScopeList, 7) */
             ],
             gotos: &[
-                (55, 1), /* Scope => 1 */
-                (61, 2), /* ScopeList => 2 */
+                (56, 1), /* Scope => 1 */
+                (62, 2), /* ScopeList => 2 */
             ],
         },
         // State 1
         LR1State {
-            actions: &[(0, 160) /* '<$>' => LRAction::Accept */],
+            actions: &[(0, 161) /* '<$>' => LRAction::Accept */],
             gotos: &[],
         },
         // State 2
         LR1State {
             actions: &[
-                (0, 138),  /* '<$>' => LRAction::Reduce(Scope, 5) */
-                (5, 143),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (6, 143),  /* '#' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (0, 139),  /* '<$>' => LRAction::Reduce(Scope, 5) */
+                (5, 144),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (6, 144),  /* '#' => LRAction::Reduce(ScopeContentOpt, 14) */
                 (8, 0),    /* '.' => LRAction::Shift(3) */
-                (10, 143), /* 'let' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (25, 143), /* '-' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (29, 143), /* '&' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (30, 143), /* '(' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (32, 143), /* '@' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (33, 143), /* ':' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (34, 143), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (35, 143), /* '[' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (38, 143), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (39, 143), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (40, 143), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (41, 143), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (42, 143), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (43, 143), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (44, 143), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (45, 143), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (46, 143), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (47, 143), /* 'return' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (48, 143), /* '{' => LRAction::Reduce(ScopeContentOpt, 14) */
-                (49, 138), /* '}' => LRAction::Reduce(Scope, 5) */
+                (10, 144), /* 'let' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (25, 144), /* '-' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (29, 144), /* '&' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (30, 144), /* '(' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (32, 144), /* '@' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (33, 144), /* ':' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (34, 144), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (35, 144), /* '[' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (38, 144), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (39, 144), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (40, 144), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (41, 144), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (42, 144), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (43, 144), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (44, 144), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (45, 144), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (46, 144), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (47, 144), /* 'return' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (48, 144), /* '{' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (49, 139), /* '}' => LRAction::Reduce(Scope, 5) */
             ],
             gotos: &[
                 (10, 4), /* Break => 4 */
-                (56, 5), /* ScopeContent => 5 */
-                (58, 6), /* ScopeContentOpt => 6 */
+                (57, 5), /* ScopeContent => 5 */
+                (59, 6), /* ScopeContentOpt => 6 */
             ],
         },
         // State 3
@@ -540,188 +542,174 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 4
         LR1State {
             actions: &[
-                (5, 142),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (6, 142),  /* '#' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (10, 142), /* 'let' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (25, 142), /* '-' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (29, 142), /* '&' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (30, 142), /* '(' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (32, 142), /* '@' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (33, 142), /* ':' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (34, 142), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (35, 142), /* '[' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (38, 142), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (39, 142), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (40, 142), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (41, 142), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (42, 142), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (43, 142), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (44, 142), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (45, 142), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (46, 142), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (47, 142), /* 'return' => LRAction::Reduce(ScopeContentOpt, 13) */
-                (48, 142), /* '{' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (5, 143),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (6, 143),  /* '#' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (10, 143), /* 'let' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (25, 143), /* '-' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (29, 143), /* '&' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (30, 143), /* '(' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (32, 143), /* '@' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (33, 143), /* ':' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (34, 143), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (35, 143), /* '[' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (38, 143), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (39, 143), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (40, 143), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (41, 143), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (42, 143), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (43, 143), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (44, 143), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (45, 143), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (46, 143), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (47, 143), /* 'return' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (48, 143), /* '{' => LRAction::Reduce(ScopeContentOpt, 13) */
             ],
             gotos: &[],
         },
         // State 5
         LR1State {
             actions: &[
-                (0, 148),  /* '<$>' => LRAction::Reduce(ScopeList, 6) */
-                (5, 148),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 6) */
-                (6, 148),  /* '#' => LRAction::Reduce(ScopeList, 6) */
-                (8, 148),  /* '.' => LRAction::Reduce(ScopeList, 6) */
-                (10, 148), /* 'let' => LRAction::Reduce(ScopeList, 6) */
-                (25, 148), /* '-' => LRAction::Reduce(ScopeList, 6) */
-                (29, 148), /* '&' => LRAction::Reduce(ScopeList, 6) */
-                (30, 148), /* '(' => LRAction::Reduce(ScopeList, 6) */
-                (32, 148), /* '@' => LRAction::Reduce(ScopeList, 6) */
-                (33, 148), /* ':' => LRAction::Reduce(ScopeList, 6) */
-                (34, 148), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeList, 6) */
-                (35, 148), /* '[' => LRAction::Reduce(ScopeList, 6) */
-                (38, 148), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 6) */
-                (39, 148), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 6) */
-                (40, 148), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeList, 6) */
-                (41, 148), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
-                (42, 148), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
-                (43, 148), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
-                (44, 148), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
-                (45, 148), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 6) */
-                (46, 148), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 6) */
-                (47, 148), /* 'return' => LRAction::Reduce(ScopeList, 6) */
-                (48, 148), /* '{' => LRAction::Reduce(ScopeList, 6) */
-                (49, 148), /* '}' => LRAction::Reduce(ScopeList, 6) */
+                (0, 149),  /* '<$>' => LRAction::Reduce(ScopeList, 6) */
+                (5, 149),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 6) */
+                (6, 149),  /* '#' => LRAction::Reduce(ScopeList, 6) */
+                (8, 149),  /* '.' => LRAction::Reduce(ScopeList, 6) */
+                (10, 149), /* 'let' => LRAction::Reduce(ScopeList, 6) */
+                (25, 149), /* '-' => LRAction::Reduce(ScopeList, 6) */
+                (29, 149), /* '&' => LRAction::Reduce(ScopeList, 6) */
+                (30, 149), /* '(' => LRAction::Reduce(ScopeList, 6) */
+                (32, 149), /* '@' => LRAction::Reduce(ScopeList, 6) */
+                (33, 149), /* ':' => LRAction::Reduce(ScopeList, 6) */
+                (34, 149), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeList, 6) */
+                (35, 149), /* '[' => LRAction::Reduce(ScopeList, 6) */
+                (38, 149), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 6) */
+                (39, 149), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 6) */
+                (40, 149), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeList, 6) */
+                (41, 149), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
+                (42, 149), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
+                (43, 149), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
+                (44, 149), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 6) */
+                (45, 149), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 6) */
+                (46, 149), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 6) */
+                (47, 149), /* 'return' => LRAction::Reduce(ScopeList, 6) */
+                (48, 149), /* '{' => LRAction::Reduce(ScopeList, 6) */
+                (49, 149), /* '}' => LRAction::Reduce(ScopeList, 6) */
             ],
             gotos: &[],
         },
         // State 6
         LR1State {
             actions: &[
-                (5, 145),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt0, 12) */
-                (6, 145),  /* '#' => LRAction::Reduce(ScopeContentOpt0, 12) */
+                (5, 146),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt0, 12) */
+                (6, 146),  /* '#' => LRAction::Reduce(ScopeContentOpt0, 12) */
                 (10, 1),   /* 'let' => LRAction::Shift(7) */
                 (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
-                (47, 4),   /* 'return' => LRAction::Shift(10) */
-                (48, 5),   /* '{' => LRAction::Shift(11) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (47, 3),   /* 'return' => LRAction::Shift(9) */
+                (48, 4),   /* '{' => LRAction::Shift(10) */
             ],
             gotos: &[
-                (2, 12),  /* ArithmeticExpr => 12 */
-                (9, 13),  /* Block => 13 */
-                (19, 14), /* CompareExpr => 14 */
-                (24, 15), /* Expr => 15 */
-                (25, 16), /* FactorExpr => 16 */
-                (34, 17), /* InfixIfExpr => 17 */
-                (36, 18), /* InfixInExpr => 18 */
-                (38, 19), /* LetStmt => 19 */
-                (40, 20), /* LogicalAndExpr => 20 */
-                (42, 21), /* LogicalOrExpr => 21 */
-                (48, 22), /* PrefixExpr => 22 */
-                (49, 23), /* PrefixExprList => 23 */
-                (50, 24), /* PrefixOp => 24 */
-                (53, 25), /* ReturnStmt => 25 */
-                (57, 26), /* ScopeContentKind => 26 */
-                (59, 27), /* ScopeContentOpt0 => 27 */
-                (63, 28), /* SetExpr => 28 */
-                (65, 29), /* Statement => 29 */
-                (66, 30), /* StatementKind => 30 */
+                (2, 11),  /* ArithmeticExpr => 11 */
+                (9, 12),  /* Block => 12 */
+                (19, 13), /* CompareExpr => 13 */
+                (24, 14), /* Expr => 14 */
+                (25, 15), /* FactorExpr => 15 */
+                (34, 16), /* InfixIfExpr => 16 */
+                (36, 17), /* InfixInExpr => 17 */
+                (38, 18), /* LetStmt => 18 */
+                (40, 19), /* LogicalAndExpr => 19 */
+                (42, 20), /* LogicalOrExpr => 20 */
+                (50, 21), /* PrefixExpr => 21 */
+                (51, 22), /* PrefixExprList => 22 */
+                (54, 23), /* ReturnStmt => 23 */
+                (58, 24), /* ScopeContentKind => 24 */
+                (60, 25), /* ScopeContentOpt0 => 25 */
+                (64, 26), /* SetExpr => 26 */
+                (66, 27), /* Statement => 27 */
+                (67, 28), /* StatementKind => 28 */
             ],
         },
         // State 7
         LR1State {
             actions: &[
-                (34, 6), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(31) */
+                (34, 5), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(29) */
             ],
-            gotos: &[(32, 32) /* Ident => 32 */],
+            gotos: &[(32, 30) /* Ident => 30 */],
         },
         // State 8
         LR1State {
             actions: &[
-                (30, 132), /* '(' => LRAction::Reduce(PrefixOp, 65) */
-                (34, 132), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixOp, 65) */
-                (35, 132), /* '[' => LRAction::Reduce(PrefixOp, 65) */
-                (38, 132), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixOp, 65) */
-                (39, 132), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixOp, 65) */
-                (40, 132), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixOp, 65) */
-                (41, 132), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 65) */
-                (42, 132), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 65) */
-                (43, 132), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 65) */
-                (44, 132), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 65) */
-                (45, 132), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixOp, 65) */
-                (46, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixOp, 65) */
+                (29, 6),   /* '&' => LRAction::Shift(31) */
+                (30, 122), /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (34, 122), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (35, 122), /* '[' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (38, 122), /* '"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (39, 122), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (40, 122), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (41, 122), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (42, 122), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (43, 122), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (44, 122), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (45, 122), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (46, 122), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
             ],
-            gotos: &[],
+            gotos: &[
+                (0, 32),  /* ApplyExpr => 32 */
+                (44, 33), /* LowerPrefixExpr => 33 */
+                (45, 34), /* LowerPrefixExprOpt => 34 */
+            ],
         },
         // State 9
         LR1State {
-            actions: &[
-                (30, 133), /* '(' => LRAction::Reduce(PrefixOp, 66) */
-                (34, 133), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixOp, 66) */
-                (35, 133), /* '[' => LRAction::Reduce(PrefixOp, 66) */
-                (38, 133), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixOp, 66) */
-                (39, 133), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixOp, 66) */
-                (40, 133), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixOp, 66) */
-                (41, 133), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 66) */
-                (42, 133), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 66) */
-                (43, 133), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 66) */
-                (44, 133), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixOp, 66) */
-                (45, 133), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixOp, 66) */
-                (46, 133), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixOp, 66) */
-            ],
+            actions: &[(9, 137) /* ';' => LRAction::Reduce(ReturnStmt, 113) */],
             gotos: &[],
         },
         // State 10
         LR1State {
-            actions: &[(9, 136) /* ';' => LRAction::Reduce(ReturnStmt, 112) */],
-            gotos: &[],
-        },
-        // State 11
-        LR1State {
             actions: &[
-                (5, 149),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 7) */
-                (6, 149),  /* '#' => LRAction::Reduce(ScopeList, 7) */
-                (8, 149),  /* '.' => LRAction::Reduce(ScopeList, 7) */
-                (10, 149), /* 'let' => LRAction::Reduce(ScopeList, 7) */
-                (25, 149), /* '-' => LRAction::Reduce(ScopeList, 7) */
-                (29, 149), /* '&' => LRAction::Reduce(ScopeList, 7) */
-                (30, 149), /* '(' => LRAction::Reduce(ScopeList, 7) */
-                (32, 149), /* '@' => LRAction::Reduce(ScopeList, 7) */
-                (33, 149), /* ':' => LRAction::Reduce(ScopeList, 7) */
-                (34, 149), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeList, 7) */
-                (35, 149), /* '[' => LRAction::Reduce(ScopeList, 7) */
-                (38, 149), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
-                (39, 149), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
-                (40, 149), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeList, 7) */
-                (41, 149), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (42, 149), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (43, 149), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (44, 149), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
-                (45, 149), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 7) */
-                (46, 149), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 7) */
-                (47, 149), /* 'return' => LRAction::Reduce(ScopeList, 7) */
-                (48, 149), /* '{' => LRAction::Reduce(ScopeList, 7) */
-                (49, 149), /* '}' => LRAction::Reduce(ScopeList, 7) */
+                (5, 150),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 7) */
+                (6, 150),  /* '#' => LRAction::Reduce(ScopeList, 7) */
+                (8, 150),  /* '.' => LRAction::Reduce(ScopeList, 7) */
+                (10, 150), /* 'let' => LRAction::Reduce(ScopeList, 7) */
+                (25, 150), /* '-' => LRAction::Reduce(ScopeList, 7) */
+                (29, 150), /* '&' => LRAction::Reduce(ScopeList, 7) */
+                (30, 150), /* '(' => LRAction::Reduce(ScopeList, 7) */
+                (32, 150), /* '@' => LRAction::Reduce(ScopeList, 7) */
+                (33, 150), /* ':' => LRAction::Reduce(ScopeList, 7) */
+                (34, 150), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeList, 7) */
+                (35, 150), /* '[' => LRAction::Reduce(ScopeList, 7) */
+                (38, 150), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
+                (39, 150), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeList, 7) */
+                (40, 150), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeList, 7) */
+                (41, 150), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (42, 150), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (43, 150), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (44, 150), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeList, 7) */
+                (45, 150), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeList, 7) */
+                (46, 150), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeList, 7) */
+                (47, 150), /* 'return' => LRAction::Reduce(ScopeList, 7) */
+                (48, 150), /* '{' => LRAction::Reduce(ScopeList, 7) */
+                (49, 150), /* '}' => LRAction::Reduce(ScopeList, 7) */
             ],
             gotos: &[
-                (55, 33), /* Scope => 33 */
-                (61, 2),  /* ScopeList => 2 */
+                (56, 35), /* Scope => 35 */
+                (62, 2),  /* ScopeList => 2 */
             ],
         },
-        // State 12
+        // State 11
         LR1State {
             actions: &[
                 (9, 77),  /* ';' => LRAction::Reduce(CompareExprList, 42) */
@@ -741,17 +729,17 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (36, 77), /* ']' => LRAction::Reduce(CompareExprList, 42) */
                 (37, 77), /* ',' => LRAction::Reduce(CompareExprList, 42) */
             ],
-            gotos: &[(20, 34) /* CompareExprList => 34 */],
+            gotos: &[(20, 36) /* CompareExprList => 36 */],
         },
-        // State 13
+        // State 12
         LR1State {
             actions: &[
-                (5, 141), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentKind, 16) */
-                (6, 141), /* '#' => LRAction::Reduce(ScopeContentKind, 16) */
+                (5, 142), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentKind, 16) */
+                (6, 142), /* '#' => LRAction::Reduce(ScopeContentKind, 16) */
             ],
             gotos: &[],
         },
-        // State 14
+        // State 13
         LR1State {
             actions: &[
                 (9, 105),  /* ';' => LRAction::Reduce(InfixInExprOpt, 39) */
@@ -759,21 +747,21 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (13, 105), /* 'if' => LRAction::Reduce(InfixInExprOpt, 39) */
                 (14, 105), /* '||' => LRAction::Reduce(InfixInExprOpt, 39) */
                 (15, 105), /* '&&' => LRAction::Reduce(InfixInExprOpt, 39) */
-                (16, 7),   /* 'in' => LRAction::Shift(35) */
+                (16, 7),   /* 'in' => LRAction::Shift(37) */
                 (31, 105), /* ')' => LRAction::Reduce(InfixInExprOpt, 39) */
                 (36, 105), /* ']' => LRAction::Reduce(InfixInExprOpt, 39) */
                 (37, 105), /* ',' => LRAction::Reduce(InfixInExprOpt, 39) */
             ],
-            gotos: &[(37, 36) /* InfixInExprOpt => 36 */],
+            gotos: &[(37, 38) /* InfixInExprOpt => 38 */],
         },
-        // State 15
+        // State 14
         LR1State {
             actions: &[
-                (9, 156), /* ';' => LRAction::Reduce(StatementKind, 21) */
+                (9, 157), /* ';' => LRAction::Reduce(StatementKind, 21) */
             ],
             gotos: &[],
         },
-        // State 16
+        // State 15
         LR1State {
             actions: &[
                 (9, 52),  /* ';' => LRAction::Reduce(ArithmeticExprList, 52) */
@@ -795,20 +783,20 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (36, 52), /* ']' => LRAction::Reduce(ArithmeticExprList, 52) */
                 (37, 52), /* ',' => LRAction::Reduce(ArithmeticExprList, 52) */
             ],
-            gotos: &[(3, 37) /* ArithmeticExprList => 37 */],
+            gotos: &[(3, 39) /* ArithmeticExprList => 39 */],
         },
-        // State 17
+        // State 16
         LR1State {
             actions: &[
-                (9, 153),  /* ';' => LRAction::Reduce(SetExprOpt, 27) */
-                (12, 8),   /* ':=' => LRAction::Shift(38) */
-                (31, 153), /* ')' => LRAction::Reduce(SetExprOpt, 27) */
-                (36, 153), /* ']' => LRAction::Reduce(SetExprOpt, 27) */
-                (37, 153), /* ',' => LRAction::Reduce(SetExprOpt, 27) */
+                (9, 154),  /* ';' => LRAction::Reduce(SetExprOpt, 27) */
+                (12, 8),   /* ':=' => LRAction::Shift(40) */
+                (31, 154), /* ')' => LRAction::Reduce(SetExprOpt, 27) */
+                (36, 154), /* ']' => LRAction::Reduce(SetExprOpt, 27) */
+                (37, 154), /* ',' => LRAction::Reduce(SetExprOpt, 27) */
             ],
-            gotos: &[(64, 39) /* SetExprOpt => 39 */],
+            gotos: &[(65, 41) /* SetExprOpt => 41 */],
         },
-        // State 18
+        // State 17
         LR1State {
             actions: &[
                 (9, 116),  /* ';' => LRAction::Reduce(LogicalAndExprList, 36) */
@@ -820,16 +808,16 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (36, 116), /* ']' => LRAction::Reduce(LogicalAndExprList, 36) */
                 (37, 116), /* ',' => LRAction::Reduce(LogicalAndExprList, 36) */
             ],
-            gotos: &[(41, 40) /* LogicalAndExprList => 40 */],
+            gotos: &[(41, 42) /* LogicalAndExprList => 42 */],
         },
-        // State 19
+        // State 18
         LR1State {
             actions: &[
-                (9, 155), /* ';' => LRAction::Reduce(StatementKind, 20) */
+                (9, 156), /* ';' => LRAction::Reduce(StatementKind, 20) */
             ],
             gotos: &[],
         },
-        // State 20
+        // State 19
         LR1State {
             actions: &[
                 (9, 119),  /* ';' => LRAction::Reduce(LogicalOrExprList, 33) */
@@ -840,21 +828,21 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (36, 119), /* ']' => LRAction::Reduce(LogicalOrExprList, 33) */
                 (37, 119), /* ',' => LRAction::Reduce(LogicalOrExprList, 33) */
             ],
-            gotos: &[(43, 41) /* LogicalOrExprList => 41 */],
+            gotos: &[(43, 43) /* LogicalOrExprList => 43 */],
         },
-        // State 21
+        // State 20
         LR1State {
             actions: &[
                 (9, 102),  /* ';' => LRAction::Reduce(InfixIfExprOpt, 30) */
                 (12, 102), /* ':=' => LRAction::Reduce(InfixIfExprOpt, 30) */
-                (13, 9),   /* 'if' => LRAction::Shift(42) */
+                (13, 9),   /* 'if' => LRAction::Shift(44) */
                 (31, 102), /* ')' => LRAction::Reduce(InfixIfExprOpt, 30) */
                 (36, 102), /* ']' => LRAction::Reduce(InfixIfExprOpt, 30) */
                 (37, 102), /* ',' => LRAction::Reduce(InfixIfExprOpt, 30) */
             ],
-            gotos: &[(35, 43) /* InfixIfExprOpt => 43 */],
+            gotos: &[(35, 45) /* InfixIfExprOpt => 45 */],
         },
-        // State 22
+        // State 21
         LR1State {
             actions: &[
                 (9, 90),  /* ';' => LRAction::Reduce(FactorExprList, 57) */
@@ -879,111 +867,64 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (36, 90), /* ']' => LRAction::Reduce(FactorExprList, 57) */
                 (37, 90), /* ',' => LRAction::Reduce(FactorExprList, 57) */
             ],
-            gotos: &[(26, 44) /* FactorExprList => 44 */],
+            gotos: &[(26, 46) /* FactorExprList => 46 */],
+        },
+        // State 22
+        LR1State {
+            actions: &[
+                (29, 6),   /* '&' => LRAction::Shift(31) */
+                (30, 122), /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (32, 10),  /* '@' => LRAction::Shift(47) */
+                (33, 11),  /* ':' => LRAction::Shift(48) */
+                (34, 122), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (35, 122), /* '[' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (38, 122), /* '"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (39, 122), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (40, 122), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (41, 122), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (42, 122), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (43, 122), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (44, 122), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (45, 122), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (46, 122), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+            ],
+            gotos: &[
+                (0, 49),  /* ApplyExpr => 49 */
+                (23, 50), /* ExecutorComponent => 50 */
+                (44, 33), /* LowerPrefixExpr => 33 */
+                (45, 34), /* LowerPrefixExprOpt => 34 */
+                (53, 51), /* Qualif => 51 */
+                (69, 52), /* TimeIndicator => 52 */
+            ],
         },
         // State 23
         LR1State {
             actions: &[
-                (30, 10), /* '(' => LRAction::Shift(45) */
-                (32, 11), /* '@' => LRAction::Shift(46) */
-                (33, 12), /* ':' => LRAction::Shift(47) */
-                (34, 6),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(31) */
-                (35, 13), /* '[' => LRAction::Shift(48) */
-                (38, 14), /* '"(\\.|[^"])*"' => LRAction::Shift(49) */
-                (39, 15), /* 'b"(\\.|[^"])*"' => LRAction::Shift(50) */
-                (40, 16), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(51) */
-                (41, 17), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(52) */
-                (42, 18), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(53) */
-                (43, 19), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(54) */
-                (44, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(55) */
-                (45, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (46, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
+                (9, 158), /* ';' => LRAction::Reduce(StatementKind, 22) */
             ],
-            gotos: &[
-                (0, 58),  /* ApplyExpr => 58 */
-                (5, 59),  /* Array => 59 */
-                (8, 60),  /* BinaryInteger => 60 */
-                (11, 61), /* ByteLiteral => 61 */
-                (12, 62), /* Callable => 62 */
-                (23, 63), /* ExecutorComponent => 63 */
-                (28, 64), /* FilePathLiteral => 64 */
-                (30, 65), /* HexByteLiteral => 65 */
-                (31, 66), /* HexadecimalInteger => 66 */
-                (32, 67), /* Ident => 67 */
-                (33, 68), /* Ieee754Float => 68 */
-                (39, 69), /* Literal => 69 */
-                (44, 70), /* Numeric => 70 */
-                (45, 71), /* OctalInteger => 71 */
-                (46, 72), /* Path => 72 */
-                (52, 73), /* Qualif => 73 */
-                (54, 74), /* Rfc3339DateTime => 74 */
-                (67, 75), /* String => 75 */
-                (68, 76), /* TimeIndicator => 76 */
-            ],
+            gotos: &[],
         },
         // State 24
         LR1State {
             actions: &[
-                (30, 10), /* '(' => LRAction::Shift(45) */
-                (34, 6),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(31) */
-                (35, 13), /* '[' => LRAction::Shift(48) */
-                (38, 14), /* '"(\\.|[^"])*"' => LRAction::Shift(49) */
-                (39, 15), /* 'b"(\\.|[^"])*"' => LRAction::Shift(50) */
-                (40, 16), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(51) */
-                (41, 17), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(52) */
-                (42, 18), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(53) */
-                (43, 19), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(54) */
-                (44, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(55) */
-                (45, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (46, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
+                (5, 145), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt0, 11) */
+                (6, 145), /* '#' => LRAction::Reduce(ScopeContentOpt0, 11) */
             ],
-            gotos: &[
-                (0, 77),  /* ApplyExpr => 77 */
-                (5, 59),  /* Array => 59 */
-                (8, 60),  /* BinaryInteger => 60 */
-                (11, 61), /* ByteLiteral => 61 */
-                (12, 62), /* Callable => 62 */
-                (28, 64), /* FilePathLiteral => 64 */
-                (30, 65), /* HexByteLiteral => 65 */
-                (31, 66), /* HexadecimalInteger => 66 */
-                (32, 67), /* Ident => 67 */
-                (33, 68), /* Ieee754Float => 68 */
-                (39, 69), /* Literal => 69 */
-                (44, 70), /* Numeric => 70 */
-                (45, 71), /* OctalInteger => 71 */
-                (46, 72), /* Path => 72 */
-                (54, 74), /* Rfc3339DateTime => 74 */
-                (67, 75), /* String => 75 */
-            ],
+            gotos: &[],
         },
         // State 25
         LR1State {
             actions: &[
-                (9, 157), /* ';' => LRAction::Reduce(StatementKind, 22) */
-            ],
-            gotos: &[],
-        },
-        // State 26
-        LR1State {
-            actions: &[
-                (5, 144), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt0, 11) */
-                (6, 144), /* '#' => LRAction::Reduce(ScopeContentOpt0, 11) */
-            ],
-            gotos: &[],
-        },
-        // State 27
-        LR1State {
-            actions: &[
-                (5, 147), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt1, 10) */
-                (6, 23),  /* '#' => LRAction::Shift(78) */
+                (5, 148), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt1, 10) */
+                (6, 12),  /* '#' => LRAction::Shift(53) */
             ],
             gotos: &[
-                (17, 79), /* Comment => 79 */
-                (29, 80), /* Hash => 80 */
-                (60, 81), /* ScopeContentOpt1 => 81 */
+                (17, 54), /* Comment => 54 */
+                (29, 55), /* Hash => 55 */
+                (61, 56), /* ScopeContentOpt1 => 56 */
             ],
         },
-        // State 28
+        // State 26
         LR1State {
             actions: &[
                 (9, 87),  /* ';' => LRAction::Reduce(Expr, 24) */
@@ -993,73 +934,195 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
+        // State 27
+        LR1State {
+            actions: &[
+                (5, 141), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentKind, 15) */
+                (6, 141), /* '#' => LRAction::Reduce(ScopeContentKind, 15) */
+            ],
+            gotos: &[],
+        },
+        // State 28
+        LR1State {
+            actions: &[(9, 13) /* ';' => LRAction::Shift(57) */],
+            gotos: &[(63, 58) /* Semi => 58 */],
+        },
         // State 29
         LR1State {
             actions: &[
-                (5, 140), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentKind, 15) */
-                (6, 140), /* '#' => LRAction::Reduce(ScopeContentKind, 15) */
+                (8, 98),  /* '.' => LRAction::Reduce(Ident, 83) */
+                (9, 98),  /* ';' => LRAction::Reduce(Ident, 83) */
+                (11, 98), /* '=' => LRAction::Reduce(Ident, 83) */
+                (12, 98), /* ':=' => LRAction::Reduce(Ident, 83) */
+                (13, 98), /* 'if' => LRAction::Reduce(Ident, 83) */
+                (14, 98), /* '||' => LRAction::Reduce(Ident, 83) */
+                (15, 98), /* '&&' => LRAction::Reduce(Ident, 83) */
+                (16, 98), /* 'in' => LRAction::Reduce(Ident, 83) */
+                (17, 98), /* '>=' => LRAction::Reduce(Ident, 83) */
+                (18, 98), /* '<=' => LRAction::Reduce(Ident, 83) */
+                (19, 98), /* '>' => LRAction::Reduce(Ident, 83) */
+                (20, 98), /* '<' => LRAction::Reduce(Ident, 83) */
+                (21, 98), /* '!=' => LRAction::Reduce(Ident, 83) */
+                (22, 98), /* '/=' => LRAction::Reduce(Ident, 83) */
+                (23, 98), /* '==' => LRAction::Reduce(Ident, 83) */
+                (24, 98), /* '+' => LRAction::Reduce(Ident, 83) */
+                (25, 98), /* '-' => LRAction::Reduce(Ident, 83) */
+                (26, 98), /* '*' => LRAction::Reduce(Ident, 83) */
+                (27, 98), /* '/' => LRAction::Reduce(Ident, 83) */
+                (28, 98), /* '%' => LRAction::Reduce(Ident, 83) */
+                (29, 98), /* '&' => LRAction::Reduce(Ident, 83) */
+                (30, 98), /* '(' => LRAction::Reduce(Ident, 83) */
+                (31, 98), /* ')' => LRAction::Reduce(Ident, 83) */
+                (32, 98), /* '@' => LRAction::Reduce(Ident, 83) */
+                (33, 98), /* ':' => LRAction::Reduce(Ident, 83) */
+                (34, 98), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Ident, 83) */
+                (35, 98), /* '[' => LRAction::Reduce(Ident, 83) */
+                (36, 98), /* ']' => LRAction::Reduce(Ident, 83) */
+                (37, 98), /* ',' => LRAction::Reduce(Ident, 83) */
+                (38, 98), /* '"(\\.|[^"])*"' => LRAction::Reduce(Ident, 83) */
+                (39, 98), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Ident, 83) */
+                (40, 98), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Ident, 83) */
+                (41, 98), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 83) */
+                (42, 98), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 83) */
+                (43, 98), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 83) */
+                (44, 98), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 83) */
+                (45, 98), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Ident, 83) */
+                (46, 98), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Ident, 83) */
             ],
             gotos: &[],
         },
         // State 30
         LR1State {
-            actions: &[(9, 24) /* ';' => LRAction::Shift(82) */],
-            gotos: &[(62, 83) /* Semi => 83 */],
+            actions: &[(11, 14) /* '=' => LRAction::Shift(59) */],
+            gotos: &[],
         },
         // State 31
         LR1State {
             actions: &[
-                (8, 98),  /* '.' => LRAction::Reduce(Ident, 82) */
-                (9, 98),  /* ';' => LRAction::Reduce(Ident, 82) */
-                (11, 98), /* '=' => LRAction::Reduce(Ident, 82) */
-                (12, 98), /* ':=' => LRAction::Reduce(Ident, 82) */
-                (13, 98), /* 'if' => LRAction::Reduce(Ident, 82) */
-                (14, 98), /* '||' => LRAction::Reduce(Ident, 82) */
-                (15, 98), /* '&&' => LRAction::Reduce(Ident, 82) */
-                (16, 98), /* 'in' => LRAction::Reduce(Ident, 82) */
-                (17, 98), /* '>=' => LRAction::Reduce(Ident, 82) */
-                (18, 98), /* '<=' => LRAction::Reduce(Ident, 82) */
-                (19, 98), /* '>' => LRAction::Reduce(Ident, 82) */
-                (20, 98), /* '<' => LRAction::Reduce(Ident, 82) */
-                (21, 98), /* '!=' => LRAction::Reduce(Ident, 82) */
-                (22, 98), /* '/=' => LRAction::Reduce(Ident, 82) */
-                (23, 98), /* '==' => LRAction::Reduce(Ident, 82) */
-                (24, 98), /* '+' => LRAction::Reduce(Ident, 82) */
-                (25, 98), /* '-' => LRAction::Reduce(Ident, 82) */
-                (26, 98), /* '*' => LRAction::Reduce(Ident, 82) */
-                (27, 98), /* '/' => LRAction::Reduce(Ident, 82) */
-                (28, 98), /* '%' => LRAction::Reduce(Ident, 82) */
-                (30, 98), /* '(' => LRAction::Reduce(Ident, 82) */
-                (31, 98), /* ')' => LRAction::Reduce(Ident, 82) */
-                (32, 98), /* '@' => LRAction::Reduce(Ident, 82) */
-                (33, 98), /* ':' => LRAction::Reduce(Ident, 82) */
-                (34, 98), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Ident, 82) */
-                (35, 98), /* '[' => LRAction::Reduce(Ident, 82) */
-                (36, 98), /* ']' => LRAction::Reduce(Ident, 82) */
-                (37, 98), /* ',' => LRAction::Reduce(Ident, 82) */
-                (38, 98), /* '"(\\.|[^"])*"' => LRAction::Reduce(Ident, 82) */
-                (39, 98), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Ident, 82) */
-                (40, 98), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Ident, 82) */
-                (41, 98), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 82) */
-                (42, 98), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 82) */
-                (43, 98), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 82) */
-                (44, 98), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Ident, 82) */
-                (45, 98), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Ident, 82) */
-                (46, 98), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Ident, 82) */
+                (30, 121), /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (34, 121), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (35, 121), /* '[' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (38, 121), /* '"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (39, 121), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (40, 121), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (41, 121), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (42, 121), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (43, 121), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (44, 121), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (45, 121), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
+                (46, 121), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LowerPrefixExprOpt, 69) */
             ],
             gotos: &[],
         },
         // State 32
         LR1State {
-            actions: &[(11, 25) /* '=' => LRAction::Shift(84) */],
+            actions: &[
+                (9, 131),  /* ';' => LRAction::Reduce(PrefixExpr, 61) */
+                (12, 131), /* ':=' => LRAction::Reduce(PrefixExpr, 61) */
+                (13, 131), /* 'if' => LRAction::Reduce(PrefixExpr, 61) */
+                (14, 131), /* '||' => LRAction::Reduce(PrefixExpr, 61) */
+                (15, 131), /* '&&' => LRAction::Reduce(PrefixExpr, 61) */
+                (16, 131), /* 'in' => LRAction::Reduce(PrefixExpr, 61) */
+                (17, 131), /* '>=' => LRAction::Reduce(PrefixExpr, 61) */
+                (18, 131), /* '<=' => LRAction::Reduce(PrefixExpr, 61) */
+                (19, 131), /* '>' => LRAction::Reduce(PrefixExpr, 61) */
+                (20, 131), /* '<' => LRAction::Reduce(PrefixExpr, 61) */
+                (21, 131), /* '!=' => LRAction::Reduce(PrefixExpr, 61) */
+                (22, 131), /* '/=' => LRAction::Reduce(PrefixExpr, 61) */
+                (23, 131), /* '==' => LRAction::Reduce(PrefixExpr, 61) */
+                (24, 131), /* '+' => LRAction::Reduce(PrefixExpr, 61) */
+                (25, 131), /* '-' => LRAction::Reduce(PrefixExpr, 61) */
+                (26, 131), /* '*' => LRAction::Reduce(PrefixExpr, 61) */
+                (27, 131), /* '/' => LRAction::Reduce(PrefixExpr, 61) */
+                (28, 131), /* '%' => LRAction::Reduce(PrefixExpr, 61) */
+                (31, 131), /* ')' => LRAction::Reduce(PrefixExpr, 61) */
+                (36, 131), /* ']' => LRAction::Reduce(PrefixExpr, 61) */
+                (37, 131), /* ',' => LRAction::Reduce(PrefixExpr, 61) */
+            ],
             gotos: &[],
         },
         // State 33
         LR1State {
-            actions: &[(49, 26) /* '}' => LRAction::Shift(85) */],
-            gotos: &[],
+            actions: &[
+                (9, 49),  /* ';' => LRAction::Reduce(ApplyExprList, 67) */
+                (12, 49), /* ':=' => LRAction::Reduce(ApplyExprList, 67) */
+                (13, 49), /* 'if' => LRAction::Reduce(ApplyExprList, 67) */
+                (14, 49), /* '||' => LRAction::Reduce(ApplyExprList, 67) */
+                (15, 49), /* '&&' => LRAction::Reduce(ApplyExprList, 67) */
+                (16, 49), /* 'in' => LRAction::Reduce(ApplyExprList, 67) */
+                (17, 49), /* '>=' => LRAction::Reduce(ApplyExprList, 67) */
+                (18, 49), /* '<=' => LRAction::Reduce(ApplyExprList, 67) */
+                (19, 49), /* '>' => LRAction::Reduce(ApplyExprList, 67) */
+                (20, 49), /* '<' => LRAction::Reduce(ApplyExprList, 67) */
+                (21, 49), /* '!=' => LRAction::Reduce(ApplyExprList, 67) */
+                (22, 49), /* '/=' => LRAction::Reduce(ApplyExprList, 67) */
+                (23, 49), /* '==' => LRAction::Reduce(ApplyExprList, 67) */
+                (24, 49), /* '+' => LRAction::Reduce(ApplyExprList, 67) */
+                (25, 49), /* '-' => LRAction::Reduce(ApplyExprList, 67) */
+                (26, 49), /* '*' => LRAction::Reduce(ApplyExprList, 67) */
+                (27, 49), /* '/' => LRAction::Reduce(ApplyExprList, 67) */
+                (28, 49), /* '%' => LRAction::Reduce(ApplyExprList, 67) */
+                (29, 49), /* '&' => LRAction::Reduce(ApplyExprList, 67) */
+                (30, 49), /* '(' => LRAction::Reduce(ApplyExprList, 67) */
+                (31, 49), /* ')' => LRAction::Reduce(ApplyExprList, 67) */
+                (32, 49), /* '@' => LRAction::Reduce(ApplyExprList, 67) */
+                (33, 49), /* ':' => LRAction::Reduce(ApplyExprList, 67) */
+                (34, 49), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ApplyExprList, 67) */
+                (35, 49), /* '[' => LRAction::Reduce(ApplyExprList, 67) */
+                (36, 49), /* ']' => LRAction::Reduce(ApplyExprList, 67) */
+                (37, 49), /* ',' => LRAction::Reduce(ApplyExprList, 67) */
+                (38, 49), /* '"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 67) */
+                (39, 49), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 67) */
+                (40, 49), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ApplyExprList, 67) */
+                (41, 49), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 67) */
+                (42, 49), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 67) */
+                (43, 49), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 67) */
+                (44, 49), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 67) */
+                (45, 49), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ApplyExprList, 67) */
+                (46, 49), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 67) */
+            ],
+            gotos: &[(1, 60) /* ApplyExprList => 60 */],
         },
         // State 34
+        LR1State {
+            actions: &[
+                (30, 15), /* '(' => LRAction::Shift(61) */
+                (34, 5),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(29) */
+                (35, 16), /* '[' => LRAction::Shift(62) */
+                (38, 17), /* '"(\\.|[^"])*"' => LRAction::Shift(63) */
+                (39, 18), /* 'b"(\\.|[^"])*"' => LRAction::Shift(64) */
+                (40, 19), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(65) */
+                (41, 20), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(66) */
+                (42, 21), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(67) */
+                (43, 22), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(68) */
+                (44, 23), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(69) */
+                (45, 24), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(70) */
+                (46, 25), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(71) */
+            ],
+            gotos: &[
+                (5, 72),  /* Array => 72 */
+                (8, 73),  /* BinaryInteger => 73 */
+                (11, 74), /* ByteLiteral => 74 */
+                (12, 75), /* Callable => 75 */
+                (28, 76), /* FilePathLiteral => 76 */
+                (30, 77), /* HexByteLiteral => 77 */
+                (31, 78), /* HexadecimalInteger => 78 */
+                (32, 79), /* Ident => 79 */
+                (33, 80), /* Ieee754Float => 80 */
+                (39, 81), /* Literal => 81 */
+                (46, 82), /* Numeric => 82 */
+                (47, 83), /* OctalInteger => 83 */
+                (48, 84), /* Path => 84 */
+                (55, 85), /* Rfc3339DateTime => 85 */
+                (68, 86), /* String => 86 */
+            ],
+        },
+        // State 35
+        LR1State {
+            actions: &[(49, 26) /* '}' => LRAction::Shift(87) */],
+            gotos: &[],
+        },
+        // State 36
         LR1State {
             actions: &[
                 (9, 75),  /* ';' => LRAction::Reduce(CompareExpr, 40) */
@@ -1068,49 +1131,48 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (14, 75), /* '||' => LRAction::Reduce(CompareExpr, 40) */
                 (15, 75), /* '&&' => LRAction::Reduce(CompareExpr, 40) */
                 (16, 75), /* 'in' => LRAction::Reduce(CompareExpr, 40) */
-                (17, 27), /* '>=' => LRAction::Shift(86) */
-                (18, 28), /* '<=' => LRAction::Shift(87) */
-                (19, 29), /* '>' => LRAction::Shift(88) */
-                (20, 30), /* '<' => LRAction::Shift(89) */
-                (21, 31), /* '!=' => LRAction::Shift(90) */
-                (22, 32), /* '/=' => LRAction::Shift(91) */
-                (23, 33), /* '==' => LRAction::Shift(92) */
+                (17, 27), /* '>=' => LRAction::Shift(88) */
+                (18, 28), /* '<=' => LRAction::Shift(89) */
+                (19, 29), /* '>' => LRAction::Shift(90) */
+                (20, 30), /* '<' => LRAction::Shift(91) */
+                (21, 31), /* '!=' => LRAction::Shift(92) */
+                (22, 32), /* '/=' => LRAction::Shift(93) */
+                (23, 33), /* '==' => LRAction::Shift(94) */
                 (31, 75), /* ')' => LRAction::Reduce(CompareExpr, 40) */
                 (36, 75), /* ']' => LRAction::Reduce(CompareExpr, 40) */
                 (37, 75), /* ',' => LRAction::Reduce(CompareExpr, 40) */
             ],
-            gotos: &[(21, 93) /* CompareOp => 93 */],
+            gotos: &[(21, 95) /* CompareOp => 95 */],
         },
-        // State 35
+        // State 37
         LR1State {
             actions: &[
                 (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
             ],
             gotos: &[
-                (2, 12),  /* ArithmeticExpr => 12 */
-                (19, 94), /* CompareExpr => 94 */
-                (25, 16), /* FactorExpr => 16 */
-                (48, 22), /* PrefixExpr => 22 */
-                (49, 23), /* PrefixExprList => 23 */
-                (50, 24), /* PrefixOp => 24 */
+                (2, 11),  /* ArithmeticExpr => 11 */
+                (19, 96), /* CompareExpr => 96 */
+                (25, 15), /* FactorExpr => 15 */
+                (50, 21), /* PrefixExpr => 21 */
+                (51, 22), /* PrefixExprList => 22 */
             ],
         },
-        // State 36
+        // State 38
         LR1State {
             actions: &[
                 (9, 103),  /* ';' => LRAction::Reduce(InfixInExpr, 37) */
@@ -1124,7 +1186,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 37
+        // State 39
         LR1State {
             actions: &[
                 (9, 50),  /* ';' => LRAction::Reduce(ArithmeticExpr, 50) */
@@ -1140,117 +1202,115 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (21, 50), /* '!=' => LRAction::Reduce(ArithmeticExpr, 50) */
                 (22, 50), /* '/=' => LRAction::Reduce(ArithmeticExpr, 50) */
                 (23, 50), /* '==' => LRAction::Reduce(ArithmeticExpr, 50) */
-                (24, 34), /* '+' => LRAction::Shift(95) */
-                (25, 35), /* '-' => LRAction::Shift(96) */
+                (24, 34), /* '+' => LRAction::Shift(97) */
+                (25, 35), /* '-' => LRAction::Shift(98) */
                 (31, 50), /* ')' => LRAction::Reduce(ArithmeticExpr, 50) */
                 (36, 50), /* ']' => LRAction::Reduce(ArithmeticExpr, 50) */
                 (37, 50), /* ',' => LRAction::Reduce(ArithmeticExpr, 50) */
             ],
-            gotos: &[(4, 97) /* ArithmeticOp => 97 */],
-        },
-        // State 38
-        LR1State {
-            actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
-            ],
-            gotos: &[
-                (2, 12),  /* ArithmeticExpr => 12 */
-                (19, 14), /* CompareExpr => 14 */
-                (25, 16), /* FactorExpr => 16 */
-                (34, 98), /* InfixIfExpr => 98 */
-                (36, 18), /* InfixInExpr => 18 */
-                (40, 20), /* LogicalAndExpr => 20 */
-                (42, 21), /* LogicalOrExpr => 21 */
-                (48, 22), /* PrefixExpr => 22 */
-                (49, 23), /* PrefixExprList => 23 */
-                (50, 24), /* PrefixOp => 24 */
-            ],
-        },
-        // State 39
-        LR1State {
-            actions: &[
-                (9, 151),  /* ';' => LRAction::Reduce(SetExpr, 25) */
-                (31, 151), /* ')' => LRAction::Reduce(SetExpr, 25) */
-                (36, 151), /* ']' => LRAction::Reduce(SetExpr, 25) */
-                (37, 151), /* ',' => LRAction::Reduce(SetExpr, 25) */
-            ],
-            gotos: &[],
+            gotos: &[(4, 99) /* ArithmeticOp => 99 */],
         },
         // State 40
         LR1State {
             actions: &[
-                (9, 114),  /* ';' => LRAction::Reduce(LogicalAndExpr, 34) */
-                (12, 114), /* ':=' => LRAction::Reduce(LogicalAndExpr, 34) */
-                (13, 114), /* 'if' => LRAction::Reduce(LogicalAndExpr, 34) */
-                (14, 114), /* '||' => LRAction::Reduce(LogicalAndExpr, 34) */
-                (15, 36),  /* '&&' => LRAction::Shift(99) */
-                (31, 114), /* ')' => LRAction::Reduce(LogicalAndExpr, 34) */
-                (36, 114), /* ']' => LRAction::Reduce(LogicalAndExpr, 34) */
-                (37, 114), /* ',' => LRAction::Reduce(LogicalAndExpr, 34) */
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
             ],
-            gotos: &[],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (19, 13),  /* CompareExpr => 13 */
+                (25, 15),  /* FactorExpr => 15 */
+                (34, 100), /* InfixIfExpr => 100 */
+                (36, 17),  /* InfixInExpr => 17 */
+                (40, 19),  /* LogicalAndExpr => 19 */
+                (42, 20),  /* LogicalOrExpr => 20 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+            ],
         },
         // State 41
         LR1State {
             actions: &[
-                (9, 117),  /* ';' => LRAction::Reduce(LogicalOrExpr, 31) */
-                (12, 117), /* ':=' => LRAction::Reduce(LogicalOrExpr, 31) */
-                (13, 117), /* 'if' => LRAction::Reduce(LogicalOrExpr, 31) */
-                (14, 37),  /* '||' => LRAction::Shift(100) */
-                (31, 117), /* ')' => LRAction::Reduce(LogicalOrExpr, 31) */
-                (36, 117), /* ']' => LRAction::Reduce(LogicalOrExpr, 31) */
-                (37, 117), /* ',' => LRAction::Reduce(LogicalOrExpr, 31) */
+                (9, 152),  /* ';' => LRAction::Reduce(SetExpr, 25) */
+                (31, 152), /* ')' => LRAction::Reduce(SetExpr, 25) */
+                (36, 152), /* ']' => LRAction::Reduce(SetExpr, 25) */
+                (37, 152), /* ',' => LRAction::Reduce(SetExpr, 25) */
             ],
             gotos: &[],
         },
         // State 42
         LR1State {
             actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (9, 114),  /* ';' => LRAction::Reduce(LogicalAndExpr, 34) */
+                (12, 114), /* ':=' => LRAction::Reduce(LogicalAndExpr, 34) */
+                (13, 114), /* 'if' => LRAction::Reduce(LogicalAndExpr, 34) */
+                (14, 114), /* '||' => LRAction::Reduce(LogicalAndExpr, 34) */
+                (15, 36),  /* '&&' => LRAction::Shift(101) */
+                (31, 114), /* ')' => LRAction::Reduce(LogicalAndExpr, 34) */
+                (36, 114), /* ']' => LRAction::Reduce(LogicalAndExpr, 34) */
+                (37, 114), /* ',' => LRAction::Reduce(LogicalAndExpr, 34) */
             ],
-            gotos: &[
-                (2, 12),   /* ArithmeticExpr => 12 */
-                (19, 14),  /* CompareExpr => 14 */
-                (25, 16),  /* FactorExpr => 16 */
-                (36, 18),  /* InfixInExpr => 18 */
-                (40, 20),  /* LogicalAndExpr => 20 */
-                (42, 101), /* LogicalOrExpr => 101 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-            ],
+            gotos: &[],
         },
         // State 43
+        LR1State {
+            actions: &[
+                (9, 117),  /* ';' => LRAction::Reduce(LogicalOrExpr, 31) */
+                (12, 117), /* ':=' => LRAction::Reduce(LogicalOrExpr, 31) */
+                (13, 117), /* 'if' => LRAction::Reduce(LogicalOrExpr, 31) */
+                (14, 37),  /* '||' => LRAction::Shift(102) */
+                (31, 117), /* ')' => LRAction::Reduce(LogicalOrExpr, 31) */
+                (36, 117), /* ']' => LRAction::Reduce(LogicalOrExpr, 31) */
+                (37, 117), /* ',' => LRAction::Reduce(LogicalOrExpr, 31) */
+            ],
+            gotos: &[],
+        },
+        // State 44
+        LR1State {
+            actions: &[
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+            ],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (19, 13),  /* CompareExpr => 13 */
+                (25, 15),  /* FactorExpr => 15 */
+                (36, 17),  /* InfixInExpr => 17 */
+                (40, 19),  /* LogicalAndExpr => 19 */
+                (42, 103), /* LogicalOrExpr => 103 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+            ],
+        },
+        // State 45
         LR1State {
             actions: &[
                 (9, 100),  /* ';' => LRAction::Reduce(InfixIfExpr, 28) */
@@ -1261,7 +1321,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 44
+        // State 46
         LR1State {
             actions: &[
                 (9, 88),  /* ';' => LRAction::Reduce(FactorExpr, 55) */
@@ -1279,1206 +1339,87 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (23, 88), /* '==' => LRAction::Reduce(FactorExpr, 55) */
                 (24, 88), /* '+' => LRAction::Reduce(FactorExpr, 55) */
                 (25, 88), /* '-' => LRAction::Reduce(FactorExpr, 55) */
-                (26, 38), /* '*' => LRAction::Shift(102) */
-                (27, 39), /* '/' => LRAction::Shift(103) */
-                (28, 40), /* '%' => LRAction::Shift(104) */
+                (26, 38), /* '*' => LRAction::Shift(104) */
+                (27, 39), /* '/' => LRAction::Shift(105) */
+                (28, 40), /* '%' => LRAction::Shift(106) */
                 (31, 88), /* ')' => LRAction::Reduce(FactorExpr, 55) */
                 (36, 88), /* ']' => LRAction::Reduce(FactorExpr, 55) */
                 (37, 88), /* ',' => LRAction::Reduce(FactorExpr, 55) */
             ],
-            gotos: &[(27, 105) /* FactorOp => 105 */],
-        },
-        // State 45
-        LR1State {
-            actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
-            ],
-            gotos: &[
-                (2, 12),   /* ArithmeticExpr => 12 */
-                (19, 14),  /* CompareExpr => 14 */
-                (24, 106), /* Expr => 106 */
-                (25, 16),  /* FactorExpr => 16 */
-                (34, 17),  /* InfixIfExpr => 17 */
-                (36, 18),  /* InfixInExpr => 18 */
-                (40, 20),  /* LogicalAndExpr => 20 */
-                (42, 21),  /* LogicalOrExpr => 21 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-                (63, 28),  /* SetExpr => 28 */
-            ],
-        },
-        // State 46
-        LR1State {
-            actions: &[
-                (34, 6), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(31) */
-            ],
-            gotos: &[
-                (32, 67),  /* Ident => 67 */
-                (46, 107), /* Path => 107 */
-            ],
+            gotos: &[(27, 107) /* FactorOp => 107 */],
         },
         // State 47
         LR1State {
             actions: &[
-                (30, 10), /* '(' => LRAction::Shift(45) */
-                (34, 6),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(31) */
-                (35, 13), /* '[' => LRAction::Shift(48) */
-                (38, 14), /* '"(\\.|[^"])*"' => LRAction::Shift(49) */
-                (39, 15), /* 'b"(\\.|[^"])*"' => LRAction::Shift(50) */
-                (40, 16), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(51) */
-                (41, 17), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(52) */
-                (42, 18), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(53) */
-                (43, 19), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(54) */
-                (44, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(55) */
-                (45, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (46, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
+                (34, 5), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(29) */
             ],
             gotos: &[
-                (5, 59),   /* Array => 59 */
-                (8, 60),   /* BinaryInteger => 60 */
-                (11, 61),  /* ByteLiteral => 61 */
-                (12, 108), /* Callable => 108 */
-                (28, 64),  /* FilePathLiteral => 64 */
-                (30, 65),  /* HexByteLiteral => 65 */
-                (31, 66),  /* HexadecimalInteger => 66 */
-                (32, 67),  /* Ident => 67 */
-                (33, 68),  /* Ieee754Float => 68 */
-                (39, 69),  /* Literal => 69 */
-                (44, 70),  /* Numeric => 70 */
-                (45, 71),  /* OctalInteger => 71 */
-                (46, 72),  /* Path => 72 */
-                (54, 74),  /* Rfc3339DateTime => 74 */
-                (67, 75),  /* String => 75 */
+                (32, 79),  /* Ident => 79 */
+                (48, 108), /* Path => 108 */
             ],
         },
         // State 48
         LR1State {
             actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (36, 57),  /* ']' => LRAction::Reduce(ArrayOpt, 92) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 15), /* '(' => LRAction::Shift(61) */
+                (34, 5),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(29) */
+                (35, 16), /* '[' => LRAction::Shift(62) */
+                (38, 17), /* '"(\\.|[^"])*"' => LRAction::Shift(63) */
+                (39, 18), /* 'b"(\\.|[^"])*"' => LRAction::Shift(64) */
+                (40, 19), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(65) */
+                (41, 20), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(66) */
+                (42, 21), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(67) */
+                (43, 22), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(68) */
+                (44, 23), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(69) */
+                (45, 24), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(70) */
+                (46, 25), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(71) */
             ],
             gotos: &[
-                (2, 12),   /* ArithmeticExpr => 12 */
-                (6, 109),  /* ArrayOpt => 109 */
-                (15, 110), /* CommaSepElements => 110 */
-                (19, 14),  /* CompareExpr => 14 */
-                (24, 111), /* Expr => 111 */
-                (25, 16),  /* FactorExpr => 16 */
-                (34, 17),  /* InfixIfExpr => 17 */
-                (36, 18),  /* InfixInExpr => 18 */
-                (40, 20),  /* LogicalAndExpr => 20 */
-                (42, 21),  /* LogicalOrExpr => 21 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-                (63, 28),  /* SetExpr => 28 */
+                (5, 72),   /* Array => 72 */
+                (8, 73),   /* BinaryInteger => 73 */
+                (11, 74),  /* ByteLiteral => 74 */
+                (12, 109), /* Callable => 109 */
+                (28, 76),  /* FilePathLiteral => 76 */
+                (30, 77),  /* HexByteLiteral => 77 */
+                (31, 78),  /* HexadecimalInteger => 78 */
+                (32, 79),  /* Ident => 79 */
+                (33, 80),  /* Ieee754Float => 80 */
+                (39, 81),  /* Literal => 81 */
+                (46, 82),  /* Numeric => 82 */
+                (47, 83),  /* OctalInteger => 83 */
+                (48, 84),  /* Path => 84 */
+                (55, 85),  /* Rfc3339DateTime => 85 */
+                (68, 86),  /* String => 86 */
             ],
         },
         // State 49
         LR1State {
             actions: &[
-                (9, 158),  /* ';' => LRAction::Reduce(String, 99) */
-                (12, 158), /* ':=' => LRAction::Reduce(String, 99) */
-                (13, 158), /* 'if' => LRAction::Reduce(String, 99) */
-                (14, 158), /* '||' => LRAction::Reduce(String, 99) */
-                (15, 158), /* '&&' => LRAction::Reduce(String, 99) */
-                (16, 158), /* 'in' => LRAction::Reduce(String, 99) */
-                (17, 158), /* '>=' => LRAction::Reduce(String, 99) */
-                (18, 158), /* '<=' => LRAction::Reduce(String, 99) */
-                (19, 158), /* '>' => LRAction::Reduce(String, 99) */
-                (20, 158), /* '<' => LRAction::Reduce(String, 99) */
-                (21, 158), /* '!=' => LRAction::Reduce(String, 99) */
-                (22, 158), /* '/=' => LRAction::Reduce(String, 99) */
-                (23, 158), /* '==' => LRAction::Reduce(String, 99) */
-                (24, 158), /* '+' => LRAction::Reduce(String, 99) */
-                (25, 158), /* '-' => LRAction::Reduce(String, 99) */
-                (26, 158), /* '*' => LRAction::Reduce(String, 99) */
-                (27, 158), /* '/' => LRAction::Reduce(String, 99) */
-                (28, 158), /* '%' => LRAction::Reduce(String, 99) */
-                (30, 158), /* '(' => LRAction::Reduce(String, 99) */
-                (31, 158), /* ')' => LRAction::Reduce(String, 99) */
-                (32, 158), /* '@' => LRAction::Reduce(String, 99) */
-                (33, 158), /* ':' => LRAction::Reduce(String, 99) */
-                (34, 158), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(String, 99) */
-                (35, 158), /* '[' => LRAction::Reduce(String, 99) */
-                (36, 158), /* ']' => LRAction::Reduce(String, 99) */
-                (37, 158), /* ',' => LRAction::Reduce(String, 99) */
-                (38, 158), /* '"(\\.|[^"])*"' => LRAction::Reduce(String, 99) */
-                (39, 158), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(String, 99) */
-                (40, 158), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(String, 99) */
-                (41, 158), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 99) */
-                (42, 158), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 99) */
-                (43, 158), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 99) */
-                (44, 158), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 99) */
-                (45, 158), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(String, 99) */
-                (46, 158), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(String, 99) */
+                (9, 132),  /* ';' => LRAction::Reduce(PrefixExpr, 62) */
+                (12, 132), /* ':=' => LRAction::Reduce(PrefixExpr, 62) */
+                (13, 132), /* 'if' => LRAction::Reduce(PrefixExpr, 62) */
+                (14, 132), /* '||' => LRAction::Reduce(PrefixExpr, 62) */
+                (15, 132), /* '&&' => LRAction::Reduce(PrefixExpr, 62) */
+                (16, 132), /* 'in' => LRAction::Reduce(PrefixExpr, 62) */
+                (17, 132), /* '>=' => LRAction::Reduce(PrefixExpr, 62) */
+                (18, 132), /* '<=' => LRAction::Reduce(PrefixExpr, 62) */
+                (19, 132), /* '>' => LRAction::Reduce(PrefixExpr, 62) */
+                (20, 132), /* '<' => LRAction::Reduce(PrefixExpr, 62) */
+                (21, 132), /* '!=' => LRAction::Reduce(PrefixExpr, 62) */
+                (22, 132), /* '/=' => LRAction::Reduce(PrefixExpr, 62) */
+                (23, 132), /* '==' => LRAction::Reduce(PrefixExpr, 62) */
+                (24, 132), /* '+' => LRAction::Reduce(PrefixExpr, 62) */
+                (25, 132), /* '-' => LRAction::Reduce(PrefixExpr, 62) */
+                (26, 132), /* '*' => LRAction::Reduce(PrefixExpr, 62) */
+                (27, 132), /* '/' => LRAction::Reduce(PrefixExpr, 62) */
+                (28, 132), /* '%' => LRAction::Reduce(PrefixExpr, 62) */
+                (31, 132), /* ')' => LRAction::Reduce(PrefixExpr, 62) */
+                (36, 132), /* ']' => LRAction::Reduce(PrefixExpr, 62) */
+                (37, 132), /* ',' => LRAction::Reduce(PrefixExpr, 62) */
             ],
             gotos: &[],
         },
         // State 50
-        LR1State {
-            actions: &[
-                (9, 63),  /* ';' => LRAction::Reduce(ByteLiteral, 100) */
-                (12, 63), /* ':=' => LRAction::Reduce(ByteLiteral, 100) */
-                (13, 63), /* 'if' => LRAction::Reduce(ByteLiteral, 100) */
-                (14, 63), /* '||' => LRAction::Reduce(ByteLiteral, 100) */
-                (15, 63), /* '&&' => LRAction::Reduce(ByteLiteral, 100) */
-                (16, 63), /* 'in' => LRAction::Reduce(ByteLiteral, 100) */
-                (17, 63), /* '>=' => LRAction::Reduce(ByteLiteral, 100) */
-                (18, 63), /* '<=' => LRAction::Reduce(ByteLiteral, 100) */
-                (19, 63), /* '>' => LRAction::Reduce(ByteLiteral, 100) */
-                (20, 63), /* '<' => LRAction::Reduce(ByteLiteral, 100) */
-                (21, 63), /* '!=' => LRAction::Reduce(ByteLiteral, 100) */
-                (22, 63), /* '/=' => LRAction::Reduce(ByteLiteral, 100) */
-                (23, 63), /* '==' => LRAction::Reduce(ByteLiteral, 100) */
-                (24, 63), /* '+' => LRAction::Reduce(ByteLiteral, 100) */
-                (25, 63), /* '-' => LRAction::Reduce(ByteLiteral, 100) */
-                (26, 63), /* '*' => LRAction::Reduce(ByteLiteral, 100) */
-                (27, 63), /* '/' => LRAction::Reduce(ByteLiteral, 100) */
-                (28, 63), /* '%' => LRAction::Reduce(ByteLiteral, 100) */
-                (30, 63), /* '(' => LRAction::Reduce(ByteLiteral, 100) */
-                (31, 63), /* ')' => LRAction::Reduce(ByteLiteral, 100) */
-                (32, 63), /* '@' => LRAction::Reduce(ByteLiteral, 100) */
-                (33, 63), /* ':' => LRAction::Reduce(ByteLiteral, 100) */
-                (34, 63), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ByteLiteral, 100) */
-                (35, 63), /* '[' => LRAction::Reduce(ByteLiteral, 100) */
-                (36, 63), /* ']' => LRAction::Reduce(ByteLiteral, 100) */
-                (37, 63), /* ',' => LRAction::Reduce(ByteLiteral, 100) */
-                (38, 63), /* '"(\\.|[^"])*"' => LRAction::Reduce(ByteLiteral, 100) */
-                (39, 63), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ByteLiteral, 100) */
-                (40, 63), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ByteLiteral, 100) */
-                (41, 63), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 100) */
-                (42, 63), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 100) */
-                (43, 63), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 100) */
-                (44, 63), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 100) */
-                (45, 63), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ByteLiteral, 100) */
-                (46, 63), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ByteLiteral, 100) */
-            ],
-            gotos: &[],
-        },
-        // State 51
-        LR1State {
-            actions: &[
-                (9, 96),  /* ';' => LRAction::Reduce(HexByteLiteral, 101) */
-                (12, 96), /* ':=' => LRAction::Reduce(HexByteLiteral, 101) */
-                (13, 96), /* 'if' => LRAction::Reduce(HexByteLiteral, 101) */
-                (14, 96), /* '||' => LRAction::Reduce(HexByteLiteral, 101) */
-                (15, 96), /* '&&' => LRAction::Reduce(HexByteLiteral, 101) */
-                (16, 96), /* 'in' => LRAction::Reduce(HexByteLiteral, 101) */
-                (17, 96), /* '>=' => LRAction::Reduce(HexByteLiteral, 101) */
-                (18, 96), /* '<=' => LRAction::Reduce(HexByteLiteral, 101) */
-                (19, 96), /* '>' => LRAction::Reduce(HexByteLiteral, 101) */
-                (20, 96), /* '<' => LRAction::Reduce(HexByteLiteral, 101) */
-                (21, 96), /* '!=' => LRAction::Reduce(HexByteLiteral, 101) */
-                (22, 96), /* '/=' => LRAction::Reduce(HexByteLiteral, 101) */
-                (23, 96), /* '==' => LRAction::Reduce(HexByteLiteral, 101) */
-                (24, 96), /* '+' => LRAction::Reduce(HexByteLiteral, 101) */
-                (25, 96), /* '-' => LRAction::Reduce(HexByteLiteral, 101) */
-                (26, 96), /* '*' => LRAction::Reduce(HexByteLiteral, 101) */
-                (27, 96), /* '/' => LRAction::Reduce(HexByteLiteral, 101) */
-                (28, 96), /* '%' => LRAction::Reduce(HexByteLiteral, 101) */
-                (30, 96), /* '(' => LRAction::Reduce(HexByteLiteral, 101) */
-                (31, 96), /* ')' => LRAction::Reduce(HexByteLiteral, 101) */
-                (32, 96), /* '@' => LRAction::Reduce(HexByteLiteral, 101) */
-                (33, 96), /* ':' => LRAction::Reduce(HexByteLiteral, 101) */
-                (34, 96), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(HexByteLiteral, 101) */
-                (35, 96), /* '[' => LRAction::Reduce(HexByteLiteral, 101) */
-                (36, 96), /* ']' => LRAction::Reduce(HexByteLiteral, 101) */
-                (37, 96), /* ',' => LRAction::Reduce(HexByteLiteral, 101) */
-                (38, 96), /* '"(\\.|[^"])*"' => LRAction::Reduce(HexByteLiteral, 101) */
-                (39, 96), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(HexByteLiteral, 101) */
-                (40, 96), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(HexByteLiteral, 101) */
-                (41, 96), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 101) */
-                (42, 96), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 101) */
-                (43, 96), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 101) */
-                (44, 96), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 101) */
-                (45, 96), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(HexByteLiteral, 101) */
-                (46, 96), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(HexByteLiteral, 101) */
-            ],
-            gotos: &[],
-        },
-        // State 52
-        LR1State {
-            actions: &[
-                (9, 60),  /* ';' => LRAction::Reduce(BinaryInteger, 106) */
-                (12, 60), /* ':=' => LRAction::Reduce(BinaryInteger, 106) */
-                (13, 60), /* 'if' => LRAction::Reduce(BinaryInteger, 106) */
-                (14, 60), /* '||' => LRAction::Reduce(BinaryInteger, 106) */
-                (15, 60), /* '&&' => LRAction::Reduce(BinaryInteger, 106) */
-                (16, 60), /* 'in' => LRAction::Reduce(BinaryInteger, 106) */
-                (17, 60), /* '>=' => LRAction::Reduce(BinaryInteger, 106) */
-                (18, 60), /* '<=' => LRAction::Reduce(BinaryInteger, 106) */
-                (19, 60), /* '>' => LRAction::Reduce(BinaryInteger, 106) */
-                (20, 60), /* '<' => LRAction::Reduce(BinaryInteger, 106) */
-                (21, 60), /* '!=' => LRAction::Reduce(BinaryInteger, 106) */
-                (22, 60), /* '/=' => LRAction::Reduce(BinaryInteger, 106) */
-                (23, 60), /* '==' => LRAction::Reduce(BinaryInteger, 106) */
-                (24, 60), /* '+' => LRAction::Reduce(BinaryInteger, 106) */
-                (25, 60), /* '-' => LRAction::Reduce(BinaryInteger, 106) */
-                (26, 60), /* '*' => LRAction::Reduce(BinaryInteger, 106) */
-                (27, 60), /* '/' => LRAction::Reduce(BinaryInteger, 106) */
-                (28, 60), /* '%' => LRAction::Reduce(BinaryInteger, 106) */
-                (30, 60), /* '(' => LRAction::Reduce(BinaryInteger, 106) */
-                (31, 60), /* ')' => LRAction::Reduce(BinaryInteger, 106) */
-                (32, 60), /* '@' => LRAction::Reduce(BinaryInteger, 106) */
-                (33, 60), /* ':' => LRAction::Reduce(BinaryInteger, 106) */
-                (34, 60), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(BinaryInteger, 106) */
-                (35, 60), /* '[' => LRAction::Reduce(BinaryInteger, 106) */
-                (36, 60), /* ']' => LRAction::Reduce(BinaryInteger, 106) */
-                (37, 60), /* ',' => LRAction::Reduce(BinaryInteger, 106) */
-                (38, 60), /* '"(\\.|[^"])*"' => LRAction::Reduce(BinaryInteger, 106) */
-                (39, 60), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(BinaryInteger, 106) */
-                (40, 60), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(BinaryInteger, 106) */
-                (41, 60), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 106) */
-                (42, 60), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 106) */
-                (43, 60), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 106) */
-                (44, 60), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 106) */
-                (45, 60), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(BinaryInteger, 106) */
-                (46, 60), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(BinaryInteger, 106) */
-            ],
-            gotos: &[],
-        },
-        // State 53
-        LR1State {
-            actions: &[
-                (9, 124),  /* ';' => LRAction::Reduce(OctalInteger, 107) */
-                (12, 124), /* ':=' => LRAction::Reduce(OctalInteger, 107) */
-                (13, 124), /* 'if' => LRAction::Reduce(OctalInteger, 107) */
-                (14, 124), /* '||' => LRAction::Reduce(OctalInteger, 107) */
-                (15, 124), /* '&&' => LRAction::Reduce(OctalInteger, 107) */
-                (16, 124), /* 'in' => LRAction::Reduce(OctalInteger, 107) */
-                (17, 124), /* '>=' => LRAction::Reduce(OctalInteger, 107) */
-                (18, 124), /* '<=' => LRAction::Reduce(OctalInteger, 107) */
-                (19, 124), /* '>' => LRAction::Reduce(OctalInteger, 107) */
-                (20, 124), /* '<' => LRAction::Reduce(OctalInteger, 107) */
-                (21, 124), /* '!=' => LRAction::Reduce(OctalInteger, 107) */
-                (22, 124), /* '/=' => LRAction::Reduce(OctalInteger, 107) */
-                (23, 124), /* '==' => LRAction::Reduce(OctalInteger, 107) */
-                (24, 124), /* '+' => LRAction::Reduce(OctalInteger, 107) */
-                (25, 124), /* '-' => LRAction::Reduce(OctalInteger, 107) */
-                (26, 124), /* '*' => LRAction::Reduce(OctalInteger, 107) */
-                (27, 124), /* '/' => LRAction::Reduce(OctalInteger, 107) */
-                (28, 124), /* '%' => LRAction::Reduce(OctalInteger, 107) */
-                (30, 124), /* '(' => LRAction::Reduce(OctalInteger, 107) */
-                (31, 124), /* ')' => LRAction::Reduce(OctalInteger, 107) */
-                (32, 124), /* '@' => LRAction::Reduce(OctalInteger, 107) */
-                (33, 124), /* ':' => LRAction::Reduce(OctalInteger, 107) */
-                (34, 124), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(OctalInteger, 107) */
-                (35, 124), /* '[' => LRAction::Reduce(OctalInteger, 107) */
-                (36, 124), /* ']' => LRAction::Reduce(OctalInteger, 107) */
-                (37, 124), /* ',' => LRAction::Reduce(OctalInteger, 107) */
-                (38, 124), /* '"(\\.|[^"])*"' => LRAction::Reduce(OctalInteger, 107) */
-                (39, 124), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(OctalInteger, 107) */
-                (40, 124), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(OctalInteger, 107) */
-                (41, 124), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 107) */
-                (42, 124), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 107) */
-                (43, 124), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 107) */
-                (44, 124), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 107) */
-                (45, 124), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(OctalInteger, 107) */
-                (46, 124), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(OctalInteger, 107) */
-            ],
-            gotos: &[],
-        },
-        // State 54
-        LR1State {
-            actions: &[
-                (9, 97),  /* ';' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (12, 97), /* ':=' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (13, 97), /* 'if' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (14, 97), /* '||' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (15, 97), /* '&&' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (16, 97), /* 'in' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (17, 97), /* '>=' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (18, 97), /* '<=' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (19, 97), /* '>' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (20, 97), /* '<' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (21, 97), /* '!=' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (22, 97), /* '/=' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (23, 97), /* '==' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (24, 97), /* '+' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (25, 97), /* '-' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (26, 97), /* '*' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (27, 97), /* '/' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (28, 97), /* '%' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (30, 97), /* '(' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (31, 97), /* ')' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (32, 97), /* '@' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (33, 97), /* ':' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (34, 97), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (35, 97), /* '[' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (36, 97), /* ']' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (37, 97), /* ',' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (38, 97), /* '"(\\.|[^"])*"' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (39, 97), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (40, 97), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (41, 97), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (42, 97), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (43, 97), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (44, 97), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (45, 97), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(HexadecimalInteger, 108) */
-                (46, 97), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(HexadecimalInteger, 108) */
-            ],
-            gotos: &[],
-        },
-        // State 55
-        LR1State {
-            actions: &[
-                (9, 99),  /* ';' => LRAction::Reduce(Ieee754Float, 109) */
-                (12, 99), /* ':=' => LRAction::Reduce(Ieee754Float, 109) */
-                (13, 99), /* 'if' => LRAction::Reduce(Ieee754Float, 109) */
-                (14, 99), /* '||' => LRAction::Reduce(Ieee754Float, 109) */
-                (15, 99), /* '&&' => LRAction::Reduce(Ieee754Float, 109) */
-                (16, 99), /* 'in' => LRAction::Reduce(Ieee754Float, 109) */
-                (17, 99), /* '>=' => LRAction::Reduce(Ieee754Float, 109) */
-                (18, 99), /* '<=' => LRAction::Reduce(Ieee754Float, 109) */
-                (19, 99), /* '>' => LRAction::Reduce(Ieee754Float, 109) */
-                (20, 99), /* '<' => LRAction::Reduce(Ieee754Float, 109) */
-                (21, 99), /* '!=' => LRAction::Reduce(Ieee754Float, 109) */
-                (22, 99), /* '/=' => LRAction::Reduce(Ieee754Float, 109) */
-                (23, 99), /* '==' => LRAction::Reduce(Ieee754Float, 109) */
-                (24, 99), /* '+' => LRAction::Reduce(Ieee754Float, 109) */
-                (25, 99), /* '-' => LRAction::Reduce(Ieee754Float, 109) */
-                (26, 99), /* '*' => LRAction::Reduce(Ieee754Float, 109) */
-                (27, 99), /* '/' => LRAction::Reduce(Ieee754Float, 109) */
-                (28, 99), /* '%' => LRAction::Reduce(Ieee754Float, 109) */
-                (30, 99), /* '(' => LRAction::Reduce(Ieee754Float, 109) */
-                (31, 99), /* ')' => LRAction::Reduce(Ieee754Float, 109) */
-                (32, 99), /* '@' => LRAction::Reduce(Ieee754Float, 109) */
-                (33, 99), /* ':' => LRAction::Reduce(Ieee754Float, 109) */
-                (34, 99), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Ieee754Float, 109) */
-                (35, 99), /* '[' => LRAction::Reduce(Ieee754Float, 109) */
-                (36, 99), /* ']' => LRAction::Reduce(Ieee754Float, 109) */
-                (37, 99), /* ',' => LRAction::Reduce(Ieee754Float, 109) */
-                (38, 99), /* '"(\\.|[^"])*"' => LRAction::Reduce(Ieee754Float, 109) */
-                (39, 99), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Ieee754Float, 109) */
-                (40, 99), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Ieee754Float, 109) */
-                (41, 99), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 109) */
-                (42, 99), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 109) */
-                (43, 99), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 109) */
-                (44, 99), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 109) */
-                (45, 99), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Ieee754Float, 109) */
-                (46, 99), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Ieee754Float, 109) */
-            ],
-            gotos: &[],
-        },
-        // State 56
-        LR1State {
-            actions: &[
-                (9, 94),  /* ';' => LRAction::Reduce(FilePathLiteral, 110) */
-                (12, 94), /* ':=' => LRAction::Reduce(FilePathLiteral, 110) */
-                (13, 94), /* 'if' => LRAction::Reduce(FilePathLiteral, 110) */
-                (14, 94), /* '||' => LRAction::Reduce(FilePathLiteral, 110) */
-                (15, 94), /* '&&' => LRAction::Reduce(FilePathLiteral, 110) */
-                (16, 94), /* 'in' => LRAction::Reduce(FilePathLiteral, 110) */
-                (17, 94), /* '>=' => LRAction::Reduce(FilePathLiteral, 110) */
-                (18, 94), /* '<=' => LRAction::Reduce(FilePathLiteral, 110) */
-                (19, 94), /* '>' => LRAction::Reduce(FilePathLiteral, 110) */
-                (20, 94), /* '<' => LRAction::Reduce(FilePathLiteral, 110) */
-                (21, 94), /* '!=' => LRAction::Reduce(FilePathLiteral, 110) */
-                (22, 94), /* '/=' => LRAction::Reduce(FilePathLiteral, 110) */
-                (23, 94), /* '==' => LRAction::Reduce(FilePathLiteral, 110) */
-                (24, 94), /* '+' => LRAction::Reduce(FilePathLiteral, 110) */
-                (25, 94), /* '-' => LRAction::Reduce(FilePathLiteral, 110) */
-                (26, 94), /* '*' => LRAction::Reduce(FilePathLiteral, 110) */
-                (27, 94), /* '/' => LRAction::Reduce(FilePathLiteral, 110) */
-                (28, 94), /* '%' => LRAction::Reduce(FilePathLiteral, 110) */
-                (30, 94), /* '(' => LRAction::Reduce(FilePathLiteral, 110) */
-                (31, 94), /* ')' => LRAction::Reduce(FilePathLiteral, 110) */
-                (32, 94), /* '@' => LRAction::Reduce(FilePathLiteral, 110) */
-                (33, 94), /* ':' => LRAction::Reduce(FilePathLiteral, 110) */
-                (34, 94), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(FilePathLiteral, 110) */
-                (35, 94), /* '[' => LRAction::Reduce(FilePathLiteral, 110) */
-                (36, 94), /* ']' => LRAction::Reduce(FilePathLiteral, 110) */
-                (37, 94), /* ',' => LRAction::Reduce(FilePathLiteral, 110) */
-                (38, 94), /* '"(\\.|[^"])*"' => LRAction::Reduce(FilePathLiteral, 110) */
-                (39, 94), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(FilePathLiteral, 110) */
-                (40, 94), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(FilePathLiteral, 110) */
-                (41, 94), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 110) */
-                (42, 94), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 110) */
-                (43, 94), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 110) */
-                (44, 94), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 110) */
-                (45, 94), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(FilePathLiteral, 110) */
-                (46, 94), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FilePathLiteral, 110) */
-            ],
-            gotos: &[],
-        },
-        // State 57
-        LR1State {
-            actions: &[
-                (9, 137),  /* ';' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (12, 137), /* ':=' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (13, 137), /* 'if' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (14, 137), /* '||' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (15, 137), /* '&&' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (16, 137), /* 'in' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (17, 137), /* '>=' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (18, 137), /* '<=' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (19, 137), /* '>' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (20, 137), /* '<' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (21, 137), /* '!=' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (22, 137), /* '/=' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (23, 137), /* '==' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (24, 137), /* '+' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (25, 137), /* '-' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (26, 137), /* '*' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (27, 137), /* '/' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (28, 137), /* '%' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (30, 137), /* '(' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (31, 137), /* ')' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (32, 137), /* '@' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (33, 137), /* ':' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (34, 137), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (35, 137), /* '[' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (36, 137), /* ']' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (37, 137), /* ',' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (38, 137), /* '"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (39, 137), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (40, 137), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (41, 137), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (42, 137), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (43, 137), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (44, 137), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (45, 137), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Rfc3339DateTime, 111) */
-                (46, 137), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Rfc3339DateTime, 111) */
-            ],
-            gotos: &[],
-        },
-        // State 58
-        LR1State {
-            actions: &[
-                (9, 129),  /* ';' => LRAction::Reduce(PrefixExpr, 62) */
-                (12, 129), /* ':=' => LRAction::Reduce(PrefixExpr, 62) */
-                (13, 129), /* 'if' => LRAction::Reduce(PrefixExpr, 62) */
-                (14, 129), /* '||' => LRAction::Reduce(PrefixExpr, 62) */
-                (15, 129), /* '&&' => LRAction::Reduce(PrefixExpr, 62) */
-                (16, 129), /* 'in' => LRAction::Reduce(PrefixExpr, 62) */
-                (17, 129), /* '>=' => LRAction::Reduce(PrefixExpr, 62) */
-                (18, 129), /* '<=' => LRAction::Reduce(PrefixExpr, 62) */
-                (19, 129), /* '>' => LRAction::Reduce(PrefixExpr, 62) */
-                (20, 129), /* '<' => LRAction::Reduce(PrefixExpr, 62) */
-                (21, 129), /* '!=' => LRAction::Reduce(PrefixExpr, 62) */
-                (22, 129), /* '/=' => LRAction::Reduce(PrefixExpr, 62) */
-                (23, 129), /* '==' => LRAction::Reduce(PrefixExpr, 62) */
-                (24, 129), /* '+' => LRAction::Reduce(PrefixExpr, 62) */
-                (25, 129), /* '-' => LRAction::Reduce(PrefixExpr, 62) */
-                (26, 129), /* '*' => LRAction::Reduce(PrefixExpr, 62) */
-                (27, 129), /* '/' => LRAction::Reduce(PrefixExpr, 62) */
-                (28, 129), /* '%' => LRAction::Reduce(PrefixExpr, 62) */
-                (31, 129), /* ')' => LRAction::Reduce(PrefixExpr, 62) */
-                (36, 129), /* ']' => LRAction::Reduce(PrefixExpr, 62) */
-                (37, 129), /* ',' => LRAction::Reduce(PrefixExpr, 62) */
-            ],
-            gotos: &[],
-        },
-        // State 59
-        LR1State {
-            actions: &[
-                (9, 107),  /* ';' => LRAction::Reduce(Literal, 83) */
-                (12, 107), /* ':=' => LRAction::Reduce(Literal, 83) */
-                (13, 107), /* 'if' => LRAction::Reduce(Literal, 83) */
-                (14, 107), /* '||' => LRAction::Reduce(Literal, 83) */
-                (15, 107), /* '&&' => LRAction::Reduce(Literal, 83) */
-                (16, 107), /* 'in' => LRAction::Reduce(Literal, 83) */
-                (17, 107), /* '>=' => LRAction::Reduce(Literal, 83) */
-                (18, 107), /* '<=' => LRAction::Reduce(Literal, 83) */
-                (19, 107), /* '>' => LRAction::Reduce(Literal, 83) */
-                (20, 107), /* '<' => LRAction::Reduce(Literal, 83) */
-                (21, 107), /* '!=' => LRAction::Reduce(Literal, 83) */
-                (22, 107), /* '/=' => LRAction::Reduce(Literal, 83) */
-                (23, 107), /* '==' => LRAction::Reduce(Literal, 83) */
-                (24, 107), /* '+' => LRAction::Reduce(Literal, 83) */
-                (25, 107), /* '-' => LRAction::Reduce(Literal, 83) */
-                (26, 107), /* '*' => LRAction::Reduce(Literal, 83) */
-                (27, 107), /* '/' => LRAction::Reduce(Literal, 83) */
-                (28, 107), /* '%' => LRAction::Reduce(Literal, 83) */
-                (30, 107), /* '(' => LRAction::Reduce(Literal, 83) */
-                (31, 107), /* ')' => LRAction::Reduce(Literal, 83) */
-                (32, 107), /* '@' => LRAction::Reduce(Literal, 83) */
-                (33, 107), /* ':' => LRAction::Reduce(Literal, 83) */
-                (34, 107), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 83) */
-                (35, 107), /* '[' => LRAction::Reduce(Literal, 83) */
-                (36, 107), /* ']' => LRAction::Reduce(Literal, 83) */
-                (37, 107), /* ',' => LRAction::Reduce(Literal, 83) */
-                (38, 107), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 83) */
-                (39, 107), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 83) */
-                (40, 107), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 83) */
-                (41, 107), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 83) */
-                (42, 107), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 83) */
-                (43, 107), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 83) */
-                (44, 107), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 83) */
-                (45, 107), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 83) */
-                (46, 107), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 83) */
-            ],
-            gotos: &[],
-        },
-        // State 60
-        LR1State {
-            actions: &[
-                (9, 120),  /* ';' => LRAction::Reduce(Numeric, 102) */
-                (12, 120), /* ':=' => LRAction::Reduce(Numeric, 102) */
-                (13, 120), /* 'if' => LRAction::Reduce(Numeric, 102) */
-                (14, 120), /* '||' => LRAction::Reduce(Numeric, 102) */
-                (15, 120), /* '&&' => LRAction::Reduce(Numeric, 102) */
-                (16, 120), /* 'in' => LRAction::Reduce(Numeric, 102) */
-                (17, 120), /* '>=' => LRAction::Reduce(Numeric, 102) */
-                (18, 120), /* '<=' => LRAction::Reduce(Numeric, 102) */
-                (19, 120), /* '>' => LRAction::Reduce(Numeric, 102) */
-                (20, 120), /* '<' => LRAction::Reduce(Numeric, 102) */
-                (21, 120), /* '!=' => LRAction::Reduce(Numeric, 102) */
-                (22, 120), /* '/=' => LRAction::Reduce(Numeric, 102) */
-                (23, 120), /* '==' => LRAction::Reduce(Numeric, 102) */
-                (24, 120), /* '+' => LRAction::Reduce(Numeric, 102) */
-                (25, 120), /* '-' => LRAction::Reduce(Numeric, 102) */
-                (26, 120), /* '*' => LRAction::Reduce(Numeric, 102) */
-                (27, 120), /* '/' => LRAction::Reduce(Numeric, 102) */
-                (28, 120), /* '%' => LRAction::Reduce(Numeric, 102) */
-                (30, 120), /* '(' => LRAction::Reduce(Numeric, 102) */
-                (31, 120), /* ')' => LRAction::Reduce(Numeric, 102) */
-                (32, 120), /* '@' => LRAction::Reduce(Numeric, 102) */
-                (33, 120), /* ':' => LRAction::Reduce(Numeric, 102) */
-                (34, 120), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 102) */
-                (35, 120), /* '[' => LRAction::Reduce(Numeric, 102) */
-                (36, 120), /* ']' => LRAction::Reduce(Numeric, 102) */
-                (37, 120), /* ',' => LRAction::Reduce(Numeric, 102) */
-                (38, 120), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 102) */
-                (39, 120), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 102) */
-                (40, 120), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 102) */
-                (41, 120), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 102) */
-                (42, 120), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 102) */
-                (43, 120), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 102) */
-                (44, 120), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 102) */
-                (45, 120), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 102) */
-                (46, 120), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 102) */
-            ],
-            gotos: &[],
-        },
-        // State 61
-        LR1State {
-            actions: &[
-                (9, 109),  /* ';' => LRAction::Reduce(Literal, 85) */
-                (12, 109), /* ':=' => LRAction::Reduce(Literal, 85) */
-                (13, 109), /* 'if' => LRAction::Reduce(Literal, 85) */
-                (14, 109), /* '||' => LRAction::Reduce(Literal, 85) */
-                (15, 109), /* '&&' => LRAction::Reduce(Literal, 85) */
-                (16, 109), /* 'in' => LRAction::Reduce(Literal, 85) */
-                (17, 109), /* '>=' => LRAction::Reduce(Literal, 85) */
-                (18, 109), /* '<=' => LRAction::Reduce(Literal, 85) */
-                (19, 109), /* '>' => LRAction::Reduce(Literal, 85) */
-                (20, 109), /* '<' => LRAction::Reduce(Literal, 85) */
-                (21, 109), /* '!=' => LRAction::Reduce(Literal, 85) */
-                (22, 109), /* '/=' => LRAction::Reduce(Literal, 85) */
-                (23, 109), /* '==' => LRAction::Reduce(Literal, 85) */
-                (24, 109), /* '+' => LRAction::Reduce(Literal, 85) */
-                (25, 109), /* '-' => LRAction::Reduce(Literal, 85) */
-                (26, 109), /* '*' => LRAction::Reduce(Literal, 85) */
-                (27, 109), /* '/' => LRAction::Reduce(Literal, 85) */
-                (28, 109), /* '%' => LRAction::Reduce(Literal, 85) */
-                (30, 109), /* '(' => LRAction::Reduce(Literal, 85) */
-                (31, 109), /* ')' => LRAction::Reduce(Literal, 85) */
-                (32, 109), /* '@' => LRAction::Reduce(Literal, 85) */
-                (33, 109), /* ':' => LRAction::Reduce(Literal, 85) */
-                (34, 109), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 85) */
-                (35, 109), /* '[' => LRAction::Reduce(Literal, 85) */
-                (36, 109), /* ']' => LRAction::Reduce(Literal, 85) */
-                (37, 109), /* ',' => LRAction::Reduce(Literal, 85) */
-                (38, 109), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 85) */
-                (39, 109), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 85) */
-                (40, 109), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 85) */
-                (41, 109), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
-                (42, 109), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
-                (43, 109), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
-                (44, 109), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
-                (45, 109), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 85) */
-                (46, 109), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 85) */
-            ],
-            gotos: &[],
-        },
-        // State 62
-        LR1State {
-            actions: &[
-                (9, 49),  /* ';' => LRAction::Reduce(ApplyExprList, 69) */
-                (12, 49), /* ':=' => LRAction::Reduce(ApplyExprList, 69) */
-                (13, 49), /* 'if' => LRAction::Reduce(ApplyExprList, 69) */
-                (14, 49), /* '||' => LRAction::Reduce(ApplyExprList, 69) */
-                (15, 49), /* '&&' => LRAction::Reduce(ApplyExprList, 69) */
-                (16, 49), /* 'in' => LRAction::Reduce(ApplyExprList, 69) */
-                (17, 49), /* '>=' => LRAction::Reduce(ApplyExprList, 69) */
-                (18, 49), /* '<=' => LRAction::Reduce(ApplyExprList, 69) */
-                (19, 49), /* '>' => LRAction::Reduce(ApplyExprList, 69) */
-                (20, 49), /* '<' => LRAction::Reduce(ApplyExprList, 69) */
-                (21, 49), /* '!=' => LRAction::Reduce(ApplyExprList, 69) */
-                (22, 49), /* '/=' => LRAction::Reduce(ApplyExprList, 69) */
-                (23, 49), /* '==' => LRAction::Reduce(ApplyExprList, 69) */
-                (24, 49), /* '+' => LRAction::Reduce(ApplyExprList, 69) */
-                (25, 49), /* '-' => LRAction::Reduce(ApplyExprList, 69) */
-                (26, 49), /* '*' => LRAction::Reduce(ApplyExprList, 69) */
-                (27, 49), /* '/' => LRAction::Reduce(ApplyExprList, 69) */
-                (28, 49), /* '%' => LRAction::Reduce(ApplyExprList, 69) */
-                (30, 49), /* '(' => LRAction::Reduce(ApplyExprList, 69) */
-                (31, 49), /* ')' => LRAction::Reduce(ApplyExprList, 69) */
-                (32, 49), /* '@' => LRAction::Reduce(ApplyExprList, 69) */
-                (33, 49), /* ':' => LRAction::Reduce(ApplyExprList, 69) */
-                (34, 49), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ApplyExprList, 69) */
-                (35, 49), /* '[' => LRAction::Reduce(ApplyExprList, 69) */
-                (36, 49), /* ']' => LRAction::Reduce(ApplyExprList, 69) */
-                (37, 49), /* ',' => LRAction::Reduce(ApplyExprList, 69) */
-                (38, 49), /* '"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 69) */
-                (39, 49), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 69) */
-                (40, 49), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ApplyExprList, 69) */
-                (41, 49), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 69) */
-                (42, 49), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 69) */
-                (43, 49), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 69) */
-                (44, 49), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 69) */
-                (45, 49), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ApplyExprList, 69) */
-                (46, 49), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 69) */
-            ],
-            gotos: &[(1, 112) /* ApplyExprList => 112 */],
-        },
-        // State 63
-        LR1State {
-            actions: &[
-                (9, 134),  /* ';' => LRAction::Reduce(Qualif, 75) */
-                (12, 134), /* ':=' => LRAction::Reduce(Qualif, 75) */
-                (13, 134), /* 'if' => LRAction::Reduce(Qualif, 75) */
-                (14, 134), /* '||' => LRAction::Reduce(Qualif, 75) */
-                (15, 134), /* '&&' => LRAction::Reduce(Qualif, 75) */
-                (16, 134), /* 'in' => LRAction::Reduce(Qualif, 75) */
-                (17, 134), /* '>=' => LRAction::Reduce(Qualif, 75) */
-                (18, 134), /* '<=' => LRAction::Reduce(Qualif, 75) */
-                (19, 134), /* '>' => LRAction::Reduce(Qualif, 75) */
-                (20, 134), /* '<' => LRAction::Reduce(Qualif, 75) */
-                (21, 134), /* '!=' => LRAction::Reduce(Qualif, 75) */
-                (22, 134), /* '/=' => LRAction::Reduce(Qualif, 75) */
-                (23, 134), /* '==' => LRAction::Reduce(Qualif, 75) */
-                (24, 134), /* '+' => LRAction::Reduce(Qualif, 75) */
-                (25, 134), /* '-' => LRAction::Reduce(Qualif, 75) */
-                (26, 134), /* '*' => LRAction::Reduce(Qualif, 75) */
-                (27, 134), /* '/' => LRAction::Reduce(Qualif, 75) */
-                (28, 134), /* '%' => LRAction::Reduce(Qualif, 75) */
-                (30, 134), /* '(' => LRAction::Reduce(Qualif, 75) */
-                (31, 134), /* ')' => LRAction::Reduce(Qualif, 75) */
-                (32, 134), /* '@' => LRAction::Reduce(Qualif, 75) */
-                (33, 134), /* ':' => LRAction::Reduce(Qualif, 75) */
-                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Qualif, 75) */
-                (35, 134), /* '[' => LRAction::Reduce(Qualif, 75) */
-                (36, 134), /* ']' => LRAction::Reduce(Qualif, 75) */
-                (37, 134), /* ',' => LRAction::Reduce(Qualif, 75) */
-                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(Qualif, 75) */
-                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Qualif, 75) */
-                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Qualif, 75) */
-                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 75) */
-                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 75) */
-                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 75) */
-                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 75) */
-                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Qualif, 75) */
-                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Qualif, 75) */
-            ],
-            gotos: &[],
-        },
-        // State 64
-        LR1State {
-            actions: &[
-                (9, 112),  /* ';' => LRAction::Reduce(Literal, 88) */
-                (12, 112), /* ':=' => LRAction::Reduce(Literal, 88) */
-                (13, 112), /* 'if' => LRAction::Reduce(Literal, 88) */
-                (14, 112), /* '||' => LRAction::Reduce(Literal, 88) */
-                (15, 112), /* '&&' => LRAction::Reduce(Literal, 88) */
-                (16, 112), /* 'in' => LRAction::Reduce(Literal, 88) */
-                (17, 112), /* '>=' => LRAction::Reduce(Literal, 88) */
-                (18, 112), /* '<=' => LRAction::Reduce(Literal, 88) */
-                (19, 112), /* '>' => LRAction::Reduce(Literal, 88) */
-                (20, 112), /* '<' => LRAction::Reduce(Literal, 88) */
-                (21, 112), /* '!=' => LRAction::Reduce(Literal, 88) */
-                (22, 112), /* '/=' => LRAction::Reduce(Literal, 88) */
-                (23, 112), /* '==' => LRAction::Reduce(Literal, 88) */
-                (24, 112), /* '+' => LRAction::Reduce(Literal, 88) */
-                (25, 112), /* '-' => LRAction::Reduce(Literal, 88) */
-                (26, 112), /* '*' => LRAction::Reduce(Literal, 88) */
-                (27, 112), /* '/' => LRAction::Reduce(Literal, 88) */
-                (28, 112), /* '%' => LRAction::Reduce(Literal, 88) */
-                (30, 112), /* '(' => LRAction::Reduce(Literal, 88) */
-                (31, 112), /* ')' => LRAction::Reduce(Literal, 88) */
-                (32, 112), /* '@' => LRAction::Reduce(Literal, 88) */
-                (33, 112), /* ':' => LRAction::Reduce(Literal, 88) */
-                (34, 112), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 88) */
-                (35, 112), /* '[' => LRAction::Reduce(Literal, 88) */
-                (36, 112), /* ']' => LRAction::Reduce(Literal, 88) */
-                (37, 112), /* ',' => LRAction::Reduce(Literal, 88) */
-                (38, 112), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 88) */
-                (39, 112), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 88) */
-                (40, 112), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 88) */
-                (41, 112), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
-                (42, 112), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
-                (43, 112), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
-                (44, 112), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
-                (45, 112), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 88) */
-                (46, 112), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 88) */
-            ],
-            gotos: &[],
-        },
-        // State 65
-        LR1State {
-            actions: &[
-                (9, 110),  /* ';' => LRAction::Reduce(Literal, 86) */
-                (12, 110), /* ':=' => LRAction::Reduce(Literal, 86) */
-                (13, 110), /* 'if' => LRAction::Reduce(Literal, 86) */
-                (14, 110), /* '||' => LRAction::Reduce(Literal, 86) */
-                (15, 110), /* '&&' => LRAction::Reduce(Literal, 86) */
-                (16, 110), /* 'in' => LRAction::Reduce(Literal, 86) */
-                (17, 110), /* '>=' => LRAction::Reduce(Literal, 86) */
-                (18, 110), /* '<=' => LRAction::Reduce(Literal, 86) */
-                (19, 110), /* '>' => LRAction::Reduce(Literal, 86) */
-                (20, 110), /* '<' => LRAction::Reduce(Literal, 86) */
-                (21, 110), /* '!=' => LRAction::Reduce(Literal, 86) */
-                (22, 110), /* '/=' => LRAction::Reduce(Literal, 86) */
-                (23, 110), /* '==' => LRAction::Reduce(Literal, 86) */
-                (24, 110), /* '+' => LRAction::Reduce(Literal, 86) */
-                (25, 110), /* '-' => LRAction::Reduce(Literal, 86) */
-                (26, 110), /* '*' => LRAction::Reduce(Literal, 86) */
-                (27, 110), /* '/' => LRAction::Reduce(Literal, 86) */
-                (28, 110), /* '%' => LRAction::Reduce(Literal, 86) */
-                (30, 110), /* '(' => LRAction::Reduce(Literal, 86) */
-                (31, 110), /* ')' => LRAction::Reduce(Literal, 86) */
-                (32, 110), /* '@' => LRAction::Reduce(Literal, 86) */
-                (33, 110), /* ':' => LRAction::Reduce(Literal, 86) */
-                (34, 110), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 86) */
-                (35, 110), /* '[' => LRAction::Reduce(Literal, 86) */
-                (36, 110), /* ']' => LRAction::Reduce(Literal, 86) */
-                (37, 110), /* ',' => LRAction::Reduce(Literal, 86) */
-                (38, 110), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 86) */
-                (39, 110), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 86) */
-                (40, 110), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 86) */
-                (41, 110), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
-                (42, 110), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
-                (43, 110), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
-                (44, 110), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
-                (45, 110), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 86) */
-                (46, 110), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 86) */
-            ],
-            gotos: &[],
-        },
-        // State 66
-        LR1State {
-            actions: &[
-                (9, 122),  /* ';' => LRAction::Reduce(Numeric, 104) */
-                (12, 122), /* ':=' => LRAction::Reduce(Numeric, 104) */
-                (13, 122), /* 'if' => LRAction::Reduce(Numeric, 104) */
-                (14, 122), /* '||' => LRAction::Reduce(Numeric, 104) */
-                (15, 122), /* '&&' => LRAction::Reduce(Numeric, 104) */
-                (16, 122), /* 'in' => LRAction::Reduce(Numeric, 104) */
-                (17, 122), /* '>=' => LRAction::Reduce(Numeric, 104) */
-                (18, 122), /* '<=' => LRAction::Reduce(Numeric, 104) */
-                (19, 122), /* '>' => LRAction::Reduce(Numeric, 104) */
-                (20, 122), /* '<' => LRAction::Reduce(Numeric, 104) */
-                (21, 122), /* '!=' => LRAction::Reduce(Numeric, 104) */
-                (22, 122), /* '/=' => LRAction::Reduce(Numeric, 104) */
-                (23, 122), /* '==' => LRAction::Reduce(Numeric, 104) */
-                (24, 122), /* '+' => LRAction::Reduce(Numeric, 104) */
-                (25, 122), /* '-' => LRAction::Reduce(Numeric, 104) */
-                (26, 122), /* '*' => LRAction::Reduce(Numeric, 104) */
-                (27, 122), /* '/' => LRAction::Reduce(Numeric, 104) */
-                (28, 122), /* '%' => LRAction::Reduce(Numeric, 104) */
-                (30, 122), /* '(' => LRAction::Reduce(Numeric, 104) */
-                (31, 122), /* ')' => LRAction::Reduce(Numeric, 104) */
-                (32, 122), /* '@' => LRAction::Reduce(Numeric, 104) */
-                (33, 122), /* ':' => LRAction::Reduce(Numeric, 104) */
-                (34, 122), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 104) */
-                (35, 122), /* '[' => LRAction::Reduce(Numeric, 104) */
-                (36, 122), /* ']' => LRAction::Reduce(Numeric, 104) */
-                (37, 122), /* ',' => LRAction::Reduce(Numeric, 104) */
-                (38, 122), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 104) */
-                (39, 122), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 104) */
-                (40, 122), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 104) */
-                (41, 122), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
-                (42, 122), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
-                (43, 122), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
-                (44, 122), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
-                (45, 122), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 104) */
-                (46, 122), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 104) */
-            ],
-            gotos: &[],
-        },
-        // State 67
-        LR1State {
-            actions: &[
-                (8, 127),  /* '.' => LRAction::Reduce(PathList, 81) */
-                (9, 127),  /* ';' => LRAction::Reduce(PathList, 81) */
-                (12, 127), /* ':=' => LRAction::Reduce(PathList, 81) */
-                (13, 127), /* 'if' => LRAction::Reduce(PathList, 81) */
-                (14, 127), /* '||' => LRAction::Reduce(PathList, 81) */
-                (15, 127), /* '&&' => LRAction::Reduce(PathList, 81) */
-                (16, 127), /* 'in' => LRAction::Reduce(PathList, 81) */
-                (17, 127), /* '>=' => LRAction::Reduce(PathList, 81) */
-                (18, 127), /* '<=' => LRAction::Reduce(PathList, 81) */
-                (19, 127), /* '>' => LRAction::Reduce(PathList, 81) */
-                (20, 127), /* '<' => LRAction::Reduce(PathList, 81) */
-                (21, 127), /* '!=' => LRAction::Reduce(PathList, 81) */
-                (22, 127), /* '/=' => LRAction::Reduce(PathList, 81) */
-                (23, 127), /* '==' => LRAction::Reduce(PathList, 81) */
-                (24, 127), /* '+' => LRAction::Reduce(PathList, 81) */
-                (25, 127), /* '-' => LRAction::Reduce(PathList, 81) */
-                (26, 127), /* '*' => LRAction::Reduce(PathList, 81) */
-                (27, 127), /* '/' => LRAction::Reduce(PathList, 81) */
-                (28, 127), /* '%' => LRAction::Reduce(PathList, 81) */
-                (30, 127), /* '(' => LRAction::Reduce(PathList, 81) */
-                (31, 127), /* ')' => LRAction::Reduce(PathList, 81) */
-                (32, 127), /* '@' => LRAction::Reduce(PathList, 81) */
-                (33, 127), /* ':' => LRAction::Reduce(PathList, 81) */
-                (34, 127), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PathList, 81) */
-                (35, 127), /* '[' => LRAction::Reduce(PathList, 81) */
-                (36, 127), /* ']' => LRAction::Reduce(PathList, 81) */
-                (37, 127), /* ',' => LRAction::Reduce(PathList, 81) */
-                (38, 127), /* '"(\\.|[^"])*"' => LRAction::Reduce(PathList, 81) */
-                (39, 127), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PathList, 81) */
-                (40, 127), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PathList, 81) */
-                (41, 127), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
-                (42, 127), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
-                (43, 127), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
-                (44, 127), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
-                (45, 127), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PathList, 81) */
-                (46, 127), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 81) */
-            ],
-            gotos: &[(47, 113) /* PathList => 113 */],
-        },
-        // State 68
-        LR1State {
-            actions: &[
-                (9, 123),  /* ';' => LRAction::Reduce(Numeric, 105) */
-                (12, 123), /* ':=' => LRAction::Reduce(Numeric, 105) */
-                (13, 123), /* 'if' => LRAction::Reduce(Numeric, 105) */
-                (14, 123), /* '||' => LRAction::Reduce(Numeric, 105) */
-                (15, 123), /* '&&' => LRAction::Reduce(Numeric, 105) */
-                (16, 123), /* 'in' => LRAction::Reduce(Numeric, 105) */
-                (17, 123), /* '>=' => LRAction::Reduce(Numeric, 105) */
-                (18, 123), /* '<=' => LRAction::Reduce(Numeric, 105) */
-                (19, 123), /* '>' => LRAction::Reduce(Numeric, 105) */
-                (20, 123), /* '<' => LRAction::Reduce(Numeric, 105) */
-                (21, 123), /* '!=' => LRAction::Reduce(Numeric, 105) */
-                (22, 123), /* '/=' => LRAction::Reduce(Numeric, 105) */
-                (23, 123), /* '==' => LRAction::Reduce(Numeric, 105) */
-                (24, 123), /* '+' => LRAction::Reduce(Numeric, 105) */
-                (25, 123), /* '-' => LRAction::Reduce(Numeric, 105) */
-                (26, 123), /* '*' => LRAction::Reduce(Numeric, 105) */
-                (27, 123), /* '/' => LRAction::Reduce(Numeric, 105) */
-                (28, 123), /* '%' => LRAction::Reduce(Numeric, 105) */
-                (30, 123), /* '(' => LRAction::Reduce(Numeric, 105) */
-                (31, 123), /* ')' => LRAction::Reduce(Numeric, 105) */
-                (32, 123), /* '@' => LRAction::Reduce(Numeric, 105) */
-                (33, 123), /* ':' => LRAction::Reduce(Numeric, 105) */
-                (34, 123), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 105) */
-                (35, 123), /* '[' => LRAction::Reduce(Numeric, 105) */
-                (36, 123), /* ']' => LRAction::Reduce(Numeric, 105) */
-                (37, 123), /* ',' => LRAction::Reduce(Numeric, 105) */
-                (38, 123), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 105) */
-                (39, 123), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 105) */
-                (40, 123), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 105) */
-                (41, 123), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
-                (42, 123), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
-                (43, 123), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
-                (44, 123), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
-                (45, 123), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 105) */
-                (46, 123), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 105) */
-            ],
-            gotos: &[],
-        },
-        // State 69
-        LR1State {
-            actions: &[
-                (9, 65),  /* ';' => LRAction::Reduce(Callable, 71) */
-                (12, 65), /* ':=' => LRAction::Reduce(Callable, 71) */
-                (13, 65), /* 'if' => LRAction::Reduce(Callable, 71) */
-                (14, 65), /* '||' => LRAction::Reduce(Callable, 71) */
-                (15, 65), /* '&&' => LRAction::Reduce(Callable, 71) */
-                (16, 65), /* 'in' => LRAction::Reduce(Callable, 71) */
-                (17, 65), /* '>=' => LRAction::Reduce(Callable, 71) */
-                (18, 65), /* '<=' => LRAction::Reduce(Callable, 71) */
-                (19, 65), /* '>' => LRAction::Reduce(Callable, 71) */
-                (20, 65), /* '<' => LRAction::Reduce(Callable, 71) */
-                (21, 65), /* '!=' => LRAction::Reduce(Callable, 71) */
-                (22, 65), /* '/=' => LRAction::Reduce(Callable, 71) */
-                (23, 65), /* '==' => LRAction::Reduce(Callable, 71) */
-                (24, 65), /* '+' => LRAction::Reduce(Callable, 71) */
-                (25, 65), /* '-' => LRAction::Reduce(Callable, 71) */
-                (26, 65), /* '*' => LRAction::Reduce(Callable, 71) */
-                (27, 65), /* '/' => LRAction::Reduce(Callable, 71) */
-                (28, 65), /* '%' => LRAction::Reduce(Callable, 71) */
-                (30, 65), /* '(' => LRAction::Reduce(Callable, 71) */
-                (31, 65), /* ')' => LRAction::Reduce(Callable, 71) */
-                (32, 65), /* '@' => LRAction::Reduce(Callable, 71) */
-                (33, 65), /* ':' => LRAction::Reduce(Callable, 71) */
-                (34, 65), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Callable, 71) */
-                (35, 65), /* '[' => LRAction::Reduce(Callable, 71) */
-                (36, 65), /* ']' => LRAction::Reduce(Callable, 71) */
-                (37, 65), /* ',' => LRAction::Reduce(Callable, 71) */
-                (38, 65), /* '"(\\.|[^"])*"' => LRAction::Reduce(Callable, 71) */
-                (39, 65), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Callable, 71) */
-                (40, 65), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Callable, 71) */
-                (41, 65), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
-                (42, 65), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
-                (43, 65), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
-                (44, 65), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
-                (45, 65), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 71) */
-                (46, 65), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 71) */
-            ],
-            gotos: &[],
-        },
-        // State 70
-        LR1State {
-            actions: &[
-                (9, 111),  /* ';' => LRAction::Reduce(Literal, 87) */
-                (12, 111), /* ':=' => LRAction::Reduce(Literal, 87) */
-                (13, 111), /* 'if' => LRAction::Reduce(Literal, 87) */
-                (14, 111), /* '||' => LRAction::Reduce(Literal, 87) */
-                (15, 111), /* '&&' => LRAction::Reduce(Literal, 87) */
-                (16, 111), /* 'in' => LRAction::Reduce(Literal, 87) */
-                (17, 111), /* '>=' => LRAction::Reduce(Literal, 87) */
-                (18, 111), /* '<=' => LRAction::Reduce(Literal, 87) */
-                (19, 111), /* '>' => LRAction::Reduce(Literal, 87) */
-                (20, 111), /* '<' => LRAction::Reduce(Literal, 87) */
-                (21, 111), /* '!=' => LRAction::Reduce(Literal, 87) */
-                (22, 111), /* '/=' => LRAction::Reduce(Literal, 87) */
-                (23, 111), /* '==' => LRAction::Reduce(Literal, 87) */
-                (24, 111), /* '+' => LRAction::Reduce(Literal, 87) */
-                (25, 111), /* '-' => LRAction::Reduce(Literal, 87) */
-                (26, 111), /* '*' => LRAction::Reduce(Literal, 87) */
-                (27, 111), /* '/' => LRAction::Reduce(Literal, 87) */
-                (28, 111), /* '%' => LRAction::Reduce(Literal, 87) */
-                (30, 111), /* '(' => LRAction::Reduce(Literal, 87) */
-                (31, 111), /* ')' => LRAction::Reduce(Literal, 87) */
-                (32, 111), /* '@' => LRAction::Reduce(Literal, 87) */
-                (33, 111), /* ':' => LRAction::Reduce(Literal, 87) */
-                (34, 111), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 87) */
-                (35, 111), /* '[' => LRAction::Reduce(Literal, 87) */
-                (36, 111), /* ']' => LRAction::Reduce(Literal, 87) */
-                (37, 111), /* ',' => LRAction::Reduce(Literal, 87) */
-                (38, 111), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 87) */
-                (39, 111), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 87) */
-                (40, 111), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 87) */
-                (41, 111), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
-                (42, 111), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
-                (43, 111), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
-                (44, 111), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
-                (45, 111), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 87) */
-                (46, 111), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 87) */
-            ],
-            gotos: &[],
-        },
-        // State 71
-        LR1State {
-            actions: &[
-                (9, 121),  /* ';' => LRAction::Reduce(Numeric, 103) */
-                (12, 121), /* ':=' => LRAction::Reduce(Numeric, 103) */
-                (13, 121), /* 'if' => LRAction::Reduce(Numeric, 103) */
-                (14, 121), /* '||' => LRAction::Reduce(Numeric, 103) */
-                (15, 121), /* '&&' => LRAction::Reduce(Numeric, 103) */
-                (16, 121), /* 'in' => LRAction::Reduce(Numeric, 103) */
-                (17, 121), /* '>=' => LRAction::Reduce(Numeric, 103) */
-                (18, 121), /* '<=' => LRAction::Reduce(Numeric, 103) */
-                (19, 121), /* '>' => LRAction::Reduce(Numeric, 103) */
-                (20, 121), /* '<' => LRAction::Reduce(Numeric, 103) */
-                (21, 121), /* '!=' => LRAction::Reduce(Numeric, 103) */
-                (22, 121), /* '/=' => LRAction::Reduce(Numeric, 103) */
-                (23, 121), /* '==' => LRAction::Reduce(Numeric, 103) */
-                (24, 121), /* '+' => LRAction::Reduce(Numeric, 103) */
-                (25, 121), /* '-' => LRAction::Reduce(Numeric, 103) */
-                (26, 121), /* '*' => LRAction::Reduce(Numeric, 103) */
-                (27, 121), /* '/' => LRAction::Reduce(Numeric, 103) */
-                (28, 121), /* '%' => LRAction::Reduce(Numeric, 103) */
-                (30, 121), /* '(' => LRAction::Reduce(Numeric, 103) */
-                (31, 121), /* ')' => LRAction::Reduce(Numeric, 103) */
-                (32, 121), /* '@' => LRAction::Reduce(Numeric, 103) */
-                (33, 121), /* ':' => LRAction::Reduce(Numeric, 103) */
-                (34, 121), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 103) */
-                (35, 121), /* '[' => LRAction::Reduce(Numeric, 103) */
-                (36, 121), /* ']' => LRAction::Reduce(Numeric, 103) */
-                (37, 121), /* ',' => LRAction::Reduce(Numeric, 103) */
-                (38, 121), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 103) */
-                (39, 121), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 103) */
-                (40, 121), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 103) */
-                (41, 121), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
-                (42, 121), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
-                (43, 121), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
-                (44, 121), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
-                (45, 121), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 103) */
-                (46, 121), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 103) */
-            ],
-            gotos: &[],
-        },
-        // State 72
-        LR1State {
-            actions: &[
-                (9, 64),  /* ';' => LRAction::Reduce(Callable, 70) */
-                (12, 64), /* ':=' => LRAction::Reduce(Callable, 70) */
-                (13, 64), /* 'if' => LRAction::Reduce(Callable, 70) */
-                (14, 64), /* '||' => LRAction::Reduce(Callable, 70) */
-                (15, 64), /* '&&' => LRAction::Reduce(Callable, 70) */
-                (16, 64), /* 'in' => LRAction::Reduce(Callable, 70) */
-                (17, 64), /* '>=' => LRAction::Reduce(Callable, 70) */
-                (18, 64), /* '<=' => LRAction::Reduce(Callable, 70) */
-                (19, 64), /* '>' => LRAction::Reduce(Callable, 70) */
-                (20, 64), /* '<' => LRAction::Reduce(Callable, 70) */
-                (21, 64), /* '!=' => LRAction::Reduce(Callable, 70) */
-                (22, 64), /* '/=' => LRAction::Reduce(Callable, 70) */
-                (23, 64), /* '==' => LRAction::Reduce(Callable, 70) */
-                (24, 64), /* '+' => LRAction::Reduce(Callable, 70) */
-                (25, 64), /* '-' => LRAction::Reduce(Callable, 70) */
-                (26, 64), /* '*' => LRAction::Reduce(Callable, 70) */
-                (27, 64), /* '/' => LRAction::Reduce(Callable, 70) */
-                (28, 64), /* '%' => LRAction::Reduce(Callable, 70) */
-                (30, 64), /* '(' => LRAction::Reduce(Callable, 70) */
-                (31, 64), /* ')' => LRAction::Reduce(Callable, 70) */
-                (32, 64), /* '@' => LRAction::Reduce(Callable, 70) */
-                (33, 64), /* ':' => LRAction::Reduce(Callable, 70) */
-                (34, 64), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Callable, 70) */
-                (35, 64), /* '[' => LRAction::Reduce(Callable, 70) */
-                (36, 64), /* ']' => LRAction::Reduce(Callable, 70) */
-                (37, 64), /* ',' => LRAction::Reduce(Callable, 70) */
-                (38, 64), /* '"(\\.|[^"])*"' => LRAction::Reduce(Callable, 70) */
-                (39, 64), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Callable, 70) */
-                (40, 64), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Callable, 70) */
-                (41, 64), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 70) */
-                (42, 64), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 70) */
-                (43, 64), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 70) */
-                (44, 64), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 70) */
-                (45, 64), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 70) */
-                (46, 64), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 70) */
-            ],
-            gotos: &[],
-        },
-        // State 73
-        LR1State {
-            actions: &[
-                (30, 130), /* '(' => LRAction::Reduce(PrefixExprList, 63) */
-                (32, 130), /* '@' => LRAction::Reduce(PrefixExprList, 63) */
-                (33, 130), /* ':' => LRAction::Reduce(PrefixExprList, 63) */
-                (34, 130), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 63) */
-                (35, 130), /* '[' => LRAction::Reduce(PrefixExprList, 63) */
-                (38, 130), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 63) */
-                (39, 130), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 63) */
-                (40, 130), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 63) */
-                (41, 130), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
-                (42, 130), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
-                (43, 130), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
-                (44, 130), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
-                (45, 130), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 63) */
-                (46, 130), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 63) */
-            ],
-            gotos: &[],
-        },
-        // State 74
-        LR1State {
-            actions: &[
-                (9, 113),  /* ';' => LRAction::Reduce(Literal, 89) */
-                (12, 113), /* ':=' => LRAction::Reduce(Literal, 89) */
-                (13, 113), /* 'if' => LRAction::Reduce(Literal, 89) */
-                (14, 113), /* '||' => LRAction::Reduce(Literal, 89) */
-                (15, 113), /* '&&' => LRAction::Reduce(Literal, 89) */
-                (16, 113), /* 'in' => LRAction::Reduce(Literal, 89) */
-                (17, 113), /* '>=' => LRAction::Reduce(Literal, 89) */
-                (18, 113), /* '<=' => LRAction::Reduce(Literal, 89) */
-                (19, 113), /* '>' => LRAction::Reduce(Literal, 89) */
-                (20, 113), /* '<' => LRAction::Reduce(Literal, 89) */
-                (21, 113), /* '!=' => LRAction::Reduce(Literal, 89) */
-                (22, 113), /* '/=' => LRAction::Reduce(Literal, 89) */
-                (23, 113), /* '==' => LRAction::Reduce(Literal, 89) */
-                (24, 113), /* '+' => LRAction::Reduce(Literal, 89) */
-                (25, 113), /* '-' => LRAction::Reduce(Literal, 89) */
-                (26, 113), /* '*' => LRAction::Reduce(Literal, 89) */
-                (27, 113), /* '/' => LRAction::Reduce(Literal, 89) */
-                (28, 113), /* '%' => LRAction::Reduce(Literal, 89) */
-                (30, 113), /* '(' => LRAction::Reduce(Literal, 89) */
-                (31, 113), /* ')' => LRAction::Reduce(Literal, 89) */
-                (32, 113), /* '@' => LRAction::Reduce(Literal, 89) */
-                (33, 113), /* ':' => LRAction::Reduce(Literal, 89) */
-                (34, 113), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 89) */
-                (35, 113), /* '[' => LRAction::Reduce(Literal, 89) */
-                (36, 113), /* ']' => LRAction::Reduce(Literal, 89) */
-                (37, 113), /* ',' => LRAction::Reduce(Literal, 89) */
-                (38, 113), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 89) */
-                (39, 113), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 89) */
-                (40, 113), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 89) */
-                (41, 113), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
-                (42, 113), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
-                (43, 113), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
-                (44, 113), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
-                (45, 113), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 89) */
-                (46, 113), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 89) */
-            ],
-            gotos: &[],
-        },
-        // State 75
-        LR1State {
-            actions: &[
-                (9, 108),  /* ';' => LRAction::Reduce(Literal, 84) */
-                (12, 108), /* ':=' => LRAction::Reduce(Literal, 84) */
-                (13, 108), /* 'if' => LRAction::Reduce(Literal, 84) */
-                (14, 108), /* '||' => LRAction::Reduce(Literal, 84) */
-                (15, 108), /* '&&' => LRAction::Reduce(Literal, 84) */
-                (16, 108), /* 'in' => LRAction::Reduce(Literal, 84) */
-                (17, 108), /* '>=' => LRAction::Reduce(Literal, 84) */
-                (18, 108), /* '<=' => LRAction::Reduce(Literal, 84) */
-                (19, 108), /* '>' => LRAction::Reduce(Literal, 84) */
-                (20, 108), /* '<' => LRAction::Reduce(Literal, 84) */
-                (21, 108), /* '!=' => LRAction::Reduce(Literal, 84) */
-                (22, 108), /* '/=' => LRAction::Reduce(Literal, 84) */
-                (23, 108), /* '==' => LRAction::Reduce(Literal, 84) */
-                (24, 108), /* '+' => LRAction::Reduce(Literal, 84) */
-                (25, 108), /* '-' => LRAction::Reduce(Literal, 84) */
-                (26, 108), /* '*' => LRAction::Reduce(Literal, 84) */
-                (27, 108), /* '/' => LRAction::Reduce(Literal, 84) */
-                (28, 108), /* '%' => LRAction::Reduce(Literal, 84) */
-                (30, 108), /* '(' => LRAction::Reduce(Literal, 84) */
-                (31, 108), /* ')' => LRAction::Reduce(Literal, 84) */
-                (32, 108), /* '@' => LRAction::Reduce(Literal, 84) */
-                (33, 108), /* ':' => LRAction::Reduce(Literal, 84) */
-                (34, 108), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 84) */
-                (35, 108), /* '[' => LRAction::Reduce(Literal, 84) */
-                (36, 108), /* ']' => LRAction::Reduce(Literal, 84) */
-                (37, 108), /* ',' => LRAction::Reduce(Literal, 84) */
-                (38, 108), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 84) */
-                (39, 108), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 84) */
-                (40, 108), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 84) */
-                (41, 108), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
-                (42, 108), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
-                (43, 108), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
-                (44, 108), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
-                (45, 108), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 84) */
-                (46, 108), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 84) */
-            ],
-            gotos: &[],
-        },
-        // State 76
         LR1State {
             actions: &[
                 (9, 135),  /* ';' => LRAction::Reduce(Qualif, 76) */
@@ -2499,6 +1440,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (26, 135), /* '*' => LRAction::Reduce(Qualif, 76) */
                 (27, 135), /* '/' => LRAction::Reduce(Qualif, 76) */
                 (28, 135), /* '%' => LRAction::Reduce(Qualif, 76) */
+                (29, 135), /* '&' => LRAction::Reduce(Qualif, 76) */
                 (30, 135), /* '(' => LRAction::Reduce(Qualif, 76) */
                 (31, 135), /* ')' => LRAction::Reduce(Qualif, 76) */
                 (32, 135), /* '@' => LRAction::Reduce(Qualif, 76) */
@@ -2519,115 +1461,1279 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
+        // State 51
+        LR1State {
+            actions: &[
+                (29, 133), /* '&' => LRAction::Reduce(PrefixExprList, 63) */
+                (30, 133), /* '(' => LRAction::Reduce(PrefixExprList, 63) */
+                (32, 133), /* '@' => LRAction::Reduce(PrefixExprList, 63) */
+                (33, 133), /* ':' => LRAction::Reduce(PrefixExprList, 63) */
+                (34, 133), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 63) */
+                (35, 133), /* '[' => LRAction::Reduce(PrefixExprList, 63) */
+                (38, 133), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 63) */
+                (39, 133), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 63) */
+                (40, 133), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 63) */
+                (41, 133), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
+                (42, 133), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
+                (43, 133), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
+                (44, 133), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 63) */
+                (45, 133), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 63) */
+                (46, 133), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 63) */
+            ],
+            gotos: &[],
+        },
+        // State 52
+        LR1State {
+            actions: &[
+                (9, 136),  /* ';' => LRAction::Reduce(Qualif, 77) */
+                (12, 136), /* ':=' => LRAction::Reduce(Qualif, 77) */
+                (13, 136), /* 'if' => LRAction::Reduce(Qualif, 77) */
+                (14, 136), /* '||' => LRAction::Reduce(Qualif, 77) */
+                (15, 136), /* '&&' => LRAction::Reduce(Qualif, 77) */
+                (16, 136), /* 'in' => LRAction::Reduce(Qualif, 77) */
+                (17, 136), /* '>=' => LRAction::Reduce(Qualif, 77) */
+                (18, 136), /* '<=' => LRAction::Reduce(Qualif, 77) */
+                (19, 136), /* '>' => LRAction::Reduce(Qualif, 77) */
+                (20, 136), /* '<' => LRAction::Reduce(Qualif, 77) */
+                (21, 136), /* '!=' => LRAction::Reduce(Qualif, 77) */
+                (22, 136), /* '/=' => LRAction::Reduce(Qualif, 77) */
+                (23, 136), /* '==' => LRAction::Reduce(Qualif, 77) */
+                (24, 136), /* '+' => LRAction::Reduce(Qualif, 77) */
+                (25, 136), /* '-' => LRAction::Reduce(Qualif, 77) */
+                (26, 136), /* '*' => LRAction::Reduce(Qualif, 77) */
+                (27, 136), /* '/' => LRAction::Reduce(Qualif, 77) */
+                (28, 136), /* '%' => LRAction::Reduce(Qualif, 77) */
+                (29, 136), /* '&' => LRAction::Reduce(Qualif, 77) */
+                (30, 136), /* '(' => LRAction::Reduce(Qualif, 77) */
+                (31, 136), /* ')' => LRAction::Reduce(Qualif, 77) */
+                (32, 136), /* '@' => LRAction::Reduce(Qualif, 77) */
+                (33, 136), /* ':' => LRAction::Reduce(Qualif, 77) */
+                (34, 136), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Qualif, 77) */
+                (35, 136), /* '[' => LRAction::Reduce(Qualif, 77) */
+                (36, 136), /* ']' => LRAction::Reduce(Qualif, 77) */
+                (37, 136), /* ',' => LRAction::Reduce(Qualif, 77) */
+                (38, 136), /* '"(\\.|[^"])*"' => LRAction::Reduce(Qualif, 77) */
+                (39, 136), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Qualif, 77) */
+                (40, 136), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Qualif, 77) */
+                (41, 136), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 77) */
+                (42, 136), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 77) */
+                (43, 136), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 77) */
+                (44, 136), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Qualif, 77) */
+                (45, 136), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Qualif, 77) */
+                (46, 136), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Qualif, 77) */
+            ],
+            gotos: &[],
+        },
+        // State 53
+        LR1State {
+            actions: &[(7, 95) /* '[^\r\n]*' => LRAction::Reduce(Hash, 2) */],
+            gotos: &[],
+        },
+        // State 54
+        LR1State {
+            actions: &[
+                (5, 147), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt1, 9) */
+            ],
+            gotos: &[],
+        },
+        // State 55
+        LR1State {
+            actions: &[(7, 41) /* '[^\r\n]*' => LRAction::Shift(110) */],
+            gotos: &[(18, 111) /* CommentContent => 111 */],
+        },
+        // State 56
+        LR1State {
+            actions: &[(5, 42) /* '(?:\r?\n|\r)+' => LRAction::Shift(112) */],
+            gotos: &[(22, 113) /* EndOfLine => 113 */],
+        },
+        // State 57
+        LR1State {
+            actions: &[
+                (5, 151), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Semi, 19) */
+                (6, 151), /* '#' => LRAction::Reduce(Semi, 19) */
+            ],
+            gotos: &[],
+        },
+        // State 58
+        LR1State {
+            actions: &[
+                (5, 155), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Statement, 17) */
+                (6, 155), /* '#' => LRAction::Reduce(Statement, 17) */
+            ],
+            gotos: &[],
+        },
+        // State 59
+        LR1State {
+            actions: &[
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+            ],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (19, 13),  /* CompareExpr => 13 */
+                (24, 114), /* Expr => 114 */
+                (25, 15),  /* FactorExpr => 15 */
+                (34, 16),  /* InfixIfExpr => 16 */
+                (36, 17),  /* InfixInExpr => 17 */
+                (40, 19),  /* LogicalAndExpr => 19 */
+                (42, 20),  /* LogicalOrExpr => 20 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+                (64, 26),  /* SetExpr => 26 */
+            ],
+        },
+        // State 60
+        LR1State {
+            actions: &[
+                (9, 47),   /* ';' => LRAction::Reduce(ApplyExpr, 65) */
+                (12, 47),  /* ':=' => LRAction::Reduce(ApplyExpr, 65) */
+                (13, 47),  /* 'if' => LRAction::Reduce(ApplyExpr, 65) */
+                (14, 47),  /* '||' => LRAction::Reduce(ApplyExpr, 65) */
+                (15, 47),  /* '&&' => LRAction::Reduce(ApplyExpr, 65) */
+                (16, 47),  /* 'in' => LRAction::Reduce(ApplyExpr, 65) */
+                (17, 47),  /* '>=' => LRAction::Reduce(ApplyExpr, 65) */
+                (18, 47),  /* '<=' => LRAction::Reduce(ApplyExpr, 65) */
+                (19, 47),  /* '>' => LRAction::Reduce(ApplyExpr, 65) */
+                (20, 47),  /* '<' => LRAction::Reduce(ApplyExpr, 65) */
+                (21, 47),  /* '!=' => LRAction::Reduce(ApplyExpr, 65) */
+                (22, 47),  /* '/=' => LRAction::Reduce(ApplyExpr, 65) */
+                (23, 47),  /* '==' => LRAction::Reduce(ApplyExpr, 65) */
+                (24, 47),  /* '+' => LRAction::Reduce(ApplyExpr, 65) */
+                (25, 47),  /* '-' => LRAction::Reduce(ApplyExpr, 65) */
+                (26, 47),  /* '*' => LRAction::Reduce(ApplyExpr, 65) */
+                (27, 47),  /* '/' => LRAction::Reduce(ApplyExpr, 65) */
+                (28, 47),  /* '%' => LRAction::Reduce(ApplyExpr, 65) */
+                (29, 6),   /* '&' => LRAction::Shift(31) */
+                (30, 122), /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (31, 47),  /* ')' => LRAction::Reduce(ApplyExpr, 65) */
+                (32, 10),  /* '@' => LRAction::Shift(47) */
+                (33, 11),  /* ':' => LRAction::Shift(48) */
+                (34, 122), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (35, 122), /* '[' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (36, 47),  /* ']' => LRAction::Reduce(ApplyExpr, 65) */
+                (37, 47),  /* ',' => LRAction::Reduce(ApplyExpr, 65) */
+                (38, 122), /* '"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (39, 122), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (40, 122), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (41, 122), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (42, 122), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (43, 122), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (44, 122), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (45, 122), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+                (46, 122), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LowerPrefixExprOpt, 70) */
+            ],
+            gotos: &[
+                (7, 115),  /* AtomicExpr => 115 */
+                (23, 50),  /* ExecutorComponent => 50 */
+                (44, 116), /* LowerPrefixExpr => 116 */
+                (45, 34),  /* LowerPrefixExprOpt => 34 */
+                (53, 117), /* Qualif => 117 */
+                (69, 52),  /* TimeIndicator => 52 */
+            ],
+        },
+        // State 61
+        LR1State {
+            actions: &[
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+            ],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (19, 13),  /* CompareExpr => 13 */
+                (24, 118), /* Expr => 118 */
+                (25, 15),  /* FactorExpr => 15 */
+                (34, 16),  /* InfixIfExpr => 16 */
+                (36, 17),  /* InfixInExpr => 17 */
+                (40, 19),  /* LogicalAndExpr => 19 */
+                (42, 20),  /* LogicalOrExpr => 20 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+                (64, 26),  /* SetExpr => 26 */
+            ],
+        },
+        // State 62
+        LR1State {
+            actions: &[
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (36, 57),  /* ']' => LRAction::Reduce(ArrayOpt, 93) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+            ],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (6, 119),  /* ArrayOpt => 119 */
+                (15, 120), /* CommaSepElements => 120 */
+                (19, 13),  /* CompareExpr => 13 */
+                (24, 121), /* Expr => 121 */
+                (25, 15),  /* FactorExpr => 15 */
+                (34, 16),  /* InfixIfExpr => 16 */
+                (36, 17),  /* InfixInExpr => 17 */
+                (40, 19),  /* LogicalAndExpr => 19 */
+                (42, 20),  /* LogicalOrExpr => 20 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+                (64, 26),  /* SetExpr => 26 */
+            ],
+        },
+        // State 63
+        LR1State {
+            actions: &[
+                (9, 159),  /* ';' => LRAction::Reduce(String, 100) */
+                (12, 159), /* ':=' => LRAction::Reduce(String, 100) */
+                (13, 159), /* 'if' => LRAction::Reduce(String, 100) */
+                (14, 159), /* '||' => LRAction::Reduce(String, 100) */
+                (15, 159), /* '&&' => LRAction::Reduce(String, 100) */
+                (16, 159), /* 'in' => LRAction::Reduce(String, 100) */
+                (17, 159), /* '>=' => LRAction::Reduce(String, 100) */
+                (18, 159), /* '<=' => LRAction::Reduce(String, 100) */
+                (19, 159), /* '>' => LRAction::Reduce(String, 100) */
+                (20, 159), /* '<' => LRAction::Reduce(String, 100) */
+                (21, 159), /* '!=' => LRAction::Reduce(String, 100) */
+                (22, 159), /* '/=' => LRAction::Reduce(String, 100) */
+                (23, 159), /* '==' => LRAction::Reduce(String, 100) */
+                (24, 159), /* '+' => LRAction::Reduce(String, 100) */
+                (25, 159), /* '-' => LRAction::Reduce(String, 100) */
+                (26, 159), /* '*' => LRAction::Reduce(String, 100) */
+                (27, 159), /* '/' => LRAction::Reduce(String, 100) */
+                (28, 159), /* '%' => LRAction::Reduce(String, 100) */
+                (29, 159), /* '&' => LRAction::Reduce(String, 100) */
+                (30, 159), /* '(' => LRAction::Reduce(String, 100) */
+                (31, 159), /* ')' => LRAction::Reduce(String, 100) */
+                (32, 159), /* '@' => LRAction::Reduce(String, 100) */
+                (33, 159), /* ':' => LRAction::Reduce(String, 100) */
+                (34, 159), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(String, 100) */
+                (35, 159), /* '[' => LRAction::Reduce(String, 100) */
+                (36, 159), /* ']' => LRAction::Reduce(String, 100) */
+                (37, 159), /* ',' => LRAction::Reduce(String, 100) */
+                (38, 159), /* '"(\\.|[^"])*"' => LRAction::Reduce(String, 100) */
+                (39, 159), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(String, 100) */
+                (40, 159), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(String, 100) */
+                (41, 159), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 100) */
+                (42, 159), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 100) */
+                (43, 159), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 100) */
+                (44, 159), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(String, 100) */
+                (45, 159), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(String, 100) */
+                (46, 159), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(String, 100) */
+            ],
+            gotos: &[],
+        },
+        // State 64
+        LR1State {
+            actions: &[
+                (9, 63),  /* ';' => LRAction::Reduce(ByteLiteral, 101) */
+                (12, 63), /* ':=' => LRAction::Reduce(ByteLiteral, 101) */
+                (13, 63), /* 'if' => LRAction::Reduce(ByteLiteral, 101) */
+                (14, 63), /* '||' => LRAction::Reduce(ByteLiteral, 101) */
+                (15, 63), /* '&&' => LRAction::Reduce(ByteLiteral, 101) */
+                (16, 63), /* 'in' => LRAction::Reduce(ByteLiteral, 101) */
+                (17, 63), /* '>=' => LRAction::Reduce(ByteLiteral, 101) */
+                (18, 63), /* '<=' => LRAction::Reduce(ByteLiteral, 101) */
+                (19, 63), /* '>' => LRAction::Reduce(ByteLiteral, 101) */
+                (20, 63), /* '<' => LRAction::Reduce(ByteLiteral, 101) */
+                (21, 63), /* '!=' => LRAction::Reduce(ByteLiteral, 101) */
+                (22, 63), /* '/=' => LRAction::Reduce(ByteLiteral, 101) */
+                (23, 63), /* '==' => LRAction::Reduce(ByteLiteral, 101) */
+                (24, 63), /* '+' => LRAction::Reduce(ByteLiteral, 101) */
+                (25, 63), /* '-' => LRAction::Reduce(ByteLiteral, 101) */
+                (26, 63), /* '*' => LRAction::Reduce(ByteLiteral, 101) */
+                (27, 63), /* '/' => LRAction::Reduce(ByteLiteral, 101) */
+                (28, 63), /* '%' => LRAction::Reduce(ByteLiteral, 101) */
+                (29, 63), /* '&' => LRAction::Reduce(ByteLiteral, 101) */
+                (30, 63), /* '(' => LRAction::Reduce(ByteLiteral, 101) */
+                (31, 63), /* ')' => LRAction::Reduce(ByteLiteral, 101) */
+                (32, 63), /* '@' => LRAction::Reduce(ByteLiteral, 101) */
+                (33, 63), /* ':' => LRAction::Reduce(ByteLiteral, 101) */
+                (34, 63), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ByteLiteral, 101) */
+                (35, 63), /* '[' => LRAction::Reduce(ByteLiteral, 101) */
+                (36, 63), /* ']' => LRAction::Reduce(ByteLiteral, 101) */
+                (37, 63), /* ',' => LRAction::Reduce(ByteLiteral, 101) */
+                (38, 63), /* '"(\\.|[^"])*"' => LRAction::Reduce(ByteLiteral, 101) */
+                (39, 63), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ByteLiteral, 101) */
+                (40, 63), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ByteLiteral, 101) */
+                (41, 63), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 101) */
+                (42, 63), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 101) */
+                (43, 63), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 101) */
+                (44, 63), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ByteLiteral, 101) */
+                (45, 63), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ByteLiteral, 101) */
+                (46, 63), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ByteLiteral, 101) */
+            ],
+            gotos: &[],
+        },
+        // State 65
+        LR1State {
+            actions: &[
+                (9, 96),  /* ';' => LRAction::Reduce(HexByteLiteral, 102) */
+                (12, 96), /* ':=' => LRAction::Reduce(HexByteLiteral, 102) */
+                (13, 96), /* 'if' => LRAction::Reduce(HexByteLiteral, 102) */
+                (14, 96), /* '||' => LRAction::Reduce(HexByteLiteral, 102) */
+                (15, 96), /* '&&' => LRAction::Reduce(HexByteLiteral, 102) */
+                (16, 96), /* 'in' => LRAction::Reduce(HexByteLiteral, 102) */
+                (17, 96), /* '>=' => LRAction::Reduce(HexByteLiteral, 102) */
+                (18, 96), /* '<=' => LRAction::Reduce(HexByteLiteral, 102) */
+                (19, 96), /* '>' => LRAction::Reduce(HexByteLiteral, 102) */
+                (20, 96), /* '<' => LRAction::Reduce(HexByteLiteral, 102) */
+                (21, 96), /* '!=' => LRAction::Reduce(HexByteLiteral, 102) */
+                (22, 96), /* '/=' => LRAction::Reduce(HexByteLiteral, 102) */
+                (23, 96), /* '==' => LRAction::Reduce(HexByteLiteral, 102) */
+                (24, 96), /* '+' => LRAction::Reduce(HexByteLiteral, 102) */
+                (25, 96), /* '-' => LRAction::Reduce(HexByteLiteral, 102) */
+                (26, 96), /* '*' => LRAction::Reduce(HexByteLiteral, 102) */
+                (27, 96), /* '/' => LRAction::Reduce(HexByteLiteral, 102) */
+                (28, 96), /* '%' => LRAction::Reduce(HexByteLiteral, 102) */
+                (29, 96), /* '&' => LRAction::Reduce(HexByteLiteral, 102) */
+                (30, 96), /* '(' => LRAction::Reduce(HexByteLiteral, 102) */
+                (31, 96), /* ')' => LRAction::Reduce(HexByteLiteral, 102) */
+                (32, 96), /* '@' => LRAction::Reduce(HexByteLiteral, 102) */
+                (33, 96), /* ':' => LRAction::Reduce(HexByteLiteral, 102) */
+                (34, 96), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(HexByteLiteral, 102) */
+                (35, 96), /* '[' => LRAction::Reduce(HexByteLiteral, 102) */
+                (36, 96), /* ']' => LRAction::Reduce(HexByteLiteral, 102) */
+                (37, 96), /* ',' => LRAction::Reduce(HexByteLiteral, 102) */
+                (38, 96), /* '"(\\.|[^"])*"' => LRAction::Reduce(HexByteLiteral, 102) */
+                (39, 96), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(HexByteLiteral, 102) */
+                (40, 96), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(HexByteLiteral, 102) */
+                (41, 96), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 102) */
+                (42, 96), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 102) */
+                (43, 96), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 102) */
+                (44, 96), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(HexByteLiteral, 102) */
+                (45, 96), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(HexByteLiteral, 102) */
+                (46, 96), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(HexByteLiteral, 102) */
+            ],
+            gotos: &[],
+        },
+        // State 66
+        LR1State {
+            actions: &[
+                (9, 60),  /* ';' => LRAction::Reduce(BinaryInteger, 107) */
+                (12, 60), /* ':=' => LRAction::Reduce(BinaryInteger, 107) */
+                (13, 60), /* 'if' => LRAction::Reduce(BinaryInteger, 107) */
+                (14, 60), /* '||' => LRAction::Reduce(BinaryInteger, 107) */
+                (15, 60), /* '&&' => LRAction::Reduce(BinaryInteger, 107) */
+                (16, 60), /* 'in' => LRAction::Reduce(BinaryInteger, 107) */
+                (17, 60), /* '>=' => LRAction::Reduce(BinaryInteger, 107) */
+                (18, 60), /* '<=' => LRAction::Reduce(BinaryInteger, 107) */
+                (19, 60), /* '>' => LRAction::Reduce(BinaryInteger, 107) */
+                (20, 60), /* '<' => LRAction::Reduce(BinaryInteger, 107) */
+                (21, 60), /* '!=' => LRAction::Reduce(BinaryInteger, 107) */
+                (22, 60), /* '/=' => LRAction::Reduce(BinaryInteger, 107) */
+                (23, 60), /* '==' => LRAction::Reduce(BinaryInteger, 107) */
+                (24, 60), /* '+' => LRAction::Reduce(BinaryInteger, 107) */
+                (25, 60), /* '-' => LRAction::Reduce(BinaryInteger, 107) */
+                (26, 60), /* '*' => LRAction::Reduce(BinaryInteger, 107) */
+                (27, 60), /* '/' => LRAction::Reduce(BinaryInteger, 107) */
+                (28, 60), /* '%' => LRAction::Reduce(BinaryInteger, 107) */
+                (29, 60), /* '&' => LRAction::Reduce(BinaryInteger, 107) */
+                (30, 60), /* '(' => LRAction::Reduce(BinaryInteger, 107) */
+                (31, 60), /* ')' => LRAction::Reduce(BinaryInteger, 107) */
+                (32, 60), /* '@' => LRAction::Reduce(BinaryInteger, 107) */
+                (33, 60), /* ':' => LRAction::Reduce(BinaryInteger, 107) */
+                (34, 60), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(BinaryInteger, 107) */
+                (35, 60), /* '[' => LRAction::Reduce(BinaryInteger, 107) */
+                (36, 60), /* ']' => LRAction::Reduce(BinaryInteger, 107) */
+                (37, 60), /* ',' => LRAction::Reduce(BinaryInteger, 107) */
+                (38, 60), /* '"(\\.|[^"])*"' => LRAction::Reduce(BinaryInteger, 107) */
+                (39, 60), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(BinaryInteger, 107) */
+                (40, 60), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(BinaryInteger, 107) */
+                (41, 60), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 107) */
+                (42, 60), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 107) */
+                (43, 60), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 107) */
+                (44, 60), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(BinaryInteger, 107) */
+                (45, 60), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(BinaryInteger, 107) */
+                (46, 60), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(BinaryInteger, 107) */
+            ],
+            gotos: &[],
+        },
+        // State 67
+        LR1State {
+            actions: &[
+                (9, 127),  /* ';' => LRAction::Reduce(OctalInteger, 108) */
+                (12, 127), /* ':=' => LRAction::Reduce(OctalInteger, 108) */
+                (13, 127), /* 'if' => LRAction::Reduce(OctalInteger, 108) */
+                (14, 127), /* '||' => LRAction::Reduce(OctalInteger, 108) */
+                (15, 127), /* '&&' => LRAction::Reduce(OctalInteger, 108) */
+                (16, 127), /* 'in' => LRAction::Reduce(OctalInteger, 108) */
+                (17, 127), /* '>=' => LRAction::Reduce(OctalInteger, 108) */
+                (18, 127), /* '<=' => LRAction::Reduce(OctalInteger, 108) */
+                (19, 127), /* '>' => LRAction::Reduce(OctalInteger, 108) */
+                (20, 127), /* '<' => LRAction::Reduce(OctalInteger, 108) */
+                (21, 127), /* '!=' => LRAction::Reduce(OctalInteger, 108) */
+                (22, 127), /* '/=' => LRAction::Reduce(OctalInteger, 108) */
+                (23, 127), /* '==' => LRAction::Reduce(OctalInteger, 108) */
+                (24, 127), /* '+' => LRAction::Reduce(OctalInteger, 108) */
+                (25, 127), /* '-' => LRAction::Reduce(OctalInteger, 108) */
+                (26, 127), /* '*' => LRAction::Reduce(OctalInteger, 108) */
+                (27, 127), /* '/' => LRAction::Reduce(OctalInteger, 108) */
+                (28, 127), /* '%' => LRAction::Reduce(OctalInteger, 108) */
+                (29, 127), /* '&' => LRAction::Reduce(OctalInteger, 108) */
+                (30, 127), /* '(' => LRAction::Reduce(OctalInteger, 108) */
+                (31, 127), /* ')' => LRAction::Reduce(OctalInteger, 108) */
+                (32, 127), /* '@' => LRAction::Reduce(OctalInteger, 108) */
+                (33, 127), /* ':' => LRAction::Reduce(OctalInteger, 108) */
+                (34, 127), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(OctalInteger, 108) */
+                (35, 127), /* '[' => LRAction::Reduce(OctalInteger, 108) */
+                (36, 127), /* ']' => LRAction::Reduce(OctalInteger, 108) */
+                (37, 127), /* ',' => LRAction::Reduce(OctalInteger, 108) */
+                (38, 127), /* '"(\\.|[^"])*"' => LRAction::Reduce(OctalInteger, 108) */
+                (39, 127), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(OctalInteger, 108) */
+                (40, 127), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(OctalInteger, 108) */
+                (41, 127), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 108) */
+                (42, 127), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 108) */
+                (43, 127), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 108) */
+                (44, 127), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(OctalInteger, 108) */
+                (45, 127), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(OctalInteger, 108) */
+                (46, 127), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(OctalInteger, 108) */
+            ],
+            gotos: &[],
+        },
+        // State 68
+        LR1State {
+            actions: &[
+                (9, 97),  /* ';' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (12, 97), /* ':=' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (13, 97), /* 'if' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (14, 97), /* '||' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (15, 97), /* '&&' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (16, 97), /* 'in' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (17, 97), /* '>=' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (18, 97), /* '<=' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (19, 97), /* '>' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (20, 97), /* '<' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (21, 97), /* '!=' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (22, 97), /* '/=' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (23, 97), /* '==' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (24, 97), /* '+' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (25, 97), /* '-' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (26, 97), /* '*' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (27, 97), /* '/' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (28, 97), /* '%' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (29, 97), /* '&' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (30, 97), /* '(' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (31, 97), /* ')' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (32, 97), /* '@' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (33, 97), /* ':' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (34, 97), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (35, 97), /* '[' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (36, 97), /* ']' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (37, 97), /* ',' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (38, 97), /* '"(\\.|[^"])*"' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (39, 97), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (40, 97), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (41, 97), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (42, 97), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (43, 97), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (44, 97), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (45, 97), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(HexadecimalInteger, 109) */
+                (46, 97), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(HexadecimalInteger, 109) */
+            ],
+            gotos: &[],
+        },
+        // State 69
+        LR1State {
+            actions: &[
+                (9, 99),  /* ';' => LRAction::Reduce(Ieee754Float, 110) */
+                (12, 99), /* ':=' => LRAction::Reduce(Ieee754Float, 110) */
+                (13, 99), /* 'if' => LRAction::Reduce(Ieee754Float, 110) */
+                (14, 99), /* '||' => LRAction::Reduce(Ieee754Float, 110) */
+                (15, 99), /* '&&' => LRAction::Reduce(Ieee754Float, 110) */
+                (16, 99), /* 'in' => LRAction::Reduce(Ieee754Float, 110) */
+                (17, 99), /* '>=' => LRAction::Reduce(Ieee754Float, 110) */
+                (18, 99), /* '<=' => LRAction::Reduce(Ieee754Float, 110) */
+                (19, 99), /* '>' => LRAction::Reduce(Ieee754Float, 110) */
+                (20, 99), /* '<' => LRAction::Reduce(Ieee754Float, 110) */
+                (21, 99), /* '!=' => LRAction::Reduce(Ieee754Float, 110) */
+                (22, 99), /* '/=' => LRAction::Reduce(Ieee754Float, 110) */
+                (23, 99), /* '==' => LRAction::Reduce(Ieee754Float, 110) */
+                (24, 99), /* '+' => LRAction::Reduce(Ieee754Float, 110) */
+                (25, 99), /* '-' => LRAction::Reduce(Ieee754Float, 110) */
+                (26, 99), /* '*' => LRAction::Reduce(Ieee754Float, 110) */
+                (27, 99), /* '/' => LRAction::Reduce(Ieee754Float, 110) */
+                (28, 99), /* '%' => LRAction::Reduce(Ieee754Float, 110) */
+                (29, 99), /* '&' => LRAction::Reduce(Ieee754Float, 110) */
+                (30, 99), /* '(' => LRAction::Reduce(Ieee754Float, 110) */
+                (31, 99), /* ')' => LRAction::Reduce(Ieee754Float, 110) */
+                (32, 99), /* '@' => LRAction::Reduce(Ieee754Float, 110) */
+                (33, 99), /* ':' => LRAction::Reduce(Ieee754Float, 110) */
+                (34, 99), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Ieee754Float, 110) */
+                (35, 99), /* '[' => LRAction::Reduce(Ieee754Float, 110) */
+                (36, 99), /* ']' => LRAction::Reduce(Ieee754Float, 110) */
+                (37, 99), /* ',' => LRAction::Reduce(Ieee754Float, 110) */
+                (38, 99), /* '"(\\.|[^"])*"' => LRAction::Reduce(Ieee754Float, 110) */
+                (39, 99), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Ieee754Float, 110) */
+                (40, 99), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Ieee754Float, 110) */
+                (41, 99), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 110) */
+                (42, 99), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 110) */
+                (43, 99), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 110) */
+                (44, 99), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Ieee754Float, 110) */
+                (45, 99), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Ieee754Float, 110) */
+                (46, 99), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Ieee754Float, 110) */
+            ],
+            gotos: &[],
+        },
+        // State 70
+        LR1State {
+            actions: &[
+                (9, 94),  /* ';' => LRAction::Reduce(FilePathLiteral, 111) */
+                (12, 94), /* ':=' => LRAction::Reduce(FilePathLiteral, 111) */
+                (13, 94), /* 'if' => LRAction::Reduce(FilePathLiteral, 111) */
+                (14, 94), /* '||' => LRAction::Reduce(FilePathLiteral, 111) */
+                (15, 94), /* '&&' => LRAction::Reduce(FilePathLiteral, 111) */
+                (16, 94), /* 'in' => LRAction::Reduce(FilePathLiteral, 111) */
+                (17, 94), /* '>=' => LRAction::Reduce(FilePathLiteral, 111) */
+                (18, 94), /* '<=' => LRAction::Reduce(FilePathLiteral, 111) */
+                (19, 94), /* '>' => LRAction::Reduce(FilePathLiteral, 111) */
+                (20, 94), /* '<' => LRAction::Reduce(FilePathLiteral, 111) */
+                (21, 94), /* '!=' => LRAction::Reduce(FilePathLiteral, 111) */
+                (22, 94), /* '/=' => LRAction::Reduce(FilePathLiteral, 111) */
+                (23, 94), /* '==' => LRAction::Reduce(FilePathLiteral, 111) */
+                (24, 94), /* '+' => LRAction::Reduce(FilePathLiteral, 111) */
+                (25, 94), /* '-' => LRAction::Reduce(FilePathLiteral, 111) */
+                (26, 94), /* '*' => LRAction::Reduce(FilePathLiteral, 111) */
+                (27, 94), /* '/' => LRAction::Reduce(FilePathLiteral, 111) */
+                (28, 94), /* '%' => LRAction::Reduce(FilePathLiteral, 111) */
+                (29, 94), /* '&' => LRAction::Reduce(FilePathLiteral, 111) */
+                (30, 94), /* '(' => LRAction::Reduce(FilePathLiteral, 111) */
+                (31, 94), /* ')' => LRAction::Reduce(FilePathLiteral, 111) */
+                (32, 94), /* '@' => LRAction::Reduce(FilePathLiteral, 111) */
+                (33, 94), /* ':' => LRAction::Reduce(FilePathLiteral, 111) */
+                (34, 94), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(FilePathLiteral, 111) */
+                (35, 94), /* '[' => LRAction::Reduce(FilePathLiteral, 111) */
+                (36, 94), /* ']' => LRAction::Reduce(FilePathLiteral, 111) */
+                (37, 94), /* ',' => LRAction::Reduce(FilePathLiteral, 111) */
+                (38, 94), /* '"(\\.|[^"])*"' => LRAction::Reduce(FilePathLiteral, 111) */
+                (39, 94), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(FilePathLiteral, 111) */
+                (40, 94), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(FilePathLiteral, 111) */
+                (41, 94), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 111) */
+                (42, 94), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 111) */
+                (43, 94), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 111) */
+                (44, 94), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(FilePathLiteral, 111) */
+                (45, 94), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(FilePathLiteral, 111) */
+                (46, 94), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FilePathLiteral, 111) */
+            ],
+            gotos: &[],
+        },
+        // State 71
+        LR1State {
+            actions: &[
+                (9, 138),  /* ';' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (12, 138), /* ':=' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (13, 138), /* 'if' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (14, 138), /* '||' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (15, 138), /* '&&' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (16, 138), /* 'in' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (17, 138), /* '>=' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (18, 138), /* '<=' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (19, 138), /* '>' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (20, 138), /* '<' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (21, 138), /* '!=' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (22, 138), /* '/=' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (23, 138), /* '==' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (24, 138), /* '+' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (25, 138), /* '-' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (26, 138), /* '*' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (27, 138), /* '/' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (28, 138), /* '%' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (29, 138), /* '&' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (30, 138), /* '(' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (31, 138), /* ')' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (32, 138), /* '@' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (33, 138), /* ':' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (34, 138), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (35, 138), /* '[' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (36, 138), /* ']' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (37, 138), /* ',' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (38, 138), /* '"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (39, 138), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (40, 138), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (41, 138), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (42, 138), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (43, 138), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (44, 138), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (45, 138), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Rfc3339DateTime, 112) */
+                (46, 138), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Rfc3339DateTime, 112) */
+            ],
+            gotos: &[],
+        },
+        // State 72
+        LR1State {
+            actions: &[
+                (9, 107),  /* ';' => LRAction::Reduce(Literal, 84) */
+                (12, 107), /* ':=' => LRAction::Reduce(Literal, 84) */
+                (13, 107), /* 'if' => LRAction::Reduce(Literal, 84) */
+                (14, 107), /* '||' => LRAction::Reduce(Literal, 84) */
+                (15, 107), /* '&&' => LRAction::Reduce(Literal, 84) */
+                (16, 107), /* 'in' => LRAction::Reduce(Literal, 84) */
+                (17, 107), /* '>=' => LRAction::Reduce(Literal, 84) */
+                (18, 107), /* '<=' => LRAction::Reduce(Literal, 84) */
+                (19, 107), /* '>' => LRAction::Reduce(Literal, 84) */
+                (20, 107), /* '<' => LRAction::Reduce(Literal, 84) */
+                (21, 107), /* '!=' => LRAction::Reduce(Literal, 84) */
+                (22, 107), /* '/=' => LRAction::Reduce(Literal, 84) */
+                (23, 107), /* '==' => LRAction::Reduce(Literal, 84) */
+                (24, 107), /* '+' => LRAction::Reduce(Literal, 84) */
+                (25, 107), /* '-' => LRAction::Reduce(Literal, 84) */
+                (26, 107), /* '*' => LRAction::Reduce(Literal, 84) */
+                (27, 107), /* '/' => LRAction::Reduce(Literal, 84) */
+                (28, 107), /* '%' => LRAction::Reduce(Literal, 84) */
+                (29, 107), /* '&' => LRAction::Reduce(Literal, 84) */
+                (30, 107), /* '(' => LRAction::Reduce(Literal, 84) */
+                (31, 107), /* ')' => LRAction::Reduce(Literal, 84) */
+                (32, 107), /* '@' => LRAction::Reduce(Literal, 84) */
+                (33, 107), /* ':' => LRAction::Reduce(Literal, 84) */
+                (34, 107), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 84) */
+                (35, 107), /* '[' => LRAction::Reduce(Literal, 84) */
+                (36, 107), /* ']' => LRAction::Reduce(Literal, 84) */
+                (37, 107), /* ',' => LRAction::Reduce(Literal, 84) */
+                (38, 107), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 84) */
+                (39, 107), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 84) */
+                (40, 107), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 84) */
+                (41, 107), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
+                (42, 107), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
+                (43, 107), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
+                (44, 107), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 84) */
+                (45, 107), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 84) */
+                (46, 107), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 84) */
+            ],
+            gotos: &[],
+        },
+        // State 73
+        LR1State {
+            actions: &[
+                (9, 123),  /* ';' => LRAction::Reduce(Numeric, 103) */
+                (12, 123), /* ':=' => LRAction::Reduce(Numeric, 103) */
+                (13, 123), /* 'if' => LRAction::Reduce(Numeric, 103) */
+                (14, 123), /* '||' => LRAction::Reduce(Numeric, 103) */
+                (15, 123), /* '&&' => LRAction::Reduce(Numeric, 103) */
+                (16, 123), /* 'in' => LRAction::Reduce(Numeric, 103) */
+                (17, 123), /* '>=' => LRAction::Reduce(Numeric, 103) */
+                (18, 123), /* '<=' => LRAction::Reduce(Numeric, 103) */
+                (19, 123), /* '>' => LRAction::Reduce(Numeric, 103) */
+                (20, 123), /* '<' => LRAction::Reduce(Numeric, 103) */
+                (21, 123), /* '!=' => LRAction::Reduce(Numeric, 103) */
+                (22, 123), /* '/=' => LRAction::Reduce(Numeric, 103) */
+                (23, 123), /* '==' => LRAction::Reduce(Numeric, 103) */
+                (24, 123), /* '+' => LRAction::Reduce(Numeric, 103) */
+                (25, 123), /* '-' => LRAction::Reduce(Numeric, 103) */
+                (26, 123), /* '*' => LRAction::Reduce(Numeric, 103) */
+                (27, 123), /* '/' => LRAction::Reduce(Numeric, 103) */
+                (28, 123), /* '%' => LRAction::Reduce(Numeric, 103) */
+                (29, 123), /* '&' => LRAction::Reduce(Numeric, 103) */
+                (30, 123), /* '(' => LRAction::Reduce(Numeric, 103) */
+                (31, 123), /* ')' => LRAction::Reduce(Numeric, 103) */
+                (32, 123), /* '@' => LRAction::Reduce(Numeric, 103) */
+                (33, 123), /* ':' => LRAction::Reduce(Numeric, 103) */
+                (34, 123), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 103) */
+                (35, 123), /* '[' => LRAction::Reduce(Numeric, 103) */
+                (36, 123), /* ']' => LRAction::Reduce(Numeric, 103) */
+                (37, 123), /* ',' => LRAction::Reduce(Numeric, 103) */
+                (38, 123), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 103) */
+                (39, 123), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 103) */
+                (40, 123), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 103) */
+                (41, 123), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
+                (42, 123), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
+                (43, 123), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
+                (44, 123), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 103) */
+                (45, 123), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 103) */
+                (46, 123), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 103) */
+            ],
+            gotos: &[],
+        },
+        // State 74
+        LR1State {
+            actions: &[
+                (9, 109),  /* ';' => LRAction::Reduce(Literal, 86) */
+                (12, 109), /* ':=' => LRAction::Reduce(Literal, 86) */
+                (13, 109), /* 'if' => LRAction::Reduce(Literal, 86) */
+                (14, 109), /* '||' => LRAction::Reduce(Literal, 86) */
+                (15, 109), /* '&&' => LRAction::Reduce(Literal, 86) */
+                (16, 109), /* 'in' => LRAction::Reduce(Literal, 86) */
+                (17, 109), /* '>=' => LRAction::Reduce(Literal, 86) */
+                (18, 109), /* '<=' => LRAction::Reduce(Literal, 86) */
+                (19, 109), /* '>' => LRAction::Reduce(Literal, 86) */
+                (20, 109), /* '<' => LRAction::Reduce(Literal, 86) */
+                (21, 109), /* '!=' => LRAction::Reduce(Literal, 86) */
+                (22, 109), /* '/=' => LRAction::Reduce(Literal, 86) */
+                (23, 109), /* '==' => LRAction::Reduce(Literal, 86) */
+                (24, 109), /* '+' => LRAction::Reduce(Literal, 86) */
+                (25, 109), /* '-' => LRAction::Reduce(Literal, 86) */
+                (26, 109), /* '*' => LRAction::Reduce(Literal, 86) */
+                (27, 109), /* '/' => LRAction::Reduce(Literal, 86) */
+                (28, 109), /* '%' => LRAction::Reduce(Literal, 86) */
+                (29, 109), /* '&' => LRAction::Reduce(Literal, 86) */
+                (30, 109), /* '(' => LRAction::Reduce(Literal, 86) */
+                (31, 109), /* ')' => LRAction::Reduce(Literal, 86) */
+                (32, 109), /* '@' => LRAction::Reduce(Literal, 86) */
+                (33, 109), /* ':' => LRAction::Reduce(Literal, 86) */
+                (34, 109), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 86) */
+                (35, 109), /* '[' => LRAction::Reduce(Literal, 86) */
+                (36, 109), /* ']' => LRAction::Reduce(Literal, 86) */
+                (37, 109), /* ',' => LRAction::Reduce(Literal, 86) */
+                (38, 109), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 86) */
+                (39, 109), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 86) */
+                (40, 109), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 86) */
+                (41, 109), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
+                (42, 109), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
+                (43, 109), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
+                (44, 109), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 86) */
+                (45, 109), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 86) */
+                (46, 109), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 86) */
+            ],
+            gotos: &[],
+        },
+        // State 75
+        LR1State {
+            actions: &[
+                (9, 120),  /* ';' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (12, 120), /* ':=' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (13, 120), /* 'if' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (14, 120), /* '||' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (15, 120), /* '&&' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (16, 120), /* 'in' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (17, 120), /* '>=' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (18, 120), /* '<=' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (19, 120), /* '>' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (20, 120), /* '<' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (21, 120), /* '!=' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (22, 120), /* '/=' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (23, 120), /* '==' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (24, 120), /* '+' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (25, 120), /* '-' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (26, 120), /* '*' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (27, 120), /* '/' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (28, 120), /* '%' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (29, 120), /* '&' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (30, 120), /* '(' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (31, 120), /* ')' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (32, 120), /* '@' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (33, 120), /* ':' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (34, 120), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (35, 120), /* '[' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (36, 120), /* ']' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (37, 120), /* ',' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (38, 120), /* '"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (39, 120), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (40, 120), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (41, 120), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (42, 120), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (43, 120), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (44, 120), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (45, 120), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(LowerPrefixExpr, 68) */
+                (46, 120), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LowerPrefixExpr, 68) */
+            ],
+            gotos: &[],
+        },
+        // State 76
+        LR1State {
+            actions: &[
+                (9, 112),  /* ';' => LRAction::Reduce(Literal, 89) */
+                (12, 112), /* ':=' => LRAction::Reduce(Literal, 89) */
+                (13, 112), /* 'if' => LRAction::Reduce(Literal, 89) */
+                (14, 112), /* '||' => LRAction::Reduce(Literal, 89) */
+                (15, 112), /* '&&' => LRAction::Reduce(Literal, 89) */
+                (16, 112), /* 'in' => LRAction::Reduce(Literal, 89) */
+                (17, 112), /* '>=' => LRAction::Reduce(Literal, 89) */
+                (18, 112), /* '<=' => LRAction::Reduce(Literal, 89) */
+                (19, 112), /* '>' => LRAction::Reduce(Literal, 89) */
+                (20, 112), /* '<' => LRAction::Reduce(Literal, 89) */
+                (21, 112), /* '!=' => LRAction::Reduce(Literal, 89) */
+                (22, 112), /* '/=' => LRAction::Reduce(Literal, 89) */
+                (23, 112), /* '==' => LRAction::Reduce(Literal, 89) */
+                (24, 112), /* '+' => LRAction::Reduce(Literal, 89) */
+                (25, 112), /* '-' => LRAction::Reduce(Literal, 89) */
+                (26, 112), /* '*' => LRAction::Reduce(Literal, 89) */
+                (27, 112), /* '/' => LRAction::Reduce(Literal, 89) */
+                (28, 112), /* '%' => LRAction::Reduce(Literal, 89) */
+                (29, 112), /* '&' => LRAction::Reduce(Literal, 89) */
+                (30, 112), /* '(' => LRAction::Reduce(Literal, 89) */
+                (31, 112), /* ')' => LRAction::Reduce(Literal, 89) */
+                (32, 112), /* '@' => LRAction::Reduce(Literal, 89) */
+                (33, 112), /* ':' => LRAction::Reduce(Literal, 89) */
+                (34, 112), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 89) */
+                (35, 112), /* '[' => LRAction::Reduce(Literal, 89) */
+                (36, 112), /* ']' => LRAction::Reduce(Literal, 89) */
+                (37, 112), /* ',' => LRAction::Reduce(Literal, 89) */
+                (38, 112), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 89) */
+                (39, 112), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 89) */
+                (40, 112), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 89) */
+                (41, 112), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
+                (42, 112), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
+                (43, 112), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
+                (44, 112), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 89) */
+                (45, 112), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 89) */
+                (46, 112), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 89) */
+            ],
+            gotos: &[],
+        },
         // State 77
         LR1State {
             actions: &[
-                (9, 128),  /* ';' => LRAction::Reduce(PrefixExpr, 61) */
-                (12, 128), /* ':=' => LRAction::Reduce(PrefixExpr, 61) */
-                (13, 128), /* 'if' => LRAction::Reduce(PrefixExpr, 61) */
-                (14, 128), /* '||' => LRAction::Reduce(PrefixExpr, 61) */
-                (15, 128), /* '&&' => LRAction::Reduce(PrefixExpr, 61) */
-                (16, 128), /* 'in' => LRAction::Reduce(PrefixExpr, 61) */
-                (17, 128), /* '>=' => LRAction::Reduce(PrefixExpr, 61) */
-                (18, 128), /* '<=' => LRAction::Reduce(PrefixExpr, 61) */
-                (19, 128), /* '>' => LRAction::Reduce(PrefixExpr, 61) */
-                (20, 128), /* '<' => LRAction::Reduce(PrefixExpr, 61) */
-                (21, 128), /* '!=' => LRAction::Reduce(PrefixExpr, 61) */
-                (22, 128), /* '/=' => LRAction::Reduce(PrefixExpr, 61) */
-                (23, 128), /* '==' => LRAction::Reduce(PrefixExpr, 61) */
-                (24, 128), /* '+' => LRAction::Reduce(PrefixExpr, 61) */
-                (25, 128), /* '-' => LRAction::Reduce(PrefixExpr, 61) */
-                (26, 128), /* '*' => LRAction::Reduce(PrefixExpr, 61) */
-                (27, 128), /* '/' => LRAction::Reduce(PrefixExpr, 61) */
-                (28, 128), /* '%' => LRAction::Reduce(PrefixExpr, 61) */
-                (31, 128), /* ')' => LRAction::Reduce(PrefixExpr, 61) */
-                (36, 128), /* ']' => LRAction::Reduce(PrefixExpr, 61) */
-                (37, 128), /* ',' => LRAction::Reduce(PrefixExpr, 61) */
+                (9, 110),  /* ';' => LRAction::Reduce(Literal, 87) */
+                (12, 110), /* ':=' => LRAction::Reduce(Literal, 87) */
+                (13, 110), /* 'if' => LRAction::Reduce(Literal, 87) */
+                (14, 110), /* '||' => LRAction::Reduce(Literal, 87) */
+                (15, 110), /* '&&' => LRAction::Reduce(Literal, 87) */
+                (16, 110), /* 'in' => LRAction::Reduce(Literal, 87) */
+                (17, 110), /* '>=' => LRAction::Reduce(Literal, 87) */
+                (18, 110), /* '<=' => LRAction::Reduce(Literal, 87) */
+                (19, 110), /* '>' => LRAction::Reduce(Literal, 87) */
+                (20, 110), /* '<' => LRAction::Reduce(Literal, 87) */
+                (21, 110), /* '!=' => LRAction::Reduce(Literal, 87) */
+                (22, 110), /* '/=' => LRAction::Reduce(Literal, 87) */
+                (23, 110), /* '==' => LRAction::Reduce(Literal, 87) */
+                (24, 110), /* '+' => LRAction::Reduce(Literal, 87) */
+                (25, 110), /* '-' => LRAction::Reduce(Literal, 87) */
+                (26, 110), /* '*' => LRAction::Reduce(Literal, 87) */
+                (27, 110), /* '/' => LRAction::Reduce(Literal, 87) */
+                (28, 110), /* '%' => LRAction::Reduce(Literal, 87) */
+                (29, 110), /* '&' => LRAction::Reduce(Literal, 87) */
+                (30, 110), /* '(' => LRAction::Reduce(Literal, 87) */
+                (31, 110), /* ')' => LRAction::Reduce(Literal, 87) */
+                (32, 110), /* '@' => LRAction::Reduce(Literal, 87) */
+                (33, 110), /* ':' => LRAction::Reduce(Literal, 87) */
+                (34, 110), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 87) */
+                (35, 110), /* '[' => LRAction::Reduce(Literal, 87) */
+                (36, 110), /* ']' => LRAction::Reduce(Literal, 87) */
+                (37, 110), /* ',' => LRAction::Reduce(Literal, 87) */
+                (38, 110), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 87) */
+                (39, 110), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 87) */
+                (40, 110), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 87) */
+                (41, 110), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
+                (42, 110), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
+                (43, 110), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
+                (44, 110), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 87) */
+                (45, 110), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 87) */
+                (46, 110), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 87) */
             ],
             gotos: &[],
         },
         // State 78
         LR1State {
-            actions: &[(7, 95) /* '[^\r\n]*' => LRAction::Reduce(Hash, 2) */],
+            actions: &[
+                (9, 125),  /* ';' => LRAction::Reduce(Numeric, 105) */
+                (12, 125), /* ':=' => LRAction::Reduce(Numeric, 105) */
+                (13, 125), /* 'if' => LRAction::Reduce(Numeric, 105) */
+                (14, 125), /* '||' => LRAction::Reduce(Numeric, 105) */
+                (15, 125), /* '&&' => LRAction::Reduce(Numeric, 105) */
+                (16, 125), /* 'in' => LRAction::Reduce(Numeric, 105) */
+                (17, 125), /* '>=' => LRAction::Reduce(Numeric, 105) */
+                (18, 125), /* '<=' => LRAction::Reduce(Numeric, 105) */
+                (19, 125), /* '>' => LRAction::Reduce(Numeric, 105) */
+                (20, 125), /* '<' => LRAction::Reduce(Numeric, 105) */
+                (21, 125), /* '!=' => LRAction::Reduce(Numeric, 105) */
+                (22, 125), /* '/=' => LRAction::Reduce(Numeric, 105) */
+                (23, 125), /* '==' => LRAction::Reduce(Numeric, 105) */
+                (24, 125), /* '+' => LRAction::Reduce(Numeric, 105) */
+                (25, 125), /* '-' => LRAction::Reduce(Numeric, 105) */
+                (26, 125), /* '*' => LRAction::Reduce(Numeric, 105) */
+                (27, 125), /* '/' => LRAction::Reduce(Numeric, 105) */
+                (28, 125), /* '%' => LRAction::Reduce(Numeric, 105) */
+                (29, 125), /* '&' => LRAction::Reduce(Numeric, 105) */
+                (30, 125), /* '(' => LRAction::Reduce(Numeric, 105) */
+                (31, 125), /* ')' => LRAction::Reduce(Numeric, 105) */
+                (32, 125), /* '@' => LRAction::Reduce(Numeric, 105) */
+                (33, 125), /* ':' => LRAction::Reduce(Numeric, 105) */
+                (34, 125), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 105) */
+                (35, 125), /* '[' => LRAction::Reduce(Numeric, 105) */
+                (36, 125), /* ']' => LRAction::Reduce(Numeric, 105) */
+                (37, 125), /* ',' => LRAction::Reduce(Numeric, 105) */
+                (38, 125), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 105) */
+                (39, 125), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 105) */
+                (40, 125), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 105) */
+                (41, 125), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
+                (42, 125), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
+                (43, 125), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
+                (44, 125), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 105) */
+                (45, 125), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 105) */
+                (46, 125), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 105) */
+            ],
             gotos: &[],
         },
         // State 79
         LR1State {
             actions: &[
-                (5, 146), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt1, 9) */
+                (8, 130),  /* '.' => LRAction::Reduce(PathList, 82) */
+                (9, 130),  /* ';' => LRAction::Reduce(PathList, 82) */
+                (12, 130), /* ':=' => LRAction::Reduce(PathList, 82) */
+                (13, 130), /* 'if' => LRAction::Reduce(PathList, 82) */
+                (14, 130), /* '||' => LRAction::Reduce(PathList, 82) */
+                (15, 130), /* '&&' => LRAction::Reduce(PathList, 82) */
+                (16, 130), /* 'in' => LRAction::Reduce(PathList, 82) */
+                (17, 130), /* '>=' => LRAction::Reduce(PathList, 82) */
+                (18, 130), /* '<=' => LRAction::Reduce(PathList, 82) */
+                (19, 130), /* '>' => LRAction::Reduce(PathList, 82) */
+                (20, 130), /* '<' => LRAction::Reduce(PathList, 82) */
+                (21, 130), /* '!=' => LRAction::Reduce(PathList, 82) */
+                (22, 130), /* '/=' => LRAction::Reduce(PathList, 82) */
+                (23, 130), /* '==' => LRAction::Reduce(PathList, 82) */
+                (24, 130), /* '+' => LRAction::Reduce(PathList, 82) */
+                (25, 130), /* '-' => LRAction::Reduce(PathList, 82) */
+                (26, 130), /* '*' => LRAction::Reduce(PathList, 82) */
+                (27, 130), /* '/' => LRAction::Reduce(PathList, 82) */
+                (28, 130), /* '%' => LRAction::Reduce(PathList, 82) */
+                (29, 130), /* '&' => LRAction::Reduce(PathList, 82) */
+                (30, 130), /* '(' => LRAction::Reduce(PathList, 82) */
+                (31, 130), /* ')' => LRAction::Reduce(PathList, 82) */
+                (32, 130), /* '@' => LRAction::Reduce(PathList, 82) */
+                (33, 130), /* ':' => LRAction::Reduce(PathList, 82) */
+                (34, 130), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PathList, 82) */
+                (35, 130), /* '[' => LRAction::Reduce(PathList, 82) */
+                (36, 130), /* ']' => LRAction::Reduce(PathList, 82) */
+                (37, 130), /* ',' => LRAction::Reduce(PathList, 82) */
+                (38, 130), /* '"(\\.|[^"])*"' => LRAction::Reduce(PathList, 82) */
+                (39, 130), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PathList, 82) */
+                (40, 130), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PathList, 82) */
+                (41, 130), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 82) */
+                (42, 130), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 82) */
+                (43, 130), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 82) */
+                (44, 130), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 82) */
+                (45, 130), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PathList, 82) */
+                (46, 130), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 82) */
             ],
-            gotos: &[],
+            gotos: &[(49, 122) /* PathList => 122 */],
         },
         // State 80
         LR1State {
-            actions: &[(7, 41) /* '[^\r\n]*' => LRAction::Shift(114) */],
-            gotos: &[(18, 115) /* CommentContent => 115 */],
+            actions: &[
+                (9, 126),  /* ';' => LRAction::Reduce(Numeric, 106) */
+                (12, 126), /* ':=' => LRAction::Reduce(Numeric, 106) */
+                (13, 126), /* 'if' => LRAction::Reduce(Numeric, 106) */
+                (14, 126), /* '||' => LRAction::Reduce(Numeric, 106) */
+                (15, 126), /* '&&' => LRAction::Reduce(Numeric, 106) */
+                (16, 126), /* 'in' => LRAction::Reduce(Numeric, 106) */
+                (17, 126), /* '>=' => LRAction::Reduce(Numeric, 106) */
+                (18, 126), /* '<=' => LRAction::Reduce(Numeric, 106) */
+                (19, 126), /* '>' => LRAction::Reduce(Numeric, 106) */
+                (20, 126), /* '<' => LRAction::Reduce(Numeric, 106) */
+                (21, 126), /* '!=' => LRAction::Reduce(Numeric, 106) */
+                (22, 126), /* '/=' => LRAction::Reduce(Numeric, 106) */
+                (23, 126), /* '==' => LRAction::Reduce(Numeric, 106) */
+                (24, 126), /* '+' => LRAction::Reduce(Numeric, 106) */
+                (25, 126), /* '-' => LRAction::Reduce(Numeric, 106) */
+                (26, 126), /* '*' => LRAction::Reduce(Numeric, 106) */
+                (27, 126), /* '/' => LRAction::Reduce(Numeric, 106) */
+                (28, 126), /* '%' => LRAction::Reduce(Numeric, 106) */
+                (29, 126), /* '&' => LRAction::Reduce(Numeric, 106) */
+                (30, 126), /* '(' => LRAction::Reduce(Numeric, 106) */
+                (31, 126), /* ')' => LRAction::Reduce(Numeric, 106) */
+                (32, 126), /* '@' => LRAction::Reduce(Numeric, 106) */
+                (33, 126), /* ':' => LRAction::Reduce(Numeric, 106) */
+                (34, 126), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 106) */
+                (35, 126), /* '[' => LRAction::Reduce(Numeric, 106) */
+                (36, 126), /* ']' => LRAction::Reduce(Numeric, 106) */
+                (37, 126), /* ',' => LRAction::Reduce(Numeric, 106) */
+                (38, 126), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 106) */
+                (39, 126), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 106) */
+                (40, 126), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 106) */
+                (41, 126), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 106) */
+                (42, 126), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 106) */
+                (43, 126), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 106) */
+                (44, 126), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 106) */
+                (45, 126), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 106) */
+                (46, 126), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 106) */
+            ],
+            gotos: &[],
         },
         // State 81
         LR1State {
-            actions: &[(5, 42) /* '(?:\r?\n|\r)+' => LRAction::Shift(116) */],
-            gotos: &[(22, 117) /* EndOfLine => 117 */],
+            actions: &[
+                (9, 65),  /* ';' => LRAction::Reduce(Callable, 72) */
+                (12, 65), /* ':=' => LRAction::Reduce(Callable, 72) */
+                (13, 65), /* 'if' => LRAction::Reduce(Callable, 72) */
+                (14, 65), /* '||' => LRAction::Reduce(Callable, 72) */
+                (15, 65), /* '&&' => LRAction::Reduce(Callable, 72) */
+                (16, 65), /* 'in' => LRAction::Reduce(Callable, 72) */
+                (17, 65), /* '>=' => LRAction::Reduce(Callable, 72) */
+                (18, 65), /* '<=' => LRAction::Reduce(Callable, 72) */
+                (19, 65), /* '>' => LRAction::Reduce(Callable, 72) */
+                (20, 65), /* '<' => LRAction::Reduce(Callable, 72) */
+                (21, 65), /* '!=' => LRAction::Reduce(Callable, 72) */
+                (22, 65), /* '/=' => LRAction::Reduce(Callable, 72) */
+                (23, 65), /* '==' => LRAction::Reduce(Callable, 72) */
+                (24, 65), /* '+' => LRAction::Reduce(Callable, 72) */
+                (25, 65), /* '-' => LRAction::Reduce(Callable, 72) */
+                (26, 65), /* '*' => LRAction::Reduce(Callable, 72) */
+                (27, 65), /* '/' => LRAction::Reduce(Callable, 72) */
+                (28, 65), /* '%' => LRAction::Reduce(Callable, 72) */
+                (29, 65), /* '&' => LRAction::Reduce(Callable, 72) */
+                (30, 65), /* '(' => LRAction::Reduce(Callable, 72) */
+                (31, 65), /* ')' => LRAction::Reduce(Callable, 72) */
+                (32, 65), /* '@' => LRAction::Reduce(Callable, 72) */
+                (33, 65), /* ':' => LRAction::Reduce(Callable, 72) */
+                (34, 65), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Callable, 72) */
+                (35, 65), /* '[' => LRAction::Reduce(Callable, 72) */
+                (36, 65), /* ']' => LRAction::Reduce(Callable, 72) */
+                (37, 65), /* ',' => LRAction::Reduce(Callable, 72) */
+                (38, 65), /* '"(\\.|[^"])*"' => LRAction::Reduce(Callable, 72) */
+                (39, 65), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Callable, 72) */
+                (40, 65), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Callable, 72) */
+                (41, 65), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
+                (42, 65), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
+                (43, 65), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
+                (44, 65), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
+                (45, 65), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 72) */
+                (46, 65), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 72) */
+            ],
+            gotos: &[],
         },
         // State 82
         LR1State {
             actions: &[
-                (5, 150), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Semi, 19) */
-                (6, 150), /* '#' => LRAction::Reduce(Semi, 19) */
+                (9, 111),  /* ';' => LRAction::Reduce(Literal, 88) */
+                (12, 111), /* ':=' => LRAction::Reduce(Literal, 88) */
+                (13, 111), /* 'if' => LRAction::Reduce(Literal, 88) */
+                (14, 111), /* '||' => LRAction::Reduce(Literal, 88) */
+                (15, 111), /* '&&' => LRAction::Reduce(Literal, 88) */
+                (16, 111), /* 'in' => LRAction::Reduce(Literal, 88) */
+                (17, 111), /* '>=' => LRAction::Reduce(Literal, 88) */
+                (18, 111), /* '<=' => LRAction::Reduce(Literal, 88) */
+                (19, 111), /* '>' => LRAction::Reduce(Literal, 88) */
+                (20, 111), /* '<' => LRAction::Reduce(Literal, 88) */
+                (21, 111), /* '!=' => LRAction::Reduce(Literal, 88) */
+                (22, 111), /* '/=' => LRAction::Reduce(Literal, 88) */
+                (23, 111), /* '==' => LRAction::Reduce(Literal, 88) */
+                (24, 111), /* '+' => LRAction::Reduce(Literal, 88) */
+                (25, 111), /* '-' => LRAction::Reduce(Literal, 88) */
+                (26, 111), /* '*' => LRAction::Reduce(Literal, 88) */
+                (27, 111), /* '/' => LRAction::Reduce(Literal, 88) */
+                (28, 111), /* '%' => LRAction::Reduce(Literal, 88) */
+                (29, 111), /* '&' => LRAction::Reduce(Literal, 88) */
+                (30, 111), /* '(' => LRAction::Reduce(Literal, 88) */
+                (31, 111), /* ')' => LRAction::Reduce(Literal, 88) */
+                (32, 111), /* '@' => LRAction::Reduce(Literal, 88) */
+                (33, 111), /* ':' => LRAction::Reduce(Literal, 88) */
+                (34, 111), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 88) */
+                (35, 111), /* '[' => LRAction::Reduce(Literal, 88) */
+                (36, 111), /* ']' => LRAction::Reduce(Literal, 88) */
+                (37, 111), /* ',' => LRAction::Reduce(Literal, 88) */
+                (38, 111), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 88) */
+                (39, 111), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 88) */
+                (40, 111), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 88) */
+                (41, 111), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
+                (42, 111), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
+                (43, 111), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
+                (44, 111), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 88) */
+                (45, 111), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 88) */
+                (46, 111), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 88) */
             ],
             gotos: &[],
         },
         // State 83
         LR1State {
             actions: &[
-                (5, 154), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Statement, 17) */
-                (6, 154), /* '#' => LRAction::Reduce(Statement, 17) */
+                (9, 124),  /* ';' => LRAction::Reduce(Numeric, 104) */
+                (12, 124), /* ':=' => LRAction::Reduce(Numeric, 104) */
+                (13, 124), /* 'if' => LRAction::Reduce(Numeric, 104) */
+                (14, 124), /* '||' => LRAction::Reduce(Numeric, 104) */
+                (15, 124), /* '&&' => LRAction::Reduce(Numeric, 104) */
+                (16, 124), /* 'in' => LRAction::Reduce(Numeric, 104) */
+                (17, 124), /* '>=' => LRAction::Reduce(Numeric, 104) */
+                (18, 124), /* '<=' => LRAction::Reduce(Numeric, 104) */
+                (19, 124), /* '>' => LRAction::Reduce(Numeric, 104) */
+                (20, 124), /* '<' => LRAction::Reduce(Numeric, 104) */
+                (21, 124), /* '!=' => LRAction::Reduce(Numeric, 104) */
+                (22, 124), /* '/=' => LRAction::Reduce(Numeric, 104) */
+                (23, 124), /* '==' => LRAction::Reduce(Numeric, 104) */
+                (24, 124), /* '+' => LRAction::Reduce(Numeric, 104) */
+                (25, 124), /* '-' => LRAction::Reduce(Numeric, 104) */
+                (26, 124), /* '*' => LRAction::Reduce(Numeric, 104) */
+                (27, 124), /* '/' => LRAction::Reduce(Numeric, 104) */
+                (28, 124), /* '%' => LRAction::Reduce(Numeric, 104) */
+                (29, 124), /* '&' => LRAction::Reduce(Numeric, 104) */
+                (30, 124), /* '(' => LRAction::Reduce(Numeric, 104) */
+                (31, 124), /* ')' => LRAction::Reduce(Numeric, 104) */
+                (32, 124), /* '@' => LRAction::Reduce(Numeric, 104) */
+                (33, 124), /* ':' => LRAction::Reduce(Numeric, 104) */
+                (34, 124), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Numeric, 104) */
+                (35, 124), /* '[' => LRAction::Reduce(Numeric, 104) */
+                (36, 124), /* ']' => LRAction::Reduce(Numeric, 104) */
+                (37, 124), /* ',' => LRAction::Reduce(Numeric, 104) */
+                (38, 124), /* '"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 104) */
+                (39, 124), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Numeric, 104) */
+                (40, 124), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Numeric, 104) */
+                (41, 124), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
+                (42, 124), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
+                (43, 124), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
+                (44, 124), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Numeric, 104) */
+                (45, 124), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Numeric, 104) */
+                (46, 124), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Numeric, 104) */
             ],
             gotos: &[],
         },
         // State 84
         LR1State {
             actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (9, 64),  /* ';' => LRAction::Reduce(Callable, 71) */
+                (12, 64), /* ':=' => LRAction::Reduce(Callable, 71) */
+                (13, 64), /* 'if' => LRAction::Reduce(Callable, 71) */
+                (14, 64), /* '||' => LRAction::Reduce(Callable, 71) */
+                (15, 64), /* '&&' => LRAction::Reduce(Callable, 71) */
+                (16, 64), /* 'in' => LRAction::Reduce(Callable, 71) */
+                (17, 64), /* '>=' => LRAction::Reduce(Callable, 71) */
+                (18, 64), /* '<=' => LRAction::Reduce(Callable, 71) */
+                (19, 64), /* '>' => LRAction::Reduce(Callable, 71) */
+                (20, 64), /* '<' => LRAction::Reduce(Callable, 71) */
+                (21, 64), /* '!=' => LRAction::Reduce(Callable, 71) */
+                (22, 64), /* '/=' => LRAction::Reduce(Callable, 71) */
+                (23, 64), /* '==' => LRAction::Reduce(Callable, 71) */
+                (24, 64), /* '+' => LRAction::Reduce(Callable, 71) */
+                (25, 64), /* '-' => LRAction::Reduce(Callable, 71) */
+                (26, 64), /* '*' => LRAction::Reduce(Callable, 71) */
+                (27, 64), /* '/' => LRAction::Reduce(Callable, 71) */
+                (28, 64), /* '%' => LRAction::Reduce(Callable, 71) */
+                (29, 64), /* '&' => LRAction::Reduce(Callable, 71) */
+                (30, 64), /* '(' => LRAction::Reduce(Callable, 71) */
+                (31, 64), /* ')' => LRAction::Reduce(Callable, 71) */
+                (32, 64), /* '@' => LRAction::Reduce(Callable, 71) */
+                (33, 64), /* ':' => LRAction::Reduce(Callable, 71) */
+                (34, 64), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Callable, 71) */
+                (35, 64), /* '[' => LRAction::Reduce(Callable, 71) */
+                (36, 64), /* ']' => LRAction::Reduce(Callable, 71) */
+                (37, 64), /* ',' => LRAction::Reduce(Callable, 71) */
+                (38, 64), /* '"(\\.|[^"])*"' => LRAction::Reduce(Callable, 71) */
+                (39, 64), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Callable, 71) */
+                (40, 64), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Callable, 71) */
+                (41, 64), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
+                (42, 64), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
+                (43, 64), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
+                (44, 64), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 71) */
+                (45, 64), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 71) */
+                (46, 64), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 71) */
             ],
-            gotos: &[
-                (2, 12),   /* ArithmeticExpr => 12 */
-                (19, 14),  /* CompareExpr => 14 */
-                (24, 118), /* Expr => 118 */
-                (25, 16),  /* FactorExpr => 16 */
-                (34, 17),  /* InfixIfExpr => 17 */
-                (36, 18),  /* InfixInExpr => 18 */
-                (40, 20),  /* LogicalAndExpr => 20 */
-                (42, 21),  /* LogicalOrExpr => 21 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-                (63, 28),  /* SetExpr => 28 */
-            ],
+            gotos: &[],
         },
         // State 85
         LR1State {
             actions: &[
-                (5, 61), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Block, 113) */
-                (6, 61), /* '#' => LRAction::Reduce(Block, 113) */
+                (9, 113),  /* ';' => LRAction::Reduce(Literal, 90) */
+                (12, 113), /* ':=' => LRAction::Reduce(Literal, 90) */
+                (13, 113), /* 'if' => LRAction::Reduce(Literal, 90) */
+                (14, 113), /* '||' => LRAction::Reduce(Literal, 90) */
+                (15, 113), /* '&&' => LRAction::Reduce(Literal, 90) */
+                (16, 113), /* 'in' => LRAction::Reduce(Literal, 90) */
+                (17, 113), /* '>=' => LRAction::Reduce(Literal, 90) */
+                (18, 113), /* '<=' => LRAction::Reduce(Literal, 90) */
+                (19, 113), /* '>' => LRAction::Reduce(Literal, 90) */
+                (20, 113), /* '<' => LRAction::Reduce(Literal, 90) */
+                (21, 113), /* '!=' => LRAction::Reduce(Literal, 90) */
+                (22, 113), /* '/=' => LRAction::Reduce(Literal, 90) */
+                (23, 113), /* '==' => LRAction::Reduce(Literal, 90) */
+                (24, 113), /* '+' => LRAction::Reduce(Literal, 90) */
+                (25, 113), /* '-' => LRAction::Reduce(Literal, 90) */
+                (26, 113), /* '*' => LRAction::Reduce(Literal, 90) */
+                (27, 113), /* '/' => LRAction::Reduce(Literal, 90) */
+                (28, 113), /* '%' => LRAction::Reduce(Literal, 90) */
+                (29, 113), /* '&' => LRAction::Reduce(Literal, 90) */
+                (30, 113), /* '(' => LRAction::Reduce(Literal, 90) */
+                (31, 113), /* ')' => LRAction::Reduce(Literal, 90) */
+                (32, 113), /* '@' => LRAction::Reduce(Literal, 90) */
+                (33, 113), /* ':' => LRAction::Reduce(Literal, 90) */
+                (34, 113), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 90) */
+                (35, 113), /* '[' => LRAction::Reduce(Literal, 90) */
+                (36, 113), /* ']' => LRAction::Reduce(Literal, 90) */
+                (37, 113), /* ',' => LRAction::Reduce(Literal, 90) */
+                (38, 113), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 90) */
+                (39, 113), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 90) */
+                (40, 113), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 90) */
+                (41, 113), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 90) */
+                (42, 113), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 90) */
+                (43, 113), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 90) */
+                (44, 113), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 90) */
+                (45, 113), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 90) */
+                (46, 113), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 90) */
             ],
             gotos: &[],
         },
         // State 86
+        LR1State {
+            actions: &[
+                (9, 108),  /* ';' => LRAction::Reduce(Literal, 85) */
+                (12, 108), /* ':=' => LRAction::Reduce(Literal, 85) */
+                (13, 108), /* 'if' => LRAction::Reduce(Literal, 85) */
+                (14, 108), /* '||' => LRAction::Reduce(Literal, 85) */
+                (15, 108), /* '&&' => LRAction::Reduce(Literal, 85) */
+                (16, 108), /* 'in' => LRAction::Reduce(Literal, 85) */
+                (17, 108), /* '>=' => LRAction::Reduce(Literal, 85) */
+                (18, 108), /* '<=' => LRAction::Reduce(Literal, 85) */
+                (19, 108), /* '>' => LRAction::Reduce(Literal, 85) */
+                (20, 108), /* '<' => LRAction::Reduce(Literal, 85) */
+                (21, 108), /* '!=' => LRAction::Reduce(Literal, 85) */
+                (22, 108), /* '/=' => LRAction::Reduce(Literal, 85) */
+                (23, 108), /* '==' => LRAction::Reduce(Literal, 85) */
+                (24, 108), /* '+' => LRAction::Reduce(Literal, 85) */
+                (25, 108), /* '-' => LRAction::Reduce(Literal, 85) */
+                (26, 108), /* '*' => LRAction::Reduce(Literal, 85) */
+                (27, 108), /* '/' => LRAction::Reduce(Literal, 85) */
+                (28, 108), /* '%' => LRAction::Reduce(Literal, 85) */
+                (29, 108), /* '&' => LRAction::Reduce(Literal, 85) */
+                (30, 108), /* '(' => LRAction::Reduce(Literal, 85) */
+                (31, 108), /* ')' => LRAction::Reduce(Literal, 85) */
+                (32, 108), /* '@' => LRAction::Reduce(Literal, 85) */
+                (33, 108), /* ':' => LRAction::Reduce(Literal, 85) */
+                (34, 108), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Literal, 85) */
+                (35, 108), /* '[' => LRAction::Reduce(Literal, 85) */
+                (36, 108), /* ']' => LRAction::Reduce(Literal, 85) */
+                (37, 108), /* ',' => LRAction::Reduce(Literal, 85) */
+                (38, 108), /* '"(\\.|[^"])*"' => LRAction::Reduce(Literal, 85) */
+                (39, 108), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Literal, 85) */
+                (40, 108), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Literal, 85) */
+                (41, 108), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
+                (42, 108), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
+                (43, 108), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
+                (44, 108), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Literal, 85) */
+                (45, 108), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Literal, 85) */
+                (46, 108), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Literal, 85) */
+            ],
+            gotos: &[],
+        },
+        // State 87
+        LR1State {
+            actions: &[
+                (5, 61), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Block, 114) */
+                (6, 61), /* '#' => LRAction::Reduce(Block, 114) */
+            ],
+            gotos: &[],
+        },
+        // State 88
         LR1State {
             actions: &[
                 (25, 78), /* '-' => LRAction::Reduce(CompareOp, 43) */
@@ -2649,7 +2755,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 87
+        // State 89
         LR1State {
             actions: &[
                 (25, 79), /* '-' => LRAction::Reduce(CompareOp, 44) */
@@ -2671,7 +2777,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 88
+        // State 90
         LR1State {
             actions: &[
                 (25, 80), /* '-' => LRAction::Reduce(CompareOp, 45) */
@@ -2693,7 +2799,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 89
+        // State 91
         LR1State {
             actions: &[
                 (25, 81), /* '-' => LRAction::Reduce(CompareOp, 46) */
@@ -2715,7 +2821,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 90
+        // State 92
         LR1State {
             actions: &[
                 (25, 82), /* '-' => LRAction::Reduce(CompareOp, 47) */
@@ -2737,7 +2843,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 91
+        // State 93
         LR1State {
             actions: &[
                 (25, 83), /* '-' => LRAction::Reduce(CompareOp, 48) */
@@ -2759,7 +2865,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 92
+        // State 94
         LR1State {
             actions: &[
                 (25, 84), /* '-' => LRAction::Reduce(CompareOp, 49) */
@@ -2781,35 +2887,34 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 93
+        // State 95
         LR1State {
             actions: &[
                 (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
             ],
             gotos: &[
-                (2, 119), /* ArithmeticExpr => 119 */
-                (25, 16), /* FactorExpr => 16 */
-                (48, 22), /* PrefixExpr => 22 */
-                (49, 23), /* PrefixExprList => 23 */
-                (50, 24), /* PrefixOp => 24 */
+                (2, 123), /* ArithmeticExpr => 123 */
+                (25, 15), /* FactorExpr => 15 */
+                (50, 21), /* PrefixExpr => 21 */
+                (51, 22), /* PrefixExprList => 22 */
             ],
         },
-        // State 94
+        // State 96
         LR1State {
             actions: &[
                 (9, 104),  /* ';' => LRAction::Reduce(InfixInExprOpt, 38) */
@@ -2823,7 +2928,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 95
+        // State 97
         LR1State {
             actions: &[
                 (25, 53), /* '-' => LRAction::Reduce(ArithmeticOp, 53) */
@@ -2845,7 +2950,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 96
+        // State 98
         LR1State {
             actions: &[
                 (25, 54), /* '-' => LRAction::Reduce(ArithmeticOp, 54) */
@@ -2867,105 +2972,102 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 97
-        LR1State {
-            actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
-            ],
-            gotos: &[
-                (25, 120), /* FactorExpr => 120 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-            ],
-        },
-        // State 98
-        LR1State {
-            actions: &[
-                (9, 152),  /* ';' => LRAction::Reduce(SetExprOpt, 26) */
-                (31, 152), /* ')' => LRAction::Reduce(SetExprOpt, 26) */
-                (36, 152), /* ']' => LRAction::Reduce(SetExprOpt, 26) */
-                (37, 152), /* ',' => LRAction::Reduce(SetExprOpt, 26) */
-            ],
-            gotos: &[],
-        },
         // State 99
         LR1State {
             actions: &[
                 (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
             ],
             gotos: &[
-                (2, 12),   /* ArithmeticExpr => 12 */
-                (19, 14),  /* CompareExpr => 14 */
-                (25, 16),  /* FactorExpr => 16 */
-                (36, 121), /* InfixInExpr => 121 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
+                (25, 124), /* FactorExpr => 124 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
             ],
         },
         // State 100
         LR1State {
             actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+                (9, 153),  /* ';' => LRAction::Reduce(SetExprOpt, 26) */
+                (31, 153), /* ')' => LRAction::Reduce(SetExprOpt, 26) */
+                (36, 153), /* ']' => LRAction::Reduce(SetExprOpt, 26) */
+                (37, 153), /* ',' => LRAction::Reduce(SetExprOpt, 26) */
             ],
-            gotos: &[
-                (2, 12),   /* ArithmeticExpr => 12 */
-                (19, 14),  /* CompareExpr => 14 */
-                (25, 16),  /* FactorExpr => 16 */
-                (36, 18),  /* InfixInExpr => 18 */
-                (40, 122), /* LogicalAndExpr => 122 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-            ],
+            gotos: &[],
         },
         // State 101
+        LR1State {
+            actions: &[
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+            ],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (19, 13),  /* CompareExpr => 13 */
+                (25, 15),  /* FactorExpr => 15 */
+                (36, 125), /* InfixInExpr => 125 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+            ],
+        },
+        // State 102
+        LR1State {
+            actions: &[
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
+            ],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (19, 13),  /* CompareExpr => 13 */
+                (25, 15),  /* FactorExpr => 15 */
+                (36, 17),  /* InfixInExpr => 17 */
+                (40, 126), /* LogicalAndExpr => 126 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+            ],
+        },
+        // State 103
         LR1State {
             actions: &[
                 (9, 101),  /* ';' => LRAction::Reduce(InfixIfExprOpt, 29) */
@@ -2976,7 +3078,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 102
+        // State 104
         LR1State {
             actions: &[
                 (25, 91), /* '-' => LRAction::Reduce(FactorOp, 58) */
@@ -2998,7 +3100,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 103
+        // State 105
         LR1State {
             actions: &[
                 (25, 92), /* '-' => LRAction::Reduce(FactorOp, 59) */
@@ -3020,7 +3122,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 104
+        // State 106
         LR1State {
             actions: &[
                 (25, 93), /* '-' => LRAction::Reduce(FactorOp, 60) */
@@ -3042,258 +3144,130 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 105
-        LR1State {
-            actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
-            ],
-            gotos: &[
-                (48, 123), /* PrefixExpr => 123 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-            ],
-        },
-        // State 106
-        LR1State {
-            actions: &[(31, 43) /* ')' => LRAction::Shift(124) */],
-            gotos: &[],
-        },
         // State 107
         LR1State {
             actions: &[
-                (9, 86),  /* ';' => LRAction::Reduce(ExecutorComponent, 77) */
-                (12, 86), /* ':=' => LRAction::Reduce(ExecutorComponent, 77) */
-                (13, 86), /* 'if' => LRAction::Reduce(ExecutorComponent, 77) */
-                (14, 86), /* '||' => LRAction::Reduce(ExecutorComponent, 77) */
-                (15, 86), /* '&&' => LRAction::Reduce(ExecutorComponent, 77) */
-                (16, 86), /* 'in' => LRAction::Reduce(ExecutorComponent, 77) */
-                (17, 86), /* '>=' => LRAction::Reduce(ExecutorComponent, 77) */
-                (18, 86), /* '<=' => LRAction::Reduce(ExecutorComponent, 77) */
-                (19, 86), /* '>' => LRAction::Reduce(ExecutorComponent, 77) */
-                (20, 86), /* '<' => LRAction::Reduce(ExecutorComponent, 77) */
-                (21, 86), /* '!=' => LRAction::Reduce(ExecutorComponent, 77) */
-                (22, 86), /* '/=' => LRAction::Reduce(ExecutorComponent, 77) */
-                (23, 86), /* '==' => LRAction::Reduce(ExecutorComponent, 77) */
-                (24, 86), /* '+' => LRAction::Reduce(ExecutorComponent, 77) */
-                (25, 86), /* '-' => LRAction::Reduce(ExecutorComponent, 77) */
-                (26, 86), /* '*' => LRAction::Reduce(ExecutorComponent, 77) */
-                (27, 86), /* '/' => LRAction::Reduce(ExecutorComponent, 77) */
-                (28, 86), /* '%' => LRAction::Reduce(ExecutorComponent, 77) */
-                (30, 86), /* '(' => LRAction::Reduce(ExecutorComponent, 77) */
-                (31, 86), /* ')' => LRAction::Reduce(ExecutorComponent, 77) */
-                (32, 86), /* '@' => LRAction::Reduce(ExecutorComponent, 77) */
-                (33, 86), /* ':' => LRAction::Reduce(ExecutorComponent, 77) */
-                (34, 86), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ExecutorComponent, 77) */
-                (35, 86), /* '[' => LRAction::Reduce(ExecutorComponent, 77) */
-                (36, 86), /* ']' => LRAction::Reduce(ExecutorComponent, 77) */
-                (37, 86), /* ',' => LRAction::Reduce(ExecutorComponent, 77) */
-                (38, 86), /* '"(\\.|[^"])*"' => LRAction::Reduce(ExecutorComponent, 77) */
-                (39, 86), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ExecutorComponent, 77) */
-                (40, 86), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ExecutorComponent, 77) */
-                (41, 86), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 77) */
-                (42, 86), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 77) */
-                (43, 86), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 77) */
-                (44, 86), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 77) */
-                (45, 86), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ExecutorComponent, 77) */
-                (46, 86), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ExecutorComponent, 77) */
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
             ],
-            gotos: &[],
+            gotos: &[
+                (50, 127), /* PrefixExpr => 127 */
+                (51, 22),  /* PrefixExprList => 22 */
+            ],
         },
         // State 108
         LR1State {
             actions: &[
-                (9, 159),  /* ';' => LRAction::Reduce(TimeIndicator, 78) */
-                (12, 159), /* ':=' => LRAction::Reduce(TimeIndicator, 78) */
-                (13, 159), /* 'if' => LRAction::Reduce(TimeIndicator, 78) */
-                (14, 159), /* '||' => LRAction::Reduce(TimeIndicator, 78) */
-                (15, 159), /* '&&' => LRAction::Reduce(TimeIndicator, 78) */
-                (16, 159), /* 'in' => LRAction::Reduce(TimeIndicator, 78) */
-                (17, 159), /* '>=' => LRAction::Reduce(TimeIndicator, 78) */
-                (18, 159), /* '<=' => LRAction::Reduce(TimeIndicator, 78) */
-                (19, 159), /* '>' => LRAction::Reduce(TimeIndicator, 78) */
-                (20, 159), /* '<' => LRAction::Reduce(TimeIndicator, 78) */
-                (21, 159), /* '!=' => LRAction::Reduce(TimeIndicator, 78) */
-                (22, 159), /* '/=' => LRAction::Reduce(TimeIndicator, 78) */
-                (23, 159), /* '==' => LRAction::Reduce(TimeIndicator, 78) */
-                (24, 159), /* '+' => LRAction::Reduce(TimeIndicator, 78) */
-                (25, 159), /* '-' => LRAction::Reduce(TimeIndicator, 78) */
-                (26, 159), /* '*' => LRAction::Reduce(TimeIndicator, 78) */
-                (27, 159), /* '/' => LRAction::Reduce(TimeIndicator, 78) */
-                (28, 159), /* '%' => LRAction::Reduce(TimeIndicator, 78) */
-                (30, 159), /* '(' => LRAction::Reduce(TimeIndicator, 78) */
-                (31, 159), /* ')' => LRAction::Reduce(TimeIndicator, 78) */
-                (32, 159), /* '@' => LRAction::Reduce(TimeIndicator, 78) */
-                (33, 159), /* ':' => LRAction::Reduce(TimeIndicator, 78) */
-                (34, 159), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(TimeIndicator, 78) */
-                (35, 159), /* '[' => LRAction::Reduce(TimeIndicator, 78) */
-                (36, 159), /* ']' => LRAction::Reduce(TimeIndicator, 78) */
-                (37, 159), /* ',' => LRAction::Reduce(TimeIndicator, 78) */
-                (38, 159), /* '"(\\.|[^"])*"' => LRAction::Reduce(TimeIndicator, 78) */
-                (39, 159), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(TimeIndicator, 78) */
-                (40, 159), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(TimeIndicator, 78) */
-                (41, 159), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 78) */
-                (42, 159), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 78) */
-                (43, 159), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 78) */
-                (44, 159), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 78) */
-                (45, 159), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(TimeIndicator, 78) */
-                (46, 159), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(TimeIndicator, 78) */
+                (9, 86),  /* ';' => LRAction::Reduce(ExecutorComponent, 78) */
+                (12, 86), /* ':=' => LRAction::Reduce(ExecutorComponent, 78) */
+                (13, 86), /* 'if' => LRAction::Reduce(ExecutorComponent, 78) */
+                (14, 86), /* '||' => LRAction::Reduce(ExecutorComponent, 78) */
+                (15, 86), /* '&&' => LRAction::Reduce(ExecutorComponent, 78) */
+                (16, 86), /* 'in' => LRAction::Reduce(ExecutorComponent, 78) */
+                (17, 86), /* '>=' => LRAction::Reduce(ExecutorComponent, 78) */
+                (18, 86), /* '<=' => LRAction::Reduce(ExecutorComponent, 78) */
+                (19, 86), /* '>' => LRAction::Reduce(ExecutorComponent, 78) */
+                (20, 86), /* '<' => LRAction::Reduce(ExecutorComponent, 78) */
+                (21, 86), /* '!=' => LRAction::Reduce(ExecutorComponent, 78) */
+                (22, 86), /* '/=' => LRAction::Reduce(ExecutorComponent, 78) */
+                (23, 86), /* '==' => LRAction::Reduce(ExecutorComponent, 78) */
+                (24, 86), /* '+' => LRAction::Reduce(ExecutorComponent, 78) */
+                (25, 86), /* '-' => LRAction::Reduce(ExecutorComponent, 78) */
+                (26, 86), /* '*' => LRAction::Reduce(ExecutorComponent, 78) */
+                (27, 86), /* '/' => LRAction::Reduce(ExecutorComponent, 78) */
+                (28, 86), /* '%' => LRAction::Reduce(ExecutorComponent, 78) */
+                (29, 86), /* '&' => LRAction::Reduce(ExecutorComponent, 78) */
+                (30, 86), /* '(' => LRAction::Reduce(ExecutorComponent, 78) */
+                (31, 86), /* ')' => LRAction::Reduce(ExecutorComponent, 78) */
+                (32, 86), /* '@' => LRAction::Reduce(ExecutorComponent, 78) */
+                (33, 86), /* ':' => LRAction::Reduce(ExecutorComponent, 78) */
+                (34, 86), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ExecutorComponent, 78) */
+                (35, 86), /* '[' => LRAction::Reduce(ExecutorComponent, 78) */
+                (36, 86), /* ']' => LRAction::Reduce(ExecutorComponent, 78) */
+                (37, 86), /* ',' => LRAction::Reduce(ExecutorComponent, 78) */
+                (38, 86), /* '"(\\.|[^"])*"' => LRAction::Reduce(ExecutorComponent, 78) */
+                (39, 86), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ExecutorComponent, 78) */
+                (40, 86), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ExecutorComponent, 78) */
+                (41, 86), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 78) */
+                (42, 86), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 78) */
+                (43, 86), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 78) */
+                (44, 86), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ExecutorComponent, 78) */
+                (45, 86), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ExecutorComponent, 78) */
+                (46, 86), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ExecutorComponent, 78) */
             ],
             gotos: &[],
         },
         // State 109
         LR1State {
-            actions: &[(36, 44) /* ']' => LRAction::Shift(125) */],
+            actions: &[
+                (9, 160),  /* ';' => LRAction::Reduce(TimeIndicator, 79) */
+                (12, 160), /* ':=' => LRAction::Reduce(TimeIndicator, 79) */
+                (13, 160), /* 'if' => LRAction::Reduce(TimeIndicator, 79) */
+                (14, 160), /* '||' => LRAction::Reduce(TimeIndicator, 79) */
+                (15, 160), /* '&&' => LRAction::Reduce(TimeIndicator, 79) */
+                (16, 160), /* 'in' => LRAction::Reduce(TimeIndicator, 79) */
+                (17, 160), /* '>=' => LRAction::Reduce(TimeIndicator, 79) */
+                (18, 160), /* '<=' => LRAction::Reduce(TimeIndicator, 79) */
+                (19, 160), /* '>' => LRAction::Reduce(TimeIndicator, 79) */
+                (20, 160), /* '<' => LRAction::Reduce(TimeIndicator, 79) */
+                (21, 160), /* '!=' => LRAction::Reduce(TimeIndicator, 79) */
+                (22, 160), /* '/=' => LRAction::Reduce(TimeIndicator, 79) */
+                (23, 160), /* '==' => LRAction::Reduce(TimeIndicator, 79) */
+                (24, 160), /* '+' => LRAction::Reduce(TimeIndicator, 79) */
+                (25, 160), /* '-' => LRAction::Reduce(TimeIndicator, 79) */
+                (26, 160), /* '*' => LRAction::Reduce(TimeIndicator, 79) */
+                (27, 160), /* '/' => LRAction::Reduce(TimeIndicator, 79) */
+                (28, 160), /* '%' => LRAction::Reduce(TimeIndicator, 79) */
+                (29, 160), /* '&' => LRAction::Reduce(TimeIndicator, 79) */
+                (30, 160), /* '(' => LRAction::Reduce(TimeIndicator, 79) */
+                (31, 160), /* ')' => LRAction::Reduce(TimeIndicator, 79) */
+                (32, 160), /* '@' => LRAction::Reduce(TimeIndicator, 79) */
+                (33, 160), /* ':' => LRAction::Reduce(TimeIndicator, 79) */
+                (34, 160), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(TimeIndicator, 79) */
+                (35, 160), /* '[' => LRAction::Reduce(TimeIndicator, 79) */
+                (36, 160), /* ']' => LRAction::Reduce(TimeIndicator, 79) */
+                (37, 160), /* ',' => LRAction::Reduce(TimeIndicator, 79) */
+                (38, 160), /* '"(\\.|[^"])*"' => LRAction::Reduce(TimeIndicator, 79) */
+                (39, 160), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(TimeIndicator, 79) */
+                (40, 160), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(TimeIndicator, 79) */
+                (41, 160), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 79) */
+                (42, 160), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 79) */
+                (43, 160), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 79) */
+                (44, 160), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(TimeIndicator, 79) */
+                (45, 160), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(TimeIndicator, 79) */
+                (46, 160), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(TimeIndicator, 79) */
+            ],
             gotos: &[],
         },
         // State 110
-        LR1State {
-            actions: &[(36, 56) /* ']' => LRAction::Reduce(ArrayOpt, 91) */],
-            gotos: &[],
-        },
-        // State 111
-        LR1State {
-            actions: &[
-                (36, 72), /* ']' => LRAction::Reduce(CommaSepElementsOpt, 95) */
-                (37, 45), /* ',' => LRAction::Shift(126) */
-            ],
-            gotos: &[
-                (13, 127), /* CommaExprList => 127 */
-                (16, 128), /* CommaSepElementsOpt => 128 */
-            ],
-        },
-        // State 112
-        LR1State {
-            actions: &[
-                (9, 47),  /* ';' => LRAction::Reduce(ApplyExpr, 67) */
-                (12, 47), /* ':=' => LRAction::Reduce(ApplyExpr, 67) */
-                (13, 47), /* 'if' => LRAction::Reduce(ApplyExpr, 67) */
-                (14, 47), /* '||' => LRAction::Reduce(ApplyExpr, 67) */
-                (15, 47), /* '&&' => LRAction::Reduce(ApplyExpr, 67) */
-                (16, 47), /* 'in' => LRAction::Reduce(ApplyExpr, 67) */
-                (17, 47), /* '>=' => LRAction::Reduce(ApplyExpr, 67) */
-                (18, 47), /* '<=' => LRAction::Reduce(ApplyExpr, 67) */
-                (19, 47), /* '>' => LRAction::Reduce(ApplyExpr, 67) */
-                (20, 47), /* '<' => LRAction::Reduce(ApplyExpr, 67) */
-                (21, 47), /* '!=' => LRAction::Reduce(ApplyExpr, 67) */
-                (22, 47), /* '/=' => LRAction::Reduce(ApplyExpr, 67) */
-                (23, 47), /* '==' => LRAction::Reduce(ApplyExpr, 67) */
-                (24, 47), /* '+' => LRAction::Reduce(ApplyExpr, 67) */
-                (25, 47), /* '-' => LRAction::Reduce(ApplyExpr, 67) */
-                (26, 47), /* '*' => LRAction::Reduce(ApplyExpr, 67) */
-                (27, 47), /* '/' => LRAction::Reduce(ApplyExpr, 67) */
-                (28, 47), /* '%' => LRAction::Reduce(ApplyExpr, 67) */
-                (30, 10), /* '(' => LRAction::Shift(45) */
-                (31, 47), /* ')' => LRAction::Reduce(ApplyExpr, 67) */
-                (32, 11), /* '@' => LRAction::Shift(46) */
-                (33, 12), /* ':' => LRAction::Shift(47) */
-                (34, 6),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(31) */
-                (35, 13), /* '[' => LRAction::Shift(48) */
-                (36, 47), /* ']' => LRAction::Reduce(ApplyExpr, 67) */
-                (37, 47), /* ',' => LRAction::Reduce(ApplyExpr, 67) */
-                (38, 14), /* '"(\\.|[^"])*"' => LRAction::Shift(49) */
-                (39, 15), /* 'b"(\\.|[^"])*"' => LRAction::Shift(50) */
-                (40, 16), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(51) */
-                (41, 17), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(52) */
-                (42, 18), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(53) */
-                (43, 19), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(54) */
-                (44, 20), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(55) */
-                (45, 21), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Shift(56) */
-                (46, 22), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(57) */
-            ],
-            gotos: &[
-                (5, 59),   /* Array => 59 */
-                (7, 129),  /* AtomicExpr => 129 */
-                (8, 60),   /* BinaryInteger => 60 */
-                (11, 61),  /* ByteLiteral => 61 */
-                (12, 130), /* Callable => 130 */
-                (23, 63),  /* ExecutorComponent => 63 */
-                (28, 64),  /* FilePathLiteral => 64 */
-                (30, 65),  /* HexByteLiteral => 65 */
-                (31, 66),  /* HexadecimalInteger => 66 */
-                (32, 67),  /* Ident => 67 */
-                (33, 68),  /* Ieee754Float => 68 */
-                (39, 69),  /* Literal => 69 */
-                (44, 70),  /* Numeric => 70 */
-                (45, 71),  /* OctalInteger => 71 */
-                (46, 72),  /* Path => 72 */
-                (52, 131), /* Qualif => 131 */
-                (54, 74),  /* Rfc3339DateTime => 74 */
-                (67, 75),  /* String => 75 */
-                (68, 76),  /* TimeIndicator => 76 */
-            ],
-        },
-        // State 113
-        LR1State {
-            actions: &[
-                (8, 46),   /* '.' => LRAction::Shift(132) */
-                (9, 125),  /* ';' => LRAction::Reduce(Path, 79) */
-                (12, 125), /* ':=' => LRAction::Reduce(Path, 79) */
-                (13, 125), /* 'if' => LRAction::Reduce(Path, 79) */
-                (14, 125), /* '||' => LRAction::Reduce(Path, 79) */
-                (15, 125), /* '&&' => LRAction::Reduce(Path, 79) */
-                (16, 125), /* 'in' => LRAction::Reduce(Path, 79) */
-                (17, 125), /* '>=' => LRAction::Reduce(Path, 79) */
-                (18, 125), /* '<=' => LRAction::Reduce(Path, 79) */
-                (19, 125), /* '>' => LRAction::Reduce(Path, 79) */
-                (20, 125), /* '<' => LRAction::Reduce(Path, 79) */
-                (21, 125), /* '!=' => LRAction::Reduce(Path, 79) */
-                (22, 125), /* '/=' => LRAction::Reduce(Path, 79) */
-                (23, 125), /* '==' => LRAction::Reduce(Path, 79) */
-                (24, 125), /* '+' => LRAction::Reduce(Path, 79) */
-                (25, 125), /* '-' => LRAction::Reduce(Path, 79) */
-                (26, 125), /* '*' => LRAction::Reduce(Path, 79) */
-                (27, 125), /* '/' => LRAction::Reduce(Path, 79) */
-                (28, 125), /* '%' => LRAction::Reduce(Path, 79) */
-                (30, 125), /* '(' => LRAction::Reduce(Path, 79) */
-                (31, 125), /* ')' => LRAction::Reduce(Path, 79) */
-                (32, 125), /* '@' => LRAction::Reduce(Path, 79) */
-                (33, 125), /* ':' => LRAction::Reduce(Path, 79) */
-                (34, 125), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Path, 79) */
-                (35, 125), /* '[' => LRAction::Reduce(Path, 79) */
-                (36, 125), /* ']' => LRAction::Reduce(Path, 79) */
-                (37, 125), /* ',' => LRAction::Reduce(Path, 79) */
-                (38, 125), /* '"(\\.|[^"])*"' => LRAction::Reduce(Path, 79) */
-                (39, 125), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Path, 79) */
-                (40, 125), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Path, 79) */
-                (41, 125), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 79) */
-                (42, 125), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 79) */
-                (43, 125), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 79) */
-                (44, 125), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 79) */
-                (45, 125), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Path, 79) */
-                (46, 125), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Path, 79) */
-            ],
-            gotos: &[],
-        },
-        // State 114
         LR1State {
             actions: &[
                 (5, 74), /* '(?:\r?\n|\r)+' => LRAction::Reduce(CommentContent, 3) */
             ],
             gotos: &[],
         },
-        // State 115
+        // State 111
         LR1State {
             actions: &[
                 (5, 73), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Comment, 1) */
             ],
             gotos: &[],
         },
-        // State 116
+        // State 112
         LR1State {
             actions: &[
                 (0, 85),  /* '<$>' => LRAction::Reduce(EndOfLine, 0) */
@@ -3323,42 +3297,237 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
+        // State 113
+        LR1State {
+            actions: &[
+                (0, 140),  /* '<$>' => LRAction::Reduce(ScopeContent, 8) */
+                (5, 140),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContent, 8) */
+                (6, 140),  /* '#' => LRAction::Reduce(ScopeContent, 8) */
+                (8, 140),  /* '.' => LRAction::Reduce(ScopeContent, 8) */
+                (10, 140), /* 'let' => LRAction::Reduce(ScopeContent, 8) */
+                (25, 140), /* '-' => LRAction::Reduce(ScopeContent, 8) */
+                (29, 140), /* '&' => LRAction::Reduce(ScopeContent, 8) */
+                (30, 140), /* '(' => LRAction::Reduce(ScopeContent, 8) */
+                (32, 140), /* '@' => LRAction::Reduce(ScopeContent, 8) */
+                (33, 140), /* ':' => LRAction::Reduce(ScopeContent, 8) */
+                (34, 140), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeContent, 8) */
+                (35, 140), /* '[' => LRAction::Reduce(ScopeContent, 8) */
+                (38, 140), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeContent, 8) */
+                (39, 140), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeContent, 8) */
+                (40, 140), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeContent, 8) */
+                (41, 140), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
+                (42, 140), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
+                (43, 140), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
+                (44, 140), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
+                (45, 140), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContent, 8) */
+                (46, 140), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContent, 8) */
+                (47, 140), /* 'return' => LRAction::Reduce(ScopeContent, 8) */
+                (48, 140), /* '{' => LRAction::Reduce(ScopeContent, 8) */
+                (49, 140), /* '}' => LRAction::Reduce(ScopeContent, 8) */
+            ],
+            gotos: &[],
+        },
+        // State 114
+        LR1State {
+            actions: &[(9, 106) /* ';' => LRAction::Reduce(LetStmt, 23) */],
+            gotos: &[],
+        },
+        // State 115
+        LR1State {
+            actions: &[
+                (9, 48),  /* ';' => LRAction::Reduce(ApplyExprList, 66) */
+                (12, 48), /* ':=' => LRAction::Reduce(ApplyExprList, 66) */
+                (13, 48), /* 'if' => LRAction::Reduce(ApplyExprList, 66) */
+                (14, 48), /* '||' => LRAction::Reduce(ApplyExprList, 66) */
+                (15, 48), /* '&&' => LRAction::Reduce(ApplyExprList, 66) */
+                (16, 48), /* 'in' => LRAction::Reduce(ApplyExprList, 66) */
+                (17, 48), /* '>=' => LRAction::Reduce(ApplyExprList, 66) */
+                (18, 48), /* '<=' => LRAction::Reduce(ApplyExprList, 66) */
+                (19, 48), /* '>' => LRAction::Reduce(ApplyExprList, 66) */
+                (20, 48), /* '<' => LRAction::Reduce(ApplyExprList, 66) */
+                (21, 48), /* '!=' => LRAction::Reduce(ApplyExprList, 66) */
+                (22, 48), /* '/=' => LRAction::Reduce(ApplyExprList, 66) */
+                (23, 48), /* '==' => LRAction::Reduce(ApplyExprList, 66) */
+                (24, 48), /* '+' => LRAction::Reduce(ApplyExprList, 66) */
+                (25, 48), /* '-' => LRAction::Reduce(ApplyExprList, 66) */
+                (26, 48), /* '*' => LRAction::Reduce(ApplyExprList, 66) */
+                (27, 48), /* '/' => LRAction::Reduce(ApplyExprList, 66) */
+                (28, 48), /* '%' => LRAction::Reduce(ApplyExprList, 66) */
+                (29, 48), /* '&' => LRAction::Reduce(ApplyExprList, 66) */
+                (30, 48), /* '(' => LRAction::Reduce(ApplyExprList, 66) */
+                (31, 48), /* ')' => LRAction::Reduce(ApplyExprList, 66) */
+                (32, 48), /* '@' => LRAction::Reduce(ApplyExprList, 66) */
+                (33, 48), /* ':' => LRAction::Reduce(ApplyExprList, 66) */
+                (34, 48), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ApplyExprList, 66) */
+                (35, 48), /* '[' => LRAction::Reduce(ApplyExprList, 66) */
+                (36, 48), /* ']' => LRAction::Reduce(ApplyExprList, 66) */
+                (37, 48), /* ',' => LRAction::Reduce(ApplyExprList, 66) */
+                (38, 48), /* '"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 66) */
+                (39, 48), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 66) */
+                (40, 48), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ApplyExprList, 66) */
+                (41, 48), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 66) */
+                (42, 48), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 66) */
+                (43, 48), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 66) */
+                (44, 48), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 66) */
+                (45, 48), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ApplyExprList, 66) */
+                (46, 48), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 66) */
+            ],
+            gotos: &[],
+        },
+        // State 116
+        LR1State {
+            actions: &[
+                (9, 59),  /* ';' => LRAction::Reduce(AtomicExpr, 75) */
+                (12, 59), /* ':=' => LRAction::Reduce(AtomicExpr, 75) */
+                (13, 59), /* 'if' => LRAction::Reduce(AtomicExpr, 75) */
+                (14, 59), /* '||' => LRAction::Reduce(AtomicExpr, 75) */
+                (15, 59), /* '&&' => LRAction::Reduce(AtomicExpr, 75) */
+                (16, 59), /* 'in' => LRAction::Reduce(AtomicExpr, 75) */
+                (17, 59), /* '>=' => LRAction::Reduce(AtomicExpr, 75) */
+                (18, 59), /* '<=' => LRAction::Reduce(AtomicExpr, 75) */
+                (19, 59), /* '>' => LRAction::Reduce(AtomicExpr, 75) */
+                (20, 59), /* '<' => LRAction::Reduce(AtomicExpr, 75) */
+                (21, 59), /* '!=' => LRAction::Reduce(AtomicExpr, 75) */
+                (22, 59), /* '/=' => LRAction::Reduce(AtomicExpr, 75) */
+                (23, 59), /* '==' => LRAction::Reduce(AtomicExpr, 75) */
+                (24, 59), /* '+' => LRAction::Reduce(AtomicExpr, 75) */
+                (25, 59), /* '-' => LRAction::Reduce(AtomicExpr, 75) */
+                (26, 59), /* '*' => LRAction::Reduce(AtomicExpr, 75) */
+                (27, 59), /* '/' => LRAction::Reduce(AtomicExpr, 75) */
+                (28, 59), /* '%' => LRAction::Reduce(AtomicExpr, 75) */
+                (29, 59), /* '&' => LRAction::Reduce(AtomicExpr, 75) */
+                (30, 59), /* '(' => LRAction::Reduce(AtomicExpr, 75) */
+                (31, 59), /* ')' => LRAction::Reduce(AtomicExpr, 75) */
+                (32, 59), /* '@' => LRAction::Reduce(AtomicExpr, 75) */
+                (33, 59), /* ':' => LRAction::Reduce(AtomicExpr, 75) */
+                (34, 59), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(AtomicExpr, 75) */
+                (35, 59), /* '[' => LRAction::Reduce(AtomicExpr, 75) */
+                (36, 59), /* ']' => LRAction::Reduce(AtomicExpr, 75) */
+                (37, 59), /* ',' => LRAction::Reduce(AtomicExpr, 75) */
+                (38, 59), /* '"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 75) */
+                (39, 59), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 75) */
+                (40, 59), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(AtomicExpr, 75) */
+                (41, 59), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 75) */
+                (42, 59), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 75) */
+                (43, 59), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 75) */
+                (44, 59), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 75) */
+                (45, 59), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(AtomicExpr, 75) */
+                (46, 59), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 75) */
+            ],
+            gotos: &[],
+        },
         // State 117
         LR1State {
             actions: &[
-                (0, 139),  /* '<$>' => LRAction::Reduce(ScopeContent, 8) */
-                (5, 139),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContent, 8) */
-                (6, 139),  /* '#' => LRAction::Reduce(ScopeContent, 8) */
-                (8, 139),  /* '.' => LRAction::Reduce(ScopeContent, 8) */
-                (10, 139), /* 'let' => LRAction::Reduce(ScopeContent, 8) */
-                (25, 139), /* '-' => LRAction::Reduce(ScopeContent, 8) */
-                (29, 139), /* '&' => LRAction::Reduce(ScopeContent, 8) */
-                (30, 139), /* '(' => LRAction::Reduce(ScopeContent, 8) */
-                (32, 139), /* '@' => LRAction::Reduce(ScopeContent, 8) */
-                (33, 139), /* ':' => LRAction::Reduce(ScopeContent, 8) */
-                (34, 139), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ScopeContent, 8) */
-                (35, 139), /* '[' => LRAction::Reduce(ScopeContent, 8) */
-                (38, 139), /* '"(\\.|[^"])*"' => LRAction::Reduce(ScopeContent, 8) */
-                (39, 139), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ScopeContent, 8) */
-                (40, 139), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ScopeContent, 8) */
-                (41, 139), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
-                (42, 139), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
-                (43, 139), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
-                (44, 139), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ScopeContent, 8) */
-                (45, 139), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ScopeContent, 8) */
-                (46, 139), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ScopeContent, 8) */
-                (47, 139), /* 'return' => LRAction::Reduce(ScopeContent, 8) */
-                (48, 139), /* '{' => LRAction::Reduce(ScopeContent, 8) */
-                (49, 139), /* '}' => LRAction::Reduce(ScopeContent, 8) */
+                (9, 58),  /* ';' => LRAction::Reduce(AtomicExpr, 74) */
+                (12, 58), /* ':=' => LRAction::Reduce(AtomicExpr, 74) */
+                (13, 58), /* 'if' => LRAction::Reduce(AtomicExpr, 74) */
+                (14, 58), /* '||' => LRAction::Reduce(AtomicExpr, 74) */
+                (15, 58), /* '&&' => LRAction::Reduce(AtomicExpr, 74) */
+                (16, 58), /* 'in' => LRAction::Reduce(AtomicExpr, 74) */
+                (17, 58), /* '>=' => LRAction::Reduce(AtomicExpr, 74) */
+                (18, 58), /* '<=' => LRAction::Reduce(AtomicExpr, 74) */
+                (19, 58), /* '>' => LRAction::Reduce(AtomicExpr, 74) */
+                (20, 58), /* '<' => LRAction::Reduce(AtomicExpr, 74) */
+                (21, 58), /* '!=' => LRAction::Reduce(AtomicExpr, 74) */
+                (22, 58), /* '/=' => LRAction::Reduce(AtomicExpr, 74) */
+                (23, 58), /* '==' => LRAction::Reduce(AtomicExpr, 74) */
+                (24, 58), /* '+' => LRAction::Reduce(AtomicExpr, 74) */
+                (25, 58), /* '-' => LRAction::Reduce(AtomicExpr, 74) */
+                (26, 58), /* '*' => LRAction::Reduce(AtomicExpr, 74) */
+                (27, 58), /* '/' => LRAction::Reduce(AtomicExpr, 74) */
+                (28, 58), /* '%' => LRAction::Reduce(AtomicExpr, 74) */
+                (29, 58), /* '&' => LRAction::Reduce(AtomicExpr, 74) */
+                (30, 58), /* '(' => LRAction::Reduce(AtomicExpr, 74) */
+                (31, 58), /* ')' => LRAction::Reduce(AtomicExpr, 74) */
+                (32, 58), /* '@' => LRAction::Reduce(AtomicExpr, 74) */
+                (33, 58), /* ':' => LRAction::Reduce(AtomicExpr, 74) */
+                (34, 58), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(AtomicExpr, 74) */
+                (35, 58), /* '[' => LRAction::Reduce(AtomicExpr, 74) */
+                (36, 58), /* ']' => LRAction::Reduce(AtomicExpr, 74) */
+                (37, 58), /* ',' => LRAction::Reduce(AtomicExpr, 74) */
+                (38, 58), /* '"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 74) */
+                (39, 58), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 74) */
+                (40, 58), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(AtomicExpr, 74) */
+                (41, 58), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
+                (42, 58), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
+                (43, 58), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
+                (44, 58), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
+                (45, 58), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(AtomicExpr, 74) */
+                (46, 58), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 74) */
             ],
             gotos: &[],
         },
         // State 118
         LR1State {
-            actions: &[(9, 106) /* ';' => LRAction::Reduce(LetStmt, 23) */],
+            actions: &[(31, 43) /* ')' => LRAction::Shift(128) */],
             gotos: &[],
         },
         // State 119
+        LR1State {
+            actions: &[(36, 44) /* ']' => LRAction::Shift(129) */],
+            gotos: &[],
+        },
+        // State 120
+        LR1State {
+            actions: &[(36, 56) /* ']' => LRAction::Reduce(ArrayOpt, 92) */],
+            gotos: &[],
+        },
+        // State 121
+        LR1State {
+            actions: &[
+                (36, 72), /* ']' => LRAction::Reduce(CommaSepElementsOpt, 96) */
+                (37, 45), /* ',' => LRAction::Shift(130) */
+            ],
+            gotos: &[
+                (13, 131), /* CommaExprList => 131 */
+                (16, 132), /* CommaSepElementsOpt => 132 */
+            ],
+        },
+        // State 122
+        LR1State {
+            actions: &[
+                (8, 46),   /* '.' => LRAction::Shift(133) */
+                (9, 128),  /* ';' => LRAction::Reduce(Path, 80) */
+                (12, 128), /* ':=' => LRAction::Reduce(Path, 80) */
+                (13, 128), /* 'if' => LRAction::Reduce(Path, 80) */
+                (14, 128), /* '||' => LRAction::Reduce(Path, 80) */
+                (15, 128), /* '&&' => LRAction::Reduce(Path, 80) */
+                (16, 128), /* 'in' => LRAction::Reduce(Path, 80) */
+                (17, 128), /* '>=' => LRAction::Reduce(Path, 80) */
+                (18, 128), /* '<=' => LRAction::Reduce(Path, 80) */
+                (19, 128), /* '>' => LRAction::Reduce(Path, 80) */
+                (20, 128), /* '<' => LRAction::Reduce(Path, 80) */
+                (21, 128), /* '!=' => LRAction::Reduce(Path, 80) */
+                (22, 128), /* '/=' => LRAction::Reduce(Path, 80) */
+                (23, 128), /* '==' => LRAction::Reduce(Path, 80) */
+                (24, 128), /* '+' => LRAction::Reduce(Path, 80) */
+                (25, 128), /* '-' => LRAction::Reduce(Path, 80) */
+                (26, 128), /* '*' => LRAction::Reduce(Path, 80) */
+                (27, 128), /* '/' => LRAction::Reduce(Path, 80) */
+                (28, 128), /* '%' => LRAction::Reduce(Path, 80) */
+                (29, 128), /* '&' => LRAction::Reduce(Path, 80) */
+                (30, 128), /* '(' => LRAction::Reduce(Path, 80) */
+                (31, 128), /* ')' => LRAction::Reduce(Path, 80) */
+                (32, 128), /* '@' => LRAction::Reduce(Path, 80) */
+                (33, 128), /* ':' => LRAction::Reduce(Path, 80) */
+                (34, 128), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Path, 80) */
+                (35, 128), /* '[' => LRAction::Reduce(Path, 80) */
+                (36, 128), /* ']' => LRAction::Reduce(Path, 80) */
+                (37, 128), /* ',' => LRAction::Reduce(Path, 80) */
+                (38, 128), /* '"(\\.|[^"])*"' => LRAction::Reduce(Path, 80) */
+                (39, 128), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Path, 80) */
+                (40, 128), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Path, 80) */
+                (41, 128), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 80) */
+                (42, 128), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 80) */
+                (43, 128), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 80) */
+                (44, 128), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Path, 80) */
+                (45, 128), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Path, 80) */
+                (46, 128), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Path, 80) */
+            ],
+            gotos: &[],
+        },
+        // State 123
         LR1State {
             actions: &[
                 (9, 76),  /* ';' => LRAction::Reduce(CompareExprList, 41) */
@@ -3380,7 +3549,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 120
+        // State 124
         LR1State {
             actions: &[
                 (9, 51),  /* ';' => LRAction::Reduce(ArithmeticExprList, 51) */
@@ -3404,7 +3573,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 121
+        // State 125
         LR1State {
             actions: &[
                 (9, 115),  /* ';' => LRAction::Reduce(LogicalAndExprList, 35) */
@@ -3418,7 +3587,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 122
+        // State 126
         LR1State {
             actions: &[
                 (9, 118),  /* ';' => LRAction::Reduce(LogicalOrExprList, 32) */
@@ -3431,7 +3600,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 123
+        // State 127
         LR1State {
             actions: &[
                 (9, 89),  /* ';' => LRAction::Reduce(FactorExprList, 56) */
@@ -3458,330 +3627,209 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 124
-        LR1State {
-            actions: &[
-                (9, 66),  /* ';' => LRAction::Reduce(Callable, 72) */
-                (12, 66), /* ':=' => LRAction::Reduce(Callable, 72) */
-                (13, 66), /* 'if' => LRAction::Reduce(Callable, 72) */
-                (14, 66), /* '||' => LRAction::Reduce(Callable, 72) */
-                (15, 66), /* '&&' => LRAction::Reduce(Callable, 72) */
-                (16, 66), /* 'in' => LRAction::Reduce(Callable, 72) */
-                (17, 66), /* '>=' => LRAction::Reduce(Callable, 72) */
-                (18, 66), /* '<=' => LRAction::Reduce(Callable, 72) */
-                (19, 66), /* '>' => LRAction::Reduce(Callable, 72) */
-                (20, 66), /* '<' => LRAction::Reduce(Callable, 72) */
-                (21, 66), /* '!=' => LRAction::Reduce(Callable, 72) */
-                (22, 66), /* '/=' => LRAction::Reduce(Callable, 72) */
-                (23, 66), /* '==' => LRAction::Reduce(Callable, 72) */
-                (24, 66), /* '+' => LRAction::Reduce(Callable, 72) */
-                (25, 66), /* '-' => LRAction::Reduce(Callable, 72) */
-                (26, 66), /* '*' => LRAction::Reduce(Callable, 72) */
-                (27, 66), /* '/' => LRAction::Reduce(Callable, 72) */
-                (28, 66), /* '%' => LRAction::Reduce(Callable, 72) */
-                (30, 66), /* '(' => LRAction::Reduce(Callable, 72) */
-                (31, 66), /* ')' => LRAction::Reduce(Callable, 72) */
-                (32, 66), /* '@' => LRAction::Reduce(Callable, 72) */
-                (33, 66), /* ':' => LRAction::Reduce(Callable, 72) */
-                (34, 66), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Callable, 72) */
-                (35, 66), /* '[' => LRAction::Reduce(Callable, 72) */
-                (36, 66), /* ']' => LRAction::Reduce(Callable, 72) */
-                (37, 66), /* ',' => LRAction::Reduce(Callable, 72) */
-                (38, 66), /* '"(\\.|[^"])*"' => LRAction::Reduce(Callable, 72) */
-                (39, 66), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Callable, 72) */
-                (40, 66), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Callable, 72) */
-                (41, 66), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
-                (42, 66), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
-                (43, 66), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
-                (44, 66), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 72) */
-                (45, 66), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 72) */
-                (46, 66), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 72) */
-            ],
-            gotos: &[],
-        },
-        // State 125
-        LR1State {
-            actions: &[
-                (9, 55),  /* ';' => LRAction::Reduce(Array, 90) */
-                (12, 55), /* ':=' => LRAction::Reduce(Array, 90) */
-                (13, 55), /* 'if' => LRAction::Reduce(Array, 90) */
-                (14, 55), /* '||' => LRAction::Reduce(Array, 90) */
-                (15, 55), /* '&&' => LRAction::Reduce(Array, 90) */
-                (16, 55), /* 'in' => LRAction::Reduce(Array, 90) */
-                (17, 55), /* '>=' => LRAction::Reduce(Array, 90) */
-                (18, 55), /* '<=' => LRAction::Reduce(Array, 90) */
-                (19, 55), /* '>' => LRAction::Reduce(Array, 90) */
-                (20, 55), /* '<' => LRAction::Reduce(Array, 90) */
-                (21, 55), /* '!=' => LRAction::Reduce(Array, 90) */
-                (22, 55), /* '/=' => LRAction::Reduce(Array, 90) */
-                (23, 55), /* '==' => LRAction::Reduce(Array, 90) */
-                (24, 55), /* '+' => LRAction::Reduce(Array, 90) */
-                (25, 55), /* '-' => LRAction::Reduce(Array, 90) */
-                (26, 55), /* '*' => LRAction::Reduce(Array, 90) */
-                (27, 55), /* '/' => LRAction::Reduce(Array, 90) */
-                (28, 55), /* '%' => LRAction::Reduce(Array, 90) */
-                (30, 55), /* '(' => LRAction::Reduce(Array, 90) */
-                (31, 55), /* ')' => LRAction::Reduce(Array, 90) */
-                (32, 55), /* '@' => LRAction::Reduce(Array, 90) */
-                (33, 55), /* ':' => LRAction::Reduce(Array, 90) */
-                (34, 55), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Array, 90) */
-                (35, 55), /* '[' => LRAction::Reduce(Array, 90) */
-                (36, 55), /* ']' => LRAction::Reduce(Array, 90) */
-                (37, 55), /* ',' => LRAction::Reduce(Array, 90) */
-                (38, 55), /* '"(\\.|[^"])*"' => LRAction::Reduce(Array, 90) */
-                (39, 55), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Array, 90) */
-                (40, 55), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Array, 90) */
-                (41, 55), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 90) */
-                (42, 55), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 90) */
-                (43, 55), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 90) */
-                (44, 55), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 90) */
-                (45, 55), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Array, 90) */
-                (46, 55), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Array, 90) */
-            ],
-            gotos: &[],
-        },
-        // State 126
-        LR1State {
-            actions: &[
-                (25, 2),   /* '-' => LRAction::Shift(8) */
-                (29, 3),   /* '&' => LRAction::Shift(9) */
-                (30, 131), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
-                (32, 131), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
-                (33, 131), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
-                (34, 131), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
-                (35, 131), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
-                (36, 69),  /* ']' => LRAction::Reduce(CommaExprListOpt, 98) */
-                (38, 131), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (39, 131), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (40, 131), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (41, 131), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (42, 131), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (43, 131), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (44, 131), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
-                (45, 131), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
-                (46, 131), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
-            ],
-            gotos: &[
-                (2, 12),   /* ArithmeticExpr => 12 */
-                (14, 133), /* CommaExprListOpt => 133 */
-                (15, 134), /* CommaSepElements => 134 */
-                (19, 14),  /* CompareExpr => 14 */
-                (24, 111), /* Expr => 111 */
-                (25, 16),  /* FactorExpr => 16 */
-                (34, 17),  /* InfixIfExpr => 17 */
-                (36, 18),  /* InfixInExpr => 18 */
-                (40, 20),  /* LogicalAndExpr => 20 */
-                (42, 21),  /* LogicalOrExpr => 21 */
-                (48, 22),  /* PrefixExpr => 22 */
-                (49, 23),  /* PrefixExprList => 23 */
-                (50, 24),  /* PrefixOp => 24 */
-                (63, 28),  /* SetExpr => 28 */
-            ],
-        },
-        // State 127
-        LR1State {
-            actions: &[
-                (36, 71), /* ']' => LRAction::Reduce(CommaSepElementsOpt, 94) */
-            ],
-            gotos: &[],
-        },
         // State 128
         LR1State {
             actions: &[
-                (36, 70), /* ']' => LRAction::Reduce(CommaSepElements, 93) */
+                (9, 66),  /* ';' => LRAction::Reduce(Callable, 73) */
+                (12, 66), /* ':=' => LRAction::Reduce(Callable, 73) */
+                (13, 66), /* 'if' => LRAction::Reduce(Callable, 73) */
+                (14, 66), /* '||' => LRAction::Reduce(Callable, 73) */
+                (15, 66), /* '&&' => LRAction::Reduce(Callable, 73) */
+                (16, 66), /* 'in' => LRAction::Reduce(Callable, 73) */
+                (17, 66), /* '>=' => LRAction::Reduce(Callable, 73) */
+                (18, 66), /* '<=' => LRAction::Reduce(Callable, 73) */
+                (19, 66), /* '>' => LRAction::Reduce(Callable, 73) */
+                (20, 66), /* '<' => LRAction::Reduce(Callable, 73) */
+                (21, 66), /* '!=' => LRAction::Reduce(Callable, 73) */
+                (22, 66), /* '/=' => LRAction::Reduce(Callable, 73) */
+                (23, 66), /* '==' => LRAction::Reduce(Callable, 73) */
+                (24, 66), /* '+' => LRAction::Reduce(Callable, 73) */
+                (25, 66), /* '-' => LRAction::Reduce(Callable, 73) */
+                (26, 66), /* '*' => LRAction::Reduce(Callable, 73) */
+                (27, 66), /* '/' => LRAction::Reduce(Callable, 73) */
+                (28, 66), /* '%' => LRAction::Reduce(Callable, 73) */
+                (29, 66), /* '&' => LRAction::Reduce(Callable, 73) */
+                (30, 66), /* '(' => LRAction::Reduce(Callable, 73) */
+                (31, 66), /* ')' => LRAction::Reduce(Callable, 73) */
+                (32, 66), /* '@' => LRAction::Reduce(Callable, 73) */
+                (33, 66), /* ':' => LRAction::Reduce(Callable, 73) */
+                (34, 66), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Callable, 73) */
+                (35, 66), /* '[' => LRAction::Reduce(Callable, 73) */
+                (36, 66), /* ']' => LRAction::Reduce(Callable, 73) */
+                (37, 66), /* ',' => LRAction::Reduce(Callable, 73) */
+                (38, 66), /* '"(\\.|[^"])*"' => LRAction::Reduce(Callable, 73) */
+                (39, 66), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Callable, 73) */
+                (40, 66), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Callable, 73) */
+                (41, 66), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 73) */
+                (42, 66), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 73) */
+                (43, 66), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 73) */
+                (44, 66), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Callable, 73) */
+                (45, 66), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Callable, 73) */
+                (46, 66), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Callable, 73) */
             ],
             gotos: &[],
         },
         // State 129
         LR1State {
             actions: &[
-                (9, 48),  /* ';' => LRAction::Reduce(ApplyExprList, 68) */
-                (12, 48), /* ':=' => LRAction::Reduce(ApplyExprList, 68) */
-                (13, 48), /* 'if' => LRAction::Reduce(ApplyExprList, 68) */
-                (14, 48), /* '||' => LRAction::Reduce(ApplyExprList, 68) */
-                (15, 48), /* '&&' => LRAction::Reduce(ApplyExprList, 68) */
-                (16, 48), /* 'in' => LRAction::Reduce(ApplyExprList, 68) */
-                (17, 48), /* '>=' => LRAction::Reduce(ApplyExprList, 68) */
-                (18, 48), /* '<=' => LRAction::Reduce(ApplyExprList, 68) */
-                (19, 48), /* '>' => LRAction::Reduce(ApplyExprList, 68) */
-                (20, 48), /* '<' => LRAction::Reduce(ApplyExprList, 68) */
-                (21, 48), /* '!=' => LRAction::Reduce(ApplyExprList, 68) */
-                (22, 48), /* '/=' => LRAction::Reduce(ApplyExprList, 68) */
-                (23, 48), /* '==' => LRAction::Reduce(ApplyExprList, 68) */
-                (24, 48), /* '+' => LRAction::Reduce(ApplyExprList, 68) */
-                (25, 48), /* '-' => LRAction::Reduce(ApplyExprList, 68) */
-                (26, 48), /* '*' => LRAction::Reduce(ApplyExprList, 68) */
-                (27, 48), /* '/' => LRAction::Reduce(ApplyExprList, 68) */
-                (28, 48), /* '%' => LRAction::Reduce(ApplyExprList, 68) */
-                (30, 48), /* '(' => LRAction::Reduce(ApplyExprList, 68) */
-                (31, 48), /* ')' => LRAction::Reduce(ApplyExprList, 68) */
-                (32, 48), /* '@' => LRAction::Reduce(ApplyExprList, 68) */
-                (33, 48), /* ':' => LRAction::Reduce(ApplyExprList, 68) */
-                (34, 48), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(ApplyExprList, 68) */
-                (35, 48), /* '[' => LRAction::Reduce(ApplyExprList, 68) */
-                (36, 48), /* ']' => LRAction::Reduce(ApplyExprList, 68) */
-                (37, 48), /* ',' => LRAction::Reduce(ApplyExprList, 68) */
-                (38, 48), /* '"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 68) */
-                (39, 48), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(ApplyExprList, 68) */
-                (40, 48), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(ApplyExprList, 68) */
-                (41, 48), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 68) */
-                (42, 48), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 68) */
-                (43, 48), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 68) */
-                (44, 48), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(ApplyExprList, 68) */
-                (45, 48), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(ApplyExprList, 68) */
-                (46, 48), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 68) */
+                (9, 55),  /* ';' => LRAction::Reduce(Array, 91) */
+                (12, 55), /* ':=' => LRAction::Reduce(Array, 91) */
+                (13, 55), /* 'if' => LRAction::Reduce(Array, 91) */
+                (14, 55), /* '||' => LRAction::Reduce(Array, 91) */
+                (15, 55), /* '&&' => LRAction::Reduce(Array, 91) */
+                (16, 55), /* 'in' => LRAction::Reduce(Array, 91) */
+                (17, 55), /* '>=' => LRAction::Reduce(Array, 91) */
+                (18, 55), /* '<=' => LRAction::Reduce(Array, 91) */
+                (19, 55), /* '>' => LRAction::Reduce(Array, 91) */
+                (20, 55), /* '<' => LRAction::Reduce(Array, 91) */
+                (21, 55), /* '!=' => LRAction::Reduce(Array, 91) */
+                (22, 55), /* '/=' => LRAction::Reduce(Array, 91) */
+                (23, 55), /* '==' => LRAction::Reduce(Array, 91) */
+                (24, 55), /* '+' => LRAction::Reduce(Array, 91) */
+                (25, 55), /* '-' => LRAction::Reduce(Array, 91) */
+                (26, 55), /* '*' => LRAction::Reduce(Array, 91) */
+                (27, 55), /* '/' => LRAction::Reduce(Array, 91) */
+                (28, 55), /* '%' => LRAction::Reduce(Array, 91) */
+                (29, 55), /* '&' => LRAction::Reduce(Array, 91) */
+                (30, 55), /* '(' => LRAction::Reduce(Array, 91) */
+                (31, 55), /* ')' => LRAction::Reduce(Array, 91) */
+                (32, 55), /* '@' => LRAction::Reduce(Array, 91) */
+                (33, 55), /* ':' => LRAction::Reduce(Array, 91) */
+                (34, 55), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(Array, 91) */
+                (35, 55), /* '[' => LRAction::Reduce(Array, 91) */
+                (36, 55), /* ']' => LRAction::Reduce(Array, 91) */
+                (37, 55), /* ',' => LRAction::Reduce(Array, 91) */
+                (38, 55), /* '"(\\.|[^"])*"' => LRAction::Reduce(Array, 91) */
+                (39, 55), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(Array, 91) */
+                (40, 55), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(Array, 91) */
+                (41, 55), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 91) */
+                (42, 55), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 91) */
+                (43, 55), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 91) */
+                (44, 55), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(Array, 91) */
+                (45, 55), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(Array, 91) */
+                (46, 55), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(Array, 91) */
             ],
             gotos: &[],
         },
         // State 130
         LR1State {
             actions: &[
-                (9, 59),  /* ';' => LRAction::Reduce(AtomicExpr, 74) */
-                (12, 59), /* ':=' => LRAction::Reduce(AtomicExpr, 74) */
-                (13, 59), /* 'if' => LRAction::Reduce(AtomicExpr, 74) */
-                (14, 59), /* '||' => LRAction::Reduce(AtomicExpr, 74) */
-                (15, 59), /* '&&' => LRAction::Reduce(AtomicExpr, 74) */
-                (16, 59), /* 'in' => LRAction::Reduce(AtomicExpr, 74) */
-                (17, 59), /* '>=' => LRAction::Reduce(AtomicExpr, 74) */
-                (18, 59), /* '<=' => LRAction::Reduce(AtomicExpr, 74) */
-                (19, 59), /* '>' => LRAction::Reduce(AtomicExpr, 74) */
-                (20, 59), /* '<' => LRAction::Reduce(AtomicExpr, 74) */
-                (21, 59), /* '!=' => LRAction::Reduce(AtomicExpr, 74) */
-                (22, 59), /* '/=' => LRAction::Reduce(AtomicExpr, 74) */
-                (23, 59), /* '==' => LRAction::Reduce(AtomicExpr, 74) */
-                (24, 59), /* '+' => LRAction::Reduce(AtomicExpr, 74) */
-                (25, 59), /* '-' => LRAction::Reduce(AtomicExpr, 74) */
-                (26, 59), /* '*' => LRAction::Reduce(AtomicExpr, 74) */
-                (27, 59), /* '/' => LRAction::Reduce(AtomicExpr, 74) */
-                (28, 59), /* '%' => LRAction::Reduce(AtomicExpr, 74) */
-                (30, 59), /* '(' => LRAction::Reduce(AtomicExpr, 74) */
-                (31, 59), /* ')' => LRAction::Reduce(AtomicExpr, 74) */
-                (32, 59), /* '@' => LRAction::Reduce(AtomicExpr, 74) */
-                (33, 59), /* ':' => LRAction::Reduce(AtomicExpr, 74) */
-                (34, 59), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(AtomicExpr, 74) */
-                (35, 59), /* '[' => LRAction::Reduce(AtomicExpr, 74) */
-                (36, 59), /* ']' => LRAction::Reduce(AtomicExpr, 74) */
-                (37, 59), /* ',' => LRAction::Reduce(AtomicExpr, 74) */
-                (38, 59), /* '"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 74) */
-                (39, 59), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 74) */
-                (40, 59), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(AtomicExpr, 74) */
-                (41, 59), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
-                (42, 59), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
-                (43, 59), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
-                (44, 59), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 74) */
-                (45, 59), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(AtomicExpr, 74) */
-                (46, 59), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 74) */
+                (25, 2),   /* '-' => LRAction::Shift(8) */
+                (29, 134), /* '&' => LRAction::Reduce(PrefixExprList, 64) */
+                (30, 134), /* '(' => LRAction::Reduce(PrefixExprList, 64) */
+                (32, 134), /* '@' => LRAction::Reduce(PrefixExprList, 64) */
+                (33, 134), /* ':' => LRAction::Reduce(PrefixExprList, 64) */
+                (34, 134), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PrefixExprList, 64) */
+                (35, 134), /* '[' => LRAction::Reduce(PrefixExprList, 64) */
+                (36, 69),  /* ']' => LRAction::Reduce(CommaExprListOpt, 99) */
+                (38, 134), /* '"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (39, 134), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (40, 134), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (41, 134), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (42, 134), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (43, 134), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (44, 134), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PrefixExprList, 64) */
+                (45, 134), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PrefixExprList, 64) */
+                (46, 134), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 64) */
             ],
-            gotos: &[],
+            gotos: &[
+                (2, 11),   /* ArithmeticExpr => 11 */
+                (14, 134), /* CommaExprListOpt => 134 */
+                (15, 135), /* CommaSepElements => 135 */
+                (19, 13),  /* CompareExpr => 13 */
+                (24, 121), /* Expr => 121 */
+                (25, 15),  /* FactorExpr => 15 */
+                (34, 16),  /* InfixIfExpr => 16 */
+                (36, 17),  /* InfixInExpr => 17 */
+                (40, 19),  /* LogicalAndExpr => 19 */
+                (42, 20),  /* LogicalOrExpr => 20 */
+                (50, 21),  /* PrefixExpr => 21 */
+                (51, 22),  /* PrefixExprList => 22 */
+                (64, 26),  /* SetExpr => 26 */
+            ],
         },
         // State 131
         LR1State {
             actions: &[
-                (9, 58),  /* ';' => LRAction::Reduce(AtomicExpr, 73) */
-                (12, 58), /* ':=' => LRAction::Reduce(AtomicExpr, 73) */
-                (13, 58), /* 'if' => LRAction::Reduce(AtomicExpr, 73) */
-                (14, 58), /* '||' => LRAction::Reduce(AtomicExpr, 73) */
-                (15, 58), /* '&&' => LRAction::Reduce(AtomicExpr, 73) */
-                (16, 58), /* 'in' => LRAction::Reduce(AtomicExpr, 73) */
-                (17, 58), /* '>=' => LRAction::Reduce(AtomicExpr, 73) */
-                (18, 58), /* '<=' => LRAction::Reduce(AtomicExpr, 73) */
-                (19, 58), /* '>' => LRAction::Reduce(AtomicExpr, 73) */
-                (20, 58), /* '<' => LRAction::Reduce(AtomicExpr, 73) */
-                (21, 58), /* '!=' => LRAction::Reduce(AtomicExpr, 73) */
-                (22, 58), /* '/=' => LRAction::Reduce(AtomicExpr, 73) */
-                (23, 58), /* '==' => LRAction::Reduce(AtomicExpr, 73) */
-                (24, 58), /* '+' => LRAction::Reduce(AtomicExpr, 73) */
-                (25, 58), /* '-' => LRAction::Reduce(AtomicExpr, 73) */
-                (26, 58), /* '*' => LRAction::Reduce(AtomicExpr, 73) */
-                (27, 58), /* '/' => LRAction::Reduce(AtomicExpr, 73) */
-                (28, 58), /* '%' => LRAction::Reduce(AtomicExpr, 73) */
-                (30, 58), /* '(' => LRAction::Reduce(AtomicExpr, 73) */
-                (31, 58), /* ')' => LRAction::Reduce(AtomicExpr, 73) */
-                (32, 58), /* '@' => LRAction::Reduce(AtomicExpr, 73) */
-                (33, 58), /* ':' => LRAction::Reduce(AtomicExpr, 73) */
-                (34, 58), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(AtomicExpr, 73) */
-                (35, 58), /* '[' => LRAction::Reduce(AtomicExpr, 73) */
-                (36, 58), /* ']' => LRAction::Reduce(AtomicExpr, 73) */
-                (37, 58), /* ',' => LRAction::Reduce(AtomicExpr, 73) */
-                (38, 58), /* '"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 73) */
-                (39, 58), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(AtomicExpr, 73) */
-                (40, 58), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(AtomicExpr, 73) */
-                (41, 58), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 73) */
-                (42, 58), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 73) */
-                (43, 58), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 73) */
-                (44, 58), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(AtomicExpr, 73) */
-                (45, 58), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(AtomicExpr, 73) */
-                (46, 58), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(AtomicExpr, 73) */
+                (36, 71), /* ']' => LRAction::Reduce(CommaSepElementsOpt, 95) */
             ],
             gotos: &[],
         },
         // State 132
         LR1State {
             actions: &[
-                (34, 6), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(31) */
+                (36, 70), /* ']' => LRAction::Reduce(CommaSepElements, 94) */
             ],
-            gotos: &[(32, 135) /* Ident => 135 */],
+            gotos: &[],
         },
         // State 133
         LR1State {
             actions: &[
-                (36, 67), /* ']' => LRAction::Reduce(CommaExprList, 96) */
+                (34, 5), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(29) */
             ],
-            gotos: &[],
+            gotos: &[(32, 136) /* Ident => 136 */],
         },
         // State 134
         LR1State {
             actions: &[
-                (36, 68), /* ']' => LRAction::Reduce(CommaExprListOpt, 97) */
+                (36, 67), /* ']' => LRAction::Reduce(CommaExprList, 97) */
             ],
             gotos: &[],
         },
         // State 135
         LR1State {
             actions: &[
-                (8, 126),  /* '.' => LRAction::Reduce(PathList, 80) */
-                (9, 126),  /* ';' => LRAction::Reduce(PathList, 80) */
-                (12, 126), /* ':=' => LRAction::Reduce(PathList, 80) */
-                (13, 126), /* 'if' => LRAction::Reduce(PathList, 80) */
-                (14, 126), /* '||' => LRAction::Reduce(PathList, 80) */
-                (15, 126), /* '&&' => LRAction::Reduce(PathList, 80) */
-                (16, 126), /* 'in' => LRAction::Reduce(PathList, 80) */
-                (17, 126), /* '>=' => LRAction::Reduce(PathList, 80) */
-                (18, 126), /* '<=' => LRAction::Reduce(PathList, 80) */
-                (19, 126), /* '>' => LRAction::Reduce(PathList, 80) */
-                (20, 126), /* '<' => LRAction::Reduce(PathList, 80) */
-                (21, 126), /* '!=' => LRAction::Reduce(PathList, 80) */
-                (22, 126), /* '/=' => LRAction::Reduce(PathList, 80) */
-                (23, 126), /* '==' => LRAction::Reduce(PathList, 80) */
-                (24, 126), /* '+' => LRAction::Reduce(PathList, 80) */
-                (25, 126), /* '-' => LRAction::Reduce(PathList, 80) */
-                (26, 126), /* '*' => LRAction::Reduce(PathList, 80) */
-                (27, 126), /* '/' => LRAction::Reduce(PathList, 80) */
-                (28, 126), /* '%' => LRAction::Reduce(PathList, 80) */
-                (30, 126), /* '(' => LRAction::Reduce(PathList, 80) */
-                (31, 126), /* ')' => LRAction::Reduce(PathList, 80) */
-                (32, 126), /* '@' => LRAction::Reduce(PathList, 80) */
-                (33, 126), /* ':' => LRAction::Reduce(PathList, 80) */
-                (34, 126), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PathList, 80) */
-                (35, 126), /* '[' => LRAction::Reduce(PathList, 80) */
-                (36, 126), /* ']' => LRAction::Reduce(PathList, 80) */
-                (37, 126), /* ',' => LRAction::Reduce(PathList, 80) */
-                (38, 126), /* '"(\\.|[^"])*"' => LRAction::Reduce(PathList, 80) */
-                (39, 126), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PathList, 80) */
-                (40, 126), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PathList, 80) */
-                (41, 126), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 80) */
-                (42, 126), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 80) */
-                (43, 126), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 80) */
-                (44, 126), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 80) */
-                (45, 126), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PathList, 80) */
-                (46, 126), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 80) */
+                (36, 68), /* ']' => LRAction::Reduce(CommaExprListOpt, 98) */
+            ],
+            gotos: &[],
+        },
+        // State 136
+        LR1State {
+            actions: &[
+                (8, 129),  /* '.' => LRAction::Reduce(PathList, 81) */
+                (9, 129),  /* ';' => LRAction::Reduce(PathList, 81) */
+                (12, 129), /* ':=' => LRAction::Reduce(PathList, 81) */
+                (13, 129), /* 'if' => LRAction::Reduce(PathList, 81) */
+                (14, 129), /* '||' => LRAction::Reduce(PathList, 81) */
+                (15, 129), /* '&&' => LRAction::Reduce(PathList, 81) */
+                (16, 129), /* 'in' => LRAction::Reduce(PathList, 81) */
+                (17, 129), /* '>=' => LRAction::Reduce(PathList, 81) */
+                (18, 129), /* '<=' => LRAction::Reduce(PathList, 81) */
+                (19, 129), /* '>' => LRAction::Reduce(PathList, 81) */
+                (20, 129), /* '<' => LRAction::Reduce(PathList, 81) */
+                (21, 129), /* '!=' => LRAction::Reduce(PathList, 81) */
+                (22, 129), /* '/=' => LRAction::Reduce(PathList, 81) */
+                (23, 129), /* '==' => LRAction::Reduce(PathList, 81) */
+                (24, 129), /* '+' => LRAction::Reduce(PathList, 81) */
+                (25, 129), /* '-' => LRAction::Reduce(PathList, 81) */
+                (26, 129), /* '*' => LRAction::Reduce(PathList, 81) */
+                (27, 129), /* '/' => LRAction::Reduce(PathList, 81) */
+                (28, 129), /* '%' => LRAction::Reduce(PathList, 81) */
+                (29, 129), /* '&' => LRAction::Reduce(PathList, 81) */
+                (30, 129), /* '(' => LRAction::Reduce(PathList, 81) */
+                (31, 129), /* ')' => LRAction::Reduce(PathList, 81) */
+                (32, 129), /* '@' => LRAction::Reduce(PathList, 81) */
+                (33, 129), /* ':' => LRAction::Reduce(PathList, 81) */
+                (34, 129), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(PathList, 81) */
+                (35, 129), /* '[' => LRAction::Reduce(PathList, 81) */
+                (36, 129), /* ']' => LRAction::Reduce(PathList, 81) */
+                (37, 129), /* ',' => LRAction::Reduce(PathList, 81) */
+                (38, 129), /* '"(\\.|[^"])*"' => LRAction::Reduce(PathList, 81) */
+                (39, 129), /* 'b"(\\.|[^"])*"' => LRAction::Reduce(PathList, 81) */
+                (40, 129), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Reduce(PathList, 81) */
+                (41, 129), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
+                (42, 129), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
+                (43, 129), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
+                (44, 129), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(PathList, 81) */
+                (45, 129), /* 'os"[0-9a-zA-Z_.,-\/()\[\]]*"' => LRAction::Reduce(PathList, 81) */
+                (46, 129), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PathList, 81) */
             ],
             gotos: &[],
         },
     ],
 };
 
-pub const PRODUCTIONS: &[LRProduction; 114] = &[
+pub const PRODUCTIONS: &[LRProduction; 115] = &[
     // 0 - EndOfLine: /(?:\r?\n|\r)+/;
     LRProduction { lhs: 22, len: 1 },
     // 1 - Comment: Hash^ /* Clipped */ CommentContent;
@@ -3791,53 +3839,53 @@ pub const PRODUCTIONS: &[LRProduction; 114] = &[
     // 3 - CommentContent: /[^\r\n]*/;
     LRProduction { lhs: 18, len: 1 },
     // 4 - Program: Scope;
-    LRProduction { lhs: 51, len: 1 },
+    LRProduction { lhs: 52, len: 1 },
     // 5 - Scope: ScopeList /* Vec */;
-    LRProduction { lhs: 55, len: 1 },
+    LRProduction { lhs: 56, len: 1 },
     // 6 - ScopeList: ScopeList ScopeContent;
-    LRProduction { lhs: 61, len: 2 },
+    LRProduction { lhs: 62, len: 2 },
     // 7 - ScopeList: ;
-    LRProduction { lhs: 61, len: 0 },
+    LRProduction { lhs: 62, len: 0 },
     // 8 - ScopeContent: ScopeContentOpt /* Option */ ScopeContentOpt0 /* Option */ ScopeContentOpt1 /* Option */ EndOfLine;
-    LRProduction { lhs: 56, len: 4 },
+    LRProduction { lhs: 57, len: 4 },
     // 9 - ScopeContentOpt1: Comment;
-    LRProduction { lhs: 60, len: 1 },
+    LRProduction { lhs: 61, len: 1 },
     // 10 - ScopeContentOpt1: ;
-    LRProduction { lhs: 60, len: 0 },
+    LRProduction { lhs: 61, len: 0 },
     // 11 - ScopeContentOpt0: ScopeContentKind;
-    LRProduction { lhs: 59, len: 1 },
+    LRProduction { lhs: 60, len: 1 },
     // 12 - ScopeContentOpt0: ;
-    LRProduction { lhs: 59, len: 0 },
+    LRProduction { lhs: 60, len: 0 },
     // 13 - ScopeContentOpt: Break;
-    LRProduction { lhs: 58, len: 1 },
+    LRProduction { lhs: 59, len: 1 },
     // 14 - ScopeContentOpt: ;
-    LRProduction { lhs: 58, len: 0 },
+    LRProduction { lhs: 59, len: 0 },
     // 15 - ScopeContentKind: Statement;
-    LRProduction { lhs: 57, len: 1 },
+    LRProduction { lhs: 58, len: 1 },
     // 16 - ScopeContentKind: Block;
-    LRProduction { lhs: 57, len: 1 },
+    LRProduction { lhs: 58, len: 1 },
     // 17 - Statement: StatementKind Semi;
-    LRProduction { lhs: 65, len: 2 },
+    LRProduction { lhs: 66, len: 2 },
     // 18 - Break: '.';
     LRProduction { lhs: 10, len: 1 },
     // 19 - Semi: ';';
-    LRProduction { lhs: 62, len: 1 },
+    LRProduction { lhs: 63, len: 1 },
     // 20 - StatementKind: LetStmt;
-    LRProduction { lhs: 66, len: 1 },
+    LRProduction { lhs: 67, len: 1 },
     // 21 - StatementKind: Expr;
-    LRProduction { lhs: 66, len: 1 },
+    LRProduction { lhs: 67, len: 1 },
     // 22 - StatementKind: ReturnStmt;
-    LRProduction { lhs: 66, len: 1 },
+    LRProduction { lhs: 67, len: 1 },
     // 23 - LetStmt: 'let' Ident '=' Expr;
     LRProduction { lhs: 38, len: 4 },
     // 24 - Expr: SetExpr;
     LRProduction { lhs: 24, len: 1 },
     // 25 - SetExpr: InfixIfExpr SetExprOpt /* Option */;
-    LRProduction { lhs: 63, len: 2 },
-    // 26 - SetExprOpt: ':=' InfixIfExpr;
     LRProduction { lhs: 64, len: 2 },
+    // 26 - SetExprOpt: ':=' InfixIfExpr;
+    LRProduction { lhs: 65, len: 2 },
     // 27 - SetExprOpt: ;
-    LRProduction { lhs: 64, len: 0 },
+    LRProduction { lhs: 65, len: 0 },
     // 28 - InfixIfExpr: LogicalOrExpr InfixIfExprOpt /* Option */;
     LRProduction { lhs: 34, len: 2 },
     // 29 - InfixIfExprOpt: 'if' LogicalOrExpr;
@@ -3904,111 +3952,113 @@ pub const PRODUCTIONS: &[LRProduction; 114] = &[
     LRProduction { lhs: 27, len: 1 },
     // 60 - FactorOp: '%';
     LRProduction { lhs: 27, len: 1 },
-    // 61 - PrefixExpr: PrefixOp ApplyExpr;
-    LRProduction { lhs: 48, len: 2 },
+    // 61 - PrefixExpr: '-' ApplyExpr;
+    LRProduction { lhs: 50, len: 2 },
     // 62 - PrefixExpr: PrefixExprList /* Vec */ ApplyExpr;
-    LRProduction { lhs: 48, len: 2 },
+    LRProduction { lhs: 50, len: 2 },
     // 63 - PrefixExprList: PrefixExprList Qualif;
-    LRProduction { lhs: 49, len: 2 },
+    LRProduction { lhs: 51, len: 2 },
     // 64 - PrefixExprList: ;
-    LRProduction { lhs: 49, len: 0 },
-    // 65 - PrefixOp: '-';
-    LRProduction { lhs: 50, len: 1 },
-    // 66 - PrefixOp: '&';
-    LRProduction { lhs: 50, len: 1 },
-    // 67 - ApplyExpr: Callable ApplyExprList /* Vec */;
+    LRProduction { lhs: 51, len: 0 },
+    // 65 - ApplyExpr: LowerPrefixExpr ApplyExprList /* Vec */;
     LRProduction { lhs: 0, len: 2 },
-    // 68 - ApplyExprList: ApplyExprList AtomicExpr;
+    // 66 - ApplyExprList: ApplyExprList AtomicExpr;
     LRProduction { lhs: 1, len: 2 },
-    // 69 - ApplyExprList: ;
+    // 67 - ApplyExprList: ;
     LRProduction { lhs: 1, len: 0 },
-    // 70 - Callable: Path;
-    LRProduction { lhs: 12, len: 1 },
-    // 71 - Callable: Literal;
-    LRProduction { lhs: 12, len: 1 },
-    // 72 - Callable: '(' Expr ')';
-    LRProduction { lhs: 12, len: 3 },
-    // 73 - AtomicExpr: Qualif;
-    LRProduction { lhs: 7, len: 1 },
-    // 74 - AtomicExpr: Callable;
-    LRProduction { lhs: 7, len: 1 },
-    // 75 - Qualif: ExecutorComponent;
-    LRProduction { lhs: 52, len: 1 },
-    // 76 - Qualif: TimeIndicator;
-    LRProduction { lhs: 52, len: 1 },
-    // 77 - ExecutorComponent: '@' Path;
-    LRProduction { lhs: 23, len: 2 },
-    // 78 - TimeIndicator: ':' Callable;
-    LRProduction { lhs: 68, len: 2 },
-    // 79 - Path: Ident PathList /* Vec */;
-    LRProduction { lhs: 46, len: 2 },
-    // 80 - PathList: PathList '.' Ident;
-    LRProduction { lhs: 47, len: 3 },
-    // 81 - PathList: ;
-    LRProduction { lhs: 47, len: 0 },
-    // 82 - Ident: /[_a-zA-Z](\w|[\/-])*/;
-    LRProduction { lhs: 32, len: 1 },
-    // 83 - Literal: Array;
-    LRProduction { lhs: 39, len: 1 },
-    // 84 - Literal: String;
-    LRProduction { lhs: 39, len: 1 },
-    // 85 - Literal: ByteLiteral;
-    LRProduction { lhs: 39, len: 1 },
-    // 86 - Literal: HexByteLiteral;
-    LRProduction { lhs: 39, len: 1 },
-    // 87 - Literal: Numeric;
-    LRProduction { lhs: 39, len: 1 },
-    // 88 - Literal: FilePathLiteral;
-    LRProduction { lhs: 39, len: 1 },
-    // 89 - Literal: Rfc3339DateTime;
-    LRProduction { lhs: 39, len: 1 },
-    // 90 - Array: '[' ArrayOpt /* Option */ ']';
-    LRProduction { lhs: 5, len: 3 },
-    // 91 - ArrayOpt: CommaSepElements;
-    LRProduction { lhs: 6, len: 1 },
-    // 92 - ArrayOpt: ;
-    LRProduction { lhs: 6, len: 0 },
-    // 93 - CommaSepElements: Expr CommaSepElementsOpt /* Option */;
-    LRProduction { lhs: 15, len: 2 },
-    // 94 - CommaSepElementsOpt: CommaExprList;
-    LRProduction { lhs: 16, len: 1 },
-    // 95 - CommaSepElementsOpt: ;
-    LRProduction { lhs: 16, len: 0 },
-    // 96 - CommaExprList: ',' CommaExprListOpt /* Option */;
-    LRProduction { lhs: 13, len: 2 },
-    // 97 - CommaExprListOpt: CommaSepElements;
-    LRProduction { lhs: 14, len: 1 },
-    // 98 - CommaExprListOpt: ;
-    LRProduction { lhs: 14, len: 0 },
-    // 99 - String: /"(\\.|[^"])*"/;
-    LRProduction { lhs: 67, len: 1 },
-    // 100 - ByteLiteral: /b"(\\.|[^"])*"/;
-    LRProduction { lhs: 11, len: 1 },
-    // 101 - HexByteLiteral: /bx"[0-9a-fA-F_]*"/;
-    LRProduction { lhs: 30, len: 1 },
-    // 102 - Numeric: BinaryInteger;
-    LRProduction { lhs: 44, len: 1 },
-    // 103 - Numeric: OctalInteger;
-    LRProduction { lhs: 44, len: 1 },
-    // 104 - Numeric: HexadecimalInteger;
-    LRProduction { lhs: 44, len: 1 },
-    // 105 - Numeric: Ieee754Float;
-    LRProduction { lhs: 44, len: 1 },
-    // 106 - BinaryInteger: /0b[01_]+([a-zA-Z](\w|[\/-])*)?/;
-    LRProduction { lhs: 8, len: 1 },
-    // 107 - OctalInteger: /0o[0-7_]+([a-zA-Z](\w|[\/-])*)?/;
+    // 68 - LowerPrefixExpr: LowerPrefixExprOpt /* Option */ Callable;
+    LRProduction { lhs: 44, len: 2 },
+    // 69 - LowerPrefixExprOpt: '&';
     LRProduction { lhs: 45, len: 1 },
-    // 108 - HexadecimalInteger: /0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?/;
-    LRProduction { lhs: 31, len: 1 },
-    // 109 - Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?/;
-    LRProduction { lhs: 33, len: 1 },
-    // 110 - FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
-    LRProduction { lhs: 28, len: 1 },
-    // 111 - Rfc3339DateTime: /\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
-    LRProduction { lhs: 54, len: 1 },
-    // 112 - ReturnStmt: 'return';
+    // 70 - LowerPrefixExprOpt: ;
+    LRProduction { lhs: 45, len: 0 },
+    // 71 - Callable: Path;
+    LRProduction { lhs: 12, len: 1 },
+    // 72 - Callable: Literal;
+    LRProduction { lhs: 12, len: 1 },
+    // 73 - Callable: '(' Expr ')';
+    LRProduction { lhs: 12, len: 3 },
+    // 74 - AtomicExpr: Qualif;
+    LRProduction { lhs: 7, len: 1 },
+    // 75 - AtomicExpr: LowerPrefixExpr;
+    LRProduction { lhs: 7, len: 1 },
+    // 76 - Qualif: ExecutorComponent;
     LRProduction { lhs: 53, len: 1 },
-    // 113 - Block: '{' Scope '}';
+    // 77 - Qualif: TimeIndicator;
+    LRProduction { lhs: 53, len: 1 },
+    // 78 - ExecutorComponent: '@' Path;
+    LRProduction { lhs: 23, len: 2 },
+    // 79 - TimeIndicator: ':' Callable;
+    LRProduction { lhs: 69, len: 2 },
+    // 80 - Path: Ident PathList /* Vec */;
+    LRProduction { lhs: 48, len: 2 },
+    // 81 - PathList: PathList '.' Ident;
+    LRProduction { lhs: 49, len: 3 },
+    // 82 - PathList: ;
+    LRProduction { lhs: 49, len: 0 },
+    // 83 - Ident: /[_a-zA-Z](\w|[\/-])*/;
+    LRProduction { lhs: 32, len: 1 },
+    // 84 - Literal: Array;
+    LRProduction { lhs: 39, len: 1 },
+    // 85 - Literal: String;
+    LRProduction { lhs: 39, len: 1 },
+    // 86 - Literal: ByteLiteral;
+    LRProduction { lhs: 39, len: 1 },
+    // 87 - Literal: HexByteLiteral;
+    LRProduction { lhs: 39, len: 1 },
+    // 88 - Literal: Numeric;
+    LRProduction { lhs: 39, len: 1 },
+    // 89 - Literal: FilePathLiteral;
+    LRProduction { lhs: 39, len: 1 },
+    // 90 - Literal: Rfc3339DateTime;
+    LRProduction { lhs: 39, len: 1 },
+    // 91 - Array: '[' ArrayOpt /* Option */ ']';
+    LRProduction { lhs: 5, len: 3 },
+    // 92 - ArrayOpt: CommaSepElements;
+    LRProduction { lhs: 6, len: 1 },
+    // 93 - ArrayOpt: ;
+    LRProduction { lhs: 6, len: 0 },
+    // 94 - CommaSepElements: Expr CommaSepElementsOpt /* Option */;
+    LRProduction { lhs: 15, len: 2 },
+    // 95 - CommaSepElementsOpt: CommaExprList;
+    LRProduction { lhs: 16, len: 1 },
+    // 96 - CommaSepElementsOpt: ;
+    LRProduction { lhs: 16, len: 0 },
+    // 97 - CommaExprList: ',' CommaExprListOpt /* Option */;
+    LRProduction { lhs: 13, len: 2 },
+    // 98 - CommaExprListOpt: CommaSepElements;
+    LRProduction { lhs: 14, len: 1 },
+    // 99 - CommaExprListOpt: ;
+    LRProduction { lhs: 14, len: 0 },
+    // 100 - String: /"(\\.|[^"])*"/;
+    LRProduction { lhs: 68, len: 1 },
+    // 101 - ByteLiteral: /b"(\\.|[^"])*"/;
+    LRProduction { lhs: 11, len: 1 },
+    // 102 - HexByteLiteral: /bx"[0-9a-fA-F_]*"/;
+    LRProduction { lhs: 30, len: 1 },
+    // 103 - Numeric: BinaryInteger;
+    LRProduction { lhs: 46, len: 1 },
+    // 104 - Numeric: OctalInteger;
+    LRProduction { lhs: 46, len: 1 },
+    // 105 - Numeric: HexadecimalInteger;
+    LRProduction { lhs: 46, len: 1 },
+    // 106 - Numeric: Ieee754Float;
+    LRProduction { lhs: 46, len: 1 },
+    // 107 - BinaryInteger: /0b[01_]+([a-zA-Z](\w|[\/-])*)?/;
+    LRProduction { lhs: 8, len: 1 },
+    // 108 - OctalInteger: /0o[0-7_]+([a-zA-Z](\w|[\/-])*)?/;
+    LRProduction { lhs: 47, len: 1 },
+    // 109 - HexadecimalInteger: /0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?/;
+    LRProduction { lhs: 31, len: 1 },
+    // 110 - Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?/;
+    LRProduction { lhs: 33, len: 1 },
+    // 111 - FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
+    LRProduction { lhs: 28, len: 1 },
+    // 112 - Rfc3339DateTime: /\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+    LRProduction { lhs: 55, len: 1 },
+    // 113 - ReturnStmt: 'return';
+    LRProduction { lhs: 54, len: 1 },
+    // 114 - Block: '{' Scope '}';
     LRProduction { lhs: 9, len: 3 },
 ];
 
@@ -4035,7 +4085,7 @@ pub fn parse<'t, T>(
 where
     T: AsRef<Path>,
 {
-    let mut lr_parser = LRParser::new(51, &PARSE_TABLE, PRODUCTIONS, TERMINAL_NAMES, NON_TERMINALS);
+    let mut lr_parser = LRParser::new(52, &PARSE_TABLE, PRODUCTIONS, TERMINAL_NAMES, NON_TERMINALS);
     lr_parser.trim_parse_tree();
 
     // Initialize wrapper

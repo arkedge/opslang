@@ -124,18 +124,18 @@ FactorOp
 
 // `-`: lower than application
 PrefixExpr
-    : PrefixOp ApplyExpr
+    : '-' ApplyExpr
     | { Qualif } ApplyExpr
     ;
 
-PrefixOp
-    : '-'
-    | '&'
+// application: lower than `&`
+ApplyExpr
+    : LowerPrefixExpr { AtomicExpr }
     ;
 
-// application: lower than `-`
-ApplyExpr
-    : Callable { AtomicExpr }
+// `&`: lower than grouping
+LowerPrefixExpr
+    : [ '&' ] Callable
     ;
 
 Callable
@@ -147,7 +147,7 @@ Callable
 // expressions with clear space delimitation
 AtomicExpr
     : Qualif
-    | Callable
+    | LowerPrefixExpr
     ;
 
 // Qualification for sending a command

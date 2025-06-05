@@ -13,7 +13,7 @@ wait 5s;                            # WINGS: wait_sec
 wait 1 == 1 && 2 <= 2;              # WINGS: wait_until
 wait 0 == 1 || 5s;                  # タイムアウトつき
 
-print (&MOBC.HK);                   # telemetry id 参照
+print &MOBC.HK;                   # telemetry id 参照
 print MOBC.HK.XX.YY;
 let hk = MOBC.HK;                   # テレメトリ集合型
 print hk.OBC.XX.YY;                 # テレメトリ集合型は構造体のように参照できる

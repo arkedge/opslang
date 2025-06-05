@@ -474,12 +474,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
 
     fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
         match self {
-            grammar_trait::PrefixExpr::PrefixOpApplyExpr(prefix_expr_prefix_op_apply_expr) => cx
+            grammar_trait::PrefixExpr::MinusApplyExpr(prefix_expr_minus_apply_expr) => cx
                 .alloc_expr(syn::ExprKind::Unary(syn::Unary {
-                    op: prefix_expr_prefix_op_apply_expr.prefix_op.process_token(cx),
-                    expr: prefix_expr_prefix_op_apply_expr
-                        .apply_expr
-                        .process_token(cx),
+                    op: syn::UnOp::Neg(syn::token::Hyphen {
+                        position: syn::BytePos(prefix_expr_minus_apply_expr.minus.location.start),
+                    }),
+                    expr: prefix_expr_minus_apply_expr.apply_expr.process_token(cx),
                 })),
             grammar_trait::PrefixExpr::PrefixExprListApplyExpr(
                 prefix_expr_prefix_expr_list_apply_expr,
@@ -507,21 +507,6 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
                     }))
                 }
             }
-        }
-    }
-}
-
-impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixOp<'_> {
-    type Output = syn::UnOp;
-
-    fn process_token(&self, _cx: &'cx ParseContext<'cx>) -> Self::Output {
-        match self {
-            grammar_trait::PrefixOp::Minus(prefix_op_minus) => syn::UnOp::Neg(syn::token::Hyphen {
-                position: syn::BytePos(prefix_op_minus.minus.location.start),
-            }),
-            grammar_trait::PrefixOp::Amp(prefix_op_amp) => syn::UnOp::Ref(syn::token::Ampersand {
-                position: syn::BytePos(prefix_op_amp.amp.location.start),
-            }),
         }
     }
 }
@@ -557,10 +542,10 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ApplyExpr<'_> {
 
     fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
         if self.apply_expr_list.is_empty() {
-            self.callable.process_token(cx)
+            self.lower_prefix_expr.process_token(cx)
         } else {
             cx.alloc_expr(syn::ExprKind::Apply(syn::Apply {
-                function: self.callable.process_token(cx),
+                function: self.lower_prefix_expr.process_token(cx),
                 args: Box::leak(
                     self.apply_expr_list
                         .iter()
@@ -569,6 +554,23 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ApplyExpr<'_> {
                         .into_boxed_slice(),
                 ),
             }))
+        }
+    }
+}
+
+impl<'cx> ProcessToken<'cx> for grammar_trait::LowerPrefixExpr<'_> {
+    type Output = syn::Expr<'cx>;
+
+    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+        if let Some(lower_prefix) = self.lower_prefix_expr_opt.as_ref() {
+            cx.alloc_expr(syn::ExprKind::Unary(syn::Unary {
+                op: syn::UnOp::Ref(syn::token::Ampersand {
+                    position: syn::BytePos(lower_prefix.amp.location.start),
+                }),
+                expr: self.callable.process_token(cx),
+            }))
+        } else {
+            self.callable.process_token(cx)
         }
     }
 }
@@ -606,8 +608,8 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
             grammar_trait::AtomicExpr::Qualif(atomic_expr_qualif) => cx.alloc_expr(
                 syn::ExprKind::Qualif(atomic_expr_qualif.qualif.process_token(cx)),
             ),
-            grammar_trait::AtomicExpr::Callable(atomic_expr_callable) => {
-                atomic_expr_callable.callable.process_token(cx)
+            grammar_trait::AtomicExpr::LowerPrefixExpr(atomic_expr_lower_prefix) => {
+                atomic_expr_lower_prefix.lower_prefix_expr.process_token(cx)
             }
         }
     }
