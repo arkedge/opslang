@@ -78,7 +78,7 @@ pub struct Let<'cx> {
 /// ```
 ///
 /// parsed as:
-/// ```no_run
+/// ```ignore (illustrative)
 /// SendCommand {
 ///     destination: DestinationSpec {
 ///         receiver_component: Some(ReceiverComponent {
