@@ -1,7 +1,7 @@
-use interner::Interner;
+use family::TypeFamily;
 use opslang_ast_macros::{OrderSpan, TrivialBridge};
 
-pub mod interner;
+pub mod family;
 pub mod loc;
 pub mod token;
 
@@ -12,10 +12,10 @@ pub type Position = BytePos;
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// Default value for each types in this crate, to allow this crate define an AST.
 ///
-/// This type does not take any lifetime parameters because [`Interner`] trait has them.
-pub struct DefaultInterner;
+/// This type does not take any lifetime parameters because [`TypeFamily`] trait has them.
+pub struct DefaultTypeFamily;
 
-impl<'cx> Interner<'cx> for DefaultInterner {
+impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
     type Comment = &'cx Comment<'cx>;
     type CommentSpan = Span;
     type Row = &'cx Row<'cx>;
@@ -56,26 +56,26 @@ pub struct Span {
 /// An overall program. A program is a sequence of statements.
 ///
 /// This version of program contains only a body of the main function.
-pub struct Program<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Program<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub content: Scope<'cx, I>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// Sequence of statements.
-pub struct Scope<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Scope<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub items: &'cx [I::ScopeItem],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A scope item can be a single statement or a block of statements, or a comment.
-pub enum ScopeItem<'cx, I: Interner<'cx> = DefaultInterner> {
+pub enum ScopeItem<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     Row(I::Row),
     Block(I::Block),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A single row of program with optional comments and breaks.
-pub struct Row<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Row<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub breaks: Option<I::BreakToken>,
     pub content: Option<I::RowContent>,
     pub comment: Option<I::Comment>,
@@ -83,7 +83,7 @@ pub struct Row<'cx, I: Interner<'cx> = DefaultInterner> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A comment in a program.
-pub struct Comment<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Comment<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub content: &'cx str,
     pub span: I::CommentSpan,
 }
@@ -99,7 +99,7 @@ pub struct Comment<'cx, I: Interner<'cx> = DefaultInterner> {
 ///     NOP
 /// }
 /// ```
-pub struct Block<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Block<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_brace: token::OpenBrace,
     pub scope: Scope<'cx, I>,
     pub right_brace: token::CloseBrace,
@@ -107,7 +107,7 @@ pub struct Block<'cx, I: Interner<'cx> = DefaultInterner> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
-pub enum StatementKind<'cx, I: Interner<'cx> = DefaultInterner> {
+pub enum StatementKind<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     Let(Let<'cx, I>),
     Expr(ExprStatement<'cx, I>),
     Return(I::ReturnStmt),
@@ -121,7 +121,7 @@ pub enum StatementKind<'cx, I: Interner<'cx> = DefaultInterner> {
 /// ```ops
 /// let d = 1s
 /// ```
-pub struct Let<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Let<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub let_token: I::LetToken,
     pub variable: I::Ident,
     pub eq: I::EqToken,
@@ -131,7 +131,7 @@ pub struct Let<'cx, I: Interner<'cx> = DefaultInterner> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
-pub struct ExprStatement<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct ExprStatement<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub expr: Expr<'cx, I>,
     pub semi: I::SemiToken,
 }
@@ -149,12 +149,12 @@ pub struct ReturnStmt {
     pub semi: token::Semi,
 }
 
-pub type OwnedExpr<'cx, I = DefaultInterner> = ExprKind<'cx, I>;
-pub type Expr<'cx, I = DefaultInterner> = &'cx OwnedExpr<'cx, I>;
+pub type OwnedExpr<'cx, I = DefaultTypeFamily> = ExprKind<'cx, I>;
+pub type Expr<'cx, I = DefaultTypeFamily> = &'cx OwnedExpr<'cx, I>;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// An expression.
-pub enum ExprKind<'cx, I: Interner<'cx> = DefaultInterner> {
+pub enum ExprKind<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     Variable(I::Path),
     Literal(I::Literal),
     Parened(I::Parened),
@@ -181,7 +181,7 @@ pub struct Ident<'cx> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A qualification for a command.
-pub enum Qualif<'cx, I: Interner<'cx> = DefaultInterner> {
+pub enum Qualif<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     TimeIndicator(Expr<'cx, I>),
     ExecutorComponent(ExecutorComponent<'cx>),
 }
@@ -203,7 +203,7 @@ pub struct ExecutorComponent<'cx> {
 /// # Examples
 ///
 /// - `:20` in `MOBC.TL.NOP :20 @AOBC` or `:20 @AOBC MOBC.TL.NOP`.
-pub struct TimeIndicator<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct TimeIndicator<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub value: Expr<'cx, I>,
 }
 
@@ -213,7 +213,7 @@ pub mod literal {
     use super::*;
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub enum Literal<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub enum Literal<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
         Array(Array<'cx, I>),
         String(String<'cx>),
         Bytes(Bytes<'cx>),
@@ -224,7 +224,7 @@ pub mod literal {
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub struct Array<'cx, I: Interner<'cx> = DefaultInterner> {
+    pub struct Array<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
         pub left_bracket: token::OpenSquare,
         pub exprs: &'cx [Expr<'cx, I>],
         pub right_bracket: token::CloseSquare,
@@ -300,20 +300,20 @@ pub mod literal {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Parened<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Parened<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_paren: token::OpenParen,
     pub expr: Expr<'cx, I>,
     pub right_paren: token::CloseParen,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct PreQualified<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct PreQualified<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub qualifs: &'cx [I::Qualif],
     pub expr: Expr<'cx, I>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Unary<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Unary<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub op: I::UnOp,
     pub expr: Expr<'cx, I>,
 }
@@ -330,7 +330,7 @@ pub enum UnOp {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Compare<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Compare<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub head: Expr<'cx, I>,
     pub tail_with_op: &'cx [(I::CompareOp, Expr<'cx, I>)],
 }
@@ -354,7 +354,7 @@ pub enum NotEqualToken {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Binary<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Binary<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: Expr<'cx, I>,
     pub op: I::BinOp,
     pub rhs: Expr<'cx, I>,
@@ -388,13 +388,13 @@ pub enum BinOp {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Apply<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Apply<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub function: Expr<'cx, I>,
     pub args: &'cx [Expr<'cx, I>],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
-pub struct Set<'cx, I: Interner<'cx> = DefaultInterner> {
+pub struct Set<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: Expr<'cx, I>,
     pub colon_eq: I::ColonEqToken,
     pub rhs: Expr<'cx, I>,

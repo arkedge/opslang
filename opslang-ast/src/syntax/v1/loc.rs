@@ -1,6 +1,6 @@
 //! Extension traits for `opslang_ast` types.
 
-use super::interner::Interner;
+use super::family::TypeFamily;
 
 pub trait Span {
     fn span(&self) -> super::Span;
@@ -50,7 +50,7 @@ impl<T: Position> Span for T {
     }
 }
 
-impl<'cx, I: Interner<'cx, CommentSpan: Span>> Span for super::Comment<'cx, I> {
+impl<'cx, I: TypeFamily<'cx, CommentSpan: Span>> Span for super::Comment<'cx, I> {
     fn span(&self) -> super::Span {
         self.span.span()
     }

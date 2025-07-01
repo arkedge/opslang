@@ -1,6 +1,6 @@
 use crate::{Bridge, derive_trivial_bridge};
 
-macro_rules! declare_interner {
+macro_rules! declare_family {
     () => {};
     ($(type $ident:ident;)*) => {
         $(
@@ -9,7 +9,7 @@ macro_rules! declare_interner {
     };
 }
 
-/// Type family that interns almost every types, to allow global type substitution.
+/// Type family that occurs in almost every types to allow global type substitution.
 /// It is known as "trees that grow".
 ///
 /// # Operation in this crate
@@ -19,8 +19,8 @@ macro_rules! declare_interner {
 /// type parameters.
 ///
 /// This trait carries all of possible substitution, including recursive elements.
-pub trait Interner<'cx> {
-    declare_interner! {
+pub trait TypeFamily<'cx> {
+    declare_family! {
         type Comment;
         type CommentSpan;
         type ScopeItem;
@@ -40,7 +40,7 @@ pub trait Interner<'cx> {
         type EqToken;
         type ColonEqToken;
 
-        // Expression interner
+        // Expression types
 
         type Literal;
         type Parened;
@@ -59,12 +59,12 @@ macro_rules! declare_compat {
     () => {};
     ($(type $ident:ident;)*) => {
         $(
-            type $ident: Bridge<Full = <super::DefaultInterner as Interner<'cx>>::$ident>;
+            type $ident: Bridge<Full = <super::DefaultTypeFamily as TypeFamily<'cx>>::$ident>;
         )*
     };
 }
 
-/// Part of interner that is different between compatible versions.
+/// Part of type family that is different between compatible versions.
 ///
 /// This is used to convert between different versions of the AST.
 pub trait CompatV0<'cx> {
