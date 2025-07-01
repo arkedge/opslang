@@ -1,26 +1,28 @@
 use opslang_ast::v0::Row;
 
-use crate::ParseOps;
+use crate::{ParseOps, Versioned};
 
 type This = super::V0;
 
-impl<'a> ParseOps<&'a str, This> for opslang_ast::v0::SRow {
+pub type AssumeV0Format<T> = Versioned<This, T>;
+
+impl<'a> ParseOps<AssumeV0Format<&'a str>, This> for opslang_ast::v0::SRow {
     type Context = ();
 
     type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
 
-    fn parse(from: &'a str, _context: Self::Context) -> Result<Self, Self::Error> {
-        ops_parser::row(from)
+    fn parse(from: AssumeV0Format<&'a str>, _context: Self::Context) -> Result<Self, Self::Error> {
+        ops_parser::row(from.0)
     }
 }
 
-impl<'a> ParseOps<&'a str, This> for Vec<opslang_ast::v0::Statement> {
+impl<'a> ParseOps<AssumeV0Format<&'a str>, This> for Vec<opslang_ast::v0::Statement> {
     type Context = ();
 
     type Error = peg::error::ParseError<<str as peg::Parse>::PositionRepr>;
 
-    fn parse(from: &'a str, _context: Self::Context) -> Result<Self, Self::Error> {
-        ops_parser::statements(from)
+    fn parse(from: AssumeV0Format<&'a str>, _context: Self::Context) -> Result<Self, Self::Error> {
+        ops_parser::statements(from.0)
     }
 }
 

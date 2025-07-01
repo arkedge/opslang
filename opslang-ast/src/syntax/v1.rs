@@ -60,6 +60,10 @@ pub struct Program<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
     pub content: Scope<'cx, I>,
 }
 
+impl Versioned for Program<'_, DefaultTypeFamily> {
+    type Version = V1;
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// Sequence of statements.
 pub struct Scope<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
@@ -208,6 +212,8 @@ pub struct TimeIndicator<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
 }
 
 pub use literal::*;
+
+use crate::{V1, version::Versioned};
 
 pub mod literal {
     use super::*;

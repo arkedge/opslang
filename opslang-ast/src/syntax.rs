@@ -5,7 +5,11 @@ macro_rules! declare_versions {
     ($([$current:vis])? $path:ident, $ty:ident; $($tt:tt)*) => {
         pub mod $path;
         pub struct $ty;
-        impl $crate::version::sealed::VersionMarker for $ty {}
+        impl $crate::version::sealed::VersionMarker for $ty {
+            fn version() -> &'static str {
+                stringify!($path)
+            }
+        }
 
         $(
             /// Type alias for the default version of the ast.
