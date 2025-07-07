@@ -56,8 +56,8 @@ pub struct Span {
 /// An overall program. A program is a sequence of statements.
 ///
 /// This version of program contains only a body of the main function.
-pub struct Program<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub content: Scope<'cx, I>,
+pub struct Program<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub content: Scope<'cx, F>,
 }
 
 impl Versioned for Program<'_, DefaultTypeFamily> {
@@ -66,30 +66,30 @@ impl Versioned for Program<'_, DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// Sequence of statements.
-pub struct Scope<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub items: &'cx [I::ScopeItem],
+pub struct Scope<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub items: &'cx [F::ScopeItem],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A scope item can be a single statement or a block of statements, or a comment.
-pub enum ScopeItem<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    Row(I::Row),
-    Block(I::Block),
+pub enum ScopeItem<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    Row(F::Row),
+    Block(F::Block),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A single row of program with optional comments and breaks.
-pub struct Row<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub breaks: Option<I::BreakToken>,
-    pub content: Option<I::RowContent>,
-    pub comment: Option<I::Comment>,
+pub struct Row<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub breaks: Option<F::BreakToken>,
+    pub content: Option<F::RowContent>,
+    pub comment: Option<F::Comment>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A comment in a program.
-pub struct Comment<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
+pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub content: &'cx str,
-    pub span: I::CommentSpan,
+    pub span: F::CommentSpan,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -103,18 +103,18 @@ pub struct Comment<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
 ///     NOP
 /// }
 /// ```
-pub struct Block<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
+pub struct Block<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_brace: token::OpenBrace,
-    pub scope: Scope<'cx, I>,
+    pub scope: Scope<'cx, F>,
     pub right_brace: token::CloseBrace,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
-pub enum StatementKind<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    Let(Let<'cx, I>),
-    Expr(ExprStatement<'cx, I>),
-    Return(I::ReturnStmt),
+pub enum StatementKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    Let(Let<'cx, F>),
+    Expr(ExprStatement<'cx, F>),
+    Return(F::ReturnStmt),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -125,19 +125,19 @@ pub enum StatementKind<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
 /// ```ops
 /// let d = 1s
 /// ```
-pub struct Let<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub let_token: I::LetToken,
-    pub variable: I::Ident,
-    pub eq: I::EqToken,
-    pub rhs: Expr<'cx, I>,
-    pub semi: I::SemiToken,
+pub struct Let<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub let_token: F::LetToken,
+    pub variable: F::Ident,
+    pub eq: F::EqToken,
+    pub rhs: Expr<'cx, F>,
+    pub semi: F::SemiToken,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
-pub struct ExprStatement<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub expr: Expr<'cx, I>,
-    pub semi: I::SemiToken,
+pub struct ExprStatement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub expr: Expr<'cx, F>,
+    pub semi: F::SemiToken,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -153,22 +153,22 @@ pub struct ReturnStmt {
     pub semi: token::Semi,
 }
 
-pub type OwnedExpr<'cx, I = DefaultTypeFamily> = ExprKind<'cx, I>;
-pub type Expr<'cx, I = DefaultTypeFamily> = &'cx OwnedExpr<'cx, I>;
+pub type OwnedExpr<'cx, F = DefaultTypeFamily> = ExprKind<'cx, F>;
+pub type Expr<'cx, F = DefaultTypeFamily> = &'cx OwnedExpr<'cx, F>;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// An expression.
-pub enum ExprKind<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    Variable(I::Path),
-    Literal(I::Literal),
-    Parened(I::Parened),
-    Qualif(I::Qualif),
-    PreQualified(I::PreQualified),
-    Unary(Unary<'cx, I>),
-    Compare(Compare<'cx, I>),
-    Binary(Binary<'cx, I>),
-    Apply(I::Apply),
-    Set(Set<'cx, I>),
+pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    Variable(F::Path),
+    Literal(F::Literal),
+    Parened(F::Parened),
+    Qualif(F::Qualif),
+    PreQualified(F::PreQualified),
+    Unary(Unary<'cx, F>),
+    Compare(Compare<'cx, F>),
+    Binary(Binary<'cx, F>),
+    Apply(F::Apply),
+    Set(Set<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -185,8 +185,8 @@ pub struct Ident<'cx> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A qualification for a command.
-pub enum Qualif<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    TimeIndicator(Expr<'cx, I>),
+pub enum Qualif<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    TimeIndicator(Expr<'cx, F>),
     ExecutorComponent(ExecutorComponent<'cx>),
 }
 
@@ -207,8 +207,8 @@ pub struct ExecutorComponent<'cx> {
 /// # Examples
 ///
 /// - `:20` in `MOBC.TL.NOP :20 @AOBC` or `:20 @AOBC MOBC.TL.NOP`.
-pub struct TimeIndicator<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub value: Expr<'cx, I>,
+pub struct TimeIndicator<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub value: Expr<'cx, F>,
 }
 
 pub use literal::*;
@@ -219,20 +219,20 @@ pub mod literal {
     use super::*;
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub enum Literal<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-        Array(Array<'cx, I>),
+    pub enum Literal<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+        Array(Array<'cx, F>),
         String(String<'cx>),
         Bytes(Bytes<'cx>),
         HexBytes(HexBytes<'cx>),
-        Numeric(I::Numeric),
+        Numeric(F::Numeric),
         OsFilePath(OsFilePath<'cx>),
         DateTime(DateTime<'cx>),
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub struct Array<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub struct Array<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub left_bracket: token::OpenSquare,
-        pub exprs: &'cx [Expr<'cx, I>],
+        pub exprs: &'cx [Expr<'cx, F>],
         pub right_bracket: token::CloseSquare,
     }
 
@@ -306,22 +306,22 @@ pub mod literal {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Parened<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
+pub struct Parened<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_paren: token::OpenParen,
-    pub expr: Expr<'cx, I>,
+    pub expr: Expr<'cx, F>,
     pub right_paren: token::CloseParen,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct PreQualified<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub qualifs: &'cx [I::Qualif],
-    pub expr: Expr<'cx, I>,
+pub struct PreQualified<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub qualifs: &'cx [F::Qualif],
+    pub expr: Expr<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Unary<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub op: I::UnOp,
-    pub expr: Expr<'cx, I>,
+pub struct Unary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub op: F::UnOp,
+    pub expr: Expr<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -336,9 +336,9 @@ pub enum UnOp {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Compare<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub head: Expr<'cx, I>,
-    pub tail_with_op: &'cx [(I::CompareOp, Expr<'cx, I>)],
+pub struct Compare<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub head: Expr<'cx, F>,
+    pub tail_with_op: &'cx [(F::CompareOp, Expr<'cx, F>)],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -360,10 +360,10 @@ pub enum NotEqualToken {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Binary<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub lhs: Expr<'cx, I>,
-    pub op: I::BinOp,
-    pub rhs: Expr<'cx, I>,
+pub struct Binary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub lhs: Expr<'cx, F>,
+    pub op: F::BinOp,
+    pub rhs: Expr<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -394,14 +394,14 @@ pub enum BinOp {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Apply<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub function: Expr<'cx, I>,
-    pub args: &'cx [Expr<'cx, I>],
+pub struct Apply<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub function: Expr<'cx, F>,
+    pub args: &'cx [Expr<'cx, F>],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
-pub struct Set<'cx, I: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub lhs: Expr<'cx, I>,
-    pub colon_eq: I::ColonEqToken,
-    pub rhs: Expr<'cx, I>,
+pub struct Set<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub lhs: Expr<'cx, F>,
+    pub colon_eq: F::ColonEqToken,
+    pub rhs: Expr<'cx, F>,
 }

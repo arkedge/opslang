@@ -50,7 +50,7 @@ impl<T: Position> Span for T {
     }
 }
 
-impl<'cx, I: TypeFamily<'cx, CommentSpan: Span>> Span for super::Comment<'cx, I> {
+impl<'cx, F: TypeFamily<'cx, CommentSpan: Span>> Span for super::Comment<'cx, F> {
     fn span(&self) -> super::Span {
         self.span.span()
     }
