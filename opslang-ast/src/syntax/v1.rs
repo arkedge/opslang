@@ -85,6 +85,16 @@ pub struct Row<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub comment: Option<F::Comment>,
 }
 
+impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
+    fn default() -> Self {
+        Self {
+            breaks: Default::default(),
+            content: Default::default(),
+            comment: Default::default(),
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A comment in a program.
 pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
