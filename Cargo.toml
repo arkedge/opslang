@@ -6,6 +6,7 @@ members = [
     "opslang-diag",
     "opslang-ir",
     "opslang-parser",
+    "opslang-printer",
     "tools/opslang-migration",
     "tools/opslang-formatter",
 ]
