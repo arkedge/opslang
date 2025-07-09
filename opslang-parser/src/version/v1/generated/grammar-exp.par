@@ -12,7 +12,7 @@
 
 %%
 
-/*   0 */ EndOfLine: <INITIAL, Cmnt>/(?:\r?\n|\r)+/;
+/*   0 */ EndOfLine: <INITIAL, Cmnt>/\r?\n|\r/;
 /*   1 */ Comment: Hash^ /* Clipped */ CommentContent;
 /*   2 */ Hash: '#';
 /*   3 */ CommentContent: <Cmnt>/[^\r\n]*/;

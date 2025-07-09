@@ -14,7 +14,7 @@
 %%
 
 EndOfLine
-    : <INITIAL, Cmnt>/(?:\r?\n|\r)+/
+    : <INITIAL, Cmnt>/\r?\n|\r/
     ;
 
 Comment: Hash^ CommentContent;

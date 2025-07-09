@@ -981,7 +981,7 @@ pub enum CompareOp<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct EndOfLine<'t> {
-    pub end_of_line: Token<'t>, /* (?:\r?\n|\r)+ */
+    pub end_of_line: Token<'t>, /* \r?\n|\r */
 }
 
 ///
@@ -1628,7 +1628,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 0:
     ///
-    /// `EndOfLine: <INITIAL, Cmnt>/(?:\r?\n|\r)+/;`
+    /// `EndOfLine: <INITIAL, Cmnt>/\r?\n|\r/;`
     ///
     #[parol_runtime::function_name::named]
     fn end_of_line(&mut self, end_of_line: &ParseTreeType<'t>) -> Result<()> {

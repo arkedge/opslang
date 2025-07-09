@@ -23,7 +23,7 @@ pub const TERMINALS: &[(&str, Option<(bool, &str)>); 51] = &[
     /*  2 */ (UNMATCHABLE_TOKEN, None),
     /*  3 */ (UNMATCHABLE_TOKEN, None),
     /*  4 */ (UNMATCHABLE_TOKEN, None),
-    /*  5 */ (r"(?:\r?\n|\r)+", None),
+    /*  5 */ (r"\r?\n|\r", None),
     /*  6 */ (r"\#", None),
     /*  7 */ (r"[^\r\n]*", None),
     /*  8 */ (r"\.", None),
@@ -445,7 +445,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         LR1State {
             actions: &[
                 (0, 150),  /* '<$>' => LRAction::Reduce(ScopeList, 7) */
-                (5, 150),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 7) */
+                (5, 150),  /* '\r?\n|\r' => LRAction::Reduce(ScopeList, 7) */
                 (6, 150),  /* '#' => LRAction::Reduce(ScopeList, 7) */
                 (8, 150),  /* '.' => LRAction::Reduce(ScopeList, 7) */
                 (10, 150), /* 'let' => LRAction::Reduce(ScopeList, 7) */
@@ -482,7 +482,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         LR1State {
             actions: &[
                 (0, 139),  /* '<$>' => LRAction::Reduce(Scope, 5) */
-                (5, 144),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt, 14) */
+                (5, 144),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt, 14) */
                 (6, 144),  /* '#' => LRAction::Reduce(ScopeContentOpt, 14) */
                 (8, 0),    /* '.' => LRAction::Shift(3) */
                 (10, 144), /* 'let' => LRAction::Reduce(ScopeContentOpt, 14) */
@@ -515,7 +515,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 3
         LR1State {
             actions: &[
-                (5, 62),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(Break, 18) */
+                (5, 62),  /* '\r?\n|\r' => LRAction::Reduce(Break, 18) */
                 (6, 62),  /* '#' => LRAction::Reduce(Break, 18) */
                 (10, 62), /* 'let' => LRAction::Reduce(Break, 18) */
                 (25, 62), /* '-' => LRAction::Reduce(Break, 18) */
@@ -542,7 +542,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 4
         LR1State {
             actions: &[
-                (5, 143),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt, 13) */
+                (5, 143),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt, 13) */
                 (6, 143),  /* '#' => LRAction::Reduce(ScopeContentOpt, 13) */
                 (10, 143), /* 'let' => LRAction::Reduce(ScopeContentOpt, 13) */
                 (25, 143), /* '-' => LRAction::Reduce(ScopeContentOpt, 13) */
@@ -570,7 +570,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         LR1State {
             actions: &[
                 (0, 149),  /* '<$>' => LRAction::Reduce(ScopeList, 6) */
-                (5, 149),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 6) */
+                (5, 149),  /* '\r?\n|\r' => LRAction::Reduce(ScopeList, 6) */
                 (6, 149),  /* '#' => LRAction::Reduce(ScopeList, 6) */
                 (8, 149),  /* '.' => LRAction::Reduce(ScopeList, 6) */
                 (10, 149), /* 'let' => LRAction::Reduce(ScopeList, 6) */
@@ -599,7 +599,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 6
         LR1State {
             actions: &[
-                (5, 146),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt0, 12) */
+                (5, 146),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt0, 12) */
                 (6, 146),  /* '#' => LRAction::Reduce(ScopeContentOpt0, 12) */
                 (10, 1),   /* 'let' => LRAction::Shift(7) */
                 (25, 2),   /* '-' => LRAction::Shift(8) */
@@ -680,7 +680,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 10
         LR1State {
             actions: &[
-                (5, 150),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeList, 7) */
+                (5, 150),  /* '\r?\n|\r' => LRAction::Reduce(ScopeList, 7) */
                 (6, 150),  /* '#' => LRAction::Reduce(ScopeList, 7) */
                 (8, 150),  /* '.' => LRAction::Reduce(ScopeList, 7) */
                 (10, 150), /* 'let' => LRAction::Reduce(ScopeList, 7) */
@@ -734,7 +734,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 12
         LR1State {
             actions: &[
-                (5, 142), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentKind, 16) */
+                (5, 142), /* '\r?\n|\r' => LRAction::Reduce(ScopeContentKind, 16) */
                 (6, 142), /* '#' => LRAction::Reduce(ScopeContentKind, 16) */
             ],
             gotos: &[],
@@ -907,7 +907,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 24
         LR1State {
             actions: &[
-                (5, 145), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt0, 11) */
+                (5, 145), /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt0, 11) */
                 (6, 145), /* '#' => LRAction::Reduce(ScopeContentOpt0, 11) */
             ],
             gotos: &[],
@@ -915,7 +915,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 25
         LR1State {
             actions: &[
-                (5, 148), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt1, 10) */
+                (5, 148), /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt1, 10) */
                 (6, 12),  /* '#' => LRAction::Shift(53) */
             ],
             gotos: &[
@@ -937,7 +937,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 27
         LR1State {
             actions: &[
-                (5, 141), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentKind, 15) */
+                (5, 141), /* '\r?\n|\r' => LRAction::Reduce(ScopeContentKind, 15) */
                 (6, 141), /* '#' => LRAction::Reduce(ScopeContentKind, 15) */
             ],
             gotos: &[],
@@ -1532,7 +1532,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 54
         LR1State {
             actions: &[
-                (5, 147), /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContentOpt1, 9) */
+                (5, 147), /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt1, 9) */
             ],
             gotos: &[],
         },
@@ -1543,13 +1543,13 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         },
         // State 56
         LR1State {
-            actions: &[(5, 42) /* '(?:\r?\n|\r)+' => LRAction::Shift(112) */],
+            actions: &[(5, 42) /* '\r?\n|\r' => LRAction::Shift(112) */],
             gotos: &[(22, 113) /* EndOfLine => 113 */],
         },
         // State 57
         LR1State {
             actions: &[
-                (5, 151), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Semi, 19) */
+                (5, 151), /* '\r?\n|\r' => LRAction::Reduce(Semi, 19) */
                 (6, 151), /* '#' => LRAction::Reduce(Semi, 19) */
             ],
             gotos: &[],
@@ -1557,7 +1557,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 58
         LR1State {
             actions: &[
-                (5, 155), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Statement, 17) */
+                (5, 155), /* '\r?\n|\r' => LRAction::Reduce(Statement, 17) */
                 (6, 155), /* '#' => LRAction::Reduce(Statement, 17) */
             ],
             gotos: &[],
@@ -2728,7 +2728,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 87
         LR1State {
             actions: &[
-                (5, 61), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Block, 114) */
+                (5, 61), /* '\r?\n|\r' => LRAction::Reduce(Block, 114) */
                 (6, 61), /* '#' => LRAction::Reduce(Block, 114) */
             ],
             gotos: &[],
@@ -3256,14 +3256,14 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 110
         LR1State {
             actions: &[
-                (5, 74), /* '(?:\r?\n|\r)+' => LRAction::Reduce(CommentContent, 3) */
+                (5, 74), /* '\r?\n|\r' => LRAction::Reduce(CommentContent, 3) */
             ],
             gotos: &[],
         },
         // State 111
         LR1State {
             actions: &[
-                (5, 73), /* '(?:\r?\n|\r)+' => LRAction::Reduce(Comment, 1) */
+                (5, 73), /* '\r?\n|\r' => LRAction::Reduce(Comment, 1) */
             ],
             gotos: &[],
         },
@@ -3271,7 +3271,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         LR1State {
             actions: &[
                 (0, 85),  /* '<$>' => LRAction::Reduce(EndOfLine, 0) */
-                (5, 85),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(EndOfLine, 0) */
+                (5, 85),  /* '\r?\n|\r' => LRAction::Reduce(EndOfLine, 0) */
                 (6, 85),  /* '#' => LRAction::Reduce(EndOfLine, 0) */
                 (8, 85),  /* '.' => LRAction::Reduce(EndOfLine, 0) */
                 (10, 85), /* 'let' => LRAction::Reduce(EndOfLine, 0) */
@@ -3301,7 +3301,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         LR1State {
             actions: &[
                 (0, 140),  /* '<$>' => LRAction::Reduce(ScopeContent, 8) */
-                (5, 140),  /* '(?:\r?\n|\r)+' => LRAction::Reduce(ScopeContent, 8) */
+                (5, 140),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContent, 8) */
                 (6, 140),  /* '#' => LRAction::Reduce(ScopeContent, 8) */
                 (8, 140),  /* '.' => LRAction::Reduce(ScopeContent, 8) */
                 (10, 140), /* 'let' => LRAction::Reduce(ScopeContent, 8) */
@@ -3830,7 +3830,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
 };
 
 pub const PRODUCTIONS: &[LRProduction; 115] = &[
-    // 0 - EndOfLine: /(?:\r?\n|\r)+/;
+    // 0 - EndOfLine: /\r?\n|\r/;
     LRProduction { lhs: 22, len: 1 },
     // 1 - Comment: Hash^ /* Clipped */ CommentContent;
     LRProduction { lhs: 17, len: 2 },
