@@ -1,41 +1,258 @@
 use std::fmt::{self, Write};
 
-use crate::{CommentAligned, Indent, Naive, Newline, PrettyPrint, PrintOptions, Strategy};
+use crate::{
+    CommentAligned, CommentGrouping, CommentPosition, Indent, Naive, Newline, PrettyPrint,
+    PrintOptions, Strategy,
+};
 use opslang_ast::syntax::v1::*;
 
-// Generic implementations for elements that don't depend on strategy
+// Helper structures for comment alignment calculations
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Program<'cx>
-where
-    Scope<'cx>: PrettyPrint<S>,
-{
-    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        PrettyPrint::<S>::pretty_print(&self.content, writer, options)
+/// Information about a single row for comment alignment calculation.
+#[derive(Debug, Clone)]
+struct RowInfo<'cx> {
+    /// Pre-formatted content string (before comment).
+    content: std::string::String,
+    /// Raw comment reference (None if no comment).
+    comment: Option<&'cx Comment<'cx>>,
+}
+
+/// Write a group of rows with aligned comments.
+fn write_comment_group<'cx>(
+    rows: &[RowInfo<'cx>],
+    writer: &mut impl Write,
+    options: &PrintOptions<CommentAligned>,
+) -> fmt::Result {
+    if rows.is_empty() {
+        return Ok(());
+    }
+
+    // Find the target alignment position (excluding shebang comments)
+    let longest_content = rows
+        .iter()
+        .filter(|row| row.comment.is_some() && !row.comment.unwrap().content.starts_with('!'))
+        .map(|row| row.content.len())
+        .max()
+        .unwrap_or(0);
+
+    let target_position =
+        calculate_target_position(longest_content, options.comment_alignment.position);
+
+    // Write each row with proper alignment
+    for row in rows {
+        writer.write_str(&row.content)?;
+
+        if let Some(comment) = row.comment {
+            let current_len = row.content.len();
+            // Shebang comments (starting with '!') are not aligned
+            if comment.content.starts_with('!') {
+                writer.write_str(" ")?;
+            } else if target_position > current_len {
+                let spaces_needed = target_position - current_len;
+                writer.write_str(&" ".repeat(spaces_needed))?;
+            } else {
+                writer.write_str(" ")?;
+            }
+            PrettyPrint::<CommentAligned>::pretty_print(comment, writer, options)?;
+        }
+
+        Newline.write(writer, options)?;
+    }
+
+    Ok(())
+}
+
+/// Implementation for consecutive grouping: group rows separated by empty lines
+fn pretty_print_consecutive<'cx>(
+    scope: &Scope<'cx>,
+    writer: &mut impl Write,
+    options: &PrintOptions<CommentAligned>,
+) -> fmt::Result {
+    let mut current_group = Vec::new();
+    let mut temp_buffer = std::string::String::new();
+
+    for item in scope.items {
+        match item {
+            ScopeItem::Row(row) => {
+                temp_buffer.clear();
+
+                // Format the content part
+                Indent.write(&mut temp_buffer, options)?;
+                if row.breaks.is_some() {
+                    temp_buffer.push('.');
+                }
+                if let Some(content) = &row.content {
+                    PrettyPrint::<CommentAligned>::pretty_print(
+                        content,
+                        &mut temp_buffer,
+                        options,
+                    )?;
+                }
+
+                let row_info = RowInfo {
+                    content: temp_buffer.clone(),
+                    comment: row.comment,
+                };
+
+                // If this is an empty line (default Row), output current group
+                if **row == Row::default() {
+                    if !current_group.is_empty() {
+                        write_comment_group(&current_group, writer, options)?;
+                        current_group.clear();
+                    }
+                    // Write the empty line
+                    Newline.write(writer, options)?;
+                } else {
+                    current_group.push(row_info);
+                }
+            }
+            ScopeItem::Block(block) => {
+                // Output any pending group before the block
+                if !current_group.is_empty() {
+                    write_comment_group(&current_group, writer, options)?;
+                    current_group.clear();
+                }
+                // Output the block
+                PrettyPrint::<CommentAligned>::pretty_print(*block, writer, options)?;
+                Newline.write(writer, options)?;
+            }
+        }
+    }
+
+    // Output any remaining group
+    if !current_group.is_empty() {
+        write_comment_group(&current_group, writer, options)?;
+    }
+
+    Ok(())
+}
+
+/// Implementation for per-block grouping: group all comments in the current block
+fn pretty_print_per_block<'cx>(
+    scope: &Scope<'cx>,
+    writer: &mut impl Write,
+    options: &PrintOptions<CommentAligned>,
+) -> fmt::Result {
+    let mut row_infos = Vec::new();
+    let mut temp_buffer = std::string::String::new();
+
+    // Collect all row information
+    for item in scope.items {
+        match item {
+            ScopeItem::Row(row) => {
+                temp_buffer.clear();
+
+                // Format the content part
+                Indent.write(&mut temp_buffer, options)?;
+                if row.breaks.is_some() {
+                    temp_buffer.push('.');
+                }
+                if let Some(content) = &row.content {
+                    PrettyPrint::<CommentAligned>::pretty_print(
+                        content,
+                        &mut temp_buffer,
+                        options,
+                    )?;
+                }
+
+                row_infos.push(RowInfo {
+                    content: temp_buffer.clone(),
+                    comment: row.comment,
+                });
+            }
+            ScopeItem::Block(block) => {
+                // Output any pending rows before the block
+                if !row_infos.is_empty() {
+                    write_comment_group(&row_infos, writer, options)?;
+                    row_infos.clear();
+                }
+                // Output the block (recursively handles its own alignment)
+                PrettyPrint::<CommentAligned>::pretty_print(*block, writer, options)?;
+                Newline.write(writer, options)?;
+            }
+        }
+    }
+
+    // Output any remaining rows
+    if !row_infos.is_empty() {
+        write_comment_group(&row_infos, writer, options)?;
+    }
+
+    Ok(())
+}
+
+/// Calculate the target position based on position strategy
+fn calculate_target_position(longest_content: usize, position: CommentPosition) -> usize {
+    match position {
+        CommentPosition::ToLongest => longest_content + 1, // +1 for space before comment
+        CommentPosition::ToFixed {
+            column,
+            fallback_to_longest,
+        } => {
+            if fallback_to_longest && longest_content >= column {
+                longest_content + 1
+            } else {
+                column
+            }
+        }
+        CommentPosition::ToTabMultiple {
+            tab_size,
+            fallback_to_longest,
+        } => {
+            let tab_position = ((longest_content / tab_size) + 1) * tab_size;
+            if fallback_to_longest && longest_content >= tab_position {
+                longest_content + 1
+            } else {
+                tab_position
+            }
+        }
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Scope<'cx>
-where
-    ScopeItem<'cx>: PrettyPrint<S>,
-{
-    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+// Generic implementations for elements that don't depend on strategy
+
+impl<'cx> PrettyPrint<Naive> for Program<'cx> {
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
+        PrettyPrint::<Naive>::pretty_print(&self.content, writer, options)
+    }
+}
+
+impl<'cx> PrettyPrint<CommentAligned> for Program<'cx> {
+    fn pretty_print(
+        &self,
+        writer: &mut impl Write,
+        options: &PrintOptions<CommentAligned>,
+    ) -> fmt::Result {
+        PrettyPrint::<CommentAligned>::pretty_print(&self.content, writer, options)
+    }
+}
+
+// Naive implementation for Scope
+impl<'cx> PrettyPrint<Naive> for Scope<'cx> {
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
         for item in self.items {
-            PrettyPrint::<S>::pretty_print(item, writer, options)?;
+            match item {
+                ScopeItem::Row(row) => PrettyPrint::<Naive>::pretty_print(*row, writer, options)?,
+                ScopeItem::Block(block) => {
+                    PrettyPrint::<Naive>::pretty_print(*block, writer, options)?
+                }
+            };
             Newline.write(writer, options)?;
         }
         Ok(())
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for ScopeItem<'cx>
-where
-    Row<'cx>: PrettyPrint<S>,
-    Block<'cx>: PrettyPrint<S>,
-{
-    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        match self {
-            ScopeItem::Row(row) => PrettyPrint::<S>::pretty_print(*row, writer, options),
-            ScopeItem::Block(block) => PrettyPrint::<S>::pretty_print(*block, writer, options),
+// CommentAligned implementation for Scope
+impl<'cx> PrettyPrint<CommentAligned> for Scope<'cx> {
+    fn pretty_print(
+        &self,
+        writer: &mut impl Write,
+        options: &PrintOptions<CommentAligned>,
+    ) -> fmt::Result {
+        match options.comment_alignment.grouping {
+            CommentGrouping::Consecutive => pretty_print_consecutive(self, writer, options),
+            CommentGrouping::PerBlock => pretty_print_per_block(self, writer, options),
         }
     }
 }
@@ -74,6 +291,8 @@ impl<'cx> PrettyPrint<CommentAligned> for Row<'cx> {
         writer: &mut impl Write,
         options: &PrintOptions<CommentAligned>,
     ) -> fmt::Result {
+        // Note: When Row is used individually (not through Scope),
+        // we fall back to naive comment handling
         Indent.write(writer, options)?;
 
         // Handle breaks
@@ -86,9 +305,7 @@ impl<'cx> PrettyPrint<CommentAligned> for Row<'cx> {
             PrettyPrint::<CommentAligned>::pretty_print(content, writer, options)?;
         }
 
-        // Handle comment (aligned approach: this is simplified for now)
-        // In a real implementation, we'd need to analyze consecutive rows
-        // and align comments properly
+        // Handle comment (fallback to naive approach when not in scope context)
         if let Some(comment) = &self.comment {
             if self.content.is_some() {
                 writer.write_str(" ")?;
@@ -107,16 +324,31 @@ impl<'cx, S: Strategy> PrettyPrint<S> for Comment<'cx> {
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Block<'cx>
-where
-    Scope<'cx>: PrettyPrint<S>,
-{
-    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+impl<'cx> PrettyPrint<Naive> for Block<'cx> {
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
         writer.write_str("{")?;
         Newline.write(writer, options)?;
 
         let nested_options = options.with_increased_indent();
-        PrettyPrint::<S>::pretty_print(&self.scope, writer, &nested_options)?;
+        PrettyPrint::<Naive>::pretty_print(&self.scope, writer, &nested_options)?;
+
+        Newline.write(writer, options)?;
+        Indent.write(writer, options)?;
+        writer.write_str("}")
+    }
+}
+
+impl<'cx> PrettyPrint<CommentAligned> for Block<'cx> {
+    fn pretty_print(
+        &self,
+        writer: &mut impl Write,
+        options: &PrintOptions<CommentAligned>,
+    ) -> fmt::Result {
+        writer.write_str("{")?;
+        Newline.write(writer, options)?;
+
+        let nested_options = options.with_increased_indent();
+        PrettyPrint::<CommentAligned>::pretty_print(&self.scope, writer, &nested_options)?;
 
         Newline.write(writer, options)?;
         Indent.write(writer, options)?;

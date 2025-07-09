@@ -37,14 +37,45 @@ pub struct CommentAligned;
 impl sealed::Sealed for CommentAligned {}
 impl Strategy for CommentAligned {}
 
-/// Configuration for comment alignment
+/// Comment grouping strategy for alignment
 #[derive(Debug, Clone, Copy, Default)]
-pub enum CommentAlignment {
-    /// Align comments to the longest line in the consecutive group
+pub enum CommentGrouping {
+    /// Group consecutive lines (separated by empty lines)
+    #[default]
+    Consecutive,
+    /// Group comments per block scope
+    PerBlock,
+}
+
+/// Comment position calculation method
+#[derive(Debug, Clone, Copy, Default)]
+pub enum CommentPosition {
+    /// Align comments to the longest line in the group
     #[default]
     ToLongest,
     /// Align comments to a fixed column position
-    ToFixed(usize),
+    /// If `fallback_to_longest` is true, lines longer than the fixed position
+    /// fall back to longest alignment within the group
+    ToFixed {
+        column: usize,
+        fallback_to_longest: bool,
+    },
+    /// Align comments to multiples of the given tab size
+    /// If `fallback_to_longest` is true, lines that don't fit the tab boundary
+    /// may fall back to longest alignment within the group
+    ToTabMultiple {
+        tab_size: usize,
+        fallback_to_longest: bool,
+    },
+}
+
+/// Configuration for comment alignment
+#[derive(Debug, Clone, Copy, Default)]
+pub struct CommentAlignment {
+    /// Grouping strategy for comment alignment
+    pub grouping: CommentGrouping,
+    /// Position calculation method
+    pub position: CommentPosition,
 }
 
 /// Style for newlines in output
@@ -220,10 +251,10 @@ impl<S: Strategy> Default for Printer<S> {
 /// # Usage
 ///
 /// ```rust
-/// # use opslang_printer::{Indent, PrintOptions};
+/// # use opslang_printer::{Indent, PrintOptions, Naive};
 /// # use std::fmt::Write;
 /// # let mut output = String::new();
-/// # let options = PrintOptions::default();
+/// # let options = PrintOptions::<Naive>::default();
 /// Indent.write(&mut output, &options).unwrap();
 /// ```
 #[derive(Debug, Clone, Copy, Default)]
@@ -245,10 +276,10 @@ impl Indent {
 /// # Usage
 ///
 /// ```rust
-/// # use opslang_printer::{Newline, PrintOptions};
+/// # use opslang_printer::{Newline, PrintOptions, Naive};
 /// # use std::fmt::Write;
 /// # let mut output = String::new();
-/// # let options = PrintOptions::default();
+/// # let options = PrintOptions::<Naive>::default();
 /// Newline.write(&mut output, &options).unwrap();
 /// ```
 #[derive(Debug, Clone, Copy, Default)]
@@ -270,10 +301,10 @@ impl Newline {
 /// # Usage
 ///
 /// ```rust
-/// # use opslang_printer::{IndentedNewline, PrintOptions};
+/// # use opslang_printer::{IndentedNewline, PrintOptions, Naive};
 /// # use std::fmt::Write;
 /// # let mut output = String::new();
-/// # let options = PrintOptions::default();
+/// # let options = PrintOptions::<Naive>::default();
 /// IndentedNewline.write(&mut output, &options).unwrap();
 /// ```
 #[derive(Debug, Clone, Copy, Default)]
@@ -308,8 +339,12 @@ mod tests {
         assert_eq!(opts.base.max_width, 80);
         assert!(opts.base.trailing_comma);
         assert!(matches!(
-            opts.comment_alignment,
-            CommentAlignment::ToLongest
+            opts.comment_alignment.position,
+            CommentPosition::ToLongest
+        ));
+        assert!(matches!(
+            opts.comment_alignment.grouping,
+            CommentGrouping::Consecutive
         ));
     }
 
@@ -390,7 +425,13 @@ mod tests {
                 newline_style: NewlineStyle::Windows,
                 trailing_comma: false,
             },
-            comment_alignment: CommentAlignment::ToFixed(40),
+            comment_alignment: CommentAlignment {
+                grouping: CommentGrouping::Consecutive,
+                position: CommentPosition::ToFixed {
+                    column: 40,
+                    fallback_to_longest: false,
+                },
+            },
             ..Default::default()
         };
         let printer: Printer<Naive> = Printer::new(options);
@@ -413,16 +454,27 @@ mod tests {
         let opts_default = PrintOptions::<Naive>::from_base(base);
         assert_eq!(opts_default.indent_str, "\t");
         assert!(matches!(
-            opts_default.comment_alignment,
-            CommentAlignment::ToLongest
+            opts_default.comment_alignment.position,
+            CommentPosition::ToLongest
         ));
 
-        let opts_aligned =
-            PrintOptions::<Naive>::from_base_with_alignment(base, CommentAlignment::ToFixed(40));
+        let opts_aligned = PrintOptions::<Naive>::from_base_with_alignment(
+            base,
+            CommentAlignment {
+                grouping: CommentGrouping::Consecutive,
+                position: CommentPosition::ToFixed {
+                    column: 40,
+                    fallback_to_longest: false,
+                },
+            },
+        );
         assert_eq!(opts_aligned.indent_str, "\t");
         assert!(matches!(
-            opts_aligned.comment_alignment,
-            CommentAlignment::ToFixed(40)
+            opts_aligned.comment_alignment.position,
+            CommentPosition::ToFixed {
+                column: 40,
+                fallback_to_longest: false
+            }
         ));
     }
 }
