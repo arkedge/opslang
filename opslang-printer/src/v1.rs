@@ -19,11 +19,9 @@ where
     ScopeItem<'cx>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        for (i, item) in self.items.iter().enumerate() {
-            if i > 0 {
-                Newline.write(writer, options)?;
-            }
+        for item in self.items {
             PrettyPrint::<S>::pretty_print(item, writer, options)?;
+            Newline.write(writer, options)?;
         }
         Ok(())
     }
