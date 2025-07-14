@@ -5,7 +5,8 @@ macro_rules! declare_versions {
     ($([$current:vis])? $path:ident, $ty:ident; $($tt:tt)*) => {
         pub mod $path;
         pub struct $ty;
-        impl $crate::version::sealed::VersionMarker for $ty {
+        impl $crate::version::sealed::Sealed for $ty {}
+        impl $crate::version::VersionMarker for $ty {
             fn version() -> &'static str {
                 stringify!($path)
             }
