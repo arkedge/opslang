@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use family::TypeFamily;
 use opslang_ast_macros::{OrderSpan, TrivialBridge};
 
@@ -10,7 +12,7 @@ pub mod token;
 pub struct BytePos(pub u32);
 pub type Position = BytePos;
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 /// Default value for each types in this crate, to allow this crate define an AST.
 ///
 /// This type does not take any lifetime parameters because [`TypeFamily`] trait has them.
@@ -165,7 +167,6 @@ pub struct ReturnStmt {
 }
 
 pub type OwnedExpr<'cx, F = DefaultTypeFamily> = ExprKind<'cx, F>;
-pub type Expr<'cx, F = DefaultTypeFamily> = &'cx OwnedExpr<'cx, F>;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// An expression.
@@ -182,16 +183,228 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Set(Set<'cx, F>),
 }
 
+mod sealed {
+    #[derive(Clone, Copy)]
+    pub struct Sealed;
+}
+
+/// A newtyped [`ExprKind`]. Use this type instead of [`ExprKind`] whenever possible.
+pub struct Expr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(
+    pub &'cx ExprKind<'cx, F>,
+    sealed::Sealed,
+);
+
+impl<'cx, F: TypeFamily<'cx>> Debug for Expr<'cx, F> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> PartialEq for Expr<'cx, F> {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(other.0)
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> Clone for Expr<'cx, F> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> Copy for Expr<'cx, F> {}
+
+impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
+    #[inline]
+    pub fn from_kind(ctx: &'cx context::Context<'cx, F>, kind: ExprKind<'cx, F>) -> Self {
+        ctx.alloc_expr(kind)
+    }
+
+    pub fn apply_literal(
+        ctx: &'cx context::Context<'cx, F>,
+        literal: literal::Literal<'cx, F>,
+        args: Vec<Self>,
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Literal = literal::Literal<'cx, F>, Apply = Apply<'cx, F>>,
+    {
+        let function_expr = ctx.alloc_expr(ExprKind::<F>::Literal(literal));
+
+        let args_slice: &[Self] = Box::leak(args.into_boxed_slice());
+
+        let apply_expr = ExprKind::Apply(Apply {
+            function: function_expr,
+            args: args_slice,
+        });
+
+        ctx.alloc_expr(apply_expr)
+    }
+
+    #[inline]
+    pub fn ident(ctx: &'cx context::Context<'cx, F>, name: &str, span: Span) -> Self
+    where
+        F: TypeFamily<'cx, Path = Path<'cx>>,
+    {
+        Expr::variable(ctx, Path::single(ctx, name, span))
+    }
+
+    #[inline]
+    pub fn variable(ctx: &'cx context::Context<'cx, F>, path: F::Path) -> Self {
+        ctx.alloc_expr(ExprKind::Variable(path))
+    }
+
+    #[inline]
+    pub fn literal(ctx: &'cx context::Context<'cx, F>, literal: F::Literal) -> Self {
+        ctx.alloc_expr(ExprKind::Literal(literal))
+    }
+
+    #[inline]
+    pub fn parened(
+        ctx: &'cx context::Context<'cx, F>,
+        left_paren: token::OpenParen,
+        expr: Self,
+        right_paren: token::CloseParen,
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Parened = Parened<'cx, F>>,
+    {
+        let parened = Parened {
+            left_paren,
+            expr,
+            right_paren,
+        };
+        ctx.alloc_expr(ExprKind::Parened(parened))
+    }
+
+    #[inline]
+    pub fn apply(ctx: &'cx context::Context<'cx, F>, function: Self, args: Vec<Self>) -> Self
+    where
+        F: TypeFamily<'cx, Apply = Apply<'cx, F>>,
+    {
+        let apply = Apply {
+            function,
+            args: Box::leak(args.into_boxed_slice()),
+        };
+        ctx.alloc_expr(ExprKind::Apply(apply))
+    }
+
+    #[inline]
+    pub fn binary(ctx: &'cx context::Context<'cx, F>, lhs: Self, op: F::BinOp, rhs: Self) -> Self {
+        let binary = Binary { lhs, op, rhs };
+        ctx.alloc_expr(ExprKind::Binary(binary))
+    }
+
+    #[inline]
+    pub fn unary(ctx: &'cx context::Context<'cx, F>, op: F::UnOp, expr: Self) -> Self {
+        let unary = Unary { op, expr };
+        ctx.alloc_expr(ExprKind::Unary(unary))
+    }
+
+    #[inline]
+    pub fn compare(
+        ctx: &'cx context::Context<'cx, F>,
+        head: Self,
+        tail_with_op: Vec<(F::CompareOp, Self)>,
+    ) -> Self {
+        let compare = Compare {
+            head,
+            tail_with_op: Box::leak(tail_with_op.into_boxed_slice()),
+        };
+        ctx.alloc_expr(ExprKind::Compare(compare))
+    }
+
+    #[inline]
+    pub fn compare_single(
+        ctx: &'cx context::Context<'cx, F>,
+        lhs: Self,
+        op: F::CompareOp,
+        rhs: Self,
+    ) -> Self {
+        Self::compare(ctx, lhs, vec![(op, rhs)])
+    }
+
+    #[inline]
+    pub fn set(
+        ctx: &'cx context::Context<'cx, F>,
+        lhs: Self,
+        colon_eq: F::ColonEqToken,
+        rhs: Self,
+    ) -> Self {
+        let set = Set { lhs, colon_eq, rhs };
+        ctx.alloc_expr(ExprKind::Set(set))
+    }
+
+    #[inline]
+    pub fn qualif(ctx: &'cx context::Context<'cx, F>, qualif: F::Qualif) -> Self {
+        ctx.alloc_expr(ExprKind::Qualif(qualif))
+    }
+
+    #[inline]
+    pub fn pre_qualified(
+        ctx: &'cx context::Context<'cx, F>,
+        qualifs: Vec<F::Qualif>,
+        expr: Self,
+    ) -> Self
+    where
+        F: TypeFamily<'cx, PreQualified = PreQualified<'cx, F>>,
+    {
+        let pre_qualified = PreQualified {
+            qualifs: Box::leak(qualifs.into_boxed_slice()),
+            expr,
+        };
+        ctx.alloc_expr(ExprKind::PreQualified(pre_qualified))
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Path<'cx> {
     pub raw: &'cx str,
     pub segments: &'cx [Ident<'cx>],
 }
 
+impl<'cx> Path<'cx> {
+    pub fn new_unchecked(
+        ctx: &'cx context::Context<'cx, impl TypeFamily<'cx>>,
+        raw: &str,
+        segments: &'cx [Ident<'cx>],
+    ) -> Self {
+        let raw_str = ctx.alloc_str(raw);
+        Path {
+            raw: raw_str,
+            segments,
+        }
+    }
+
+    pub fn single(
+        ctx: &'cx context::Context<'cx, impl TypeFamily<'cx>>,
+        name: &str,
+        span: Span,
+    ) -> Self {
+        assert!(!name.contains('.'));
+        let ident = Ident::new(ctx, name, span);
+        let segments = Box::leak(vec![ident].into_boxed_slice());
+        Path::new_unchecked(ctx, name, segments)
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Ident<'cx> {
     pub raw: &'cx str,
     pub span: Span,
+}
+
+impl<'cx> Ident<'cx> {
+    pub fn new(
+        ctx: &'cx context::Context<'cx, impl TypeFamily<'cx>>,
+        name: &str,
+        span: Span,
+    ) -> Self {
+        let name_str = ctx.alloc_str(name);
+        Ident {
+            raw: name_str,
+            span,
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -240,6 +453,84 @@ pub mod literal {
         DateTime(DateTime<'cx>),
     }
 
+    impl<'cx, F: TypeFamily<'cx>> Literal<'cx, F> {
+        pub fn string(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
+            content: &str,
+            span: Span,
+        ) -> Self {
+            let string_str = ctx.alloc_str(content);
+            Literal::String(String {
+                raw: string_str,
+                span,
+            })
+        }
+
+        pub fn bytes(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
+            content: &str,
+            span: Span,
+        ) -> Self {
+            let bytes_str = ctx.alloc_str(content);
+            Literal::Bytes(Bytes {
+                raw: bytes_str,
+                span,
+            })
+        }
+
+        pub fn hex_bytes(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
+            content: &str,
+            span: Span,
+        ) -> Self {
+            let hex_str = ctx.alloc_str(content);
+            Literal::HexBytes(HexBytes { raw: hex_str, span })
+        }
+
+        pub fn numeric(numeric: F::Numeric) -> Self
+        where
+            F: TypeFamily<'cx, Numeric = Numeric<'cx>>,
+        {
+            Literal::Numeric(numeric)
+        }
+
+        pub fn os_file_path(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
+            content: &str,
+            span: Span,
+        ) -> Self {
+            let path_str = ctx.alloc_str(content);
+            Literal::OsFilePath(OsFilePath {
+                raw: path_str,
+                span,
+            })
+        }
+
+        pub fn date_time(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
+            content: &str,
+            span: Span,
+        ) -> Self {
+            let date_str = ctx.alloc_str(content);
+            Literal::DateTime(DateTime {
+                raw: date_str,
+                span,
+            })
+        }
+
+        pub fn array(
+            left_bracket: token::OpenSquare,
+            exprs: &'cx [Expr<'cx, F>],
+            right_bracket: token::CloseSquare,
+        ) -> Self {
+            Literal::Array(Array {
+                left_bracket,
+                exprs,
+                right_bracket,
+            })
+        }
+    }
+
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct Array<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub left_bracket: token::OpenSquare,
@@ -272,6 +563,50 @@ pub mod literal {
 
         pub kind: NumericKind,
         pub suffix: Option<NumericSuffix<'cx>>,
+    }
+
+    impl<'cx> Numeric<'cx> {
+        #[inline]
+        pub fn integer(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, impl TypeFamily<'cx>>,
+            raw: &str,
+            prefix: IntegerPrefix,
+            suffix: Option<NumericSuffix<'cx>>,
+        ) -> Self {
+            let raw_str = ctx.alloc_str(raw);
+            Numeric {
+                raw: raw_str,
+                kind: NumericKind::Integer(prefix),
+                suffix,
+            }
+        }
+
+        #[inline]
+        pub fn float(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, impl TypeFamily<'cx>>,
+            raw: &str,
+            suffix: Option<NumericSuffix<'cx>>,
+        ) -> Self {
+            let raw_str = ctx.alloc_str(raw);
+            Numeric {
+                raw: raw_str,
+                kind: NumericKind::Float,
+                suffix,
+            }
+        }
+
+        #[inline]
+        pub fn suffix(
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, impl TypeFamily<'cx>>,
+            name: &str,
+            span: Span,
+        ) -> NumericSuffix<'cx> {
+            let name_str = ctx.alloc_str(name);
+            NumericSuffix(Ident {
+                raw: name_str,
+                span,
+            })
+        }
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]

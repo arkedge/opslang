@@ -377,14 +377,14 @@ impl<'cx, S: Strategy> PrettyPrint<S> for Let<'cx> {
         writer.write_str("let ")?;
         PrettyPrint::<S>::pretty_print(&self.variable, writer, options)?;
         writer.write_str(" = ")?;
-        PrettyPrint::<S>::pretty_print(self.rhs, writer, options)?;
+        PrettyPrint::<S>::pretty_print(&self.rhs, writer, options)?;
         writer.write_str(";")
     }
 }
 
 impl<'cx, S: Strategy> PrettyPrint<S> for ExprStatement<'cx> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        PrettyPrint::<S>::pretty_print(self.expr, writer, options)?;
+        PrettyPrint::<S>::pretty_print(&self.expr, writer, options)?;
         writer.write_str(";")
     }
 }
@@ -392,6 +392,12 @@ impl<'cx, S: Strategy> PrettyPrint<S> for ExprStatement<'cx> {
 impl<S: Strategy> PrettyPrint<S> for ReturnStmt {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("return;")
+    }
+}
+
+impl<'cx, S: Strategy> PrettyPrint<S> for Expr<'cx> {
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        self.0.pretty_print(writer, options)
     }
 }
 
@@ -456,7 +462,7 @@ where
             if i > 0 {
                 writer.write_str(", ")?;
             }
-            PrettyPrint::<S>::pretty_print(*expr, writer, options)?;
+            PrettyPrint::<S>::pretty_print(expr, writer, options)?;
         }
         writer.write_str("]")
     }
@@ -517,7 +523,7 @@ where
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("(")?;
-        PrettyPrint::<S>::pretty_print(self.expr, writer, options)?;
+        PrettyPrint::<S>::pretty_print(&self.expr, writer, options)?;
         writer.write_str(")")
     }
 }
@@ -531,7 +537,7 @@ where
         match self {
             Qualif::TimeIndicator(expr) => {
                 writer.write_str(":")?;
-                PrettyPrint::<S>::pretty_print(*expr, writer, options)
+                PrettyPrint::<S>::pretty_print(expr, writer, options)
             }
             Qualif::ExecutorComponent(exec_comp) => {
                 PrettyPrint::<S>::pretty_print(exec_comp, writer, options)
@@ -560,7 +566,7 @@ where
             PrettyPrint::<S>::pretty_print(qualif, writer, options)?;
             writer.write_str(" ")?;
         }
-        PrettyPrint::<S>::pretty_print(self.expr, writer, options)
+        PrettyPrint::<S>::pretty_print(&self.expr, writer, options)
     }
 }
 
@@ -573,7 +579,7 @@ where
             UnOp::Neg(_) => writer.write_str("-")?,
             UnOp::Ref(_) => writer.write_str("&")?,
         }
-        PrettyPrint::<S>::pretty_print(self.expr, writer, options)
+        PrettyPrint::<S>::pretty_print(&self.expr, writer, options)
     }
 }
 
@@ -582,7 +588,7 @@ where
     ExprKind<'cx>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        PrettyPrint::<S>::pretty_print(self.head, writer, options)?;
+        PrettyPrint::<S>::pretty_print(&self.head, writer, options)?;
         for (op, expr) in self.tail_with_op {
             writer.write_str(" ")?;
             match op {
@@ -595,7 +601,7 @@ where
                 CompareOp::Equal(_) => writer.write_str("==")?,
             }
             writer.write_str(" ")?;
-            PrettyPrint::<S>::pretty_print(*expr, writer, options)?;
+            PrettyPrint::<S>::pretty_print(expr, writer, options)?;
         }
         Ok(())
     }
@@ -606,7 +612,7 @@ where
     ExprKind<'cx>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        PrettyPrint::<S>::pretty_print(self.lhs, writer, options)?;
+        PrettyPrint::<S>::pretty_print(&self.lhs, writer, options)?;
         writer.write_str(" ")?;
         match self.op {
             BinOp::If => writer.write_str("if")?,
@@ -620,7 +626,7 @@ where
             BinOp::Sub => writer.write_str("-")?,
         }
         writer.write_str(" ")?;
-        PrettyPrint::<S>::pretty_print(self.rhs, writer, options)
+        PrettyPrint::<S>::pretty_print(&self.rhs, writer, options)
     }
 }
 
@@ -629,13 +635,13 @@ where
     ExprKind<'cx>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        PrettyPrint::<S>::pretty_print(self.function, writer, options)?;
+        PrettyPrint::<S>::pretty_print(&self.function, writer, options)?;
         writer.write_str("(")?;
         for (i, arg) in self.args.iter().enumerate() {
             if i > 0 {
                 writer.write_str(", ")?;
             }
-            PrettyPrint::<S>::pretty_print(*arg, writer, options)?;
+            PrettyPrint::<S>::pretty_print(arg, writer, options)?;
         }
         writer.write_str(")")
     }
@@ -646,8 +652,8 @@ where
     ExprKind<'cx>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        PrettyPrint::<S>::pretty_print(self.lhs, writer, options)?;
+        PrettyPrint::<S>::pretty_print(&self.lhs, writer, options)?;
         writer.write_str(" := ")?;
-        PrettyPrint::<S>::pretty_print(self.rhs, writer, options)
+        PrettyPrint::<S>::pretty_print(&self.rhs, writer, options)
     }
 }

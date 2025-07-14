@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use crate::{Bridge, derive_trivial_bridge};
 
 macro_rules! declare_family {
@@ -19,7 +21,7 @@ macro_rules! declare_family {
 /// type parameters.
 ///
 /// This trait carries all of possible substitution, including recursive elements.
-pub trait TypeFamily<'cx> {
+pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default {
     declare_family! {
         type Comment;
         type CommentSpan;
