@@ -1,8 +1,5 @@
-use super::{
-    ParseContext,
-    generated::grammar_trait::{self, ActionTrait, Program},
-};
-use opslang_ast::v1::{self as syn};
+use super::generated::grammar_trait::{self, ActionTrait, Program};
+use opslang_ast::v1::{self as syn, context::Context};
 
 #[allow(unused_imports)]
 use parol_runtime::{Result, Token};
@@ -11,12 +8,12 @@ use parol_runtime::{Result, Token};
 ///
 /// This type is referenced in the `build.rs` file to generate the parser.
 pub struct Action<'cx> {
-    cx: &'cx ParseContext<'cx>,
+    cx: &'cx Context<'cx>,
     parsed: Option<syn::Program<'cx>>,
 }
 
 impl<'cx> Action<'cx> {
-    pub fn new(cx: &'cx ParseContext<'cx>) -> Self {
+    pub fn new(cx: &'cx Context<'cx>) -> Self {
         Self { cx, parsed: None }
     }
 
@@ -45,13 +42,13 @@ trait ProcessToken<'cx> {
     /// Processes a token into an [`Output`] type.
     ///
     /// [`Output`]: ProcessToken::Output
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output;
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output;
 }
 
 impl<'cx, T: ProcessToken<'cx>> ProcessToken<'cx> for Option<T> {
     type Output = Option<T::Output>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         self.as_ref().map(|this| this.process_token(cx))
     }
 }
@@ -59,7 +56,7 @@ impl<'cx, T: ProcessToken<'cx>> ProcessToken<'cx> for Option<T> {
 impl<'cx, T: ProcessToken<'cx>> ProcessToken<'cx> for Box<T> {
     type Output = <T as ProcessToken<'cx>>::Output;
     #[inline(always)]
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         <T as ProcessToken<'cx>>::process_token(&**self, cx)
     }
 }
@@ -103,7 +100,7 @@ impl TokenLocation for grammar_trait::Break<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Program<'_> {
     type Output = syn::Program<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         syn::Program {
             content: self.scope.process_token(cx),
         }
@@ -113,7 +110,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Program<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Scope<'_> {
     type Output = syn::Scope<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let vec: Vec<_> = self
             .scope_list
             .iter()
@@ -128,7 +125,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Scope<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContentOpt<'_> {
     type Output = syn::token::Break;
 
-    fn process_token(&self, _cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         syn::token::Break {
             position: syn::BytePos(self.r#break.r#break.location.start),
         }
@@ -138,7 +135,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContentOpt<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContent<'_> {
     type Output = syn::ScopeItem<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let Self {
             scope_content_opt,
             scope_content_opt0,
@@ -173,7 +170,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContent<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Block<'_> {
     type Output = syn::Block<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         syn::Block {
             left_brace: syn::token::OpenBrace {
                 position: syn::BytePos(self.l_brace.location.start),
@@ -189,7 +186,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Block<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
     type Output = syn::StatementKind<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let semi = syn::token::Semi {
             position: syn::BytePos(self.semi.semi.location.start),
         };
@@ -234,7 +231,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Expr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if let Some(grammar_trait::SetExprOpt {
             colon_equ,
             infix_if_expr,
@@ -256,7 +253,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Expr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::InfixIfExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if let Some(grammar_trait::InfixIfExprOpt {
             r#if: _,
             logical_or_expr,
@@ -276,7 +273,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::InfixIfExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::LogicalOrExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.logical_or_expr_list.is_empty() {
             self.logical_and_expr.process_token(cx)
         } else {
@@ -297,7 +294,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LogicalOrExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::LogicalAndExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.logical_and_expr_list.is_empty() {
             self.infix_in_expr.process_token(cx)
         } else {
@@ -318,7 +315,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LogicalAndExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::InfixInExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if let Some(grammar_trait::InfixInExprOpt {
             r#in: _,
             compare_expr,
@@ -338,7 +335,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::InfixInExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::CompareExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.compare_expr_list.is_empty() {
             self.arithmetic_expr.process_token(cx)
         } else {
@@ -364,7 +361,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::CompareOp<'_> {
     type Output = syn::CompareOp;
 
-    fn process_token(&self, _cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::CompareOp::GTEqu(compare_op_gtequ) => {
                 syn::CompareOp::GreaterEq(syn::token::RightAngleEq {
@@ -408,7 +405,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareOp<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::ArithmeticExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.arithmetic_expr_list.is_empty() {
             self.factor_expr.process_token(cx)
         } else {
@@ -429,7 +426,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ArithmeticExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::ArithmeticOp<'_> {
     type Output = syn::BinOp;
 
-    fn process_token(&self, _: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, _: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::ArithmeticOp::Plus(..) => syn::BinOp::Add,
             grammar_trait::ArithmeticOp::Minus(..) => syn::BinOp::Sub,
@@ -440,7 +437,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ArithmeticOp<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::FactorExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.factor_expr_list.is_empty() {
             self.prefix_expr.process_token(cx)
         } else {
@@ -460,7 +457,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FactorExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::FactorOp<'_> {
     type Output = syn::BinOp;
 
-    fn process_token(&self, _: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, _: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::FactorOp::Star(..) => syn::BinOp::Mul,
             grammar_trait::FactorOp::Slash(..) => syn::BinOp::Div,
@@ -472,7 +469,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FactorOp<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::PrefixExpr::MinusApplyExpr(prefix_expr_minus_apply_expr) => cx
                 .alloc_expr(syn::ExprKind::Unary(syn::Unary {
@@ -514,7 +511,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Qualif<'_> {
     type Output = syn::Qualif<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::Qualif::ExecutorComponent(qualif_executor_component) => {
                 let e = &*qualif_executor_component.executor_component;
@@ -540,7 +537,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Qualif<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::ApplyExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.apply_expr_list.is_empty() {
             self.lower_prefix_expr.process_token(cx)
         } else {
@@ -561,7 +558,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ApplyExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::LowerPrefixExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if let Some(lower_prefix) = self.lower_prefix_expr_opt.as_ref() {
             cx.alloc_expr(syn::ExprKind::Unary(syn::Unary {
                 op: syn::UnOp::Ref(syn::token::Ampersand {
@@ -578,7 +575,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LowerPrefixExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Callable<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::Callable::Path(callable_path) => cx.alloc_expr(syn::ExprKind::Variable(
                 callable_path.path.process_token(cx),
@@ -603,7 +600,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Callable<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
     type Output = syn::Expr<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::AtomicExpr::Qualif(atomic_expr_qualif) => cx.alloc_expr(
                 syn::ExprKind::Qualif(atomic_expr_qualif.qualif.process_token(cx)),
@@ -618,7 +615,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
     type Output = syn::Literal<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::Literal::Array(literal_array) => syn::Literal::Array(syn::Array {
                 left_bracket: syn::token::OpenSquare {
@@ -721,7 +718,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
     type Output = syn::Numeric<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         macro_rules! extract_suffix {
             ($token:ident, $delimiter:expr) => {{
                 let input = $token.text();
@@ -796,7 +793,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Comment<'_> {
     type Output = &'cx syn::Comment<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let token = &self.comment_content.comment_content;
         cx.alloc_comment(syn::Comment {
             content: cx.alloc_str(token.text()),
@@ -808,7 +805,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Comment<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Ident<'_> {
     type Output = syn::Ident<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let token = &self.ident;
         syn::Ident {
             raw: cx.alloc_str(token.text()),
@@ -820,7 +817,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Ident<'_> {
 impl<'cx> ProcessToken<'cx> for grammar_trait::Path<'_> {
     type Output = syn::Path<'cx>;
 
-    fn process_token(&self, cx: &'cx ParseContext<'cx>) -> Self::Output {
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let mut raw = String::new();
         let mut segments = Vec::with_capacity(self.path_list.len() + 1);
         raw.push_str(self.ident.ident.text());

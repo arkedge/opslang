@@ -1,6 +1,7 @@
 use family::TypeFamily;
 use opslang_ast_macros::{OrderSpan, TrivialBridge};
 
+pub mod context;
 pub mod family;
 pub mod loc;
 pub mod token;

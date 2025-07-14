@@ -1,13 +1,13 @@
-use opslang_ast::v1::{Block, Comment, ExprKind, Row};
+use super::{Block, Comment, ExprKind, Row};
 use typed_arena::Arena;
 
 #[derive(Default)]
-/// A context for parsing expressions.
+/// A context for constructing expressions.
 ///
 /// This type exists to hold the contents of reference types, which is introduced:
 /// - to reduce type size and
 /// - to provide uniform lifetimes for mutually recursive types.
-pub struct ParseContext<'cx> {
+pub struct Context<'cx> {
     str_arena: Arena<u8>,
     expr_arena: Arena<ExprKind<'cx>>,
     row_arena: Arena<Row<'cx>>,
@@ -15,7 +15,7 @@ pub struct ParseContext<'cx> {
     comment_arena: Arena<Comment<'cx>>,
 }
 
-impl<'cx> ParseContext<'cx> {
+impl<'cx> Context<'cx> {
     pub fn alloc_str<'any>(&'cx self, string: &'any str) -> &'cx str {
         if string.is_empty() {
             return "";

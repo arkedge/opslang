@@ -1,10 +1,9 @@
-mod context;
 mod generated;
 mod parse;
 
-pub use context::*;
-
 crate::redirect_parol!();
+
+use opslang_ast::v1::context::Context;
 
 use crate::{ParseOps, ParserInput, Versioned};
 
@@ -13,7 +12,7 @@ type This = super::V1;
 pub type AssumeV1Format<T> = Versioned<This, T>;
 
 impl<'cx> ParseOps<AssumeV1Format<ParserInput<'cx>>, This> for opslang_ast::v1::Program<'cx> {
-    type Context = &'cx ParseContext<'cx>;
+    type Context = &'cx Context<'cx>;
 
     type Error = parol_runtime::ParolError;
 
@@ -40,7 +39,7 @@ mod tests {
             file_name: "test_v1.ops".into(),
         }
         .assume_inferred();
-        let context = ParseContext::new();
+        let context = Context::new();
         let result = opslang_ast::v1::Program::parse(input, &context);
         assert!(
             result.is_ok(),
@@ -53,7 +52,7 @@ mod tests {
             content: input_str,
             file_name: "test_v1.ops".into(),
         };
-        let context = ParseContext::new();
+        let context = Context::new();
         let result = opslang_ast::v1::Program::parse(input, &context);
         assert!(
             result.is_ok(),

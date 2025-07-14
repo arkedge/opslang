@@ -1,7 +1,8 @@
 //! Integration tests for v1 printer functionality
 //! These tests use the parser to create AST nodes and then test printer behavior
 
-use opslang_parser::{ParseOps, ParserInput, v1::ParseContext};
+use opslang_ast::v1::context::Context;
+use opslang_parser::{ParseOps, ParserInput};
 use opslang_printer::{
     BasePrintOptions, CommentAligned, CommentAlignment, CommentGrouping, CommentPosition, Naive,
     PrettyPrint, PrintOptions,
@@ -10,7 +11,7 @@ use opslang_printer::{
 // Helper to parse a given source code string
 fn parse_source<'cx>(
     source: &'cx str,
-    context: &'cx ParseContext<'cx>,
+    context: &'cx Context<'cx>,
 ) -> opslang_ast::v1::Program<'cx> {
     let input = ParserInput {
         content: source,
@@ -26,7 +27,7 @@ let x = value1;               # comment1
 let very_long_var = value2;   # comment2
 "#;
 
-    let context = ParseContext::new();
+    let context = Context::new();
     let program = parse_source(source, &context);
 
     // Test with Naive strategy
@@ -59,9 +60,8 @@ let very_long_var = val2;   # comment2
 let y = val3;               # comment3
 "#;
 
-    let context = ParseContext::new();
+    let context = Context::new();
     let program = parse_source(source, &context);
-    
 
     // Test with Consecutive grouping
     let consecutive_options = PrintOptions::<CommentAligned>::from_base_with_alignment(
@@ -101,7 +101,7 @@ let x = val1;               # comment1
 let very_long_variable = val2;  # comment2
 "#;
 
-    let context = ParseContext::new();
+    let context = Context::new();
     let program = parse_source(source, &context);
 
     // Test ToLongest
@@ -162,7 +162,7 @@ let x = val1;                               # comment1
 let this_is_a_very_very_long_variable_name = val2;  # comment2
 "#;
 
-    let context = ParseContext::new();
+    let context = Context::new();
     let program = parse_source(source, &context);
 
     // Test ToFixed with fallback disabled
@@ -212,7 +212,7 @@ let very_long_var = val3;  # comment3
 let z = val4;       # comment4
 "#;
 
-    let context = ParseContext::new();
+    let context = Context::new();
     let program = parse_source(source, &context);
 
     let consecutive_options = PrintOptions::<CommentAligned>::from_base_with_alignment(
