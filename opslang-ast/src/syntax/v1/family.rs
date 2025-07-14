@@ -21,10 +21,12 @@ macro_rules! declare_family {
 /// type parameters.
 ///
 /// This trait carries all of possible substitution, including recursive elements.
-pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default {
+pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static {
     declare_family! {
+        type Span;
+        type Position;
+
         type Comment;
-        type CommentSpan;
         type ScopeItem;
         type Row;
         type RowContent;
@@ -34,14 +36,6 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default {
         type Ident;
         type Path;
 
-        // Tokens
-
-        type BreakToken;
-        type SemiToken;
-        type LetToken;
-        type EqToken;
-        type ColonEqToken;
-
         // Expression types
 
         type Literal;
@@ -50,31 +44,6 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default {
         type PreQualified;
         type Numeric;
         type Apply;
-
-        type UnOp;
-        type CompareOp;
-        type BinOp;
-    }
-}
-
-macro_rules! declare_compat {
-    () => {};
-    ($(type $ident:ident;)*) => {
-        $(
-            type $ident: Bridge<Full = <super::DefaultTypeFamily as TypeFamily<'cx>>::$ident>;
-        )*
-    };
-}
-
-/// Part of type family that is different between compatible versions.
-///
-/// This is used to convert between different versions of the AST.
-pub trait CompatV0<'cx> {
-    declare_compat! {
-        type BreakToken;
-        type Comment;
-        type CommentSpan;
-        type RowContent;
     }
 }
 

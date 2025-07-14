@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use family::TypeFamily;
+pub use family::TypeFamily;
 use opslang_ast_macros::{OrderSpan, TrivialBridge};
 
 pub mod context;
@@ -19,22 +19,18 @@ pub type Position = BytePos;
 pub struct DefaultTypeFamily;
 
 impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
+    type Span = Span;
+    type Position = Position;
+
     type Comment = &'cx Comment<'cx>;
-    type CommentSpan = Span;
     type Row = &'cx Row<'cx>;
     type RowContent = StatementKind<'cx>;
     type Block = &'cx Block<'cx>;
     type ScopeItem = ScopeItem<'cx>;
-    type ReturnStmt = ReturnStmt;
+    type ReturnStmt = ReturnStmt<'cx>;
 
     type Ident = Ident<'cx>;
     type Path = Path<'cx>;
-
-    type SemiToken = token::Semi;
-    type BreakToken = token::Break;
-    type LetToken = token::Let;
-    type EqToken = token::Eq;
-    type ColonEqToken = token::ColonEq;
 
     type Qualif = Qualif<'cx>;
     type PreQualified = PreQualified<'cx>;
@@ -42,10 +38,6 @@ impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
     type Literal = Literal<'cx>;
     type Numeric = Numeric<'cx>;
     type Apply = Apply<'cx>;
-
-    type UnOp = UnOp;
-    type CompareOp = CompareOp;
-    type BinOp = BinOp;
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, TrivialBridge)]
@@ -83,7 +75,7 @@ pub enum ScopeItem<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A single row of program with optional comments and breaks.
 pub struct Row<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub breaks: Option<F::BreakToken>,
+    pub breaks: Option<token::Break<'cx, F>>,
     pub content: Option<F::RowContent>,
     pub comment: Option<F::Comment>,
 }
@@ -102,7 +94,7 @@ impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
 /// A comment in a program.
 pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub content: &'cx str,
-    pub span: F::CommentSpan,
+    pub span: F::Span,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -117,9 +109,9 @@ pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// }
 /// ```
 pub struct Block<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub left_brace: token::OpenBrace,
+    pub left_brace: token::OpenBrace<'cx, F>,
     pub scope: Scope<'cx, F>,
-    pub right_brace: token::CloseBrace,
+    pub right_brace: token::CloseBrace<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -139,18 +131,18 @@ pub enum StatementKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// let d = 1s
 /// ```
 pub struct Let<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub let_token: F::LetToken,
+    pub let_token: token::Let<'cx, F>,
     pub variable: F::Ident,
-    pub eq: F::EqToken,
+    pub eq: token::Eq<'cx, F>,
     pub rhs: Expr<'cx, F>,
-    pub semi: F::SemiToken,
+    pub semi: token::Semi<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
 pub struct ExprStatement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub expr: Expr<'cx, F>,
-    pub semi: F::SemiToken,
+    pub semi: token::Semi<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -161,9 +153,9 @@ pub struct ExprStatement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// ```ops
 /// return;
 /// ```
-pub struct ReturnStmt {
-    pub return_token: token::Return,
-    pub semi: token::Semi,
+pub struct ReturnStmt<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub return_token: token::Return<'cx, F>,
+    pub semi: token::Semi<'cx, F>,
 }
 
 pub type OwnedExpr<'cx, F = DefaultTypeFamily> = ExprKind<'cx, F>;
@@ -241,9 +233,9 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     }
 
     #[inline]
-    pub fn ident(ctx: &'cx context::Context<'cx, F>, name: &str, span: Span) -> Self
+    pub fn ident(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self
     where
-        F: TypeFamily<'cx, Path = Path<'cx>>,
+        F: TypeFamily<'cx, Path = Path<'cx, F>>,
     {
         Expr::variable(ctx, Path::single(ctx, name, span))
     }
@@ -261,9 +253,9 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn parened(
         ctx: &'cx context::Context<'cx, F>,
-        left_paren: token::OpenParen,
+        left_paren: token::OpenParen<'cx, F>,
         expr: Self,
-        right_paren: token::CloseParen,
+        right_paren: token::CloseParen<'cx, F>,
     ) -> Self
     where
         F: TypeFamily<'cx, Parened = Parened<'cx, F>>,
@@ -289,13 +281,13 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     }
 
     #[inline]
-    pub fn binary(ctx: &'cx context::Context<'cx, F>, lhs: Self, op: F::BinOp, rhs: Self) -> Self {
+    pub fn binary(ctx: &'cx context::Context<'cx, F>, lhs: Self, op: BinOp, rhs: Self) -> Self {
         let binary = Binary { lhs, op, rhs };
         ctx.alloc_expr(ExprKind::Binary(binary))
     }
 
     #[inline]
-    pub fn unary(ctx: &'cx context::Context<'cx, F>, op: F::UnOp, expr: Self) -> Self {
+    pub fn unary(ctx: &'cx context::Context<'cx, F>, op: UnOp<'cx, F>, expr: Self) -> Self {
         let unary = Unary { op, expr };
         ctx.alloc_expr(ExprKind::Unary(unary))
     }
@@ -304,7 +296,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn compare(
         ctx: &'cx context::Context<'cx, F>,
         head: Self,
-        tail_with_op: Vec<(F::CompareOp, Self)>,
+        tail_with_op: Vec<(CompareOp<'cx, F>, Self)>,
     ) -> Self {
         let compare = Compare {
             head,
@@ -317,7 +309,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn compare_single(
         ctx: &'cx context::Context<'cx, F>,
         lhs: Self,
-        op: F::CompareOp,
+        op: CompareOp<'cx, F>,
         rhs: Self,
     ) -> Self {
         Self::compare(ctx, lhs, vec![(op, rhs)])
@@ -327,7 +319,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn set(
         ctx: &'cx context::Context<'cx, F>,
         lhs: Self,
-        colon_eq: F::ColonEqToken,
+        colon_eq: token::ColonEq<'cx, F>,
         rhs: Self,
     ) -> Self {
         let set = Set { lhs, colon_eq, rhs };
@@ -357,16 +349,16 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Path<'cx> {
+pub struct Path<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub raw: &'cx str,
-    pub segments: &'cx [Ident<'cx>],
+    pub segments: &'cx [Ident<'cx, F>],
 }
 
-impl<'cx> Path<'cx> {
+impl<'cx, F: TypeFamily<'cx>> Path<'cx, F> {
     pub fn new_unchecked(
-        ctx: &'cx context::Context<'cx, impl TypeFamily<'cx>>,
+        ctx: &'cx context::Context<'cx, F>,
         raw: &str,
-        segments: &'cx [Ident<'cx>],
+        segments: &'cx [Ident<'cx, F>],
     ) -> Self {
         let raw_str = ctx.alloc_str(raw);
         Path {
@@ -375,11 +367,7 @@ impl<'cx> Path<'cx> {
         }
     }
 
-    pub fn single(
-        ctx: &'cx context::Context<'cx, impl TypeFamily<'cx>>,
-        name: &str,
-        span: Span,
-    ) -> Self {
+    pub fn single(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self {
         assert!(!name.contains('.'));
         let ident = Ident::new(ctx, name, span);
         let segments = Box::leak(vec![ident].into_boxed_slice());
@@ -388,16 +376,16 @@ impl<'cx> Path<'cx> {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Ident<'cx> {
+pub struct Ident<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub raw: &'cx str,
-    pub span: Span,
+    pub span: F::Span,
 }
 
-impl<'cx> Ident<'cx> {
+impl<'cx, F: TypeFamily<'cx>> Ident<'cx, F> {
     pub fn new(
         ctx: &'cx context::Context<'cx, impl TypeFamily<'cx>>,
         name: &str,
-        span: Span,
+        span: F::Span,
     ) -> Self {
         let name_str = ctx.alloc_str(name);
         Ident {
@@ -411,7 +399,7 @@ impl<'cx> Ident<'cx> {
 /// A qualification for a command.
 pub enum Qualif<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     TimeIndicator(Expr<'cx, F>),
-    ExecutorComponent(ExecutorComponent<'cx>),
+    ExecutorComponent(ExecutorComponent<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -420,9 +408,9 @@ pub enum Qualif<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// # Examples
 ///
 /// - `AOBC` in `MOBC.TL.NOP :20 @AOBC`.
-pub struct ExecutorComponent<'cx> {
-    pub at_token: token::Atmark,
-    pub name: Path<'cx>,
+pub struct ExecutorComponent<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub at_token: token::Atmark<'cx, F>,
+    pub name: Path<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -445,19 +433,19 @@ pub mod literal {
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub enum Literal<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         Array(Array<'cx, F>),
-        String(String<'cx>),
-        Bytes(Bytes<'cx>),
-        HexBytes(HexBytes<'cx>),
+        String(String<'cx, F>),
+        Bytes(Bytes<'cx, F>),
+        HexBytes(HexBytes<'cx, F>),
         Numeric(F::Numeric),
-        OsFilePath(OsFilePath<'cx>),
-        DateTime(DateTime<'cx>),
+        OsFilePath(OsFilePath<'cx, F>),
+        DateTime(DateTime<'cx, F>),
     }
 
     impl<'cx, F: TypeFamily<'cx>> Literal<'cx, F> {
         pub fn string(
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
-            span: Span,
+            span: F::Span,
         ) -> Self {
             let string_str = ctx.alloc_str(content);
             Literal::String(String {
@@ -469,7 +457,7 @@ pub mod literal {
         pub fn bytes(
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
-            span: Span,
+            span: F::Span,
         ) -> Self {
             let bytes_str = ctx.alloc_str(content);
             Literal::Bytes(Bytes {
@@ -481,7 +469,7 @@ pub mod literal {
         pub fn hex_bytes(
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
-            span: Span,
+            span: F::Span,
         ) -> Self {
             let hex_str = ctx.alloc_str(content);
             Literal::HexBytes(HexBytes { raw: hex_str, span })
@@ -497,7 +485,7 @@ pub mod literal {
         pub fn os_file_path(
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
-            span: Span,
+            span: F::Span,
         ) -> Self {
             let path_str = ctx.alloc_str(content);
             Literal::OsFilePath(OsFilePath {
@@ -509,7 +497,7 @@ pub mod literal {
         pub fn date_time(
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
-            span: Span,
+            span: F::Span,
         ) -> Self {
             let date_str = ctx.alloc_str(content);
             Literal::DateTime(DateTime {
@@ -519,9 +507,9 @@ pub mod literal {
         }
 
         pub fn array(
-            left_bracket: token::OpenSquare,
+            left_bracket: token::OpenSquare<'cx, F>,
             exprs: &'cx [Expr<'cx, F>],
-            right_bracket: token::CloseSquare,
+            right_bracket: token::CloseSquare<'cx, F>,
         ) -> Self {
             Literal::Array(Array {
                 left_bracket,
@@ -533,45 +521,45 @@ pub mod literal {
 
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct Array<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-        pub left_bracket: token::OpenSquare,
+        pub left_bracket: token::OpenSquare<'cx, F>,
         pub exprs: &'cx [Expr<'cx, F>],
-        pub right_bracket: token::CloseSquare,
+        pub right_bracket: token::CloseSquare<'cx, F>,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub struct String<'cx> {
+    pub struct String<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
-        pub span: Span,
+        pub span: F::Span,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub struct Bytes<'cx> {
+    pub struct Bytes<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
-        pub span: Span,
+        pub span: F::Span,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub struct HexBytes<'cx> {
+    pub struct HexBytes<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
-        pub span: Span,
+        pub span: F::Span,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    pub struct Numeric<'cx> {
+    pub struct Numeric<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         /// The raw string representation of the numeric value, without any prefix or suffix.
         pub raw: &'cx str,
 
         pub kind: NumericKind,
-        pub suffix: Option<NumericSuffix<'cx>>,
+        pub suffix: Option<NumericSuffix<'cx, F>>,
     }
 
-    impl<'cx> Numeric<'cx> {
+    impl<'cx, F: TypeFamily<'cx>> Numeric<'cx, F> {
         #[inline]
         pub fn integer(
             ctx: &'cx crate::syntax::v1::context::Context<'cx, impl TypeFamily<'cx>>,
             raw: &str,
             prefix: IntegerPrefix,
-            suffix: Option<NumericSuffix<'cx>>,
+            suffix: Option<NumericSuffix<'cx, F>>,
         ) -> Self {
             let raw_str = ctx.alloc_str(raw);
             Numeric {
@@ -583,9 +571,9 @@ pub mod literal {
 
         #[inline]
         pub fn float(
-            ctx: &'cx crate::syntax::v1::context::Context<'cx, impl TypeFamily<'cx>>,
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             raw: &str,
-            suffix: Option<NumericSuffix<'cx>>,
+            suffix: Option<NumericSuffix<'cx, F>>,
         ) -> Self {
             let raw_str = ctx.alloc_str(raw);
             Numeric {
@@ -597,10 +585,10 @@ pub mod literal {
 
         #[inline]
         pub fn suffix(
-            ctx: &'cx crate::syntax::v1::context::Context<'cx, impl TypeFamily<'cx>>,
+            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             name: &str,
-            span: Span,
-        ) -> NumericSuffix<'cx> {
+            span: F::Span,
+        ) -> NumericSuffix<'cx, F> {
             let name_str = ctx.alloc_str(name);
             NumericSuffix(Ident {
                 raw: name_str,
@@ -617,7 +605,7 @@ pub mod literal {
 
     #[derive(Debug, PartialEq, Clone, Copy)]
     /// Suffix of numeral value. Allows any ident at this point.
-    pub struct NumericSuffix<'cx>(pub Ident<'cx>);
+    pub struct NumericSuffix<'cx, F: TypeFamily<'cx>>(pub Ident<'cx, F>);
 
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub enum IntegerPrefix {
@@ -638,24 +626,24 @@ pub mod literal {
     ///
     /// The file path is a string that represents the location of a file.
     /// It can be a relative or absolute path.
-    pub struct OsFilePath<'cx> {
+    pub struct OsFilePath<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
-        pub span: Span,
+        pub span: F::Span,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
     /// A date-time value.
-    pub struct DateTime<'cx> {
+    pub struct DateTime<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
-        pub span: Span,
+        pub span: F::Span,
     }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Parened<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub left_paren: token::OpenParen,
+    pub left_paren: token::OpenParen<'cx, F>,
     pub expr: Expr<'cx, F>,
-    pub right_paren: token::CloseParen,
+    pub right_paren: token::CloseParen<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -666,49 +654,49 @@ pub struct PreQualified<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Unary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub op: F::UnOp,
+    pub op: UnOp<'cx, F>,
     pub expr: Expr<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum UnOp {
+pub enum UnOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     /// Negates an expression.
-    Neg(token::Hyphen),
+    Neg(token::Hyphen<'cx, F>),
 
     /// Create a reference of an expression.
     ///
     /// This is a temporal solution for accepting the old `tlmid!` functionality.
-    Ref(token::Ampersand),
+    Ref(token::Ampersand<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Compare<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub head: Expr<'cx, F>,
-    pub tail_with_op: &'cx [(F::CompareOp, Expr<'cx, F>)],
+    pub tail_with_op: &'cx [(CompareOp<'cx, F>, Expr<'cx, F>)],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum CompareOp {
-    GreaterEq(token::RightAngleEq),
-    LessEq(token::AngleEq),
-    Greater(token::RightAngle),
-    Less(token::Angle),
-    NotEqual(NotEqualToken),
-    Equal(token::EqualEqual),
+pub enum CompareOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    GreaterEq(token::RightAngleEq<'cx, F>),
+    LessEq(token::AngleEq<'cx, F>),
+    Greater(token::RightAngle<'cx, F>),
+    Less(token::Angle<'cx, F>),
+    NotEqual(NotEqualToken<'cx, F>),
+    Equal(token::EqualEqual<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum NotEqualToken {
+pub enum NotEqualToken<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     /// `!=`
-    BangEqual(token::BangEqual),
+    BangEqual(token::BangEqual<'cx, F>),
     /// `/=`
-    SlashEqual(token::SlashEqual),
+    SlashEqual(token::SlashEqual<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Binary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: Expr<'cx, F>,
-    pub op: F::BinOp,
+    pub op: BinOp,
     pub rhs: Expr<'cx, F>,
 }
 
@@ -748,6 +736,6 @@ pub struct Apply<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
 pub struct Set<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: Expr<'cx, F>,
-    pub colon_eq: F::ColonEqToken,
+    pub colon_eq: token::ColonEq<'cx, F>,
     pub rhs: Expr<'cx, F>,
 }

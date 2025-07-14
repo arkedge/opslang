@@ -389,7 +389,7 @@ impl<'cx, S: Strategy> PrettyPrint<S> for ExprStatement<'cx> {
     }
 }
 
-impl<S: Strategy> PrettyPrint<S> for ReturnStmt {
+impl<'cx, S: Strategy> PrettyPrint<S> for ReturnStmt<'cx> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("return;")
     }

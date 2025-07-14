@@ -123,7 +123,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Scope<'_> {
 }
 
 impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContentOpt<'_> {
-    type Output = syn::token::Break;
+    type Output = syn::token::Break<'cx>;
 
     fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         syn::token::Break {
@@ -359,7 +359,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareExpr<'_> {
 }
 
 impl<'cx> ProcessToken<'cx> for grammar_trait::CompareOp<'_> {
-    type Output = syn::CompareOp;
+    type Output = syn::CompareOp<'cx>;
 
     fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         match self {

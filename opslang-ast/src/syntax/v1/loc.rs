@@ -50,7 +50,7 @@ impl<T: Position> Span for T {
     }
 }
 
-impl<'cx, F: TypeFamily<'cx, CommentSpan: Span>> Span for super::Comment<'cx, F> {
+impl<'cx, F: TypeFamily<'cx, Span: Span>> Span for super::Comment<'cx, F> {
     fn span(&self) -> super::Span {
         self.span.span()
     }
@@ -62,7 +62,7 @@ impl Span for super::Ident<'_> {
     }
 }
 
-impl Position for super::UnOp {
+impl Position for super::UnOp<'_> {
     fn position(&self) -> super::Position {
         match self {
             super::UnOp::Neg(hyphen) => hyphen.position,

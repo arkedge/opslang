@@ -1,5 +1,3 @@
-use opslang_ast_macros::{Position, Span};
-
 use super::{Position, Span};
 
 #[macro_export]
@@ -61,9 +59,16 @@ macro_rules! declare_token {
 
 macro_rules! token_define_if_1 {
     ($name:ident/1) => {
-        #[derive(Debug, PartialEq, Clone, Copy, Position)]
-        pub struct $name {
-            pub position: Position,
+        #[derive(Debug, PartialEq, Clone, Copy)]
+        pub struct $name<'cx, F: super::family::TypeFamily<'cx> = super::DefaultTypeFamily> {
+            pub position: F::Position,
+        }
+        impl<'cx, F: super::family::TypeFamily<'cx, Position: super::loc::Position>>
+            super::loc::Position for $name<'cx, F>
+        {
+            fn position(&self) -> Position {
+                self.position.position()
+            }
         }
     };
     ($name:ident/$lit:tt) => {};
@@ -72,9 +77,16 @@ macro_rules! token_define_if_1 {
 macro_rules! token_define_if_many {
     ($name:ident/1) => {};
     ($name:ident/$lit:tt) => {
-        #[derive(Debug, PartialEq, Clone, Copy, Span)]
-        pub struct $name {
-            pub span: Span,
+        #[derive(Debug, PartialEq, Clone, Copy)]
+        pub struct $name<'cx, F: super::family::TypeFamily<'cx> = super::DefaultTypeFamily> {
+            pub span: F::Span,
+        }
+        impl<'cx, F: super::family::TypeFamily<'cx, Span: super::loc::Span>> super::loc::Span
+            for $name<'cx, F>
+        {
+            fn span(&self) -> Span {
+                self.span.span()
+            }
         }
     };
 }
@@ -100,14 +112,7 @@ declare_token! {
     pub struct RightAngleEq/2
     pub struct AngleEq/2
     pub struct ColonEq/2
-}
 
-#[derive(Debug, PartialEq, Clone, Copy, Span)]
-pub struct Return {
-    pub span: Span,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy, Span)]
-pub struct Let {
-    pub span: Span,
+    pub struct Return/6
+    pub struct Let/3
 }
