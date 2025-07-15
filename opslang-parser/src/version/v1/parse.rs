@@ -794,10 +794,22 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Comment<'_> {
     type Output = &'cx syn::Comment<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        let token = &self.comment_content.comment_content;
         cx.alloc_comment(syn::Comment {
-            content: cx.alloc_str(token.text()),
-            span: token.location.span(),
+            content: cx.alloc_str(
+                self.comment_opt
+                    .as_ref()
+                    .map(|c| c.comment_content.comment_content.text())
+                    .unwrap_or(""),
+            ),
+            span: if let Some(comment) = &self.comment_opt {
+                comment.comment_content.comment_content.location.span()
+            } else {
+                let position = syn::BytePos(self.hash.hash.location.end + 1);
+                syn::Span {
+                    start: position,
+                    end: position,
+                }
+            },
         })
     }
 }

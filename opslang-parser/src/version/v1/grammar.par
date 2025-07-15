@@ -17,7 +17,7 @@ EndOfLine
     : <INITIAL, Cmnt>/\r?\n|\r/
     ;
 
-Comment: Hash^ CommentContent;
+Comment: Hash [ CommentContent ];
 
 Hash: '#';
 
