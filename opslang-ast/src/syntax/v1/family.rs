@@ -1,7 +1,5 @@
 use std::fmt::Debug;
 
-use crate::{Bridge, derive_trivial_bridge};
-
 macro_rules! declare_family {
     () => {};
     ($(type $ident:ident;)*) => {
@@ -46,5 +44,3 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         type Apply;
     }
 }
-
-derive_trivial_bridge!([for 'cx] &'cx super::Comment<'cx>);

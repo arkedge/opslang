@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 pub use family::TypeFamily;
-use opslang_ast_macros::{OrderSpan, TrivialBridge};
+use opslang_ast_macros::OrderSpan;
 
 pub mod context;
 pub mod family;
@@ -40,7 +40,7 @@ impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
     type Apply = Apply<'cx>;
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, TrivialBridge)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// A location in the code.
 pub struct Span {
     pub start: Position,
