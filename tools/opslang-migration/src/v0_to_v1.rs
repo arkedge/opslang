@@ -198,12 +198,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Row {
         };
 
         let comment = if let Some(v0::Comment(comment_text)) = self.comment_trailing {
-            // complement the comment text with a single space
-            let comment_str = ctx.alloc_str(&if !comment_text.is_empty() {
-                format!(" {comment_text}")
-            } else {
-                comment_text
-            });
+            let comment_str = ctx.alloc_str(&comment_text);
             Some(ctx.alloc_comment(v1::Comment {
                 content: comment_str,
                 span: Span,

@@ -236,7 +236,7 @@ peg::parser! {
             / command:command() { SingleStatement::Command(command) }
 
         rule comment() -> Comment
-            = "#" _ s:$([c if c != '\n']*) { Comment(s.to_owned()) }
+            = "#" s:$([c if c != '\n']*) { Comment(s.to_owned()) }
 
         pub rule row_() -> Row
             = _ breaks:"."? _ r:(
