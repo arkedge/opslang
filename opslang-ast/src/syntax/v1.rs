@@ -220,26 +220,6 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         ctx.alloc_expr(kind)
     }
 
-    pub fn apply_literal(
-        ctx: &'cx context::Context<'cx, F>,
-        literal: literal::Literal<'cx, F>,
-        args: Vec<Self>,
-    ) -> Self
-    where
-        F: TypeFamily<'cx, Literal = literal::Literal<'cx, F>, Apply = Apply<'cx, F>>,
-    {
-        let function_expr = ctx.alloc_expr(ExprKind::<F>::Literal(literal));
-
-        let args_slice: &[Self] = Box::leak(args.into_boxed_slice());
-
-        let apply_expr = ExprKind::Apply(Apply {
-            function: function_expr,
-            args: args_slice,
-        });
-
-        ctx.alloc_expr(apply_expr)
-    }
-
     #[inline]
     pub fn ident(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self
     where

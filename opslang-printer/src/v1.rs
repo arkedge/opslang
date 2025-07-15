@@ -391,7 +391,7 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Row<'cx, F> {
         // Handle breaks
         if self.breaks.is_some() {
             writer.write_char('.')?;
-        } else if options.reserve_for_break {
+        } else if options.reserve_for_break && (self.content.is_some() || self.comment.is_some()) {
             writer.write_char(' ')?;
         }
 
@@ -403,41 +403,9 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Row<'cx, F> {
         // Handle comment (naive approach: just add space)
         if let Some(comment) = &self.comment {
             if self.content.is_some() {
-                writer.write_char(' ')?;
-            }
-            PrettyPrint::<Naive>::pretty_print(*comment, writer, options)?;
-        }
-
-        Ok(())
-    }
-}
-
-impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Row<'cx, F> {
-    fn pretty_print(
-        &self,
-        writer: &mut impl Write,
-        options: &PrintOptions<CommentAligned>,
-    ) -> fmt::Result {
-        // Note: When Row is used individually (not through Scope),
-        // we fall back to naive comment handling
-        Indent.write(writer, options)?;
-
-        // Handle breaks
-        if self.breaks.is_some() {
-            writer.write_str(".")?;
-        }
-
-        // Handle content
-        if let Some(content) = &self.content {
-            PrettyPrint::<CommentAligned>::pretty_print(content, writer, options)?;
-        }
-
-        // Handle comment (fallback to naive approach when not in scope context)
-        if let Some(comment) = &self.comment {
-            if self.content.is_some() {
                 writer.write_str(" ")?;
             }
-            PrettyPrint::<CommentAligned>::pretty_print(*comment, writer, options)?;
+            PrettyPrint::<Naive>::pretty_print(*comment, writer, options)?;
         }
 
         Ok(())
@@ -447,7 +415,11 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Row<'cx, F> {
 impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Comment<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("#")?;
-        writer.write_str(self.content)
+        if !self.content.trim_end().is_empty() {
+            writer.write_str(self.content)
+        } else {
+            Ok(())
+        }
     }
 }
 
