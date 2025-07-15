@@ -765,8 +765,8 @@ pub struct ApplyExprList<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct ArithmeticExpr<'t> {
-    pub factor_expr: Box<FactorExpr<'t>>,
     pub arithmetic_expr_list: Vec<ArithmeticExprList<'t>>,
+    pub factor_expr: Box<FactorExpr<'t>>,
 }
 
 ///
@@ -776,8 +776,8 @@ pub struct ArithmeticExpr<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct ArithmeticExprList<'t> {
-    pub arithmetic_op: Box<ArithmeticOp<'t>>,
     pub factor_expr: Box<FactorExpr<'t>>,
+    pub arithmetic_op: Box<ArithmeticOp<'t>>,
 }
 
 ///
@@ -1012,8 +1012,8 @@ pub struct Expr<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct FactorExpr<'t> {
-    pub prefix_expr: Box<PrefixExpr<'t>>,
     pub factor_expr_list: Vec<FactorExprList<'t>>,
+    pub prefix_expr: Box<PrefixExpr<'t>>,
 }
 
 ///
@@ -1023,8 +1023,8 @@ pub struct FactorExpr<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct FactorExprList<'t> {
-    pub factor_op: Box<FactorOp<'t>>,
     pub prefix_expr: Box<PrefixExpr<'t>>,
+    pub factor_op: Box<FactorOp<'t>>,
 }
 
 ///
@@ -1177,8 +1177,8 @@ pub enum Literal<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct LogicalAndExpr<'t> {
-    pub infix_in_expr: Box<InfixInExpr<'t>>,
     pub logical_and_expr_list: Vec<LogicalAndExprList<'t>>,
+    pub infix_in_expr: Box<InfixInExpr<'t>>,
 }
 
 ///
@@ -1188,8 +1188,8 @@ pub struct LogicalAndExpr<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct LogicalAndExprList<'t> {
-    pub amp_amp: Token<'t>, /* && */
     pub infix_in_expr: Box<InfixInExpr<'t>>,
+    pub amp_amp: Token<'t>, /* && */
 }
 
 ///
@@ -1199,8 +1199,8 @@ pub struct LogicalAndExprList<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct LogicalOrExpr<'t> {
-    pub logical_and_expr: Box<LogicalAndExpr<'t>>,
     pub logical_or_expr_list: Vec<LogicalOrExprList<'t>>,
+    pub logical_and_expr: Box<LogicalAndExpr<'t>>,
 }
 
 ///
@@ -1210,8 +1210,8 @@ pub struct LogicalOrExpr<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct LogicalOrExprList<'t> {
-    pub or_or: Token<'t>, /* || */
     pub logical_and_expr: Box<LogicalAndExpr<'t>>,
+    pub or_or: Token<'t>, /* || */
 }
 
 ///
@@ -2218,22 +2218,22 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 31:
     ///
-    /// `LogicalOrExpr: LogicalAndExpr LogicalOrExprList /* Vec */;`
+    /// `LogicalOrExpr: LogicalOrExprList /* Vec */ LogicalAndExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn logical_or_expr(
         &mut self,
-        _logical_and_expr: &ParseTreeType<'t>,
         _logical_or_expr_list: &ParseTreeType<'t>,
+        _logical_and_expr: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
+        let logical_and_expr = pop_item!(self, logical_and_expr, LogicalAndExpr, context);
         let logical_or_expr_list =
             pop_item!(self, logical_or_expr_list, LogicalOrExprList, context);
-        let logical_and_expr = pop_item!(self, logical_and_expr, LogicalAndExpr, context);
         let logical_or_expr_built = LogicalOrExpr {
-            logical_and_expr: Box::new(logical_and_expr),
             logical_or_expr_list,
+            logical_and_expr: Box::new(logical_and_expr),
         };
         // Calling user action here
         self.user_grammar.logical_or_expr(&logical_or_expr_built)?;
@@ -2243,14 +2243,14 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 32:
     ///
-    /// `LogicalOrExprList /* Vec<T>::Push */: LogicalOrExprList '||' LogicalAndExpr;`
+    /// `LogicalOrExprList /* Vec<T>::Push */: LogicalOrExprList LogicalAndExpr '||';`
     ///
     #[parol_runtime::function_name::named]
     fn logical_or_expr_list_0(
         &mut self,
         _logical_or_expr_list: &ParseTreeType<'t>,
-        or_or: &ParseTreeType<'t>,
         _logical_and_expr: &ParseTreeType<'t>,
+        or_or: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
@@ -2259,8 +2259,8 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         let mut logical_or_expr_list =
             pop_item!(self, logical_or_expr_list, LogicalOrExprList, context);
         let logical_or_expr_list_0_built = LogicalOrExprList {
-            logical_and_expr: Box::new(logical_and_expr),
             or_or,
+            logical_and_expr: Box::new(logical_and_expr),
         };
         // Add an element to the vector
         logical_or_expr_list.push(logical_or_expr_list_0_built);
@@ -2286,22 +2286,22 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 34:
     ///
-    /// `LogicalAndExpr: InfixInExpr LogicalAndExprList /* Vec */;`
+    /// `LogicalAndExpr: LogicalAndExprList /* Vec */ InfixInExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn logical_and_expr(
         &mut self,
-        _infix_in_expr: &ParseTreeType<'t>,
         _logical_and_expr_list: &ParseTreeType<'t>,
+        _infix_in_expr: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
+        let infix_in_expr = pop_item!(self, infix_in_expr, InfixInExpr, context);
         let logical_and_expr_list =
             pop_item!(self, logical_and_expr_list, LogicalAndExprList, context);
-        let infix_in_expr = pop_item!(self, infix_in_expr, InfixInExpr, context);
         let logical_and_expr_built = LogicalAndExpr {
-            infix_in_expr: Box::new(infix_in_expr),
             logical_and_expr_list,
+            infix_in_expr: Box::new(infix_in_expr),
         };
         // Calling user action here
         self.user_grammar
@@ -2312,14 +2312,14 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 35:
     ///
-    /// `LogicalAndExprList /* Vec<T>::Push */: LogicalAndExprList '&&' InfixInExpr;`
+    /// `LogicalAndExprList /* Vec<T>::Push */: LogicalAndExprList InfixInExpr '&&';`
     ///
     #[parol_runtime::function_name::named]
     fn logical_and_expr_list_0(
         &mut self,
         _logical_and_expr_list: &ParseTreeType<'t>,
-        amp_amp: &ParseTreeType<'t>,
         _infix_in_expr: &ParseTreeType<'t>,
+        amp_amp: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
@@ -2328,8 +2328,8 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         let mut logical_and_expr_list =
             pop_item!(self, logical_and_expr_list, LogicalAndExprList, context);
         let logical_and_expr_list_0_built = LogicalAndExprList {
-            infix_in_expr: Box::new(infix_in_expr),
             amp_amp,
+            infix_in_expr: Box::new(infix_in_expr),
         };
         // Add an element to the vector
         logical_and_expr_list.push(logical_and_expr_list_0_built);
@@ -2598,22 +2598,22 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 50:
     ///
-    /// `ArithmeticExpr: FactorExpr ArithmeticExprList /* Vec */;`
+    /// `ArithmeticExpr: ArithmeticExprList /* Vec */ FactorExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn arithmetic_expr(
         &mut self,
-        _factor_expr: &ParseTreeType<'t>,
         _arithmetic_expr_list: &ParseTreeType<'t>,
+        _factor_expr: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
+        let factor_expr = pop_item!(self, factor_expr, FactorExpr, context);
         let arithmetic_expr_list =
             pop_item!(self, arithmetic_expr_list, ArithmeticExprList, context);
-        let factor_expr = pop_item!(self, factor_expr, FactorExpr, context);
         let arithmetic_expr_built = ArithmeticExpr {
-            factor_expr: Box::new(factor_expr),
             arithmetic_expr_list,
+            factor_expr: Box::new(factor_expr),
         };
         // Calling user action here
         self.user_grammar.arithmetic_expr(&arithmetic_expr_built)?;
@@ -2623,24 +2623,24 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 51:
     ///
-    /// `ArithmeticExprList /* Vec<T>::Push */: ArithmeticExprList ArithmeticOp FactorExpr;`
+    /// `ArithmeticExprList /* Vec<T>::Push */: ArithmeticExprList FactorExpr ArithmeticOp;`
     ///
     #[parol_runtime::function_name::named]
     fn arithmetic_expr_list_0(
         &mut self,
         _arithmetic_expr_list: &ParseTreeType<'t>,
-        _arithmetic_op: &ParseTreeType<'t>,
         _factor_expr: &ParseTreeType<'t>,
+        _arithmetic_op: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let factor_expr = pop_item!(self, factor_expr, FactorExpr, context);
         let arithmetic_op = pop_item!(self, arithmetic_op, ArithmeticOp, context);
+        let factor_expr = pop_item!(self, factor_expr, FactorExpr, context);
         let mut arithmetic_expr_list =
             pop_item!(self, arithmetic_expr_list, ArithmeticExprList, context);
         let arithmetic_expr_list_0_built = ArithmeticExprList {
-            factor_expr: Box::new(factor_expr),
             arithmetic_op: Box::new(arithmetic_op),
+            factor_expr: Box::new(factor_expr),
         };
         // Add an element to the vector
         arithmetic_expr_list.push(arithmetic_expr_list_0_built);
@@ -2700,21 +2700,21 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 55:
     ///
-    /// `FactorExpr: PrefixExpr FactorExprList /* Vec */;`
+    /// `FactorExpr: FactorExprList /* Vec */ PrefixExpr;`
     ///
     #[parol_runtime::function_name::named]
     fn factor_expr(
         &mut self,
-        _prefix_expr: &ParseTreeType<'t>,
         _factor_expr_list: &ParseTreeType<'t>,
+        _prefix_expr: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let factor_expr_list = pop_item!(self, factor_expr_list, FactorExprList, context);
         let prefix_expr = pop_item!(self, prefix_expr, PrefixExpr, context);
+        let factor_expr_list = pop_item!(self, factor_expr_list, FactorExprList, context);
         let factor_expr_built = FactorExpr {
-            prefix_expr: Box::new(prefix_expr),
             factor_expr_list,
+            prefix_expr: Box::new(prefix_expr),
         };
         // Calling user action here
         self.user_grammar.factor_expr(&factor_expr_built)?;
@@ -2724,23 +2724,23 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 56:
     ///
-    /// `FactorExprList /* Vec<T>::Push */: FactorExprList FactorOp PrefixExpr;`
+    /// `FactorExprList /* Vec<T>::Push */: FactorExprList PrefixExpr FactorOp;`
     ///
     #[parol_runtime::function_name::named]
     fn factor_expr_list_0(
         &mut self,
         _factor_expr_list: &ParseTreeType<'t>,
-        _factor_op: &ParseTreeType<'t>,
         _prefix_expr: &ParseTreeType<'t>,
+        _factor_op: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let prefix_expr = pop_item!(self, prefix_expr, PrefixExpr, context);
         let factor_op = pop_item!(self, factor_op, FactorOp, context);
+        let prefix_expr = pop_item!(self, prefix_expr, PrefixExpr, context);
         let mut factor_expr_list = pop_item!(self, factor_expr_list, FactorExprList, context);
         let factor_expr_list_0_built = FactorExprList {
-            prefix_expr: Box::new(prefix_expr),
             factor_op: Box::new(factor_op),
+            prefix_expr: Box::new(prefix_expr),
         };
         // Add an element to the vector
         factor_expr_list.push(factor_expr_list_0_built);

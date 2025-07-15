@@ -70,12 +70,12 @@ InfixIfExpr
 
 // `||` : lower than `&&`
 LogicalOrExpr
-    : LogicalAndExpr { '||' LogicalAndExpr }
+    : { LogicalAndExpr '||' } LogicalAndExpr
     ;
 
 // `&&` : lower then compare infix `in`
 LogicalAndExpr
-    : InfixInExpr { '&&' InfixInExpr }
+    : { InfixInExpr '&&' } InfixInExpr
     ;
 
 // infix `in` : non-associative, lower then compare operators
@@ -102,7 +102,7 @@ CompareOp
 // `+`, `-`
 //     : lower then factor
 ArithmeticExpr
-    : FactorExpr { ArithmeticOp FactorExpr }
+    : { FactorExpr ArithmeticOp } FactorExpr
     ;
 
 ArithmeticOp
@@ -113,7 +113,7 @@ ArithmeticOp
 // `*`, `/`
 //     : lower then prefix
 FactorExpr
-    : PrefixExpr { FactorOp PrefixExpr }
+    : { PrefixExpr FactorOp } PrefixExpr
     ;
 
 FactorOp
