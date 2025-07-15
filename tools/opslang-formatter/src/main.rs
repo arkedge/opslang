@@ -3,7 +3,8 @@ use clap::Parser;
 use opslang_formatter::{FormatterConfig, format_file, format_source};
 use std::fs;
 use std::io::{self, Read};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use walkdir::WalkDir;
 
 #[derive(Parser)]
 #[command(name = "opslang-formatter")]
@@ -25,6 +26,10 @@ struct Cli {
     /// Print formatted output to stdout instead of modifying files
     #[arg(long)]
     stdout: bool,
+
+    /// Fail if input path is a directory
+    #[arg(long)]
+    fail_on_dir: bool,
 }
 
 fn main() -> Result<()> {
@@ -47,7 +52,25 @@ fn main() -> Result<()> {
         print!("{formatted}");
     } else {
         // Process files
+        let mut all_files = Vec::new();
+
         for file_path in cli.files {
+            if file_path.is_dir() {
+                if cli.fail_on_dir {
+                    return Err(anyhow::anyhow!(
+                        "Directory provided but --fail-on-dir specified: {}",
+                        file_path.display()
+                    ));
+                }
+
+                // Recursively collect all files in directory
+                collect_files(&file_path, &mut all_files)?;
+            } else {
+                all_files.push(file_path);
+            }
+        }
+
+        for file_path in all_files {
             if cli.stdout {
                 // Read file and print formatted output to stdout
                 let source = fs::read_to_string(&file_path)
@@ -79,4 +102,25 @@ fn main() -> Result<()> {
     }
 
     Ok(())
+}
+
+fn collect_files(dir: &PathBuf, files: &mut Vec<PathBuf>) -> Result<()> {
+    for entry in WalkDir::new(dir) {
+        let entry = entry
+            .with_context(|| format!("Failed to read directory entry in: {}", dir.display()))?;
+        let path = entry.path();
+
+        if path.is_file() && is_opslang_file(path) {
+            files.push(path.to_path_buf());
+        }
+    }
+
+    Ok(())
+}
+
+fn is_opslang_file(path: &Path) -> bool {
+    path.extension()
+        .and_then(|ext| ext.to_str())
+        .map(|ext| ext == "ops" || ext == "opslang")
+        .unwrap_or(false)
 }
