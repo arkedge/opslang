@@ -141,11 +141,16 @@ fn validate_git_status_for_files(
     Ok(())
 }
 
-fn is_opslang_file(path: &Path) -> bool {
+fn is_opslang_v0_file(path: &Path) -> bool {
     path.extension()
         .and_then(|ext| ext.to_str())
         .map(|ext| ext == "ops" || ext == "opslang")
         .unwrap_or(false)
+        // ad-hoc check for v0 files
+        && {
+            let path_str = path.to_string_lossy();
+            !path_str.ends_with("v1.ops") && !path_str.ends_with("v1.ops")
+        }
 }
 
 fn collect_input_files(inputs: &[String], recursive: bool) -> Result<Vec<PathBuf>, MigrationError> {
@@ -165,7 +170,7 @@ fn collect_input_files(inputs: &[String], recursive: bool) -> Result<Vec<PathBuf
                 let entry = entry?;
                 let entry_path = entry.path();
 
-                if entry_path.is_file() && is_opslang_file(entry_path) {
+                if entry_path.is_file() && is_opslang_v0_file(entry_path) {
                     files.push(entry_path.to_path_buf());
                 }
             }
