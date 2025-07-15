@@ -98,8 +98,6 @@ pub struct BasePrintOptions {
     pub max_width: usize,
     /// Newline style
     pub newline_style: NewlineStyle,
-    /// Whether to add trailing commas
-    pub trailing_comma: bool,
 }
 
 /// Complete pretty-print options with comment alignment
@@ -119,7 +117,6 @@ impl Default for BasePrintOptions {
             indent_level: 0,
             max_width: 80,
             newline_style: NewlineStyle::Unix,
-            trailing_comma: true,
         }
     }
 }
@@ -337,7 +334,6 @@ mod tests {
         assert_eq!(opts.indent_str, "    ");
         assert_eq!(opts.indent_level, 0);
         assert_eq!(opts.max_width, 80);
-        assert!(opts.trailing_comma);
     }
 
     #[test]
@@ -346,7 +342,6 @@ mod tests {
         assert_eq!(opts.base.indent_str, "    ");
         assert_eq!(opts.base.indent_level, 0);
         assert_eq!(opts.base.max_width, 80);
-        assert!(opts.base.trailing_comma);
         assert!(matches!(
             opts.comment_alignment.position,
             CommentPosition::ToLongest
@@ -364,7 +359,6 @@ mod tests {
         assert_eq!(opts.indent_str, "    ");
         assert_eq!(opts.indent_level, 0);
         assert_eq!(opts.max_width, 80);
-        assert!(opts.trailing_comma);
     }
 
     #[test]
@@ -432,7 +426,6 @@ mod tests {
                 indent_level: 2,
                 max_width: 120,
                 newline_style: NewlineStyle::Windows,
-                trailing_comma: false,
             },
             comment_alignment: CommentAlignment {
                 grouping: CommentGrouping::Consecutive,
@@ -447,7 +440,6 @@ mod tests {
         assert_eq!(printer.options.indent_str, "\t");
         assert_eq!(printer.options.indent_level, 2);
         assert_eq!(printer.options.max_width, 120);
-        assert!(!printer.options.trailing_comma);
     }
 
     #[test]
@@ -457,7 +449,6 @@ mod tests {
             indent_level: 1,
             max_width: 120,
             newline_style: NewlineStyle::Windows,
-            trailing_comma: false,
         };
 
         let opts_default = PrintOptions::<Naive>::from_base(base);
