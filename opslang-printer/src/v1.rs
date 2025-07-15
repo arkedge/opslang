@@ -612,7 +612,9 @@ where
 
 impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for OsFilePath<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
-        writer.write_str(self.raw)
+        writer.write_str("os\"")?;
+        writer.write_str(self.raw)?;
+        writer.write_str("\"")
     }
 }
 

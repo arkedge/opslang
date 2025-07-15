@@ -685,12 +685,8 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Call {
     ) -> Result<Self::Converted, ConversionError> {
         // Create path argument as string literal
         let path_str = ctx.alloc_str(&self.path.full_name);
-        let path_literal = v1::literal::String {
-            raw: path_str,
-            span: Span,
-        };
-        let path_expr = ctx.alloc_expr(v1::ExprKind::Literal(v1::literal::Literal::String(
-            path_literal,
+        let path_expr = ctx.alloc_expr(v1::ExprKind::Literal(v1::literal::Literal::os_file_path(
+            ctx, path_str, Span,
         )));
 
         Ok(create_apply_with_string_function(
