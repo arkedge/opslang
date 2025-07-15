@@ -114,12 +114,10 @@ fn write_comment_group<'cx, F: PrintableFamily<'cx>>(
             let current_len = row.content.len();
             // Shebang comments (starting with '!') are not aligned
             if comment.content.starts_with('!') {
-                writer.write_str(" ")?;
+                // do nothing
             } else if target_position > current_len {
                 let spaces_needed = target_position - current_len;
                 writer.write_str(&" ".repeat(spaces_needed))?;
-            } else {
-                writer.write_str(" ")?;
             }
             PrettyPrint::<CommentAligned>::pretty_print(comment, writer, options)?;
         }
@@ -251,6 +249,9 @@ fn pretty_print_per_block<'cx, F: PrintableFamily<'cx>>(
 
 /// Calculate the target position based on position strategy
 fn calculate_target_position(longest_content: usize, position: CommentPosition) -> usize {
+    if longest_content == 0 {
+        return 0; // No content, no alignment needed
+    }
     match position {
         CommentPosition::ToLongest => longest_content + 1, // +1 for space before comment
         CommentPosition::ToFixed {
