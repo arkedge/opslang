@@ -58,14 +58,14 @@ impl Migrate<opslang_ast::V0, opslang_ast::V1> for V0ToV1 {
 
 // Helper functions for common Apply expression patterns
 
-/// Creates a function application expression with a string literal function name
+/// Creates a function application expression with a function name
 fn create_apply_with_string_function<'cx>(
     ctx: &'cx Context<'cx, ConvertedFamily>,
     function_name: &str,
     args: Vec<v1::Expr<'cx, ConvertedFamily>>,
 ) -> v1::Expr<'cx, ConvertedFamily> {
-    let function_literal = v1::literal::Literal::string(ctx, function_name, Span);
-    v1::Expr::apply_literal(ctx, function_literal, args)
+    let function_path = v1::Expr::ident(ctx, function_name, Span);
+    v1::Expr::apply(ctx, function_path, args)
 }
 
 /// A trait for converting v0 AST nodes to v1 AST nodes.
@@ -198,7 +198,12 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Row {
         };
 
         let comment = if let Some(v0::Comment(comment_text)) = self.comment_trailing {
-            let comment_str = ctx.alloc_str(&comment_text);
+            // complement the comment text with a single space
+            let comment_str = ctx.alloc_str(&if !comment_text.is_empty() {
+                format!(" {comment_text}")
+            } else {
+                comment_text
+            });
             Some(ctx.alloc_comment(v1::Comment {
                 content: comment_str,
                 span: Span,
@@ -395,7 +400,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
         let path_string = if let Some(v0::ReceiverComponent { name, exec_method }) =
             self.destination.receiver_component
         {
-            format!("{name}.{exec_method}")
+            format!("{name}.{exec_method}.{}", self.name)
         } else {
             self.name
         };
@@ -426,6 +431,10 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
                 name: v1::Path::single(ctx, &name, Span),
             };
             qualifs.push(v1::Qualif::ExecutorComponent(component));
+        }
+        if let Some(expr) = self.destination.time_indicator {
+            let time_qualif = v1::Qualif::TimeIndicator(expr.convert(ctx)?);
+            qualifs.push(time_qualif);
         }
 
         Ok(v1::Expr::pre_qualified(
