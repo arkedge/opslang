@@ -45,12 +45,19 @@ pub struct BasePrintOptionsConfig {
     /// String used for indentation (usually spaces or tabs)
     #[serde(default = "default_indent_str")]
     pub indent_str: String,
+
     /// Current indentation level
     #[serde(default)]
     pub indent_level: usize,
+
+    /// Whether to reserve a space for break tokens
+    #[serde(default = "default_reserve_for_break")]
+    pub reserve_for_break: bool,
+
     /// Maximum line width
     #[serde(default = "default_max_width")]
     pub max_width: usize,
+
     /// Newline style
     #[serde(default)]
     pub newline_style: NewlineStyleConfig,
@@ -106,6 +113,10 @@ fn default_indent_str() -> String {
     "    ".to_string() // 4 spaces
 }
 
+fn default_reserve_for_break() -> bool {
+    true
+}
+
 fn default_max_width() -> usize {
     80
 }
@@ -115,6 +126,7 @@ impl Default for BasePrintOptionsConfig {
         Self {
             indent_str: default_indent_str(),
             indent_level: 0,
+            reserve_for_break: default_reserve_for_break(),
             max_width: default_max_width(),
             newline_style: NewlineStyleConfig::default(),
         }
@@ -147,6 +159,7 @@ impl From<&FormatterConfig> for PrintOptions<Naive> {
                     .into_boxed_str(),
             ),
             indent_level: config.print_options.base.indent_level,
+            reserve_for_break: config.print_options.base.reserve_for_break,
             max_width: config.print_options.base.max_width,
             newline_style: match config.print_options.base.newline_style {
                 NewlineStyleConfig::Unix => opslang_printer::NewlineStyle::Unix,
@@ -170,6 +183,7 @@ impl From<&FormatterConfig> for PrintOptions<CommentAligned> {
                     .into_boxed_str(),
             ),
             indent_level: config.print_options.base.indent_level,
+            reserve_for_break: config.print_options.base.reserve_for_break,
             max_width: config.print_options.base.max_width,
             newline_style: match config.print_options.base.newline_style {
                 NewlineStyleConfig::Unix => opslang_printer::NewlineStyle::Unix,

@@ -94,6 +94,8 @@ pub struct BasePrintOptions {
     pub indent_str: &'static str,
     /// Current indentation level
     pub indent_level: usize,
+    /// Whether to reserve a space for break tokens
+    pub reserve_for_break: bool,
     /// Maximum line width
     pub max_width: usize,
     /// Newline style
@@ -115,6 +117,7 @@ impl Default for BasePrintOptions {
         Self {
             indent_str: "    ", // 4 spaces
             indent_level: 0,
+            reserve_for_break: true,
             max_width: 80,
             newline_style: NewlineStyle::Unix,
         }
@@ -419,34 +422,11 @@ mod tests {
     }
 
     #[test]
-    fn test_printer_with_options() {
-        let options = PrintOptions {
-            base: BasePrintOptions {
-                indent_str: "\t",
-                indent_level: 2,
-                max_width: 120,
-                newline_style: NewlineStyle::Windows,
-            },
-            comment_alignment: CommentAlignment {
-                grouping: CommentGrouping::Consecutive,
-                position: CommentPosition::ToFixed {
-                    column: 40,
-                    fallback_to_longest: false,
-                },
-            },
-            ..Default::default()
-        };
-        let printer: Printer<Naive> = Printer::new(options);
-        assert_eq!(printer.options.indent_str, "\t");
-        assert_eq!(printer.options.indent_level, 2);
-        assert_eq!(printer.options.max_width, 120);
-    }
-
-    #[test]
     fn test_construction_methods() {
         let base = BasePrintOptions {
             indent_str: "\t",
             indent_level: 1,
+            reserve_for_break: true,
             max_width: 120,
             newline_style: NewlineStyle::Windows,
         };

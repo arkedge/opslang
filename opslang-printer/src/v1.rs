@@ -146,6 +146,8 @@ fn pretty_print_consecutive<'cx, F: PrintableFamily<'cx>>(
                 Indent.write(&mut temp_buffer, options)?;
                 if row.breaks.is_some() {
                     temp_buffer.push('.');
+                } else if options.reserve_for_break {
+                    temp_buffer.push(' ');
                 }
                 if let Some(content) = &row.content {
                     PrettyPrint::<CommentAligned>::pretty_print(
@@ -212,6 +214,8 @@ fn pretty_print_per_block<'cx, F: PrintableFamily<'cx>>(
                 Indent.write(&mut temp_buffer, options)?;
                 if row.breaks.is_some() {
                     temp_buffer.push('.');
+                } else if options.reserve_for_break {
+                    temp_buffer.push(' ');
                 }
                 if let Some(content) = &row.content {
                     PrettyPrint::<CommentAligned>::pretty_print(
@@ -386,7 +390,9 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Row<'cx, F> {
 
         // Handle breaks
         if self.breaks.is_some() {
-            writer.write_str(".")?;
+            writer.write_char('.')?;
+        } else if options.reserve_for_break {
+            writer.write_char(' ')?;
         }
 
         // Handle content
@@ -397,7 +403,7 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Row<'cx, F> {
         // Handle comment (naive approach: just add space)
         if let Some(comment) = &self.comment {
             if self.content.is_some() {
-                writer.write_str(" ")?;
+                writer.write_char(' ')?;
             }
             PrettyPrint::<Naive>::pretty_print(*comment, writer, options)?;
         }
