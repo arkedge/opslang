@@ -12,7 +12,8 @@ use walkdir::WalkDir;
 #[derive(Parser)]
 #[command(
     name = "opslang-migration",
-    about = "Migrates opslang source files from v0 to v1"
+    about = "Migrates opslang source files from v0 to v1",
+    version
 )]
 struct Cli {
     /// Input file or directory paths
@@ -39,12 +40,12 @@ struct Cli {
     #[arg(long, help = "Ignore git working directory dirty status")]
     allow_dirty: bool,
 
-    /// Create separate output files instead of in-place modification
+    /// Create separate output files, keeping original files
     #[arg(
         long,
         help = "Create separate output files with version suffix instead of modifying in-place"
     )]
-    separate_files: bool,
+    keep: bool,
 
     /// Omit metadata comments (shebang is always included)
     #[arg(
@@ -422,7 +423,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         }
                     };
                     let output_path = if cli.output.is_none() {
-                        if cli.separate_files {
+                        if cli.keep {
                             Some(generate_output_filename(path).to_string_lossy().to_string())
                         } else {
                             // In-place modification for single file
@@ -454,7 +455,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     if let Err(e) = process_multiple_inputs(
                         files,
                         cli.fail_fast,
-                        cli.separate_files,
+                        cli.keep,
                         !cli.no_metadata,
                         cli.allow_dirty,
                     ) {
@@ -483,7 +484,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if let Err(e) = process_multiple_inputs(
                 files,
                 cli.fail_fast,
-                cli.separate_files,
+                cli.keep,
                 !cli.no_metadata,
                 cli.allow_dirty,
             ) {
