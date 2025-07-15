@@ -147,6 +147,15 @@ impl BasePrintOptions {
 }
 
 impl<S: Strategy> PrintOptions<S> {
+    /// Create a new PrintOptions
+    pub fn new(base: BasePrintOptions, comment_alignment: CommentAlignment) -> Self {
+        Self {
+            base,
+            comment_alignment,
+            _strategy: PhantomData,
+        }
+    }
+
     /// Create a new PrintOptions with increased indentation level
     pub fn with_increased_indent(&self) -> Self {
         Self {
