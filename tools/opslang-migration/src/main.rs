@@ -229,7 +229,7 @@ fn generate_metadata(include_comments: bool) -> String {
         let args: Vec<String> = env::args().collect();
         let command_line = args.join(" ");
 
-        metadata.push_str(&format!("# Generated on {datetime} by: {command_line}\n"));
+        metadata.push_str(&format!("# Migrated at {datetime} by: {command_line}\n"));
     }
 
     metadata
