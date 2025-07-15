@@ -10,16 +10,16 @@ use opslang_ast::syntax::v1::*;
 
 /// Information about a single row for comment alignment calculation.
 #[derive(Debug, Clone)]
-struct RowInfo<'cx> {
+struct RowInfo<'cx, F: PrintableFamily<'cx>> {
     /// Pre-formatted content string (before comment).
     content: std::string::String,
     /// Raw comment reference (None if no comment).
-    comment: Option<&'cx Comment<'cx>>,
+    comment: Option<&'cx Comment<'cx, F>>,
 }
 
 /// Write a group of rows with aligned comments.
-fn write_comment_group<'cx>(
-    rows: &[RowInfo<'cx>],
+fn write_comment_group<'cx, F: PrintableFamily<'cx>>(
+    rows: &[RowInfo<'cx, F>],
     writer: &mut impl Write,
     options: &PrintOptions<CommentAligned>,
 ) -> fmt::Result {
@@ -63,8 +63,8 @@ fn write_comment_group<'cx>(
 }
 
 /// Implementation for consecutive grouping: group rows separated by empty lines
-fn pretty_print_consecutive<'cx>(
-    scope: &Scope<'cx>,
+fn pretty_print_consecutive<'cx, F: PrintableFamily<'cx>>(
+    scope: &Scope<'cx, F>,
     writer: &mut impl Write,
     options: &PrintOptions<CommentAligned>,
 ) -> fmt::Result {
@@ -128,8 +128,8 @@ fn pretty_print_consecutive<'cx>(
 }
 
 /// Implementation for per-block grouping: group all comments in the current block
-fn pretty_print_per_block<'cx>(
-    scope: &Scope<'cx>,
+fn pretty_print_per_block<'cx, F: PrintableFamily<'cx>>(
+    scope: &Scope<'cx, F>,
     writer: &mut impl Write,
     options: &PrintOptions<CommentAligned>,
 ) -> fmt::Result {
@@ -209,15 +209,67 @@ fn calculate_target_position(longest_content: usize, position: CommentPosition) 
     }
 }
 
+/// Alias for printable family used in this module.
+///
+/// Types that implement this trait looks very similar to [`DefaultTypeFamily`], but
+/// accepts any `Span` and `Position` types, which allows for more flexibility in
+/// printing operations.
+pub trait PrintableFamily<'cx>:
+    TypeFamily<
+        'cx,
+        Comment = &'cx Comment<'cx, Self>,
+        Row = &'cx Row<'cx, Self>,
+        RowContent = StatementKind<'cx, Self>,
+        Block = &'cx Block<'cx, Self>,
+        ScopeItem = ScopeItem<'cx, Self>,
+        ReturnStmt = ReturnStmt<'cx, Self>,
+        Ident = Ident<'cx, Self>,
+        Path = Path<'cx, Self>,
+        Qualif = Qualif<'cx, Self>,
+        PreQualified = PreQualified<'cx, Self>,
+        Parened = Parened<'cx, Self>,
+        Literal = Literal<'cx, Self>,
+        Numeric = Numeric<'cx, Self>,
+        Apply = Apply<'cx, Self>,
+    >
+{
+}
+
+// This implementation is needed to define `PrintableFamily` as an alias for
+// such family. This can be removed using trait aliases feature, which is currently
+// unstable.
+impl<
+    'cx,
+    F: TypeFamily<
+            'cx,
+            Comment = &'cx Comment<'cx, Self>,
+            Row = &'cx Row<'cx, Self>,
+            RowContent = StatementKind<'cx, Self>,
+            Block = &'cx Block<'cx, Self>,
+            ScopeItem = ScopeItem<'cx, Self>,
+            ReturnStmt = ReturnStmt<'cx, Self>,
+            Ident = Ident<'cx, Self>,
+            Path = Path<'cx, Self>,
+            Qualif = Qualif<'cx, Self>,
+            PreQualified = PreQualified<'cx, Self>,
+            Parened = Parened<'cx, Self>,
+            Literal = Literal<'cx, Self>,
+            Numeric = Numeric<'cx, Self>,
+            Apply = Apply<'cx, Self>,
+        >,
+> PrintableFamily<'cx> for F
+{
+}
+
 // Generic implementations for elements that don't depend on strategy
 
-impl<'cx> PrettyPrint<Naive> for Program<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Program<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
         PrettyPrint::<Naive>::pretty_print(&self.content, writer, options)
     }
 }
 
-impl<'cx> PrettyPrint<CommentAligned> for Program<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Program<'cx, F> {
     fn pretty_print(
         &self,
         writer: &mut impl Write,
@@ -228,7 +280,7 @@ impl<'cx> PrettyPrint<CommentAligned> for Program<'cx> {
 }
 
 // Naive implementation for Scope
-impl<'cx> PrettyPrint<Naive> for Scope<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Scope<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
         for item in self.items {
             match item {
@@ -244,7 +296,7 @@ impl<'cx> PrettyPrint<Naive> for Scope<'cx> {
 }
 
 // CommentAligned implementation for Scope
-impl<'cx> PrettyPrint<CommentAligned> for Scope<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Scope<'cx, F> {
     fn pretty_print(
         &self,
         writer: &mut impl Write,
@@ -259,7 +311,7 @@ impl<'cx> PrettyPrint<CommentAligned> for Scope<'cx> {
 
 // Strategy-specific implementations for Row (where comment formatting matters)
 
-impl<'cx> PrettyPrint<Naive> for Row<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Row<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
         Indent.write(writer, options)?;
 
@@ -285,7 +337,7 @@ impl<'cx> PrettyPrint<Naive> for Row<'cx> {
     }
 }
 
-impl<'cx> PrettyPrint<CommentAligned> for Row<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Row<'cx, F> {
     fn pretty_print(
         &self,
         writer: &mut impl Write,
@@ -317,14 +369,14 @@ impl<'cx> PrettyPrint<CommentAligned> for Row<'cx> {
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Comment<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Comment<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("#")?;
         writer.write_str(self.content)
     }
 }
 
-impl<'cx> PrettyPrint<Naive> for Block<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Block<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
         writer.write_str("{")?;
         Newline.write(writer, options)?;
@@ -338,7 +390,7 @@ impl<'cx> PrettyPrint<Naive> for Block<'cx> {
     }
 }
 
-impl<'cx> PrettyPrint<CommentAligned> for Block<'cx> {
+impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Block<'cx, F> {
     fn pretty_print(
         &self,
         writer: &mut impl Write,
@@ -356,7 +408,7 @@ impl<'cx> PrettyPrint<CommentAligned> for Block<'cx> {
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for StatementKind<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for StatementKind<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
             StatementKind::Let(let_stmt) => {
@@ -372,7 +424,7 @@ impl<'cx, S: Strategy> PrettyPrint<S> for StatementKind<'cx> {
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Let<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Let<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("let ")?;
         PrettyPrint::<S>::pretty_print(&self.variable, writer, options)?;
@@ -382,26 +434,26 @@ impl<'cx, S: Strategy> PrettyPrint<S> for Let<'cx> {
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for ExprStatement<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprStatement<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         PrettyPrint::<S>::pretty_print(&self.expr, writer, options)?;
         writer.write_str(";")
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for ReturnStmt<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ReturnStmt<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("return;")
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Expr<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Expr<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         self.0.pretty_print(writer, options)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for ExprKind<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprKind<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
             ExprKind::Variable(path) => PrettyPrint::<S>::pretty_print(path, writer, options),
@@ -420,19 +472,19 @@ impl<'cx, S: Strategy> PrettyPrint<S> for ExprKind<'cx> {
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Path<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Path<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str(self.raw)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Ident<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Ident<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str(self.raw)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Literal<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Literal<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
             Literal::Array(array) => PrettyPrint::<S>::pretty_print(array, writer, options),
@@ -452,9 +504,9 @@ impl<'cx, S: Strategy> PrettyPrint<S> for Literal<'cx> {
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Array<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Array<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("[")?;
@@ -468,27 +520,27 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for String<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for String<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str(self.raw)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Bytes<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Bytes<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str(self.raw)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for HexBytes<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for HexBytes<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str(self.raw)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Numeric<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Numeric<'cx, F>
 where
-    Ident<'cx>: PrettyPrint<S>,
+    Ident<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self.kind {
@@ -505,21 +557,21 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for OsFilePath<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for OsFilePath<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str(self.raw)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for DateTime<'cx> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for DateTime<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str(self.raw)
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Parened<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Parened<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("(")?;
@@ -528,10 +580,10 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Qualif<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Qualif<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
-    ExecutorComponent<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
+    ExecutorComponent<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
@@ -546,9 +598,9 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for ExecutorComponent<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExecutorComponent<'cx, F>
 where
-    Path<'cx>: PrettyPrint<S>,
+    Path<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("@")?;
@@ -556,10 +608,10 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for PreQualified<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for PreQualified<'cx, F>
 where
-    Qualif<'cx>: PrettyPrint<S>,
-    ExprKind<'cx>: PrettyPrint<S>,
+    Qualif<'cx, F>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         for qualif in self.qualifs {
@@ -570,9 +622,9 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Unary<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Unary<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self.op {
@@ -583,9 +635,9 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Compare<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Compare<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         PrettyPrint::<S>::pretty_print(&self.head, writer, options)?;
@@ -607,9 +659,9 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Binary<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Binary<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         PrettyPrint::<S>::pretty_print(&self.lhs, writer, options)?;
@@ -630,9 +682,9 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Apply<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Apply<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         PrettyPrint::<S>::pretty_print(&self.function, writer, options)?;
@@ -647,9 +699,9 @@ where
     }
 }
 
-impl<'cx, S: Strategy> PrettyPrint<S> for Set<'cx>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Set<'cx, F>
 where
-    ExprKind<'cx>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         PrettyPrint::<S>::pretty_print(&self.lhs, writer, options)?;
