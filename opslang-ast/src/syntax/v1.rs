@@ -186,6 +186,14 @@ pub struct Expr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(
     sealed::Sealed,
 );
 
+impl<'cx, F: TypeFamily<'cx>> std::ops::Deref for Expr<'cx, F> {
+    type Target = &'cx ExprKind<'cx, F>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 impl<'cx, F: TypeFamily<'cx>> Debug for Expr<'cx, F> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
