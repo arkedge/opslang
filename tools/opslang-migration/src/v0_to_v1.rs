@@ -489,13 +489,9 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Expr {
                 Ok(v1::Expr::apply(ctx, converted_function, converted_args))
             }
             v0::Expr::TlmRef(variable_path) => {
-                // TlmRef ($var) becomes a reference expression in v1
+                // TlmRef ($var) becomes a path in v1
                 let path = variable_path.convert(ctx)?;
-                let variable_expr = v1::Expr::variable(ctx, path);
-
-                // Create unary reference operation (&var)
-                let ref_op = v1::UnOp::Ref(v1::token::Ampersand { position: Position });
-                Ok(v1::Expr::unary(ctx, ref_op, variable_expr))
+                Ok(v1::Expr::variable(ctx, path))
             }
             v0::Expr::UnOp(un_op_kind, expr) => {
                 let converted_expr = expr.convert(ctx)?;
