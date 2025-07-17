@@ -80,6 +80,17 @@ pub struct Row<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub comment: Option<F::Comment>,
 }
 
+impl<'cx, F: TypeFamily<'cx>> Row<'cx, F> {
+    pub fn is_empty(&self) -> bool {
+        let Self {
+            breaks,
+            content,
+            comment,
+        } = self;
+        breaks.is_none() && content.is_none() && comment.is_none()
+    }
+}
+
 impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
     fn default() -> Self {
         Self {
@@ -95,6 +106,13 @@ impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
 pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub content: &'cx str,
     pub span: F::Span,
+}
+
+impl<'cx, F: TypeFamily<'cx>> Comment<'cx, F> {
+    #[inline]
+    pub fn is_meta(&self) -> bool {
+        self.content.starts_with('!')
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

@@ -81,8 +81,25 @@ where
 struct RowInfo<'cx, F: PrintableFamily<'cx>> {
     /// Pre-formatted content string (before comment).
     content: std::string::String,
+
+    /// Whether this row has content.
+    has_content: bool,
+
     /// Raw comment reference (None if no comment).
     comment: Option<&'cx Comment<'cx, F>>,
+}
+
+impl<'cx, F: PrintableFamily<'cx>> RowInfo<'cx, F> {
+    fn need_align(&self) -> bool {
+        if !self.has_content {
+            return false;
+        }
+        let Some(comment) = self.comment else {
+            return false;
+        };
+        // Shebang comments (starting with '!') are not aligned
+        !comment.content.starts_with('!')
+    }
 }
 
 /// Write a group of rows with aligned comments.
@@ -98,7 +115,7 @@ fn write_comment_group<'cx, F: PrintableFamily<'cx>>(
     // Find the target alignment position (excluding shebang comments)
     let longest_content = rows
         .iter()
-        .filter(|row| row.comment.is_some() && !row.comment.unwrap().content.starts_with('!'))
+        .filter(|row| row.need_align())
         .map(|row| row.content.len())
         .max()
         .unwrap_or(0);
@@ -110,15 +127,15 @@ fn write_comment_group<'cx, F: PrintableFamily<'cx>>(
     for row in rows {
         writer.write_str(&row.content)?;
 
-        if let Some(comment) = row.comment {
+        if row.need_align() {
             let current_len = row.content.len();
-            // Shebang comments (starting with '!') are not aligned
-            if comment.content.starts_with('!') {
-                // do nothing
-            } else if target_position > current_len {
+            if target_position > current_len {
                 let spaces_needed = target_position - current_len;
                 writer.write_str(&" ".repeat(spaces_needed))?;
             }
+        }
+
+        if let Some(comment) = row.comment {
             PrettyPrint::<CommentAligned>::pretty_print(comment, writer, options)?;
         }
 
@@ -126,6 +143,39 @@ fn write_comment_group<'cx, F: PrintableFamily<'cx>>(
     }
 
     Ok(())
+}
+
+/// Formats content part and extract information for comment alignment
+fn format_row_before_comment<'cx, F: PrintableFamily<'cx>>(
+    temp_buffer: &mut std::string::String,
+    row: &Row<'cx, F>,
+    options: &PrintOptions<CommentAligned>,
+) -> Result<RowInfo<'cx, F>, fmt::Error> {
+    // Handle meta comment first
+    if row.breaks.is_none() && row.content.is_none() && row.comment.is_some_and(|c| c.is_meta()) {
+        return Ok(RowInfo {
+            content: Default::default(),
+            has_content: row.content.is_some(),
+            comment: row.comment,
+        });
+    }
+    if !row.is_empty() {
+        Indent.write(temp_buffer, options)?;
+    }
+    if row.breaks.is_some() {
+        temp_buffer.push('.');
+    } else if options.reserve_for_break && !row.is_empty() {
+        temp_buffer.push(' ');
+    }
+    if let Some(content) = &row.content {
+        PrettyPrint::<CommentAligned>::pretty_print(content, temp_buffer, options)?;
+    }
+
+    Ok(RowInfo {
+        content: std::mem::take(temp_buffer),
+        has_content: row.content.is_some(),
+        comment: row.comment,
+    })
 }
 
 /// Implementation for consecutive grouping: group rows separated by empty lines
@@ -140,30 +190,11 @@ fn pretty_print_consecutive<'cx, F: PrintableFamily<'cx>>(
     for item in scope.items {
         match item {
             ScopeItem::Row(row) => {
-                temp_buffer.clear();
-
                 // Format the content part
-                Indent.write(&mut temp_buffer, options)?;
-                if row.breaks.is_some() {
-                    temp_buffer.push('.');
-                } else if options.reserve_for_break {
-                    temp_buffer.push(' ');
-                }
-                if let Some(content) = &row.content {
-                    PrettyPrint::<CommentAligned>::pretty_print(
-                        content,
-                        &mut temp_buffer,
-                        options,
-                    )?;
-                }
-
-                let row_info = RowInfo {
-                    content: temp_buffer.clone(),
-                    comment: row.comment,
-                };
+                let row_info = format_row_before_comment(&mut temp_buffer, row, options)?;
 
                 // If this is an empty line (default Row), output current group
-                if **row == Row::default() {
+                if row.is_empty() {
                     if !current_group.is_empty() {
                         write_comment_group(&current_group, writer, options)?;
                         current_group.clear();
@@ -208,27 +239,10 @@ fn pretty_print_per_block<'cx, F: PrintableFamily<'cx>>(
     for item in scope.items {
         match item {
             ScopeItem::Row(row) => {
-                temp_buffer.clear();
-
                 // Format the content part
-                Indent.write(&mut temp_buffer, options)?;
-                if row.breaks.is_some() {
-                    temp_buffer.push('.');
-                } else if options.reserve_for_break {
-                    temp_buffer.push(' ');
-                }
-                if let Some(content) = &row.content {
-                    PrettyPrint::<CommentAligned>::pretty_print(
-                        content,
-                        &mut temp_buffer,
-                        options,
-                    )?;
-                }
+                let row_info = format_row_before_comment(&mut temp_buffer, row, options)?;
 
-                row_infos.push(RowInfo {
-                    content: temp_buffer.clone(),
-                    comment: row.comment,
-                });
+                row_infos.push(row_info);
             }
             ScopeItem::Block(block) => {
                 // Output any pending rows before the block
