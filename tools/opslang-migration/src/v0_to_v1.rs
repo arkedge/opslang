@@ -139,10 +139,20 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
     type Converted = v1::Program<'cx, ConvertedFamily>;
 
     fn convert(
-        self,
+        mut self,
         ctx: &'cx Context<'cx, ConvertedFamily>,
     ) -> Result<Self::Converted, ConversionError> {
         let mut scope_items = Vec::new();
+
+        if self.last().is_some_and(|statement| {
+            if let v0::Statement::Single(row) = statement {
+                row.breaks.is_none() && row.content.is_none() && row.comment_trailing.is_none()
+            } else {
+                false
+            }
+        }) {
+            self.pop();
+        }
 
         for statement in self {
             match statement {
