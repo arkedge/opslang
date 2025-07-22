@@ -66,7 +66,8 @@ impl Position for super::UnOp<'_> {
     fn position(&self) -> super::Position {
         match self {
             super::UnOp::Neg(hyphen) => hyphen.position,
-            super::UnOp::Ref(ampersand) => ampersand.position,
+            super::UnOp::IdRef(ampersand) => ampersand.position,
+            super::UnOp::Deref(dollar) => dollar.position,
         }
     }
 }

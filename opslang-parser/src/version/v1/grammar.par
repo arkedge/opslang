@@ -128,15 +128,19 @@ PrefixExpr
     | { Qualif } ApplyExpr
     ;
 
-// application: lower than `&`
+// application: lower than `&`, `$`
 ApplyExpr
     : LowerPrefixExpr { AtomicExpr }
     ;
 
-// `&`: lower than grouping
+// `&`, `$`: lower than grouping
 LowerPrefixExpr
-    : [ '&' ] Callable
+    : [ LowerPrefixOp ] Callable
     ;
+
+LowerPrefixOp
+    : '&'
+    | '$';
 
 Callable
     : Path

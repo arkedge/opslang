@@ -695,7 +695,9 @@ pub enum UnOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     /// Create a reference of an expression.
     ///
     /// This is a temporal solution for accepting the old `tlmid!` functionality.
-    Ref(token::Ampersand<'cx, F>),
+    IdRef(token::Ampersand<'cx, F>),
+
+    Deref(token::Dollar<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

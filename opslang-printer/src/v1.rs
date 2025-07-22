@@ -21,7 +21,7 @@ impl Precedence {
     const FACTOR: Self = Self(7); // *, /, %
     const PREFIX: Self = Self(8); // unary -
     const APPLY: Self = Self(9); // function application
-    const LOWER_PREFIX: Self = Self(10); // &
+    const LOWER_PREFIX: Self = Self(10); // &, $
     const ATOMIC: Self = Self(11); // grouping, literals, etc.
 }
 
@@ -40,7 +40,7 @@ fn precedence_of<'cx, F: PrintableFamily<'cx>>(expr: &ExprKind<'cx, F>) -> Prece
         ExprKind::Compare(_) => Precedence::COMPARE,
         ExprKind::Unary(unary) => match unary.op {
             UnOp::Neg(_) => Precedence::PREFIX,
-            UnOp::Ref(_) => Precedence::LOWER_PREFIX,
+            UnOp::IdRef(_) | UnOp::Deref(_) => Precedence::LOWER_PREFIX,
         },
         ExprKind::Apply(_) => Precedence::APPLY,
         ExprKind::Variable(_)
@@ -723,7 +723,11 @@ where
                 Token.write(t, writer)?;
                 Precedence::PREFIX
             }
-            UnOp::Ref(t) => {
+            UnOp::IdRef(t) => {
+                Token.write(t, writer)?;
+                Precedence::LOWER_PREFIX
+            }
+            UnOp::Deref(t) => {
                 Token.write(t, writer)?;
                 Precedence::LOWER_PREFIX
             }

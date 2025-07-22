@@ -568,9 +568,18 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LowerPrefixExpr<'_> {
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if let Some(lower_prefix) = self.lower_prefix_expr_opt.as_ref() {
             cx.alloc_expr(syn::ExprKind::Unary(syn::Unary {
-                op: syn::UnOp::Ref(syn::token::Ampersand {
-                    position: syn::BytePos(lower_prefix.amp.location.start),
-                }),
+                op: match &*lower_prefix.lower_prefix_op {
+                    grammar_trait::LowerPrefixOp::Amp(lower_prefix_op_amp) => {
+                        syn::UnOp::IdRef(syn::token::Ampersand {
+                            position: syn::BytePos(lower_prefix_op_amp.amp.location.start),
+                        })
+                    }
+                    grammar_trait::LowerPrefixOp::Dollar(lower_prefix_op_dollar) => {
+                        syn::UnOp::Deref(syn::token::Dollar {
+                            position: syn::BytePos(lower_prefix_op_dollar.dollar.location.start),
+                        })
+                    }
+                },
                 expr: self.callable.process_token(cx),
             }))
         } else {

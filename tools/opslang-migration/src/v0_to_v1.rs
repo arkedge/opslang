@@ -519,9 +519,13 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Expr {
                 Ok(v1::Expr::apply(ctx, converted_function, converted_args))
             }
             v0::Expr::TlmRef(variable_path) => {
-                // TlmRef ($var) becomes a path in v1
+                // TlmRef ($var) becomes unary Deref in v1
                 let path = variable_path.convert(ctx)?;
-                Ok(v1::Expr::variable(ctx, path))
+                Ok(v1::Expr::unary(
+                    ctx,
+                    v1::UnOp::Deref(v1::token::Dollar { position: Position }),
+                    v1::Expr::variable(ctx, path),
+                ))
             }
             v0::Expr::UnOp(un_op_kind, expr) => {
                 let converted_expr = expr.convert(ctx)?;
@@ -634,7 +638,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Literal {
                     v1::literal::Literal::date_time(ctx, datetime_str, Span)
                 }
                 v0::Literal::TlmId(tlm_id) => {
-                    // TlmId literals should be converted to unary Ref expressions
+                    // TlmId literals should be converted to unary IdRef expressions
 
                     let path = v1::Path::new_unchecked(
                         ctx,
@@ -649,7 +653,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Literal {
                     );
                     return Ok(v1::Expr::unary(
                         ctx,
-                        v1::UnOp::Ref(v1::token::Ampersand { position: Position }),
+                        v1::UnOp::IdRef(v1::token::Ampersand { position: Position }),
                         v1::Expr::variable(ctx, path),
                     ));
                 }
