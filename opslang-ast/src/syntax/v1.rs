@@ -404,23 +404,46 @@ impl<'cx, F: TypeFamily<'cx>> Ident<'cx, F> {
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A qualification for a command.
 pub enum Qualif<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    TimeIndicator(Expr<'cx, F>),
-    ExecutorComponent(ExecutorComponent<'cx, F>),
+    KindSpec(KindSpec<'cx, F>),
+    DefaultAttr(DefaultAttr<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// An executor component specification.
+/// A default attribute for command.
 ///
 /// # Examples
 ///
-/// - `AOBC` in `MOBC.TL.NOP :20 @AOBC`.
-pub struct ExecutorComponent<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+/// - `@TL:20` in `AOBC.NOP @TL:20 ~MOBC`.
+pub struct KindSpec<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub at_token: token::Atmark<'cx, F>,
+    pub name: Path<'cx, F>,
+    pub arg: Option<KindArg<'cx, F>>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A default attribute for command.
+///
+/// # Examples
+///
+/// - `@TL:20` in `AOBC.NOP @TL:20 ~MOBC`.
+pub struct KindArg<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub colon_token: token::Colon<'cx, F>,
+    pub value: Expr<'cx, F>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A default attribute for command.
+///
+/// # Examples
+///
+/// - `~MOBC` in `AOBC.NOP @TL:20 ~MOBC`.
+pub struct DefaultAttr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub tilde_token: token::Tilde<'cx, F>,
     pub name: Path<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// An executor component specification.
+/// An argument for command group.
 ///
 /// # Examples
 ///

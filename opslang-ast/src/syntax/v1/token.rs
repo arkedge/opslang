@@ -1,5 +1,13 @@
 use super::{Position, Span};
 
+pub trait Token {
+    /// Source code representation of this token.
+    const REPR: &'static str;
+}
+impl<T: Token> Token for &T {
+    const REPR: &'static str = T::REPR;
+}
+
 #[macro_export]
 /// A type-macro that expands to the name of the Rust type representation of a
 /// given token.
@@ -49,10 +57,14 @@ macro_rules! V1Token {
 }
 
 macro_rules! declare_token {
-    ($(pub struct $name:ident/$lit:tt)*) => {
+    ($(pub struct $name:ident/$lit:tt $str:literal)*) => {
         $(
             token_define_if_1!($name/$lit);
             token_define_if_many!($name/$lit);
+
+            impl<'cx, F: super::family::TypeFamily<'cx>> Token for $name<'cx, F> {
+                const REPR: &'static str = $str;
+            }
         )*
     };
 }
@@ -92,27 +104,29 @@ macro_rules! token_define_if_many {
 }
 
 declare_token! {
-    pub struct Semi/1
-    pub struct Break/1
-    pub struct Atmark/1
-    pub struct Eq/1
-    pub struct OpenBrace/1
-    pub struct CloseBrace/1
-    pub struct OpenParen/1
-    pub struct CloseParen/1
-    pub struct OpenSquare/1
-    pub struct CloseSquare/1
-    pub struct Hyphen/1
-    pub struct Ampersand/1
-    pub struct RightAngle/1
-    pub struct Angle/1
-    pub struct BangEqual/2
-    pub struct SlashEqual/2
-    pub struct EqualEqual/2
-    pub struct RightAngleEq/2
-    pub struct AngleEq/2
-    pub struct ColonEq/2
+    pub struct Semi/1 ";"
+    pub struct Break/1 "."
+    pub struct Atmark/1 "@"
+    pub struct Tilde/1 "~"
+    pub struct Colon/1 ":"
+    pub struct Eq/1 "="
+    pub struct OpenBrace/1 "{"
+    pub struct CloseBrace/1 "}"
+    pub struct OpenParen/1 "("
+    pub struct CloseParen/1 ")"
+    pub struct OpenSquare/1 "["
+    pub struct CloseSquare/1 "]"
+    pub struct Hyphen/1 "-"
+    pub struct Ampersand/1 "&"
+    pub struct RightAngle/1 ">"
+    pub struct Angle/1 "<"
+    pub struct BangEqual/2 "!="
+    pub struct SlashEqual/2 "/="
+    pub struct EqualEqual/2 "=="
+    pub struct RightAngleEq/2 ">="
+    pub struct AngleEq/2 "<="
+    pub struct ColonEq/2 ":="
 
-    pub struct Return/6
-    pub struct Let/3
+    pub struct Return/6 "return"
+    pub struct Let/3 "let"
 }

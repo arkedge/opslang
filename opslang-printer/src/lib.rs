@@ -276,7 +276,7 @@ impl Indent {
     }
 }
 
-/// Zero-sized type for writing newlines
+/// Zero-sized type for writing newlines.
 ///
 /// This type provides a method to write newlines to a writer according to the
 /// configured newline style. It's designed as a ZST to provide a clean API
@@ -301,7 +301,7 @@ impl Newline {
     }
 }
 
-/// Zero-sized type for writing indented newlines
+/// Zero-sized type for writing indented newlines.
 ///
 /// This type provides a method to write a newline followed by indentation.
 /// It's designed as a ZST to provide a clean API for combined newline and

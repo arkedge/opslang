@@ -74,6 +74,18 @@ where
     }
 }
 
+#[derive(Debug, Clone, Copy, Default)]
+pub struct Token;
+
+impl Token {
+    #[inline]
+    /// Write a token to the writer.
+    pub fn write<T: token::Token>(self, token: T, writer: &mut impl Write) -> fmt::Result {
+        let _ = token;
+        writer.write_str(T::REPR)
+    }
+}
+
 // Helper structures for comment alignment calculations
 
 /// Information about a single row for comment alignment calculation.
@@ -439,7 +451,7 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Comment<'cx, 
 
 impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Block<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
-        writer.write_str("{")?;
+        Token.write(self.left_brace, writer)?;
         Newline.write(writer, options)?;
 
         let nested_options = options.with_increased_indent();
@@ -447,7 +459,7 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Block<'cx, F> {
 
         Newline.write(writer, options)?;
         Indent.write(writer, options)?;
-        writer.write_str("}")
+        Token.write(self.right_brace, writer)
     }
 }
 
@@ -457,7 +469,7 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Block<'cx, F>
         writer: &mut impl Write,
         options: &PrintOptions<CommentAligned>,
     ) -> fmt::Result {
-        writer.write_str("{")?;
+        Token.write(self.left_brace, writer)?;
         Newline.write(writer, options)?;
 
         let nested_options = options.with_increased_indent();
@@ -465,7 +477,7 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Block<'cx, F>
 
         Newline.write(writer, options)?;
         Indent.write(writer, options)?;
-        writer.write_str("}")
+        Token.write(self.right_brace, writer)
     }
 }
 
@@ -491,20 +503,21 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Let<'cx, F> {
         PrettyPrint::<S>::pretty_print(&self.variable, writer, options)?;
         writer.write_str(" = ")?;
         PrettyPrint::<S>::pretty_print(&self.rhs, writer, options)?;
-        writer.write_str(";")
+        Token.write(self.semi, writer)
     }
 }
 
 impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprStatement<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         PrettyPrint::<S>::pretty_print(&self.expr, writer, options)?;
-        writer.write_str(";")
+        Token.write(self.semi, writer)
     }
 }
 
 impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ReturnStmt<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
-        writer.write_str("return;")
+        Token.write(self.return_token, writer)?;
+        Token.write(self.semi, writer)
     }
 }
 
@@ -570,14 +583,14 @@ where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        writer.write_str("[")?;
+        Token.write(self.left_bracket, writer)?;
         for (i, expr) in self.exprs.iter().enumerate() {
             if i > 0 {
                 writer.write_str(", ")?;
             }
             PrettyPrint::<S>::pretty_print(expr, writer, options)?;
         }
-        writer.write_str("]")
+        Token.write(self.right_bracket, writer)
     }
 }
 
@@ -652,27 +665,36 @@ where
 impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Qualif<'cx, F>
 where
     ExprKind<'cx, F>: PrettyPrint<S>,
-    ExecutorComponent<'cx, F>: PrettyPrint<S>,
+    DefaultAttr<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
-            Qualif::TimeIndicator(expr) => {
-                writer.write_str(":")?;
-                print_with_parens(expr, Precedence::ATOMIC, writer, options)
+            Qualif::KindSpec(KindSpec {
+                at_token,
+                name,
+                arg,
+            }) => {
+                Token.write(at_token, writer)?;
+                PrettyPrint::<S>::pretty_print(name, writer, options)?;
+                if let Some(expr) = arg {
+                    Token.write(expr.colon_token, writer)?;
+                    print_with_parens(&expr.value, Precedence::ATOMIC, writer, options)?;
+                }
+                Ok(())
             }
-            Qualif::ExecutorComponent(exec_comp) => {
+            Qualif::DefaultAttr(exec_comp) => {
                 PrettyPrint::<S>::pretty_print(exec_comp, writer, options)
             }
         }
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExecutorComponent<'cx, F>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for DefaultAttr<'cx, F>
 where
     Path<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        writer.write_str("@")?;
+        Token.write(self.tilde_token, writer)?;
         PrettyPrint::<S>::pretty_print(&self.name, writer, options)
     }
 }
@@ -697,12 +719,12 @@ where
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         let op_prec = match self.op {
-            UnOp::Neg(_) => {
-                writer.write_str("-")?;
+            UnOp::Neg(t) => {
+                Token.write(t, writer)?;
                 Precedence::PREFIX
             }
-            UnOp::Ref(_) => {
-                writer.write_str("&")?;
+            UnOp::Ref(t) => {
+                Token.write(t, writer)?;
                 Precedence::LOWER_PREFIX
             }
         };
@@ -719,14 +741,14 @@ where
         for (op, expr) in self.tail_with_op {
             writer.write_str(" ")?;
             match op {
-                CompareOp::GreaterEq(_) => writer.write_str(">=")?,
-                CompareOp::LessEq(_) => writer.write_str("<=")?,
-                CompareOp::Greater(_) => writer.write_str(">")?,
-                CompareOp::Less(_) => writer.write_str("<")?,
-                CompareOp::NotEqual(NotEqualToken::BangEqual(_)) => writer.write_str("!=")?,
-                CompareOp::NotEqual(NotEqualToken::SlashEqual(_)) => writer.write_str("/=")?,
-                CompareOp::Equal(_) => writer.write_str("==")?,
-            }
+                CompareOp::GreaterEq(t) => Token.write(t, writer),
+                CompareOp::LessEq(t) => Token.write(t, writer),
+                CompareOp::Greater(t) => Token.write(t, writer),
+                CompareOp::Less(t) => Token.write(t, writer),
+                CompareOp::NotEqual(NotEqualToken::BangEqual(t)) => Token.write(t, writer),
+                CompareOp::NotEqual(NotEqualToken::SlashEqual(t)) => Token.write(t, writer),
+                CompareOp::Equal(t) => Token.write(t, writer),
+            }?;
             writer.write_str(" ")?;
             print_with_parens(expr.0, Precedence::COMPARE, writer, options)?;
         }

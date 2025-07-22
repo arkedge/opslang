@@ -152,12 +152,14 @@ AtomicExpr
 
 // Qualification for sending a command
 Qualif
-    : ExecutorComponent
-    | TimeIndicator
+    : KindSpec
+    | DefaultAttr
     ;
 
-ExecutorComponent: '@' Path;
-TimeIndicator: ':' Callable;
+DefaultAttr: '~' Path;
+
+KindSpec: '@' Path [ KindArg ];
+KindArg: ':' Callable;
 
 Path: Ident { '.' Ident };
 

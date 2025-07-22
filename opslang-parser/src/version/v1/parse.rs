@@ -513,22 +513,29 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Qualif<'_> {
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
-            grammar_trait::Qualif::ExecutorComponent(qualif_executor_component) => {
-                let e = &*qualif_executor_component.executor_component;
-                syn::Qualif::ExecutorComponent(syn::ExecutorComponent {
+            grammar_trait::Qualif::KindSpec(qualif_kind_spec) => {
+                let e = &*qualif_kind_spec.kind_spec;
+                syn::Qualif::KindSpec(syn::KindSpec {
                     at_token: syn::token::Atmark {
                         position: syn::BytePos(e.at.location.start),
                     },
                     name: e.path.process_token(cx),
+                    arg: e.kind_spec_opt.as_ref().map(|k| syn::KindArg {
+                        colon_token: syn::token::Colon {
+                            position: syn::BytePos(k.kind_arg.colon.location.start),
+                        },
+                        value: k.kind_arg.callable.process_token(cx),
+                    }),
                 })
             }
-            grammar_trait::Qualif::TimeIndicator(qualif_time_indicator) => {
-                syn::Qualif::TimeIndicator(
-                    qualif_time_indicator
-                        .time_indicator
-                        .callable
-                        .process_token(cx),
-                )
+            grammar_trait::Qualif::DefaultAttr(qualif_default_attr) => {
+                let t = &*qualif_default_attr.default_attr;
+                syn::Qualif::DefaultAttr(syn::DefaultAttr {
+                    tilde_token: syn::token::Tilde {
+                        position: syn::BytePos(t.tilde.location.start),
+                    },
+                    name: t.path.process_token(cx),
+                })
             }
         }
     }

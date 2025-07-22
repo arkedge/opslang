@@ -1,4 +1,4 @@
-use opslang_ast::v1::{self, ExecutorComponent, Expr};
+use opslang_ast::v1::{self, DefaultAttr, Expr};
 
 #[derive(Debug, PartialEq)]
 /// A comment in the code.
@@ -108,5 +108,5 @@ pub struct SendCommand<'cx> {
 /// - `@TL.MOBC 20: @@AOBC NOP` in `@TL.MOBC 20: @@AOBC NOP`.
 pub struct DestinationSpec<'cx> {
     pub time_indicator: Option<Expr<'cx>>,
-    pub executor_component: Option<ExecutorComponent<'cx>>,
+    pub executor_component: Option<DefaultAttr<'cx>>,
 }

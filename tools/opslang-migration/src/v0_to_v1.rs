@@ -402,10 +402,12 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
         // Convert destination spec (part 1)
         // Create command name as a string literal (variable reference)
         assert!(!self.name.contains('.'));
-        let path_string = if let Some(v0::ReceiverComponent { name, exec_method }) =
-            self.destination.receiver_component
-        {
-            format!("{name}.{exec_method}.{}", self.name)
+        let path_string = if let Some(receiver_component) = &self.destination.receiver_component {
+            if let Some(executor_component) = &self.destination.executor_component {
+                format!("{}.{}", executor_component.name, self.name)
+            } else {
+                format!("{}.{}", receiver_component.name, self.name)
+            }
         } else {
             self.name
         };
@@ -427,19 +429,47 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
 
         // Convert destination spec (part 2)
         let mut qualifs = Vec::new();
-        if let Some(v0::ExecutorComponent { name }) = self.destination.executor_component {
-            if name.contains('.') {
+        if let Some(receiver_component) = &self.destination.receiver_component {
+            let segments = receiver_component
+                .exec_method
+                .split('.')
+                .map(|seg| v1::Ident::new(ctx, seg, Span))
+                .collect::<Vec<_>>();
+            let path = v1::Path::new_unchecked(
+                ctx,
+                &receiver_component.exec_method,
+                Box::leak(segments.into_boxed_slice()),
+            );
+            let kind_spec = v1::KindSpec {
+                at_token: v1::token::Atmark { position: Position },
+                name: path,
+                arg: if let Some(expr) = self.destination.time_indicator {
+                    Some(v1::KindArg {
+                        colon_token: v1::token::Colon { position: Position },
+                        value: expr.convert(ctx)?,
+                    })
+                } else {
+                    None
+                },
+            };
+            qualifs.push(v1::Qualif::KindSpec(kind_spec));
+        } else {
+            assert!(
+                self.destination.time_indicator.is_none(),
+                "invalid ti occurrence"
+            )
+        }
+        if let Some(executor_component) = &self.destination.executor_component {
+            if executor_component.name.contains('.') {
                 unimplemented!()
             }
-            let component = v1::ExecutorComponent {
-                at_token: v1::token::Atmark { position: Position },
-                name: v1::Path::single(ctx, &name, Span),
+
+            let receiver_component = self.destination.receiver_component.as_ref().unwrap();
+            let component = v1::DefaultAttr {
+                tilde_token: v1::token::Tilde { position: Position },
+                name: v1::Path::single(ctx, &receiver_component.name, Span),
             };
-            qualifs.push(v1::Qualif::ExecutorComponent(component));
-        }
-        if let Some(expr) = self.destination.time_indicator {
-            let time_qualif = v1::Qualif::TimeIndicator(expr.convert(ctx)?);
-            qualifs.push(time_qualif);
+            qualifs.push(v1::Qualif::DefaultAttr(component));
         }
 
         Ok(v1::Expr::pre_qualified(
