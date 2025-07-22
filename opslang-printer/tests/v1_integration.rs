@@ -133,7 +133,7 @@ let very_long_variable = val2;  # comment2
         CommentAlignment {
             grouping: CommentGrouping::Consecutive,
             position: CommentPosition::ToTabMultiple {
-                tab_size: 8,
+                tab_size: 6,
                 fallback_to_longest: false,
             },
         },
