@@ -12,7 +12,6 @@ struct Precedence(u8);
 
 impl Precedence {
     const SET: Self = Self(0); // :=
-    const INFIX_IF: Self = Self(1); // infix if
     const LOGICAL_OR: Self = Self(2); // ||
     const LOGICAL_AND: Self = Self(3); // &&
     const INFIX_IN: Self = Self(4); // infix in
@@ -30,7 +29,6 @@ fn precedence_of<'cx, F: PrintableFamily<'cx>>(expr: &ExprKind<'cx, F>) -> Prece
     match expr {
         ExprKind::Set(_) => Precedence::SET,
         ExprKind::Binary(binary) => match binary.op {
-            BinOp::If => Precedence::INFIX_IF,
             BinOp::Or => Precedence::LOGICAL_OR,
             BinOp::And => Precedence::LOGICAL_AND,
             BinOp::In => Precedence::INFIX_IN,
@@ -48,7 +46,8 @@ fn precedence_of<'cx, F: PrintableFamily<'cx>>(expr: &ExprKind<'cx, F>) -> Prece
         | ExprKind::Parened(_)
         | ExprKind::Qualif(_)
         | ExprKind::PreQualified(_)
-        | ExprKind::InfixImport(_) => Precedence::ATOMIC,
+        | ExprKind::InfixImport(_)
+        | ExprKind::If(_) => Precedence::ATOMIC,
     }
 }
 
@@ -482,7 +481,10 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Block<'cx, F>
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for StatementKind<'cx, F> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for StatementKind<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
             StatementKind::Let(let_stmt) => {
@@ -498,7 +500,10 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for StatementKind
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Let<'cx, F> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Let<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         writer.write_str("let ")?;
         PrettyPrint::<S>::pretty_print(&self.variable, writer, options)?;
@@ -508,7 +513,10 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Let<'cx, F> {
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprStatement<'cx, F> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprStatement<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         PrettyPrint::<S>::pretty_print(&self.expr, writer, options)?;
         Token.write(self.semi, writer)
@@ -522,13 +530,19 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ReturnStmt<'c
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Expr<'cx, F> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Expr<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         self.0.pretty_print(writer, options)
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprKind<'cx, F> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprKind<'cx, F>
+where
+    Block<'cx, F>: PrettyPrint<S>,
+{
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
             ExprKind::Variable(path) => PrettyPrint::<S>::pretty_print(path, writer, options),
@@ -546,6 +560,7 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprKind<'cx,
             ExprKind::InfixImport(import) => {
                 PrettyPrint::<S>::pretty_print(import, writer, options)
             }
+            ExprKind::If(if_expr) => PrettyPrint::<S>::pretty_print(if_expr, writer, options),
         }
     }
 }
@@ -562,7 +577,10 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Ident<'cx, F>
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Literal<'cx, F> {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Literal<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
             Literal::Array(array) => PrettyPrint::<S>::pretty_print(array, writer, options),
@@ -759,7 +777,6 @@ where
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         let op_prec = match self.op {
-            BinOp::If => Precedence::INFIX_IF,
             BinOp::And => Precedence::LOGICAL_AND,
             BinOp::Or => Precedence::LOGICAL_OR,
             BinOp::In => Precedence::INFIX_IN,
@@ -770,7 +787,6 @@ where
         print_with_parens(self.lhs.0, op_prec, writer, options)?;
         writer.write_str(" ")?;
         match self.op {
-            BinOp::If => writer.write_str("if")?,
             BinOp::And => writer.write_str("&&")?,
             BinOp::Or => writer.write_str("||")?,
             BinOp::In => writer.write_str("in")?,
@@ -819,5 +835,22 @@ where
         print_with_parens(self.file.0, Precedence::ATOMIC, writer, options)?;
         Token.write(self.question, writer)?;
         PrettyPrint::<S>::pretty_print(&self.path, writer, options)
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for If<'cx, F>
+where
+    Block<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        Token.write(self.if_kw, writer)?;
+        PrettyPrint::<S>::pretty_print(self.cond.0, writer, options)?;
+        PrettyPrint::<S>::pretty_print(self.then_clause, writer, options)?;
+        if let Some(if_else) = &self.else_opt {
+            Token.write(if_else.else_kw, writer)?;
+            PrettyPrint::<S>::pretty_print(if_else.else_clause, writer, options)
+        } else {
+            Ok(())
+        }
     }
 }

@@ -573,7 +573,9 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Expr {
                     _ => {
                         // Convert to Binary expression
                         let v1_bin_op = match bin_op_kind {
-                            v0::BinOpKind::If => v1::BinOp::If,
+                            v0::BinOpKind::If => {
+                                unimplemented!("please report usage of infix `if`")
+                            }
                             v0::BinOpKind::And => v1::BinOp::And,
                             v0::BinOpKind::Or => v1::BinOp::Or,
                             v0::BinOpKind::In => v1::BinOp::In,
