@@ -76,7 +76,14 @@ impl<
 
 impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Program<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
-        PrettyPrint::<Naive>::pretty_print(&self.content, writer, options)
+        for (i, definition) in self.definitions.iter().enumerate() {
+            if i > 0 {
+                Newline.write(writer, options)?;
+                Newline.write(writer, options)?;
+            }
+            PrettyPrint::<Naive>::pretty_print(definition, writer, options)?;
+        }
+        Ok(())
     }
 }
 
@@ -86,7 +93,81 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Program<'cx, 
         writer: &mut impl Write,
         options: &PrintOptions<CommentAligned>,
     ) -> fmt::Result {
-        PrettyPrint::<CommentAligned>::pretty_print(&self.content, writer, options)
+        for (i, definition) in self.definitions.iter().enumerate() {
+            if i > 0 {
+                Newline.write(writer, options)?;
+                Newline.write(writer, options)?;
+            }
+            PrettyPrint::<CommentAligned>::pretty_print(definition, writer, options)?;
+        }
+        Ok(())
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Definition<'cx, F>
+where
+    Block<'cx, F>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        match self {
+            Definition::Function(func_def) => {
+                PrettyPrint::<S>::pretty_print(func_def, writer, options)
+            }
+            Definition::Constant(const_def) => {
+                PrettyPrint::<S>::pretty_print(const_def, writer, options)
+            }
+        }
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for FunctionDef<'cx, F>
+where
+    Block<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        Token.write(self.proc_token, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(&self.name, writer, options)?;
+        Token.write(self.left_paren, writer)?;
+
+        for (i, param) in self.parameters.iter().enumerate() {
+            if i > 0 {
+                writer.write_str(", ")?;
+            }
+            PrettyPrint::<S>::pretty_print(param, writer, options)?;
+        }
+
+        Token.write(self.right_paren, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(self.body, writer, options)
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Parameter<'cx, F> {
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        PrettyPrint::<S>::pretty_print(&self.name, writer, options)?;
+        Token.write(self.colon, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(&self.ty, writer, options)
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ConstantDef<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        Token.write(self.const_token, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(&self.name, writer, options)?;
+        Token.write(self.colon, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(&self.ty, writer, options)?;
+        writer.write_str(" ")?;
+        Token.write(self.eq, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(&self.value, writer, options)
     }
 }
 

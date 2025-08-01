@@ -48,11 +48,69 @@ pub struct Span {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// An overall program. A program is a sequence of statements.
-///
-/// This version of program contains only a body of the main function.
+/// An overall program. A program is a sequence of function definitions and constant definitions.
 pub struct Program<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub content: Scope<'cx, F>,
+    pub definitions: &'cx [Definition<'cx, F>],
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A top-level definition in a program.
+pub enum Definition<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    Function(FunctionDef<'cx, F>),
+    Constant(ConstantDef<'cx, F>),
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A function definition with `prec` keyword.
+///
+/// # Examples
+///
+/// ```ops
+/// prec main() {
+///     NOP;
+/// }
+/// prec add(x: i32, y: i32) {
+///     return x + y;
+/// }
+/// ```
+pub struct FunctionDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub proc_token: token::Proc<'cx, F>,
+    pub name: F::Ident,
+    pub left_paren: token::OpenParen<'cx, F>,
+    pub parameters: &'cx [Parameter<'cx, F>],
+    pub right_paren: token::CloseParen<'cx, F>,
+    pub body: F::Block,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A function parameter.
+///
+/// # Examples
+///
+/// ```ops
+/// x: i32
+/// ```
+pub struct Parameter<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub name: F::Ident,
+    pub colon: token::Colon<'cx, F>,
+    pub ty: F::Path,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+/// A constant definition.
+///
+/// # Examples
+///
+/// ```ops
+/// const CONSTANT: i32 = 0;
+/// ```
+pub struct ConstantDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub const_token: token::Const<'cx, F>,
+    pub name: F::Ident,
+    pub colon: token::Colon<'cx, F>,
+    pub ty: F::Path,
+    pub eq: token::Eq<'cx, F>,
+    pub value: Expr<'cx, F>,
 }
 
 impl Versioned for Program<'_, DefaultTypeFamily> {

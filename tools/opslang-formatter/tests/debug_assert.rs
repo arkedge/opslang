@@ -1,4 +1,7 @@
-use opslang_ast::v1::{ExprKind, Program, context::Context};
+use opslang_ast::{
+    Definition,
+    v1::{ExprKind, Program, context::Context},
+};
 use opslang_formatter::{FormatterConfig, format_source};
 use opslang_parser::{ParseOps, ParserInput};
 
@@ -33,7 +36,9 @@ fn debug_assert_parentheses_behavior() {
         };
         let program: Program = Program::parse(parser_input, &ctx).expect("Failed to parse");
 
-        if let Some(first_item) = program.content.items.get(1) {
+        if let Definition::Function(f) = &program.definitions[0]
+            && let Some(first_item) = f.body.scope.items.get(1)
+        {
             // Skip shebang
             if let opslang_ast::v1::ScopeItem::Row(row) = first_item
                 && let Some(opslang_ast::v1::StatementKind::Expr(expr_stmt)) = &row.content

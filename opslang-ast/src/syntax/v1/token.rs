@@ -147,4 +147,6 @@ declare_kw! {
     pub struct Let "let"
     pub struct If "if"
     pub struct Else "else"
+    pub struct Proc "proc"
+    pub struct Const "const"
 }

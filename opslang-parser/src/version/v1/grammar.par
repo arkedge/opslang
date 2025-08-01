@@ -25,7 +25,32 @@ CommentContent
     : <Cmnt>/[^\r\n]*/
     ;
 
-Program: Scope;
+Program: { Definition };
+
+Definition
+    : FunctionDef
+    | ConstantDef
+    ;
+
+FunctionDef
+    : 'proc' Ident '(' [ ParameterList ] ')' Block
+    ;
+
+ParameterList
+    : Parameter [ CommaParameterList ]
+    ;
+
+CommaParameterList
+    : ',' [ ParameterList ]
+    ;
+
+Parameter
+    : Ident ':' Path
+    ;
+
+ConstantDef
+    : 'const' Ident ':' Path '=' Expr
+    ;
 
 Scope: { ScopeContent };
 

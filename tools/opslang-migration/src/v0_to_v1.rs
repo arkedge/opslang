@@ -172,7 +172,24 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
             items: Box::leak(scope_items.into_boxed_slice()),
         };
 
-        Ok(v1::Program { content: scope })
+        // Wrap the entire v0 program in a main function
+        let main_function = v1::FunctionDef {
+            proc_token: v1::token::Proc { span: Span },
+            name: v1::Ident::new(ctx, "main", Span),
+            left_paren: v1::token::OpenParen { position: Position },
+            parameters: &[],
+            right_paren: v1::token::CloseParen { position: Position },
+            body: ctx.alloc_block(v1::Block {
+                left_brace: v1::token::OpenBrace { position: Position },
+                scope,
+                right_brace: v1::token::CloseBrace { position: Position },
+            }),
+        };
+
+        let definition = v1::Definition::Function(main_function);
+        let definitions = Box::leak(vec![definition].into_boxed_slice());
+
+        Ok(v1::Program { definitions })
     }
 }
 
@@ -840,7 +857,14 @@ mod tests {
         let result = statements.convert(&ctx);
         assert!(result.is_ok());
         let program = result.unwrap();
-        assert_eq!(program.content.items.len(), 0);
+        assert_eq!(program.definitions.len(), 1);
+        if let v1::Definition::Function(func_def) = &program.definitions[0] {
+            assert_eq!(func_def.name.raw, "main");
+            assert_eq!(func_def.parameters.len(), 0);
+            assert_eq!(func_def.body.scope.items.len(), 0);
+        } else {
+            panic!("Expected main function definition");
+        }
     }
 
     #[test]

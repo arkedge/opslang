@@ -101,8 +101,105 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Program<'_> {
     type Output = syn::Program<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
+        let definitions: Vec<_> = self
+            .program_list
+            .iter()
+            .map(|def| def.definition.process_token(cx))
+            .collect();
         syn::Program {
-            content: self.scope.process_token(cx),
+            definitions: Box::leak(definitions.into_boxed_slice()),
+        }
+    }
+}
+
+impl<'cx> ProcessToken<'cx> for grammar_trait::Definition<'_> {
+    type Output = syn::Definition<'cx>;
+
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
+        match self {
+            grammar_trait::Definition::FunctionDef(function_def) => {
+                syn::Definition::Function(function_def.function_def.process_token(cx))
+            }
+            grammar_trait::Definition::ConstantDef(constant_def) => {
+                syn::Definition::Constant(constant_def.constant_def.process_token(cx))
+            }
+        }
+    }
+}
+
+impl<'cx> ProcessToken<'cx> for grammar_trait::FunctionDef<'_> {
+    type Output = syn::FunctionDef<'cx>;
+
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
+        let params = if let Some(param_list) = &self.function_def_opt {
+            let mut params = Vec::new();
+            let mut current = &param_list.parameter_list;
+            loop {
+                params.push(current.parameter.process_token(cx));
+                let Some(comma_param_list) = &current.parameter_list_opt else {
+                    break;
+                };
+                let Some(next_param_list) = &comma_param_list
+                    .comma_parameter_list
+                    .comma_parameter_list_opt
+                else {
+                    break;
+                };
+                current = &next_param_list.parameter_list;
+            }
+            params
+        } else {
+            vec![]
+        };
+
+        syn::FunctionDef {
+            proc_token: syn::token::Proc {
+                span: self.proc.span(),
+            },
+            name: self.ident.process_token(cx),
+            left_paren: syn::token::OpenParen {
+                position: syn::BytePos(self.l_paren.location.start),
+            },
+            parameters: Box::leak(params.into_boxed_slice()),
+            right_paren: syn::token::CloseParen {
+                position: syn::BytePos(self.r_paren.location.start),
+            },
+            body: cx.alloc_block(self.block.process_token(cx)),
+        }
+    }
+}
+
+impl<'cx> ProcessToken<'cx> for grammar_trait::Parameter<'_> {
+    type Output = syn::Parameter<'cx>;
+
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
+        syn::Parameter {
+            name: self.ident.process_token(cx),
+            colon: syn::token::Colon {
+                position: syn::BytePos(self.colon.location.start),
+            },
+            ty: self.path.process_token(cx),
+        }
+    }
+}
+
+impl<'cx> ProcessToken<'cx> for grammar_trait::ConstantDef<'_> {
+    type Output = syn::ConstantDef<'cx>;
+
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
+        syn::ConstantDef {
+            const_token: syn::token::Const {
+                span: self.r#const.span(),
+            },
+            name: self.ident.process_token(cx),
+            colon: syn::token::Colon {
+                position: syn::BytePos(self.colon.location.start),
+            },
+            ty: self.path.process_token(cx),
+            eq: syn::token::Eq {
+                position: syn::BytePos(self.equ.location.start),
+            },
+            value: self.expr.process_token(cx),
         }
     }
 }
