@@ -1,3 +1,6 @@
+use opslang_ast::V1Token;
+use opslang_ast::token::IntoPosition;
+use opslang_ast::token::IntoSpan;
 use opslang_ast::v1::context::Context;
 use opslang_printer::{Naive, PrettyPrint, PrintOptions};
 
@@ -133,6 +136,18 @@ pub struct Span;
 /// to retrieve spans and positions.
 pub struct Position;
 
+impl<'cx> IntoSpan<'cx, ConvertedFamily> for Span {
+    fn into_span(self) -> Self {
+        self
+    }
+}
+
+impl<'cx> IntoPosition<'cx, ConvertedFamily> for Position {
+    fn into_position(self) -> Self {
+        self
+    }
+}
+
 // Implementation of ConvertV0ToV1 for basic types
 
 impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
@@ -174,15 +189,15 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
 
         // Wrap the entire v0 program in a main function
         let main_function = v1::FunctionDef {
-            proc_token: v1::token::Proc { span: Span },
+            proc_token: V1Token![proc](Span),
             name: v1::Ident::new(ctx, "main", Span),
-            left_paren: v1::token::OpenParen { position: Position },
+            left_paren: v1::token::OpenParen(Position),
             parameters: &[],
-            right_paren: v1::token::CloseParen { position: Position },
+            right_paren: v1::token::CloseParen(Position),
             body: ctx.alloc_block(v1::Block {
-                left_brace: v1::token::OpenBrace { position: Position },
+                left_brace: v1::token::OpenBrace(Position),
                 scope,
-                right_brace: v1::token::CloseBrace { position: Position },
+                right_brace: v1::token::CloseBrace(Position),
             }),
         };
 
@@ -213,7 +228,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Row {
         ctx: &'cx Context<'cx, ConvertedFamily>,
     ) -> Result<Self::Converted, ConversionError> {
         let breaks = if self.breaks.is_some() {
-            Some(v1::token::Break { position: Position })
+            Some(V1Token![.](Position))
         } else {
             None
         };
@@ -274,9 +289,9 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Block {
         };
 
         Ok(v1::Block {
-            left_brace: v1::token::OpenBrace { position: Position },
+            left_brace: v1::token::OpenBrace(Position),
             scope,
-            right_brace: v1::token::CloseBrace { position: Position },
+            right_brace: v1::token::CloseBrace(Position),
         })
     }
 }
@@ -294,15 +309,15 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
                 Ok(v1::StatementKind::Let(converted_let))
             }
             v0::SingleStatement::Return => Ok(v1::StatementKind::Return(v1::ReturnStmt {
-                return_token: v1::token::Return { span: Span },
-                semi: v1::token::Semi { position: Position },
+                return_token: V1Token![return](Span),
+                semi: V1Token![;](Position),
             })),
             v0::SingleStatement::Command(cmd) => {
                 // Convert command to expression statement
                 let expr = cmd.convert(ctx)?;
                 Ok(v1::StatementKind::Expr(v1::ExprStatement {
                     expr,
-                    semi: v1::token::Semi { position: Position },
+                    semi: V1Token![;](Position),
                 }))
             }
             v0::SingleStatement::Print(print) => {
@@ -310,7 +325,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
                 let expr = print.convert(ctx)?;
                 Ok(v1::StatementKind::Expr(v1::ExprStatement {
                     expr,
-                    semi: v1::token::Semi { position: Position },
+                    semi: V1Token![;](Position),
                 }))
             }
             v0::SingleStatement::Call(call) => {
@@ -318,7 +333,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
                 let expr = call.convert(ctx)?;
                 Ok(v1::StatementKind::Expr(v1::ExprStatement {
                     expr,
-                    semi: v1::token::Semi { position: Position },
+                    semi: V1Token![;](Position),
                 }))
             }
             v0::SingleStatement::Wait(wait) => {
@@ -326,7 +341,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
                 let expr = wait.convert(ctx)?;
                 Ok(v1::StatementKind::Expr(v1::ExprStatement {
                     expr,
-                    semi: v1::token::Semi { position: Position },
+                    semi: V1Token![;](Position),
                 }))
             }
             v0::SingleStatement::Assert(assert) => {
@@ -334,7 +349,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
                 let expr = assert.convert(ctx)?;
                 Ok(v1::StatementKind::Expr(v1::ExprStatement {
                     expr,
-                    semi: v1::token::Semi { position: Position },
+                    semi: V1Token![;](Position),
                 }))
             }
             v0::SingleStatement::AssertEq(assert_eq) => {
@@ -342,7 +357,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
                 let expr = assert_eq.convert(ctx)?;
                 Ok(v1::StatementKind::Expr(v1::ExprStatement {
                     expr,
-                    semi: v1::token::Semi { position: Position },
+                    semi: V1Token![;](Position),
                 }))
             }
             v0::SingleStatement::Set(set) => {
@@ -350,7 +365,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
                 let expr = set.convert(ctx)?;
                 Ok(v1::StatementKind::Expr(v1::ExprStatement {
                     expr,
-                    semi: v1::token::Semi { position: Position },
+                    semi: V1Token![;](Position),
                 }))
             }
         }
@@ -368,11 +383,11 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Let {
         let rhs = self.rhs.convert(ctx)?;
 
         Ok(v1::Let {
-            let_token: v1::token::Let { span: Span },
+            let_token: V1Token![let](Span),
             variable,
-            eq: v1::token::Eq { position: Position },
+            eq: V1Token![=](Position),
             rhs,
-            semi: v1::token::Semi { position: Position },
+            semi: V1Token![;](Position),
         })
     }
 }
@@ -458,11 +473,11 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
                 Box::leak(segments.into_boxed_slice()),
             );
             let kind_spec = v1::KindSpec {
-                at_token: v1::token::Atmark { position: Position },
+                at_token: V1Token![@](Position),
                 name: path,
                 arg: if let Some(expr) = self.destination.time_indicator {
                     Some(v1::KindArg {
-                        colon_token: v1::token::Colon { position: Position },
+                        colon_token: V1Token![:](Position),
                         value: expr.convert(ctx)?,
                     })
                 } else {
@@ -483,7 +498,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
 
             let receiver_component = self.destination.receiver_component.as_ref().unwrap();
             let component = v1::DefaultAttr {
-                tilde_token: v1::token::Tilde { position: Position },
+                tilde_token: V1Token![~](Position),
                 name: v1::Path::single(ctx, &receiver_component.name, Span),
             };
             qualifs.push(v1::Qualif::DefaultAttr(component));
@@ -540,14 +555,14 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Expr {
                 let path = variable_path.convert(ctx)?;
                 Ok(v1::Expr::unary(
                     ctx,
-                    v1::UnOp::Deref(v1::token::Dollar { position: Position }),
+                    v1::UnOp::Deref(V1Token![$](Position)),
                     v1::Expr::variable(ctx, path),
                 ))
             }
             v0::Expr::UnOp(un_op_kind, expr) => {
                 let converted_expr = expr.convert(ctx)?;
                 let op = match un_op_kind {
-                    v0::UnOpKind::Neg => v1::UnOp::Neg(v1::token::Hyphen { position: Position }),
+                    v0::UnOpKind::Neg => v1::UnOp::Neg(V1Token![-](Position)),
                 };
 
                 Ok(v1::Expr::unary(ctx, op, converted_expr))
@@ -561,22 +576,20 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Expr {
                         // Convert to Compare expression
                         let v1_compare_op = match compare_op {
                             v0::CompareBinOpKind::GreaterEq => {
-                                v1::CompareOp::GreaterEq(v1::token::RightAngleEq { span: Span })
+                                v1::CompareOp::GreaterEq(V1Token![>=](Span))
                             }
                             v0::CompareBinOpKind::LessEq => {
-                                v1::CompareOp::LessEq(v1::token::AngleEq { span: Span })
+                                v1::CompareOp::LessEq(V1Token![<=](Span))
                             }
                             v0::CompareBinOpKind::Greater => {
-                                v1::CompareOp::Greater(v1::token::RightAngle { position: Position })
+                                v1::CompareOp::Greater(V1Token![>](Position))
                             }
                             v0::CompareBinOpKind::Less => {
-                                v1::CompareOp::Less(v1::token::Angle { position: Position })
+                                v1::CompareOp::Less(V1Token![<](Position))
                             }
-                            v0::CompareBinOpKind::Equal => {
-                                v1::CompareOp::Equal(v1::token::EqualEqual { span: Span })
-                            }
+                            v0::CompareBinOpKind::Equal => v1::CompareOp::Equal(V1Token![==](Span)),
                             v0::CompareBinOpKind::NotEqual => v1::CompareOp::NotEqual(
-                                v1::NotEqualToken::BangEqual(v1::token::BangEqual { span: Span }),
+                                v1::NotEqualToken::BangEqual(V1Token![!=](Span)),
                             ),
                         };
 
@@ -644,9 +657,9 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Literal {
                         converted_exprs.push(expr.convert(ctx)?);
                     }
                     v1::literal::Literal::Array(v1::literal::Array {
-                        left_bracket: v1::token::OpenSquare { position: Position },
+                        left_bracket: v1::token::OpenSquare(Position),
                         exprs: Box::leak(converted_exprs.into_boxed_slice()),
-                        right_bracket: v1::token::CloseSquare { position: Position },
+                        right_bracket: v1::token::CloseSquare(Position),
                     })
                 }
                 v0::Literal::DateTime(date_time) => {
@@ -672,7 +685,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Literal {
                     );
                     return Ok(v1::Expr::unary(
                         ctx,
-                        v1::UnOp::IdRef(v1::token::Ampersand { position: Position }),
+                        v1::UnOp::IdRef(V1Token![&](Position)),
                         v1::Expr::variable(ctx, path),
                     ));
                 }
@@ -746,7 +759,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Call {
         let path_str = ctx.alloc_str(&self.path.full_name);
         let file = v1::Expr::literal(ctx, v1::literal::Literal::string(ctx, path_str, Span));
         let path = v1::Path::single(ctx, "main", Span);
-        let arg = v1::Expr::import(ctx, file, v1::token::Question { position: Position }, path);
+        let arg = v1::Expr::import(ctx, file, V1Token![?](Position), path);
 
         Ok(create_apply_with_string_function(ctx, "call", vec![arg]))
     }
@@ -821,7 +834,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Set {
         Ok(v1::Expr::set(
             ctx,
             v1::Expr::variable(ctx, self.name.convert(ctx)?),
-            v1::token::ColonEq { span: Span },
+            V1Token![:=](Span),
             self.expr.convert(ctx)?,
         ))
     }

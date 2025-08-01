@@ -1,5 +1,9 @@
 use super::generated::grammar_trait::{self, ActionTrait, Program};
-use opslang_ast::v1::{self as syn, context::Context};
+use opslang_ast::{
+    V1Token as Token,
+    token::{IntoPosition, IntoSpan},
+    v1::{self as syn, context::Context},
+};
 
 #[allow(unused_imports)]
 use parol_runtime::{Result, Token};
@@ -31,6 +35,41 @@ impl<'cx> ActionTrait<'cx> for Action<'cx> {
     }
 }
 
+/// Locally defined types, needed so that this crate is independent from `opslang-ast`.
+struct Loc<T>(T);
+impl IntoSpan<'_> for Loc<syn::Span> {
+    fn into_span(self) -> syn::Span {
+        self.0
+    }
+}
+impl IntoPosition<'_> for Loc<syn::Position> {
+    fn into_position(self) -> syn::Position {
+        self.0
+    }
+}
+
+/// Wraps a foreign type into a locally defined type.
+trait WrapLoc<T> {
+    fn wrap(&self) -> Loc<T>;
+}
+
+impl WrapLoc<syn::Span> for parol_runtime::Token<'_> {
+    fn wrap(&self) -> Loc<syn::Span> {
+        let parol_runtime::Location { start, end, .. } = self.location;
+        Loc(syn::Span {
+            start: syn::BytePos(start),
+            end: syn::BytePos(end),
+        })
+    }
+}
+
+impl WrapLoc<syn::Position> for parol_runtime::Token<'_> {
+    fn wrap(&self) -> Loc<syn::Position> {
+        let parol_runtime::Location { start, .. } = self.location;
+        Loc(syn::BytePos(start))
+    }
+}
+
 /// A trait for processing tokens in the grammar.
 ///
 /// This trait is used to process tokens in the grammar and convert them into
@@ -58,42 +97,6 @@ impl<'cx, T: ProcessToken<'cx>> ProcessToken<'cx> for Box<T> {
     #[inline(always)]
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         <T as ProcessToken<'cx>>::process_token(&**self, cx)
-    }
-}
-
-trait TokenSpan {
-    fn span(&self) -> syn::Span;
-}
-
-trait TokenLocation {
-    fn location(&self) -> &'_ parol_runtime::Location;
-}
-
-impl TokenLocation for parol_runtime::Token<'_> {
-    fn location(&self) -> &'_ parol_runtime::Location {
-        &self.location
-    }
-}
-
-impl TokenLocation for parol_runtime::Location {
-    fn location(&self) -> &'_ parol_runtime::Location {
-        self
-    }
-}
-
-impl<T: TokenLocation> TokenSpan for T {
-    fn span(&self) -> syn::Span {
-        let parol_runtime::Location { start, end, .. } = self.location();
-        syn::Span {
-            start: syn::BytePos(*start),
-            end: syn::BytePos(*end),
-        }
-    }
-}
-
-impl TokenLocation for grammar_trait::Break<'_> {
-    fn location(&self) -> &'_ parol_runtime::Location {
-        &self.r#break.location
     }
 }
 
@@ -153,17 +156,11 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FunctionDef<'_> {
         };
 
         syn::FunctionDef {
-            proc_token: syn::token::Proc {
-                span: self.proc.span(),
-            },
+            proc_token: Token![proc](self.proc.wrap()),
             name: self.ident.process_token(cx),
-            left_paren: syn::token::OpenParen {
-                position: syn::BytePos(self.l_paren.location.start),
-            },
+            left_paren: syn::token::OpenParen(self.l_paren.wrap()),
             parameters: Box::leak(params.into_boxed_slice()),
-            right_paren: syn::token::CloseParen {
-                position: syn::BytePos(self.r_paren.location.start),
-            },
+            right_paren: syn::token::CloseParen(self.r_paren.wrap()),
             body: cx.alloc_block(self.block.process_token(cx)),
         }
     }
@@ -175,9 +172,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Parameter<'_> {
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         syn::Parameter {
             name: self.ident.process_token(cx),
-            colon: syn::token::Colon {
-                position: syn::BytePos(self.colon.location.start),
-            },
+            colon: Token![:](self.colon.wrap()),
             ty: self.path.process_token(cx),
         }
     }
@@ -188,17 +183,11 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ConstantDef<'_> {
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         syn::ConstantDef {
-            const_token: syn::token::Const {
-                span: self.r#const.span(),
-            },
+            const_token: Token![const](self.r#const.wrap()),
             name: self.ident.process_token(cx),
-            colon: syn::token::Colon {
-                position: syn::BytePos(self.colon.location.start),
-            },
+            colon: Token![:](self.colon.wrap()),
             ty: self.path.process_token(cx),
-            eq: syn::token::Eq {
-                position: syn::BytePos(self.equ.location.start),
-            },
+            eq: Token![=](self.equ.wrap()),
             value: self.expr.process_token(cx),
         }
     }
@@ -223,9 +212,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContentOpt<'_> {
     type Output = syn::token::Break<'cx>;
 
     fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
-        syn::token::Break {
-            position: syn::BytePos(self.r#break.r#break.location.start),
-        }
+        Token![.](self.r#break.r#break.wrap())
     }
 }
 
@@ -269,13 +256,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Block<'_> {
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         syn::Block {
-            left_brace: syn::token::OpenBrace {
-                position: syn::BytePos(self.l_brace.location.start),
-            },
+            left_brace: syn::token::OpenBrace(self.l_brace.wrap()),
             scope: self.scope.process_token(cx),
-            right_brace: syn::token::CloseBrace {
-                position: syn::BytePos(self.r_brace.location.start),
-            },
+            right_brace: syn::token::CloseBrace(self.r_brace.wrap()),
         }
     }
 }
@@ -284,9 +267,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
     type Output = syn::StatementKind<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        let semi = syn::token::Semi {
-            position: syn::BytePos(self.semi.semi.location.start),
-        };
+        let semi = Token![;](self.semi.semi.wrap());
         match &*self.statement_kind {
             grammar_trait::StatementKind::LetStmt(grammar_trait::StatementKindLetStmt {
                 let_stmt,
@@ -298,11 +279,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
                     expr,
                 } = &**let_stmt;
                 syn::StatementKind::Let(syn::Let {
-                    let_token: syn::token::Let { span: r#let.span() },
+                    let_token: Token![let](r#let.wrap()),
                     variable: ident.process_token(cx),
-                    eq: syn::token::Eq {
-                        position: syn::BytePos(equ.location.start),
-                    },
+                    eq: Token![=](equ.wrap()),
                     rhs: expr.process_token(cx),
                     semi,
                 })
@@ -315,9 +294,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
             }
             grammar_trait::StatementKind::ReturnStmt(statement_kind_return_stmt) => {
                 syn::StatementKind::Return(syn::ReturnStmt {
-                    return_token: syn::token::Return {
-                        span: statement_kind_return_stmt.return_stmt.return_stmt.span(),
-                    },
+                    return_token: Token![return](
+                        statement_kind_return_stmt.return_stmt.return_stmt.wrap(),
+                    ),
                     semi,
                 })
             }
@@ -336,9 +315,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Expr<'_> {
         {
             cx.alloc_expr(syn::ExprKind::Set(syn::Set {
                 lhs: self.set_expr.logical_or_expr.process_token(cx),
-                colon_eq: syn::token::ColonEq {
-                    span: colon_equ.span(),
-                },
+                colon_eq: Token![:=](colon_equ.wrap()),
                 rhs: logical_or_expr.process_token(cx),
             }))
         } else {
@@ -441,39 +418,25 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareOp<'_> {
     fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::CompareOp::GTEqu(compare_op_gtequ) => {
-                syn::CompareOp::GreaterEq(syn::token::RightAngleEq {
-                    span: compare_op_gtequ.g_t_equ.span(),
-                })
+                syn::CompareOp::GreaterEq(Token![>=](compare_op_gtequ.g_t_equ.wrap()))
             }
             grammar_trait::CompareOp::LTEqu(compare_op_ltequ) => {
-                syn::CompareOp::LessEq(syn::token::AngleEq {
-                    span: compare_op_ltequ.l_t_equ.span(),
-                })
+                syn::CompareOp::LessEq(Token![<=](compare_op_ltequ.l_t_equ.wrap()))
             }
             grammar_trait::CompareOp::GT(compare_op_gt) => {
-                syn::CompareOp::Greater(syn::token::RightAngle {
-                    position: syn::BytePos(compare_op_gt.g_t.location.start),
-                })
+                syn::CompareOp::Greater(Token![>](compare_op_gt.g_t.wrap()))
             }
             grammar_trait::CompareOp::LT(compare_op_lt) => {
-                syn::CompareOp::Less(syn::token::Angle {
-                    position: syn::BytePos(compare_op_lt.l_t.location.start),
-                })
+                syn::CompareOp::Less(Token![<](compare_op_lt.l_t.wrap()))
             }
-            grammar_trait::CompareOp::BangEqu(compare_op_bang_equ) => {
-                syn::CompareOp::NotEqual(syn::NotEqualToken::BangEqual(syn::token::BangEqual {
-                    span: compare_op_bang_equ.bang_equ.span(),
-                }))
-            }
-            grammar_trait::CompareOp::SlashEqu(compare_op_slash_equ) => {
-                syn::CompareOp::NotEqual(syn::NotEqualToken::SlashEqual(syn::token::SlashEqual {
-                    span: compare_op_slash_equ.slash_equ.span(),
-                }))
-            }
+            grammar_trait::CompareOp::BangEqu(compare_op_bang_equ) => syn::CompareOp::NotEqual(
+                syn::NotEqualToken::BangEqual(Token![!=](compare_op_bang_equ.bang_equ.wrap())),
+            ),
+            grammar_trait::CompareOp::SlashEqu(compare_op_slash_equ) => syn::CompareOp::NotEqual(
+                syn::NotEqualToken::SlashEqual(Token![/=](compare_op_slash_equ.slash_equ.wrap())),
+            ),
             grammar_trait::CompareOp::EquEqu(compare_op_equ_equ) => {
-                syn::CompareOp::Equal(syn::token::EqualEqual {
-                    span: compare_op_equ_equ.equ_equ.span(),
-                })
+                syn::CompareOp::Equal(Token![==](compare_op_equ_equ.equ_equ.wrap()))
             }
         }
     }
@@ -550,9 +513,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
         match self {
             grammar_trait::PrefixExpr::MinusApplyExpr(prefix_expr_minus_apply_expr) => cx
                 .alloc_expr(syn::ExprKind::Unary(syn::Unary {
-                    op: syn::UnOp::Neg(syn::token::Hyphen {
-                        position: syn::BytePos(prefix_expr_minus_apply_expr.minus.location.start),
-                    }),
+                    op: syn::UnOp::Neg(Token![-](prefix_expr_minus_apply_expr.minus.wrap())),
                     expr: prefix_expr_minus_apply_expr.apply_expr.process_token(cx),
                 })),
             grammar_trait::PrefixExpr::PrefixExprListApplyExpr(
@@ -593,14 +554,10 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Qualif<'_> {
             grammar_trait::Qualif::KindSpec(qualif_kind_spec) => {
                 let e = &*qualif_kind_spec.kind_spec;
                 syn::Qualif::KindSpec(syn::KindSpec {
-                    at_token: syn::token::Atmark {
-                        position: syn::BytePos(e.at.location.start),
-                    },
+                    at_token: Token![@](e.at.wrap()),
                     name: e.path.process_token(cx),
                     arg: e.kind_spec_opt.as_ref().map(|k| syn::KindArg {
-                        colon_token: syn::token::Colon {
-                            position: syn::BytePos(k.kind_arg.colon.location.start),
-                        },
+                        colon_token: Token![:](k.kind_arg.colon.wrap()),
                         value: k.kind_arg.callable.process_token(cx),
                     }),
                 })
@@ -608,9 +565,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Qualif<'_> {
             grammar_trait::Qualif::DefaultAttr(qualif_default_attr) => {
                 let t = &*qualif_default_attr.default_attr;
                 syn::Qualif::DefaultAttr(syn::DefaultAttr {
-                    tilde_token: syn::token::Tilde {
-                        position: syn::BytePos(t.tilde.location.start),
-                    },
+                    tilde_token: Token![~](t.tilde.wrap()),
                     name: t.path.process_token(cx),
                 })
             }
@@ -647,14 +602,10 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LowerPrefixExpr<'_> {
             cx.alloc_expr(syn::ExprKind::Unary(syn::Unary {
                 op: match &*lower_prefix.lower_prefix_op {
                     grammar_trait::LowerPrefixOp::Amp(lower_prefix_op_amp) => {
-                        syn::UnOp::IdRef(syn::token::Ampersand {
-                            position: syn::BytePos(lower_prefix_op_amp.amp.location.start),
-                        })
+                        syn::UnOp::IdRef(Token![&](lower_prefix_op_amp.amp.wrap()))
                     }
                     grammar_trait::LowerPrefixOp::Dollar(lower_prefix_op_dollar) => {
-                        syn::UnOp::Deref(syn::token::Dollar {
-                            position: syn::BytePos(lower_prefix_op_dollar.dollar.location.start),
-                        })
+                        syn::UnOp::Deref(Token![$](lower_prefix_op_dollar.dollar.wrap()))
                     }
                 },
                 expr: self.callable.process_token(cx),
@@ -678,13 +629,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Callable<'_> {
             ),
             grammar_trait::Callable::LParenExprRParen(callable_lparen_expr_rparen) => cx
                 .alloc_expr(syn::ExprKind::Parened(syn::Parened {
-                    left_paren: syn::token::OpenParen {
-                        position: syn::BytePos(callable_lparen_expr_rparen.l_paren.location.start),
-                    },
+                    left_paren: syn::token::OpenParen(callable_lparen_expr_rparen.l_paren.wrap()),
                     expr: callable_lparen_expr_rparen.expr.process_token(cx),
-                    right_paren: syn::token::CloseParen {
-                        position: syn::BytePos(callable_lparen_expr_rparen.r_paren.location.start),
-                    },
+                    right_paren: syn::token::CloseParen(callable_lparen_expr_rparen.r_paren.wrap()),
                 })),
         }
     }
@@ -707,9 +654,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
                     syn::Expr::import(
                         cx,
                         expr,
-                        syn::token::Question {
-                            position: syn::BytePos(import_expr_opt.quest.location.start),
-                        },
+                        Token![?](import_expr_opt.quest.wrap()),
                         import_expr_opt.path.process_token(cx),
                     )
                 } else {
@@ -720,15 +665,11 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
                 let e = &atomic_expr_if_expr.if_expr;
                 syn::Expr::if_expr(
                     cx,
-                    syn::token::If {
-                        span: e.r#if.location.span(),
-                    },
+                    Token![if](e.r#if.wrap()),
                     e.expr.process_token(cx),
                     cx.alloc_block(e.block.process_token(cx)),
                     e.if_expr_opt.as_ref().map(|el| syn::IfElse {
-                        else_kw: syn::token::Else {
-                            span: el.r#else.span(),
-                        },
+                        else_kw: Token![else](el.r#else.wrap()),
                         else_clause: cx.alloc_block(el.block.process_token(cx)),
                     }),
                 )
@@ -743,9 +684,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
             grammar_trait::Literal::Array(literal_array) => syn::Literal::Array(syn::Array {
-                left_bracket: syn::token::OpenSquare {
-                    position: syn::BytePos(literal_array.array.l_bracket.location.start),
-                },
+                left_bracket: syn::token::OpenSquare(literal_array.array.l_bracket.wrap()),
                 exprs: {
                     let mut exprs = Vec::new();
                     if let Some(comma_sep_elements) = &literal_array.array.array_opt {
@@ -766,13 +705,11 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                     }
                     Box::leak(exprs.into_boxed_slice())
                 },
-                right_bracket: syn::token::CloseSquare {
-                    position: syn::BytePos(literal_array.array.r_bracket.location.start),
-                },
+                right_bracket: syn::token::CloseSquare(literal_array.array.r_bracket.wrap()),
             }),
             grammar_trait::Literal::String(literal_string) => syn::Literal::String(syn::String {
                 raw: cx.alloc_str(literal_string.string.string.text().trim_matches('"')),
-                span: literal_string.string.string.span(),
+                span: literal_string.string.string.wrap().0,
             }),
             grammar_trait::Literal::ByteLiteral(literal_byte_literal) => {
                 syn::Literal::Bytes(syn::Bytes {
@@ -784,7 +721,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                             .trim_start_matches('b')
                             .trim_matches('"'),
                     ),
-                    span: literal_byte_literal.byte_literal.byte_literal.span(),
+                    span: literal_byte_literal.byte_literal.byte_literal.wrap().0,
                 })
             }
             grammar_trait::Literal::HexByteLiteral(literal_hex_byte_literal) => {
@@ -800,7 +737,8 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                     span: literal_hex_byte_literal
                         .hex_byte_literal
                         .hex_byte_literal
-                        .span(),
+                        .wrap()
+                        .0,
                 })
             }
             grammar_trait::Literal::Numeric(literal_numeric) => {
@@ -817,7 +755,8 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                     span: literal_rfc3339_datetime
                         .rfc3339_date_time
                         .rfc3339_date_time
-                        .span(),
+                        .wrap()
+                        .0,
                 })
             }
         }
@@ -836,7 +775,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
                         start,
                         Some(syn::NumericSuffix(syn::Ident {
                             raw: cx.alloc_str(end),
-                            span: $token.location.span(),
+                            span: $token.wrap().0,
                         })),
                     )
                 } else {
@@ -911,7 +850,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Comment<'_> {
                     .unwrap_or(""),
             ),
             span: if let Some(comment) = &self.comment_opt {
-                comment.comment_content.comment_content.location.span()
+                comment.comment_content.comment_content.wrap().0
             } else {
                 let position = syn::BytePos(self.hash.hash.location.end + 1);
                 syn::Span {
@@ -930,7 +869,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Ident<'_> {
         let token = &self.ident;
         syn::Ident {
             raw: cx.alloc_str(token.text()),
-            span: token.location.span(),
+            span: token.wrap().0,
         }
     }
 }
