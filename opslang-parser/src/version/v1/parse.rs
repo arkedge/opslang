@@ -621,8 +621,23 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
             grammar_trait::AtomicExpr::Qualif(atomic_expr_qualif) => cx.alloc_expr(
                 syn::ExprKind::Qualif(atomic_expr_qualif.qualif.process_token(cx)),
             ),
-            grammar_trait::AtomicExpr::LowerPrefixExpr(atomic_expr_lower_prefix) => {
-                atomic_expr_lower_prefix.lower_prefix_expr.process_token(cx)
+            grammar_trait::AtomicExpr::ImportExpr(atomic_expr_import) => {
+                let expr = atomic_expr_import
+                    .import_expr
+                    .lower_prefix_expr
+                    .process_token(cx);
+                if let Some(import_expr_opt) = &atomic_expr_import.import_expr.import_expr_opt {
+                    syn::Expr::import(
+                        cx,
+                        expr,
+                        syn::token::Question {
+                            position: syn::BytePos(import_expr_opt.quest.location.start),
+                        },
+                        import_expr_opt.path.process_token(cx),
+                    )
+                } else {
+                    expr
+                }
             }
         }
     }
@@ -696,22 +711,6 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
             }
             grammar_trait::Literal::Numeric(literal_numeric) => {
                 syn::Literal::Numeric(literal_numeric.numeric.process_token(cx))
-            }
-            grammar_trait::Literal::FilePathLiteral(literal_file_path_literal) => {
-                syn::Literal::OsFilePath(syn::OsFilePath {
-                    raw: cx.alloc_str(
-                        literal_file_path_literal
-                            .file_path_literal
-                            .file_path_literal
-                            .text()
-                            .trim_start_matches("os")
-                            .trim_matches('"'),
-                    ),
-                    span: literal_file_path_literal
-                        .file_path_literal
-                        .file_path_literal
-                        .span(),
-                })
             }
             grammar_trait::Literal::Rfc3339DateTime(literal_rfc3339_datetime) => {
                 syn::Literal::DateTime(syn::DateTime {

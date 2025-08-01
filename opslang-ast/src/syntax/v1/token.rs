@@ -119,6 +119,7 @@ declare_token! {
     pub struct Hyphen/1 "-"
     pub struct Ampersand/1 "&"
     pub struct Dollar/1 "$"
+    pub struct Question/1 "?"
     pub struct RightAngle/1 ">"
     pub struct Angle/1 "<"
     pub struct BangEqual/2 "!="

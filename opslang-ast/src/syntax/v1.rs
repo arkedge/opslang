@@ -191,6 +191,7 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Binary(Binary<'cx, F>),
     Apply(F::Apply),
     Set(Set<'cx, F>),
+    InfixImport(InfixImport<'cx, F>),
 }
 
 mod sealed {
@@ -333,6 +334,21 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     }
 
     #[inline]
+    pub fn import(
+        ctx: &'cx context::Context<'cx, F>,
+        file: Self,
+        question: token::Question<'cx, F>,
+        path: F::Path,
+    ) -> Self {
+        let import = InfixImport {
+            file,
+            question,
+            path,
+        };
+        ctx.alloc_expr(ExprKind::InfixImport(import))
+    }
+
+    #[inline]
     pub fn qualif(ctx: &'cx context::Context<'cx, F>, qualif: F::Qualif) -> Self {
         ctx.alloc_expr(ExprKind::Qualif(qualif))
     }
@@ -466,7 +482,6 @@ pub mod literal {
         Bytes(Bytes<'cx, F>),
         HexBytes(HexBytes<'cx, F>),
         Numeric(F::Numeric),
-        OsFilePath(OsFilePath<'cx, F>),
         DateTime(DateTime<'cx, F>),
     }
 
@@ -509,18 +524,6 @@ pub mod literal {
             F: TypeFamily<'cx, Numeric = Numeric<'cx>>,
         {
             Literal::Numeric(numeric)
-        }
-
-        pub fn os_file_path(
-            ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
-            content: &str,
-            span: F::Span,
-        ) -> Self {
-            let path_str = ctx.alloc_str(content);
-            Literal::OsFilePath(OsFilePath {
-                raw: path_str,
-                span,
-            })
         }
 
         pub fn date_time(
@@ -651,16 +654,6 @@ pub mod literal {
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    /// A file path.
-    ///
-    /// The file path is a string that represents the location of a file.
-    /// It can be a relative or absolute path.
-    pub struct OsFilePath<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-        pub raw: &'cx str,
-        pub span: F::Span,
-    }
-
-    #[derive(Debug, PartialEq, Clone, Copy)]
     /// A date-time value.
     pub struct DateTime<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
@@ -769,4 +762,11 @@ pub struct Set<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: Expr<'cx, F>,
     pub colon_eq: token::ColonEq<'cx, F>,
     pub rhs: Expr<'cx, F>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
+pub struct InfixImport<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub file: Expr<'cx, F>,
+    pub question: token::Question<'cx, F>,
+    pub path: F::Path,
 }

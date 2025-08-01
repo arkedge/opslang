@@ -151,7 +151,12 @@ Callable
 // expressions with clear space delimitation
 AtomicExpr
     : Qualif
-    | LowerPrefixExpr
+    | ImportExpr
+    ;
+
+// ad-hoc import expression
+ImportExpr
+    : LowerPrefixExpr ['?' Path]
     ;
 
 // Qualification for sending a command
@@ -175,7 +180,6 @@ Literal
     | ByteLiteral
     | HexByteLiteral
     | Numeric
-    | FilePathLiteral
     | Rfc3339DateTime
     ;
 
@@ -217,9 +221,6 @@ HexadecimalInteger: /0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?/;
 
 // IEEE 754 with permissive digit separators, without leading zeros
 Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?/;
-
-// Harmless charactors for file paths
-FilePathLiteral: /os"[0-9a-zA-Z_.,-\/()\[\]]*"/;
 
 // `chrono`-crate version of RFC 3339
 Rfc3339DateTime: /\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
