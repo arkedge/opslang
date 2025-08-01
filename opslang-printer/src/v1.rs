@@ -3,76 +3,11 @@ use std::fmt::{self, Write};
 use crate::{
     CommentAligned, CommentGrouping, CommentPosition, Indent, Naive, Newline, PrettyPrint,
     PrintOptions, Strategy,
+    v1::prec::{HasPrecedence, Precedence},
 };
 use opslang_ast::syntax::v1::*;
 
-/// Operator precedence for proper parenthesization
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-struct Precedence(u8);
-
-impl Precedence {
-    const SET: Self = Self(0); // :=
-    const LOGICAL_OR: Self = Self(2); // ||
-    const LOGICAL_AND: Self = Self(3); // &&
-    const INFIX_IN: Self = Self(4); // infix in
-    const COMPARE: Self = Self(5); // >=, <=, >, <, !=, /=, ==
-    const ARITHMETIC: Self = Self(6); // +, -
-    const FACTOR: Self = Self(7); // *, /, %
-    const PREFIX: Self = Self(8); // unary -
-    const APPLY: Self = Self(9); // function application
-    const LOWER_PREFIX: Self = Self(10); // &, $
-    const ATOMIC: Self = Self(11); // grouping, literals, etc.
-}
-
-/// Get the precedence of an expression kind
-fn precedence_of<'cx, F: PrintableFamily<'cx>>(expr: &ExprKind<'cx, F>) -> Precedence {
-    match expr {
-        ExprKind::Set(_) => Precedence::SET,
-        ExprKind::Binary(binary) => match binary.op {
-            BinOp::Or => Precedence::LOGICAL_OR,
-            BinOp::And => Precedence::LOGICAL_AND,
-            BinOp::In => Precedence::INFIX_IN,
-            BinOp::Add | BinOp::Sub => Precedence::ARITHMETIC,
-            BinOp::Mul | BinOp::Div | BinOp::Mod => Precedence::FACTOR,
-        },
-        ExprKind::Compare(_) => Precedence::COMPARE,
-        ExprKind::Unary(unary) => match unary.op {
-            UnOp::Neg(_) => Precedence::PREFIX,
-            UnOp::IdRef(_) | UnOp::Deref(_) => Precedence::LOWER_PREFIX,
-        },
-        ExprKind::Apply(_) => Precedence::APPLY,
-        ExprKind::Variable(_)
-        | ExprKind::Literal(_)
-        | ExprKind::Parened(_)
-        | ExprKind::Qualif(_)
-        | ExprKind::PreQualified(_)
-        | ExprKind::InfixImport(_)
-        | ExprKind::If(_) => Precedence::ATOMIC,
-    }
-}
-
-/// Print an expression with parentheses if needed.
-///
-/// This function will give parens when `parent_prec` is greater than the
-/// precedence of the child expression. In other words, if the child expression is
-/// the same or more prioritized than the parent, it will be printed without parens.
-fn print_with_parens<'cx, S: Strategy, F: PrintableFamily<'cx>>(
-    expr: &ExprKind<'cx, F>,
-    parent_prec: Precedence,
-    writer: &mut impl Write,
-    options: &PrintOptions<S>,
-) -> fmt::Result
-where
-    ExprKind<'cx, F>: PrettyPrint<S>,
-{
-    if precedence_of(expr) < parent_prec {
-        writer.write_str("(")?;
-        PrettyPrint::<S>::pretty_print(expr, writer, options)?;
-        writer.write_str(")")
-    } else {
-        PrettyPrint::<S>::pretty_print(expr, writer, options)
-    }
-}
+mod prec;
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Token;
@@ -689,7 +624,7 @@ where
                 PrettyPrint::<S>::pretty_print(name, writer, options)?;
                 if let Some(expr) = arg {
                     Token.write(expr.colon_token, writer)?;
-                    print_with_parens(&expr.value, Precedence::ATOMIC, writer, options)?;
+                    Precedence::ATOMIC.write_with_parens(&expr.value, writer, options)?;
                 }
                 Ok(())
             }
@@ -729,21 +664,14 @@ where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        let op_prec = match self.op {
-            UnOp::Neg(t) => {
-                Token.write(t, writer)?;
-                Precedence::PREFIX
-            }
-            UnOp::IdRef(t) => {
-                Token.write(t, writer)?;
-                Precedence::LOWER_PREFIX
-            }
-            UnOp::Deref(t) => {
-                Token.write(t, writer)?;
-                Precedence::LOWER_PREFIX
-            }
+        match self.op {
+            UnOp::Neg(t) => Token.write(t, writer)?,
+            UnOp::IdRef(t) => Token.write(t, writer)?,
+            UnOp::Deref(t) => Token.write(t, writer)?,
         };
-        print_with_parens(self.expr.0, op_prec, writer, options)
+        self.op
+            .precedence()
+            .write_with_parens(self.expr.0, writer, options)
     }
 }
 
@@ -752,7 +680,7 @@ where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        print_with_parens(self.head.0, Precedence::COMPARE, writer, options)?;
+        Precedence::COMPARE.write_with_parens(self.head.0, writer, options)?;
         for (op, expr) in self.tail_with_op {
             writer.write_str(" ")?;
             match op {
@@ -765,7 +693,7 @@ where
                 CompareOp::Equal(t) => Token.write(t, writer),
             }?;
             writer.write_str(" ")?;
-            print_with_parens(expr.0, Precedence::COMPARE, writer, options)?;
+            Precedence::COMPARE.write_with_parens(expr.0, writer, options)?;
         }
         Ok(())
     }
@@ -776,15 +704,9 @@ where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        let op_prec = match self.op {
-            BinOp::And => Precedence::LOGICAL_AND,
-            BinOp::Or => Precedence::LOGICAL_OR,
-            BinOp::In => Precedence::INFIX_IN,
-            BinOp::Mul | BinOp::Div | BinOp::Mod => Precedence::FACTOR,
-            BinOp::Add | BinOp::Sub => Precedence::ARITHMETIC,
-        };
+        let op_prec = self.op.precedence();
 
-        print_with_parens(self.lhs.0, op_prec, writer, options)?;
+        op_prec.write_with_parens(self.lhs.0, writer, options)?;
         writer.write_str(" ")?;
         match self.op {
             BinOp::And => writer.write_str("&&")?,
@@ -797,7 +719,7 @@ where
             BinOp::Sub => writer.write_str("-")?,
         }
         writer.write_str(" ")?;
-        print_with_parens(self.rhs.0, op_prec, writer, options)
+        op_prec.write_with_parens(self.rhs.0, writer, options)
     }
 }
 
@@ -807,10 +729,10 @@ where
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         // OCaml-like function application: f x y instead of f(x, y)
-        print_with_parens(self.function.0, Precedence::APPLY, writer, options)?;
+        Precedence::APPLY.write_with_parens(self.function.0, writer, options)?;
         for arg in self.args.iter() {
             writer.write_str(" ")?;
-            print_with_parens(arg.0, Precedence::APPLY, writer, options)?;
+            Precedence::APPLY.write_with_parens(arg.0, writer, options)?;
         }
         Ok(())
     }
@@ -821,9 +743,11 @@ where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        print_with_parens(self.lhs.0, Precedence::SET, writer, options)?;
-        writer.write_str(" := ")?;
-        print_with_parens(self.rhs.0, Precedence::SET, writer, options)
+        Precedence::SET.write_with_parens(self.lhs.0, writer, options)?;
+        writer.write_str(" ")?;
+        Token.write(self.colon_eq, writer)?;
+        writer.write_str(" ")?;
+        Precedence::SET.write_with_parens(self.rhs.0, writer, options)
     }
 }
 
@@ -832,7 +756,7 @@ where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        print_with_parens(self.file.0, Precedence::ATOMIC, writer, options)?;
+        Precedence::ATOMIC.write_with_parens(self.file.0, writer, options)?;
         Token.write(self.question, writer)?;
         PrettyPrint::<S>::pretty_print(&self.path, writer, options)
     }
