@@ -234,38 +234,18 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Expr<'_> {
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if let Some(grammar_trait::SetExprOpt {
             colon_equ,
-            infix_if_expr,
+            logical_or_expr,
         }) = &self.set_expr.set_expr_opt
         {
             cx.alloc_expr(syn::ExprKind::Set(syn::Set {
-                lhs: self.set_expr.infix_if_expr.process_token(cx),
+                lhs: self.set_expr.logical_or_expr.process_token(cx),
                 colon_eq: syn::token::ColonEq {
                     span: colon_equ.span(),
                 },
-                rhs: infix_if_expr.process_token(cx),
-            }))
-        } else {
-            self.set_expr.infix_if_expr.process_token(cx)
-        }
-    }
-}
-
-impl<'cx> ProcessToken<'cx> for grammar_trait::InfixIfExpr<'_> {
-    type Output = syn::Expr<'cx>;
-
-    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        if let Some(grammar_trait::InfixIfExprOpt {
-            r#if: _,
-            logical_or_expr,
-        }) = &self.infix_if_expr_opt
-        {
-            cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
-                lhs: self.logical_or_expr.process_token(cx),
-                op: syn::BinOp::If,
                 rhs: logical_or_expr.process_token(cx),
             }))
         } else {
-            self.logical_or_expr.process_token(cx)
+            self.set_expr.logical_or_expr.process_token(cx)
         }
     }
 }
@@ -323,7 +303,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::InfixInExpr<'_> {
         {
             cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
                 lhs: self.compare_expr.process_token(cx),
-                op: syn::BinOp::If,
+                op: syn::BinOp::In,
                 rhs: compare_expr.process_token(cx),
             }))
         } else {
@@ -638,6 +618,23 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
                 } else {
                     expr
                 }
+            }
+            grammar_trait::AtomicExpr::IfExpr(atomic_expr_if_expr) => {
+                let e = &atomic_expr_if_expr.if_expr;
+                syn::Expr::if_expr(
+                    cx,
+                    syn::token::If {
+                        span: e.r#if.location.span(),
+                    },
+                    e.expr.process_token(cx),
+                    cx.alloc_block(e.block.process_token(cx)),
+                    e.if_expr_opt.as_ref().map(|el| syn::IfElse {
+                        else_kw: syn::token::Else {
+                            span: el.r#else.span(),
+                        },
+                        else_clause: cx.alloc_block(el.block.process_token(cx)),
+                    }),
+                )
             }
         }
     }

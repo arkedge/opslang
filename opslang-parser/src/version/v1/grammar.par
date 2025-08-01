@@ -58,14 +58,9 @@ Expr
     : SetExpr
     ;
 
-// `:=`: lower than `if`
+// `:=`: lower than `||`
 SetExpr
-    : InfixIfExpr [ ':=' InfixIfExpr ]
-    ;
-
-// infix `if` : lower than `||`
-InfixIfExpr
-    : LogicalOrExpr [ 'if' LogicalOrExpr ]
+    : LogicalOrExpr [ ':=' LogicalOrExpr ]
     ;
 
 // `||` : lower than `&&`
@@ -152,11 +147,16 @@ Callable
 AtomicExpr
     : Qualif
     | ImportExpr
+    | IfExpr
     ;
 
 // ad-hoc import expression
 ImportExpr
     : LowerPrefixExpr ['?' Path]
+    ;
+
+IfExpr
+    : 'if' Expr Block [ 'else' Block ]
     ;
 
 // Qualification for sending a command

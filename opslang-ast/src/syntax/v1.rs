@@ -192,6 +192,7 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Apply(F::Apply),
     Set(Set<'cx, F>),
     InfixImport(InfixImport<'cx, F>),
+    If(If<'cx, F>),
 }
 
 mod sealed {
@@ -346,6 +347,58 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             path,
         };
         ctx.alloc_expr(ExprKind::InfixImport(import))
+    }
+
+    #[inline]
+    pub fn if_then_else(
+        ctx: &'cx context::Context<'cx, F>,
+        if_kw: token::If<'cx, F>,
+        cond: Self,
+        then_clause: F::Block,
+        else_kw: token::Else<'cx, F>,
+        else_clause: F::Block,
+    ) -> Self {
+        let if_expr = If {
+            if_kw,
+            cond,
+            then_clause,
+            else_opt: Some(IfElse {
+                else_kw,
+                else_clause,
+            }),
+        };
+        ctx.alloc_expr(ExprKind::If(if_expr))
+    }
+    #[inline]
+    pub fn if_then(
+        ctx: &'cx context::Context<'cx, F>,
+        if_kw: token::If<'cx, F>,
+        cond: Self,
+        then_clause: F::Block,
+    ) -> Self {
+        let if_expr = If {
+            if_kw,
+            cond,
+            then_clause,
+            else_opt: None,
+        };
+        ctx.alloc_expr(ExprKind::If(if_expr))
+    }
+    #[inline]
+    pub fn if_expr(
+        ctx: &'cx context::Context<'cx, F>,
+        if_kw: token::If<'cx, F>,
+        cond: Self,
+        then_clause: F::Block,
+        else_opt: Option<IfElse<'cx, F>>,
+    ) -> Self {
+        let if_expr = If {
+            if_kw,
+            cond,
+            then_clause,
+            else_opt,
+        };
+        ctx.alloc_expr(ExprKind::If(if_expr))
     }
 
     #[inline]
@@ -726,11 +779,6 @@ pub struct Binary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum BinOp {
-    /// `a if b` (it means `b implies a`).
-    ///
-    /// It will be deleted and replaced by `if b then a else ..` in the future.
-    If,
-
     /// `&&`
     And,
     /// `||`
@@ -769,4 +817,18 @@ pub struct InfixImport<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub file: Expr<'cx, F>,
     pub question: token::Question<'cx, F>,
     pub path: F::Path,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
+pub struct If<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub if_kw: token::If<'cx, F>,
+    pub cond: Expr<'cx, F>,
+    pub then_clause: F::Block,
+    pub else_opt: Option<IfElse<'cx, F>>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
+pub struct IfElse<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub else_kw: token::Else<'cx, F>,
+    pub else_clause: F::Block,
 }

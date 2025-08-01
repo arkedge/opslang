@@ -128,7 +128,23 @@ declare_token! {
     pub struct RightAngleEq/2 ">="
     pub struct AngleEq/2 "<="
     pub struct ColonEq/2 ":="
+}
 
-    pub struct Return/6 "return"
-    pub struct Let/3 "let"
+macro_rules! declare_kw {
+    ($(pub struct $name:ident $str:literal)*) => {
+        $(
+            token_define_if_many!($name/2);
+
+            impl<'cx, F: super::family::TypeFamily<'cx>> Token for $name<'cx, F> {
+                const REPR: &'static str = $str;
+            }
+        )*
+    };
+}
+
+declare_kw! {
+    pub struct Return "return"
+    pub struct Let "let"
+    pub struct If "if"
+    pub struct Else "else"
 }
