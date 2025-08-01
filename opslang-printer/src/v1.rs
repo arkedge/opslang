@@ -47,7 +47,8 @@ fn precedence_of<'cx, F: PrintableFamily<'cx>>(expr: &ExprKind<'cx, F>) -> Prece
         | ExprKind::Literal(_)
         | ExprKind::Parened(_)
         | ExprKind::Qualif(_)
-        | ExprKind::PreQualified(_) => Precedence::ATOMIC,
+        | ExprKind::PreQualified(_)
+        | ExprKind::InfixImport(_) => Precedence::ATOMIC,
     }
 }
 
@@ -542,6 +543,9 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ExprKind<'cx,
             ExprKind::Binary(binary) => PrettyPrint::<S>::pretty_print(binary, writer, options),
             ExprKind::Apply(apply) => PrettyPrint::<S>::pretty_print(apply, writer, options),
             ExprKind::Set(set) => PrettyPrint::<S>::pretty_print(set, writer, options),
+            ExprKind::InfixImport(import) => {
+                PrettyPrint::<S>::pretty_print(import, writer, options)
+            }
         }
     }
 }
@@ -568,9 +572,6 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Literal<'cx, 
                 PrettyPrint::<S>::pretty_print(hex_bytes, writer, options)
             }
             Literal::Numeric(numeric) => PrettyPrint::<S>::pretty_print(numeric, writer, options),
-            Literal::OsFilePath(filepath) => {
-                PrettyPrint::<S>::pretty_print(filepath, writer, options)
-            }
             Literal::DateTime(datetime) => {
                 PrettyPrint::<S>::pretty_print(datetime, writer, options)
             }
@@ -634,14 +635,6 @@ where
             PrettyPrint::<S>::pretty_print(&suffix.0, writer, options)?;
         }
         Ok(())
-    }
-}
-
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for OsFilePath<'cx, F> {
-    fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
-        writer.write_str("os\"")?;
-        writer.write_str(self.raw)?;
-        writer.write_str("\"")
     }
 }
 
@@ -815,5 +808,16 @@ where
         print_with_parens(self.lhs.0, Precedence::SET, writer, options)?;
         writer.write_str(" := ")?;
         print_with_parens(self.rhs.0, Precedence::SET, writer, options)
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for InfixImport<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        print_with_parens(self.file.0, Precedence::ATOMIC, writer, options)?;
+        Token.write(self.question, writer)?;
+        PrettyPrint::<S>::pretty_print(&self.path, writer, options)
     }
 }
