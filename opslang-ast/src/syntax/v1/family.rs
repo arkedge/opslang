@@ -94,6 +94,21 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Literal values including numbers, strings, arrays, and other constant data.
         type Literal;
 
+        /// Array literal containing a sequence of expressions.
+        type Array;
+
+        /// String literal value.
+        type String;
+
+        /// Byte sequence literal value.
+        type Bytes;
+
+        /// Hexadecimal byte sequence literal value.
+        type HexBytes;
+
+        /// Date-time literal value.
+        type DateTime;
+
         /// Parenthesized expressions that group sub-expressions and control precedence.
         type Parened;
 

@@ -51,6 +51,11 @@ macro_rules! v1_default_type_subst {
         $(PreQualified = $pre_qualified:ty,)?
         $(Parened = $parened:ty,)?
         $(Literal = $literal:ty,)?
+        $(Array = $array:ty,)?
+        $(String = $string:ty,)?
+        $(Bytes = $bytes:ty,)?
+        $(HexBytes = $hex_bytes:ty,)?
+        $(DateTime = $date_time:ty,)?
         $(Numeric = $numeric:ty,)?
         $(Apply = $apply:ty,)?
         $(Unary = $unary:ty,)?
@@ -114,8 +119,28 @@ macro_rules! v1_default_type_subst {
             $crate::syntax::v1::Literal<'cx, Self>;
             [$($literal)?]
         };
+        type Array = v1_default_type_subst!{
+            $crate::syntax::v1::literal::Array<'cx, Self>;
+            [$($array)?]
+        };
+        type String = v1_default_type_subst!{
+            $crate::syntax::v1::literal::String<'cx, Self>;
+            [$($string)?]
+        };
+        type Bytes = v1_default_type_subst!{
+            $crate::syntax::v1::literal::Bytes<'cx, Self>;
+            [$($bytes)?]
+        };
+        type HexBytes = v1_default_type_subst!{
+            $crate::syntax::v1::literal::HexBytes<'cx, Self>;
+            [$($hex_bytes)?]
+        };
+        type DateTime = v1_default_type_subst!{
+            $crate::syntax::v1::literal::DateTime<'cx, Self>;
+            [$($date_time)?]
+        };
         type Numeric = v1_default_type_subst!{
-            $crate::syntax::v1::Numeric<'cx, Self>;
+            $crate::syntax::v1::literal::Numeric<'cx, Self>;
             [$($numeric)?]
         };
         type Apply = v1_default_type_subst!{
@@ -753,12 +778,12 @@ pub mod literal {
 
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub enum Literal<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-        Array(Array<'cx, F>),
-        String(String<'cx, F>),
-        Bytes(Bytes<'cx, F>),
-        HexBytes(HexBytes<'cx, F>),
+        Array(F::Array),
+        String(F::String),
+        Bytes(F::Bytes),
+        HexBytes(F::HexBytes),
         Numeric(F::Numeric),
-        DateTime(DateTime<'cx, F>),
+        DateTime(F::DateTime),
     }
 
     impl<'cx, F: TypeFamily<'cx>> Literal<'cx, F> {
@@ -766,7 +791,10 @@ pub mod literal {
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
             span: F::Span,
-        ) -> Self {
+        ) -> Self
+        where
+            F: TypeFamily<'cx, String = String<'cx, F>>,
+        {
             let string_str = ctx.alloc_str(content);
             Literal::String(String {
                 raw: string_str,
@@ -778,7 +806,10 @@ pub mod literal {
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
             span: F::Span,
-        ) -> Self {
+        ) -> Self
+        where
+            F: TypeFamily<'cx, Bytes = Bytes<'cx, F>>,
+        {
             let bytes_str = ctx.alloc_str(content);
             Literal::Bytes(Bytes {
                 raw: bytes_str,
@@ -790,7 +821,10 @@ pub mod literal {
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
             span: F::Span,
-        ) -> Self {
+        ) -> Self
+        where
+            F: TypeFamily<'cx, HexBytes = HexBytes<'cx, F>>,
+        {
             let hex_str = ctx.alloc_str(content);
             Literal::HexBytes(HexBytes { raw: hex_str, span })
         }
@@ -806,7 +840,10 @@ pub mod literal {
             ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
             content: &str,
             span: F::Span,
-        ) -> Self {
+        ) -> Self
+        where
+            F: TypeFamily<'cx, DateTime = DateTime<'cx, F>>,
+        {
             let date_str = ctx.alloc_str(content);
             Literal::DateTime(DateTime {
                 raw: date_str,
@@ -818,7 +855,10 @@ pub mod literal {
             left_bracket: token::OpenSquare<'cx, F>,
             exprs: &'cx [F::Expr],
             right_bracket: token::CloseSquare<'cx, F>,
-        ) -> Self {
+        ) -> Self
+        where
+            F: TypeFamily<'cx, Array = Array<'cx, F>>,
+        {
             Literal::Array(Array {
                 left_bracket,
                 exprs,
