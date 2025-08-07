@@ -35,6 +35,8 @@ macro_rules! default_type_subst {
         type Ident = $crate::syntax::v1::Ident<'cx, $ty>;
         type Path = $crate::syntax::v1::Path<'cx, $ty>;
 
+        type Expr = $crate::syntax::v1::Expr<'cx, $ty>;
+
         type Qualif = $crate::syntax::v1::Qualif<'cx, $ty>;
         type PreQualified = $crate::syntax::v1::PreQualified<'cx, $ty>;
         type Parened = $crate::syntax::v1::Parened<'cx, $ty>;
@@ -121,7 +123,7 @@ pub struct ConstantDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub colon: token::Colon<'cx, F>,
     pub ty: F::Path,
     pub eq: token::Eq<'cx, F>,
-    pub value: Expr<'cx, F>,
+    pub value: F::Expr,
 }
 
 impl Versioned for Program<'_, DefaultTypeFamily> {
@@ -221,14 +223,14 @@ pub struct Let<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub let_token: token::Let<'cx, F>,
     pub variable: F::Ident,
     pub eq: token::Eq<'cx, F>,
-    pub rhs: Expr<'cx, F>,
+    pub rhs: F::Expr,
     pub semi: token::Semi<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
 pub struct ExprStatement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub expr: Expr<'cx, F>,
+    pub expr: F::Expr,
     pub semi: token::Semi<'cx, F>,
 }
 
@@ -335,7 +337,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         right_paren: token::CloseParen<'cx, F>,
     ) -> Self
     where
-        F: TypeFamily<'cx, Parened = Parened<'cx, F>>,
+        F: TypeFamily<'cx, Parened = Parened<'cx, F>, Expr = Self>,
     {
         let parened = Parened {
             left_paren,
@@ -348,7 +350,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn apply(ctx: &'cx context::Context<'cx, F>, function: Self, args: Vec<Self>) -> Self
     where
-        F: TypeFamily<'cx, Apply = Apply<'cx, F>>,
+        F: TypeFamily<'cx, Apply = Apply<'cx, F>, Expr = Self>,
     {
         let apply = Apply {
             function,
@@ -358,13 +360,19 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     }
 
     #[inline]
-    pub fn binary(ctx: &'cx context::Context<'cx, F>, lhs: Self, op: BinOp, rhs: Self) -> Self {
+    pub fn binary(ctx: &'cx context::Context<'cx, F>, lhs: Self, op: BinOp, rhs: Self) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let binary = Binary { lhs, op, rhs };
         ctx.alloc_expr(ExprKind::Binary(binary))
     }
 
     #[inline]
-    pub fn unary(ctx: &'cx context::Context<'cx, F>, op: UnOp<'cx, F>, expr: Self) -> Self {
+    pub fn unary(ctx: &'cx context::Context<'cx, F>, op: UnOp<'cx, F>, expr: Self) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let unary = Unary { op, expr };
         ctx.alloc_expr(ExprKind::Unary(unary))
     }
@@ -374,7 +382,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         ctx: &'cx context::Context<'cx, F>,
         head: Self,
         tail_with_op: Vec<(CompareOp<'cx, F>, Self)>,
-    ) -> Self {
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let compare = Compare {
             head,
             tail_with_op: Box::leak(tail_with_op.into_boxed_slice()),
@@ -388,7 +399,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         lhs: Self,
         op: CompareOp<'cx, F>,
         rhs: Self,
-    ) -> Self {
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         Self::compare(ctx, lhs, vec![(op, rhs)])
     }
 
@@ -398,7 +412,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         lhs: Self,
         colon_eq: token::ColonEq<'cx, F>,
         rhs: Self,
-    ) -> Self {
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let set = Set { lhs, colon_eq, rhs };
         ctx.alloc_expr(ExprKind::Set(set))
     }
@@ -409,7 +426,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         file: Self,
         question: token::Question<'cx, F>,
         path: F::Path,
-    ) -> Self {
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let import = InfixImport {
             file,
             question,
@@ -426,7 +446,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         then_clause: F::Block,
         else_kw: token::Else<'cx, F>,
         else_clause: F::Block,
-    ) -> Self {
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let if_expr = If {
             if_kw,
             cond,
@@ -444,7 +467,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         if_kw: token::If<'cx, F>,
         cond: Self,
         then_clause: F::Block,
-    ) -> Self {
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let if_expr = If {
             if_kw,
             cond,
@@ -460,7 +486,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         cond: Self,
         then_clause: F::Block,
         else_opt: Option<IfElse<'cx, F>>,
-    ) -> Self {
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Expr = Self>,
+    {
         let if_expr = If {
             if_kw,
             cond,
@@ -482,7 +511,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         expr: Self,
     ) -> Self
     where
-        F: TypeFamily<'cx, PreQualified = PreQualified<'cx, F>>,
+        F: TypeFamily<'cx, PreQualified = PreQualified<'cx, F>, Expr = Self>,
     {
         let pre_qualified = PreQualified {
             qualifs: Box::leak(qualifs.into_boxed_slice()),
@@ -566,7 +595,7 @@ pub struct KindSpec<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// - `@TL:20` in `AOBC.NOP @TL:20 ~MOBC`.
 pub struct KindArg<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub colon_token: token::Colon<'cx, F>,
-    pub value: Expr<'cx, F>,
+    pub value: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -587,7 +616,7 @@ pub struct DefaultAttr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 ///
 /// - `:20` in `MOBC.TL.NOP :20 @AOBC` or `:20 @AOBC MOBC.TL.NOP`.
 pub struct TimeIndicator<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub value: Expr<'cx, F>,
+    pub value: F::Expr,
 }
 
 pub use literal::*;
@@ -662,7 +691,7 @@ pub mod literal {
 
         pub fn array(
             left_bracket: token::OpenSquare<'cx, F>,
-            exprs: &'cx [Expr<'cx, F>],
+            exprs: &'cx [F::Expr],
             right_bracket: token::CloseSquare<'cx, F>,
         ) -> Self {
             Literal::Array(Array {
@@ -676,7 +705,7 @@ pub mod literal {
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct Array<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub left_bracket: token::OpenSquare<'cx, F>,
-        pub exprs: &'cx [Expr<'cx, F>],
+        pub exprs: &'cx [F::Expr],
         pub right_bracket: token::CloseSquare<'cx, F>,
     }
 
@@ -786,20 +815,20 @@ pub mod literal {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Parened<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_paren: token::OpenParen<'cx, F>,
-    pub expr: Expr<'cx, F>,
+    pub expr: F::Expr,
     pub right_paren: token::CloseParen<'cx, F>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct PreQualified<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub qualifs: &'cx [F::Qualif],
-    pub expr: Expr<'cx, F>,
+    pub expr: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Unary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub op: UnOp<'cx, F>,
-    pub expr: Expr<'cx, F>,
+    pub expr: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -817,8 +846,8 @@ pub enum UnOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Compare<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub head: Expr<'cx, F>,
-    pub tail_with_op: &'cx [(CompareOp<'cx, F>, Expr<'cx, F>)],
+    pub head: F::Expr,
+    pub tail_with_op: &'cx [(CompareOp<'cx, F>, F::Expr)],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -841,9 +870,9 @@ pub enum NotEqualToken<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Binary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub lhs: Expr<'cx, F>,
+    pub lhs: F::Expr,
     pub op: BinOp,
-    pub rhs: Expr<'cx, F>,
+    pub rhs: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -870,20 +899,20 @@ pub enum BinOp {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Apply<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub function: Expr<'cx, F>,
-    pub args: &'cx [Expr<'cx, F>],
+    pub function: F::Expr,
+    pub args: &'cx [F::Expr],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
 pub struct Set<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub lhs: Expr<'cx, F>,
+    pub lhs: F::Expr,
     pub colon_eq: token::ColonEq<'cx, F>,
-    pub rhs: Expr<'cx, F>,
+    pub rhs: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
 pub struct InfixImport<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub file: Expr<'cx, F>,
+    pub file: F::Expr,
     pub question: token::Question<'cx, F>,
     pub path: F::Path,
 }
@@ -891,7 +920,7 @@ pub struct InfixImport<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy, OrderSpan)]
 pub struct If<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub if_kw: token::If<'cx, F>,
-    pub cond: Expr<'cx, F>,
+    pub cond: F::Expr,
     pub then_clause: F::Block,
     pub else_opt: Option<IfElse<'cx, F>>,
 }

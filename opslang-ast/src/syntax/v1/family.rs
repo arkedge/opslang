@@ -35,6 +35,7 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         type Path;
 
         // Expression types
+        type Expr;
 
         type Literal;
         type Parened;
