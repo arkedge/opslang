@@ -276,7 +276,7 @@ pub struct Module<'cx> {
     /// The name of this module
     id: Ident<'cx>,
     /// Map from item names to their definitions
-    items: HashMap<Ident<'cx>, ModuleItem<'cx>>,
+    items: HashMap<String, ModuleItem<'cx>>,
 }
 
 impl<'cx> Module<'cx> {
@@ -302,7 +302,7 @@ impl<'cx> Module<'cx> {
     /// The item is indexed by its name, allowing for efficient lookup.
     /// If an item with the same name already exists, it will be replaced.
     pub fn add_item(&mut self, item: ModuleItem<'cx>) {
-        self.items.insert(item.id(), item);
+        self.items.insert(item.id().name.to_string(), item);
     }
 
     /// Looks up an item by name within this module.
@@ -327,7 +327,7 @@ impl<'cx> Module<'cx> {
 #[derive(Debug)]
 pub struct ModuleLoader<'cx> {
     /// Map from module names to their definitions
-    modules: HashMap<Ident<'cx>, &'cx Module<'cx>>,
+    modules: HashMap<String, &'cx Module<'cx>>,
 }
 
 impl<'cx> ModuleLoader<'cx> {
@@ -344,7 +344,7 @@ impl<'cx> ModuleLoader<'cx> {
     ///
     /// This makes the module available for path resolution and import operations.
     pub fn add_module(&mut self, module: &'cx Module<'cx>) {
-        self.modules.insert(module.id, module);
+        self.modules.insert(module.id.name.to_string(), module);
     }
 
     /// Looks up a module by name.
