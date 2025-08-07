@@ -100,10 +100,11 @@ pub trait ConvertV0ToV1<'cx> {
 pub struct ConvertedFamily;
 
 impl<'cx> v1::TypeFamily<'cx> for ConvertedFamily {
-    type Span = Span;
-    type Position = Position;
-
-    v1_default_type_subst!();
+    v1_default_type_subst! {
+        Span = Span,
+        Position = Position,
+        ..
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Default)]

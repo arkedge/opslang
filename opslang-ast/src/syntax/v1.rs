@@ -38,6 +38,8 @@ pub struct DefaultTypeFamily;
 macro_rules! v1_default_type_subst {
     // Note: The order of overrides must match the order below.
     (
+        $(Span = $span:ty,)?
+        $(Position = $position:ty,)?
         $(Comment = $comment:ty,)?
         $(Row = $row:ty,)?
         $(RowContent = $row_content:ty,)?
@@ -66,7 +68,16 @@ macro_rules! v1_default_type_subst {
         $(If = $if:ty,)?
         $(FunctionDef = $function_def:ty,)?
         $(ConstantDef = $constant_def:ty,)?
+        ..
     ) => {
+        type Span = v1_default_type_subst!{
+            $crate::syntax::v1::Span;
+            [$($span)?]
+        };
+        type Position = v1_default_type_subst!{
+            $crate::syntax::v1::Position;
+            [$($position)?]
+        };
         type Comment = v1_default_type_subst!{
             &'cx $crate::syntax::v1::Comment<'cx, Self>;
             [$($comment)?]
@@ -192,10 +203,9 @@ macro_rules! v1_default_type_subst {
 }
 
 impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
-    type Span = Span;
-    type Position = Position;
-
-    v1_default_type_subst!();
+    v1_default_type_subst! {
+        ..
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
