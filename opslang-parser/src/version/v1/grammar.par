@@ -184,15 +184,15 @@ IfExpr
     : 'if' Expr Block [ 'else' Block ]
     ;
 
-// Qualification for sending a command
+// Qualification for function application
 Qualif
-    : KindSpec
-    | DefaultAttr
+    : Modifier
+    | DefaultModifier
     ;
 
-DefaultAttr: '~' Path;
+DefaultModifier: '~' Path;
 
-KindSpec: '@' Path [ KindArg ];
+Modifier: '@' Path [ KindArg ];
 KindArg: ':' Callable;
 
 Path: Ident { '.' Ident };

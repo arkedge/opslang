@@ -456,11 +456,11 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
                 &receiver_component.exec_method,
                 Box::leak(segments.into_boxed_slice()),
             );
-            let kind_spec = v1::KindSpec {
+            let kind_spec = v1::Modifier {
                 at_token: V1Token![@](Position),
-                name: path,
+                id: path,
                 arg: if let Some(expr) = self.destination.time_indicator {
-                    Some(v1::KindArg {
+                    Some(v1::ModifierParam {
                         colon_token: V1Token![:](Position),
                         value: expr.convert(ctx)?,
                     })
@@ -468,7 +468,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
                     None
                 },
             };
-            qualifs.push(v1::Qualif::KindSpec(kind_spec));
+            qualifs.push(v1::Qualif::Modifier(kind_spec));
         } else {
             assert!(
                 self.destination.time_indicator.is_none(),
@@ -481,11 +481,11 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
             }
 
             let receiver_component = self.destination.receiver_component.as_ref().unwrap();
-            let component = v1::DefaultAttr {
+            let component = v1::DefaultModifier {
                 tilde_token: V1Token![~](Position),
-                name: v1::Path::single(ctx, &receiver_component.name, Span),
+                value: v1::Path::single(ctx, &receiver_component.name, Span),
             };
-            qualifs.push(v1::Qualif::DefaultAttr(component));
+            qualifs.push(v1::Qualif::DefaultModifier(component));
         }
 
         Ok(v1::Expr::pre_qualified(

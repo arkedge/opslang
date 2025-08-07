@@ -719,54 +719,88 @@ impl<'cx, F: TypeFamily<'cx>> Ident<'cx, F> {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// A qualification for a command.
+/// A qualification for a function application.
+///
+/// The OpLang qualification system enables flexible function argument modification and assignment.
+/// This system abstracts argument handling at a higher level than traditional named parameter
+/// systems found in languages like OCaml.
+///
+/// ## Core Concepts
+///
+/// **Modifiers**: Argument specification constructs that allow functions to accept parameters of
+/// specific types (numeric or DateTime). Modifiers are provided by modules and enable global
+/// abstraction of same-named arguments across different functions.
+/// - Syntax: `@TL:20` where `TL` is the modifier name and `:20` is the parameter
+///
+/// **Default Modifiers**: Provide unnamed optional arguments that can be applied without explicit
+/// parameters, offering a simplified qualification syntax.
+/// - Syntax: `~MOBC` where `MOBC` is the default modifier name
+///
+/// ## Key Features
+///
+/// 1. **Global Argument Abstraction**: Unlike function-specific named parameters, the qualification
+///    system provides module-level argument abstraction, allowing the same argument names to be
+///    reused across multiple functions.
+///
+/// 2. **Flexible Parameter Assignment**: The system facilitates easy argument substitution and
+///    modification, making function application more intuitive.
+///
+/// 3. **Module-Based Provision**: Modifiers are provided by modules, creating a systematic approach
+///    to argument specification across the language ecosystem.
+///
+/// ## Example Usage
+///
+/// ```ops
+/// AOBC.NOP @TL:20 ~MOBC
+/// ```
+///
+/// In this example:
+/// - `@TL:20` is a `Modifier` with parameter `20`
+/// - `~MOBC` is a `DefaultModifier`
+/// - Both qualify the function call `AOBC.NOP`
 pub enum Qualif<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    KindSpec(KindSpec<'cx, F>),
-    DefaultAttr(DefaultAttr<'cx, F>),
+    Modifier(Modifier<'cx, F>),
+    DefaultModifier(DefaultModifier<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// A default attribute for command.
+/// A modifier for command argument specification.
+///
+/// See [`Qualif`] for more information.
 ///
 /// # Examples
 ///
 /// - `@TL:20` in `AOBC.NOP @TL:20 ~MOBC`.
-pub struct KindSpec<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+pub struct Modifier<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub at_token: token::Atmark<'cx, F>,
-    pub name: Path<'cx, F>,
-    pub arg: Option<KindArg<'cx, F>>,
+    pub id: F::Path,
+    pub arg: Option<ModifierParam<'cx, F>>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// A default attribute for command.
+/// A parameter for a command modifier.
+///
+/// See [`Qualif`] for more information.
 ///
 /// # Examples
 ///
-/// - `@TL:20` in `AOBC.NOP @TL:20 ~MOBC`.
-pub struct KindArg<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+/// - `:20` in `@TL:20`.
+pub struct ModifierParam<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub colon_token: token::Colon<'cx, F>,
     pub value: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// A default attribute for command.
+/// A default modifier for command without explicit parameters.
+///
+/// See [`Qualif`] for more information.
 ///
 /// # Examples
 ///
 /// - `~MOBC` in `AOBC.NOP @TL:20 ~MOBC`.
-pub struct DefaultAttr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+pub struct DefaultModifier<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub tilde_token: token::Tilde<'cx, F>,
-    pub name: Path<'cx, F>,
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-/// An argument for command group.
-///
-/// # Examples
-///
-/// - `:20` in `MOBC.TL.NOP :20 @AOBC` or `:20 @AOBC MOBC.TL.NOP`.
-pub struct TimeIndicator<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub value: F::Expr,
+    pub value: F::Path,
 }
 
 pub use literal::*;

@@ -377,7 +377,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::InfixInExpr<'_> {
         {
             cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
                 lhs: self.compare_expr.process_token(cx),
-                op: syn::BinOp::In(Token![in](self.infix_in_expr_opt.as_ref().unwrap().r#in.wrap())),
+                op: syn::BinOp::In(Token![in](
+                    self.infix_in_expr_opt.as_ref().unwrap().r#in.wrap(),
+                )),
                 rhs: compare_expr.process_token(cx),
             }))
         } else {
@@ -468,8 +470,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ArithmeticOp<'_> {
 
     fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         match self {
-            grammar_trait::ArithmeticOp::Plus(token) => syn::BinOp::Add(Token![+](token.plus.wrap())),
-            grammar_trait::ArithmeticOp::Minus(token) => syn::BinOp::Sub(Token![-](token.minus.wrap())),
+            grammar_trait::ArithmeticOp::Plus(token) => {
+                syn::BinOp::Add(Token![+](token.plus.wrap()))
+            }
+            grammar_trait::ArithmeticOp::Minus(token) => {
+                syn::BinOp::Sub(Token![-](token.minus.wrap()))
+            }
         }
     }
 }
@@ -501,7 +507,9 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FactorOp<'_> {
         match self {
             grammar_trait::FactorOp::Star(token) => syn::BinOp::Mul(Token![*](token.star.wrap())),
             grammar_trait::FactorOp::Slash(token) => syn::BinOp::Div(Token![/](token.slash.wrap())),
-            grammar_trait::FactorOp::Percent(token) => syn::BinOp::Mod(Token![%](token.percent.wrap())),
+            grammar_trait::FactorOp::Percent(token) => {
+                syn::BinOp::Mod(Token![%](token.percent.wrap()))
+            }
         }
     }
 }
@@ -551,22 +559,22 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Qualif<'_> {
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         match self {
-            grammar_trait::Qualif::KindSpec(qualif_kind_spec) => {
-                let e = &*qualif_kind_spec.kind_spec;
-                syn::Qualif::KindSpec(syn::KindSpec {
+            grammar_trait::Qualif::Modifier(qualif_mod) => {
+                let e = &*qualif_mod.modifier;
+                syn::Qualif::Modifier(syn::Modifier {
                     at_token: Token![@](e.at.wrap()),
-                    name: e.path.process_token(cx),
-                    arg: e.kind_spec_opt.as_ref().map(|k| syn::KindArg {
+                    id: e.path.process_token(cx),
+                    arg: e.modifier_opt.as_ref().map(|k| syn::ModifierParam {
                         colon_token: Token![:](k.kind_arg.colon.wrap()),
                         value: k.kind_arg.callable.process_token(cx),
                     }),
                 })
             }
-            grammar_trait::Qualif::DefaultAttr(qualif_default_attr) => {
-                let t = &*qualif_default_attr.default_attr;
-                syn::Qualif::DefaultAttr(syn::DefaultAttr {
+            grammar_trait::Qualif::DefaultModifier(qualif_default) => {
+                let t = &*qualif_default.default_modifier;
+                syn::Qualif::DefaultModifier(syn::DefaultModifier {
                     tilde_token: Token![~](t.tilde.wrap()),
-                    name: t.path.process_token(cx),
+                    value: t.path.process_token(cx),
                 })
             }
         }

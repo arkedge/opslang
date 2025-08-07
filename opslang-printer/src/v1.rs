@@ -505,37 +505,33 @@ where
 impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Qualif<'cx, F>
 where
     ExprKind<'cx, F>: PrettyPrint<S>,
-    DefaultAttr<'cx, F>: PrettyPrint<S>,
+    DefaultModifier<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
-            Qualif::KindSpec(KindSpec {
-                at_token,
-                name,
-                arg,
-            }) => {
+            Qualif::Modifier(Modifier { at_token, id, arg }) => {
                 Token.write(at_token, writer)?;
-                PrettyPrint::<S>::pretty_print(name, writer, options)?;
+                PrettyPrint::<S>::pretty_print(id, writer, options)?;
                 if let Some(expr) = arg {
                     Token.write(expr.colon_token, writer)?;
                     Precedence::ATOMIC.write_with_parens(&expr.value, writer, options)?;
                 }
                 Ok(())
             }
-            Qualif::DefaultAttr(exec_comp) => {
+            Qualif::DefaultModifier(exec_comp) => {
                 PrettyPrint::<S>::pretty_print(exec_comp, writer, options)
             }
         }
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for DefaultAttr<'cx, F>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for DefaultModifier<'cx, F>
 where
     Path<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         Token.write(self.tilde_token, writer)?;
-        PrettyPrint::<S>::pretty_print(&self.name, writer, options)
+        PrettyPrint::<S>::pretty_print(&self.value, writer, options)
     }
 }
 

@@ -111,12 +111,12 @@
 /*  96 */ IfExpr: 'if' Expr Block IfExprOpt /* Option */;
 /*  97 */ IfExprOpt /* Option<T>::Some */: 'else' Block;
 /*  98 */ IfExprOpt /* Option<T>::None */: ;
-/*  99 */ Qualif: KindSpec;
-/* 100 */ Qualif: DefaultAttr;
-/* 101 */ DefaultAttr: '~' Path;
-/* 102 */ KindSpec: '@' Path KindSpecOpt /* Option */;
-/* 103 */ KindSpecOpt /* Option<T>::Some */: KindArg;
-/* 104 */ KindSpecOpt /* Option<T>::None */: ;
+/*  99 */ Qualif: Modifier;
+/* 100 */ Qualif: DefaultModifier;
+/* 101 */ DefaultModifier: '~' Path;
+/* 102 */ Modifier: '@' Path ModifierOpt /* Option */;
+/* 103 */ ModifierOpt /* Option<T>::Some */: KindArg;
+/* 104 */ ModifierOpt /* Option<T>::None */: ;
 /* 105 */ KindArg: ':' Callable;
 /* 106 */ Path: Ident PathList /* Vec */;
 /* 107 */ PathList /* Vec<T>::Push */: PathList '.' Ident;

@@ -214,13 +214,13 @@ pub trait ActionTrait<'t> {
         Ok(())
     }
 
-    /// Semantic action for non-terminal 'DefaultAttr'
-    fn default_attr(&mut self, _arg: &DefaultAttr<'t>) -> Result<()> {
+    /// Semantic action for non-terminal 'DefaultModifier'
+    fn default_modifier(&mut self, _arg: &DefaultModifier<'t>) -> Result<()> {
         Ok(())
     }
 
-    /// Semantic action for non-terminal 'KindSpec'
-    fn kind_spec(&mut self, _arg: &KindSpec<'t>) -> Result<()> {
+    /// Semantic action for non-terminal 'Modifier'
+    fn modifier(&mut self, _arg: &Modifier<'t>) -> Result<()> {
         Ok(())
     }
 
@@ -679,25 +679,25 @@ pub struct AtomicExprIfExpr<'t> {
 ///
 /// Type derived for production 99
 ///
-/// `Qualif: KindSpec;`
+/// `Qualif: Modifier;`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
-pub struct QualifKindSpec<'t> {
-    pub kind_spec: Box<KindSpec<'t>>,
+pub struct QualifModifier<'t> {
+    pub modifier: Box<Modifier<'t>>,
 }
 
 ///
 /// Type derived for production 100
 ///
-/// `Qualif: DefaultAttr;`
+/// `Qualif: DefaultModifier;`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
-pub struct QualifDefaultAttr<'t> {
-    pub default_attr: Box<DefaultAttr<'t>>,
+pub struct QualifDefaultModifier<'t> {
+    pub default_modifier: Box<DefaultModifier<'t>>,
 }
 
 ///
@@ -1111,12 +1111,12 @@ pub struct ConstantDef<'t> {
 }
 
 ///
-/// Type derived for non-terminal DefaultAttr
+/// Type derived for non-terminal DefaultModifier
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
-pub struct DefaultAttr<'t> {
+pub struct DefaultModifier<'t> {
     pub tilde: Token<'t>, /* ~ */
     pub path: Box<Path<'t>>,
 }
@@ -1339,28 +1339,6 @@ pub struct KindArg<'t> {
 }
 
 ///
-/// Type derived for non-terminal KindSpec
-///
-#[allow(dead_code)]
-#[derive(Builder, Debug, Clone)]
-#[builder(crate = "parol_runtime::derive_builder")]
-pub struct KindSpec<'t> {
-    pub at: Token<'t>, /* @ */
-    pub path: Box<Path<'t>>,
-    pub kind_spec_opt: Option<KindSpecOpt<'t>>,
-}
-
-///
-/// Type derived for non-terminal KindSpecOpt
-///
-#[allow(dead_code)]
-#[derive(Builder, Debug, Clone)]
-#[builder(crate = "parol_runtime::derive_builder")]
-pub struct KindSpecOpt<'t> {
-    pub kind_arg: Box<KindArg<'t>>,
-}
-
-///
 /// Type derived for non-terminal LetStmt
 ///
 #[allow(dead_code)]
@@ -1460,6 +1438,28 @@ pub struct LowerPrefixExprOpt<'t> {
 pub enum LowerPrefixOp<'t> {
     Amp(LowerPrefixOpAmp<'t>),
     Dollar(LowerPrefixOpDollar<'t>),
+}
+
+///
+/// Type derived for non-terminal Modifier
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct Modifier<'t> {
+    pub at: Token<'t>, /* @ */
+    pub path: Box<Path<'t>>,
+    pub modifier_opt: Option<ModifierOpt<'t>>,
+}
+
+///
+/// Type derived for non-terminal ModifierOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct ModifierOpt<'t> {
+    pub kind_arg: Box<KindArg<'t>>,
 }
 
 ///
@@ -1585,8 +1585,8 @@ pub struct ProgramList<'t> {
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum Qualif<'t> {
-    KindSpec(QualifKindSpec<'t>),
-    DefaultAttr(QualifDefaultAttr<'t>),
+    Modifier(QualifModifier<'t>),
+    DefaultModifier(QualifDefaultModifier<'t>),
 }
 
 ///
@@ -1780,7 +1780,7 @@ pub enum ASTType<'t> {
     CompareExprList(Vec<CompareExprList<'t>>),
     CompareOp(CompareOp<'t>),
     ConstantDef(ConstantDef<'t>),
-    DefaultAttr(DefaultAttr<'t>),
+    DefaultModifier(DefaultModifier<'t>),
     Definition(Definition<'t>),
     EndOfLine(EndOfLine<'t>),
     Expr(Expr<'t>),
@@ -1801,8 +1801,6 @@ pub enum ASTType<'t> {
     InfixInExpr(InfixInExpr<'t>),
     InfixInExprOpt(Option<InfixInExprOpt<'t>>),
     KindArg(KindArg<'t>),
-    KindSpec(KindSpec<'t>),
-    KindSpecOpt(Option<KindSpecOpt<'t>>),
     LetStmt(LetStmt<'t>),
     Literal(Literal<'t>),
     LogicalAndExpr(LogicalAndExpr<'t>),
@@ -1812,6 +1810,8 @@ pub enum ASTType<'t> {
     LowerPrefixExpr(LowerPrefixExpr<'t>),
     LowerPrefixExprOpt(Option<LowerPrefixExprOpt<'t>>),
     LowerPrefixOp(LowerPrefixOp<'t>),
+    Modifier(Modifier<'t>),
+    ModifierOpt(Option<ModifierOpt<'t>>),
     Numeric(Numeric<'t>),
     OctalInteger(OctalInteger<'t>),
     Parameter(Parameter<'t>),
@@ -3865,17 +3865,17 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 99:
     ///
-    /// `Qualif: KindSpec;`
+    /// `Qualif: Modifier;`
     ///
     #[parol_runtime::function_name::named]
-    fn qualif_0(&mut self, _kind_spec: &ParseTreeType<'t>) -> Result<()> {
+    fn qualif_0(&mut self, _modifier: &ParseTreeType<'t>) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let kind_spec = pop_item!(self, kind_spec, KindSpec, context);
-        let qualif_0_built = QualifKindSpec {
-            kind_spec: Box::new(kind_spec),
+        let modifier = pop_item!(self, modifier, Modifier, context);
+        let qualif_0_built = QualifModifier {
+            modifier: Box::new(modifier),
         };
-        let qualif_0_built = Qualif::KindSpec(qualif_0_built);
+        let qualif_0_built = Qualif::Modifier(qualif_0_built);
         // Calling user action here
         self.user_grammar.qualif(&qualif_0_built)?;
         self.push(ASTType::Qualif(qualif_0_built), context);
@@ -3884,17 +3884,17 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 100:
     ///
-    /// `Qualif: DefaultAttr;`
+    /// `Qualif: DefaultModifier;`
     ///
     #[parol_runtime::function_name::named]
-    fn qualif_1(&mut self, _default_attr: &ParseTreeType<'t>) -> Result<()> {
+    fn qualif_1(&mut self, _default_modifier: &ParseTreeType<'t>) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let default_attr = pop_item!(self, default_attr, DefaultAttr, context);
-        let qualif_1_built = QualifDefaultAttr {
-            default_attr: Box::new(default_attr),
+        let default_modifier = pop_item!(self, default_modifier, DefaultModifier, context);
+        let qualif_1_built = QualifDefaultModifier {
+            default_modifier: Box::new(default_modifier),
         };
-        let qualif_1_built = Qualif::DefaultAttr(qualif_1_built);
+        let qualif_1_built = Qualif::DefaultModifier(qualif_1_built);
         // Calling user action here
         self.user_grammar.qualif(&qualif_1_built)?;
         self.push(ASTType::Qualif(qualif_1_built), context);
@@ -3903,76 +3903,81 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 101:
     ///
-    /// `DefaultAttr: '~' Path;`
+    /// `DefaultModifier: '~' Path;`
     ///
     #[parol_runtime::function_name::named]
-    fn default_attr(&mut self, tilde: &ParseTreeType<'t>, _path: &ParseTreeType<'t>) -> Result<()> {
+    fn default_modifier(
+        &mut self,
+        tilde: &ParseTreeType<'t>,
+        _path: &ParseTreeType<'t>,
+    ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
         let tilde = tilde.token()?.clone();
         let path = pop_item!(self, path, Path, context);
-        let default_attr_built = DefaultAttr {
+        let default_modifier_built = DefaultModifier {
             tilde,
             path: Box::new(path),
         };
         // Calling user action here
-        self.user_grammar.default_attr(&default_attr_built)?;
-        self.push(ASTType::DefaultAttr(default_attr_built), context);
+        self.user_grammar
+            .default_modifier(&default_modifier_built)?;
+        self.push(ASTType::DefaultModifier(default_modifier_built), context);
         Ok(())
     }
 
     /// Semantic action for production 102:
     ///
-    /// `KindSpec: '@' Path KindSpecOpt /* Option */;`
+    /// `Modifier: '@' Path ModifierOpt /* Option */;`
     ///
     #[parol_runtime::function_name::named]
-    fn kind_spec(
+    fn modifier(
         &mut self,
         at: &ParseTreeType<'t>,
         _path: &ParseTreeType<'t>,
-        _kind_spec_opt: &ParseTreeType<'t>,
+        _modifier_opt: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
         let at = at.token()?.clone();
-        let kind_spec_opt = pop_item!(self, kind_spec_opt, KindSpecOpt, context);
+        let modifier_opt = pop_item!(self, modifier_opt, ModifierOpt, context);
         let path = pop_item!(self, path, Path, context);
-        let kind_spec_built = KindSpec {
+        let modifier_built = Modifier {
             at,
             path: Box::new(path),
-            kind_spec_opt,
+            modifier_opt,
         };
         // Calling user action here
-        self.user_grammar.kind_spec(&kind_spec_built)?;
-        self.push(ASTType::KindSpec(kind_spec_built), context);
+        self.user_grammar.modifier(&modifier_built)?;
+        self.push(ASTType::Modifier(modifier_built), context);
         Ok(())
     }
 
     /// Semantic action for production 103:
     ///
-    /// `KindSpecOpt /* Option<T>::Some */: KindArg;`
+    /// `ModifierOpt /* Option<T>::Some */: KindArg;`
     ///
     #[parol_runtime::function_name::named]
-    fn kind_spec_opt_0(&mut self, _kind_arg: &ParseTreeType<'t>) -> Result<()> {
+    fn modifier_opt_0(&mut self, _kind_arg: &ParseTreeType<'t>) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
         let kind_arg = pop_item!(self, kind_arg, KindArg, context);
-        let kind_spec_opt_0_built = KindSpecOpt {
+        let modifier_opt_0_built = ModifierOpt {
             kind_arg: Box::new(kind_arg),
         };
-        self.push(ASTType::KindSpecOpt(Some(kind_spec_opt_0_built)), context);
+        self.push(ASTType::ModifierOpt(Some(modifier_opt_0_built)), context);
         Ok(())
     }
 
     /// Semantic action for production 104:
     ///
-    /// `KindSpecOpt /* Option<T>::None */: ;`
+    /// `ModifierOpt /* Option<T>::None */: ;`
     ///
     #[parol_runtime::function_name::named]
-    fn kind_spec_opt_1(&mut self) -> Result<()> {
+    fn modifier_opt_1(&mut self) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        self.push(ASTType::KindSpecOpt(None), context);
+        self.push(ASTType::ModifierOpt(None), context);
         Ok(())
     }
 
@@ -4733,10 +4738,10 @@ impl<'t> UserActionsTrait<'t> for ActionAuto<'t, '_> {
             98 => self.if_expr_opt_1(),
             99 => self.qualif_0(&children[0]),
             100 => self.qualif_1(&children[0]),
-            101 => self.default_attr(&children[0], &children[1]),
-            102 => self.kind_spec(&children[0], &children[1], &children[2]),
-            103 => self.kind_spec_opt_0(&children[0]),
-            104 => self.kind_spec_opt_1(),
+            101 => self.default_modifier(&children[0], &children[1]),
+            102 => self.modifier(&children[0], &children[1], &children[2]),
+            103 => self.modifier_opt_0(&children[0]),
+            104 => self.modifier_opt_1(),
             105 => self.kind_arg(&children[0], &children[1]),
             106 => self.path(&children[0], &children[1]),
             107 => self.path_list_0(&children[0], &children[1], &children[2]),
