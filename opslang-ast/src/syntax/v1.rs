@@ -18,26 +18,37 @@ pub type Position = BytePos;
 /// This type does not take any lifetime parameters because [`TypeFamily`] trait has them.
 pub struct DefaultTypeFamily;
 
+#[macro_export]
+/// Type substitution that makes [`DefaultTypeFamily`] default.
+macro_rules! default_type_subst {
+    () => {
+        $crate::default_type_subst!(Self);
+    };
+    ($ty:ty) => {
+        type Comment = &'cx $crate::syntax::v1::Comment<'cx, $ty>;
+        type Row = &'cx $crate::syntax::v1::Row<'cx, $ty>;
+        type RowContent = $crate::syntax::v1::StatementKind<'cx, $ty>;
+        type Block = &'cx $crate::syntax::v1::Block<'cx, $ty>;
+        type ScopeItem = $crate::syntax::v1::ScopeItem<'cx, $ty>;
+        type ReturnStmt = $crate::syntax::v1::ReturnStmt<'cx, $ty>;
+
+        type Ident = $crate::syntax::v1::Ident<'cx, $ty>;
+        type Path = $crate::syntax::v1::Path<'cx, $ty>;
+
+        type Qualif = $crate::syntax::v1::Qualif<'cx, $ty>;
+        type PreQualified = $crate::syntax::v1::PreQualified<'cx, $ty>;
+        type Parened = $crate::syntax::v1::Parened<'cx, $ty>;
+        type Literal = $crate::syntax::v1::Literal<'cx, $ty>;
+        type Numeric = $crate::syntax::v1::Numeric<'cx, $ty>;
+        type Apply = $crate::syntax::v1::Apply<'cx, $ty>;
+    };
+}
+
 impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
     type Span = Span;
     type Position = Position;
 
-    type Comment = &'cx Comment<'cx>;
-    type Row = &'cx Row<'cx>;
-    type RowContent = StatementKind<'cx>;
-    type Block = &'cx Block<'cx>;
-    type ScopeItem = ScopeItem<'cx>;
-    type ReturnStmt = ReturnStmt<'cx>;
-
-    type Ident = Ident<'cx>;
-    type Path = Path<'cx>;
-
-    type Qualif = Qualif<'cx>;
-    type PreQualified = PreQualified<'cx>;
-    type Parened = Parened<'cx>;
-    type Literal = Literal<'cx>;
-    type Numeric = Numeric<'cx>;
-    type Apply = Apply<'cx>;
+    default_type_subst!(Self);
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

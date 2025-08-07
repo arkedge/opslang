@@ -1,4 +1,5 @@
 use opslang_ast::V1Token;
+use opslang_ast::default_type_subst;
 use opslang_ast::token::IntoPosition;
 use opslang_ast::token::IntoSpan;
 use opslang_ast::v1::context::Context;
@@ -102,24 +103,7 @@ impl<'cx> v1::TypeFamily<'cx> for ConvertedFamily {
     type Span = Span;
     type Position = Position;
 
-    // we want to write `..Default` here...
-
-    type Comment = &'cx v1::Comment<'cx, Self>;
-    type Row = &'cx v1::Row<'cx, Self>;
-    type RowContent = v1::StatementKind<'cx, Self>;
-    type Block = &'cx v1::Block<'cx, Self>;
-    type ScopeItem = v1::ScopeItem<'cx, Self>;
-    type ReturnStmt = v1::ReturnStmt<'cx, Self>;
-
-    type Ident = v1::Ident<'cx, Self>;
-    type Path = v1::Path<'cx, Self>;
-
-    type Qualif = v1::Qualif<'cx, Self>;
-    type PreQualified = v1::PreQualified<'cx, Self>;
-    type Parened = v1::Parened<'cx, Self>;
-    type Literal = v1::Literal<'cx, Self>;
-    type Numeric = v1::Numeric<'cx, Self>;
-    type Apply = v1::Apply<'cx, Self>;
+    default_type_subst!();
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Default)]
