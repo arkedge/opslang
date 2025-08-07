@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use opslang_ast::v1::{self as ast, DefaultTypeFamily, ExprKind, StatementKind};
+use opslang_ast::v1::{self as ast, ExprKind, StatementKind};
 use opslang_ty::version::v1::{
     Ident, Identifier, Module, ModuleItem, ModuleLoader, Ty, TyKind, TypeVariable, TypingContext,
 };
@@ -412,16 +412,20 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        expr: &ast::ExprKind<'cx, DefaultTypeFamily>,
+        mut expr: &ast::ExprKind<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
+        // Peel parentheses
+        while let ExprKind::Parened(parened) = expr {
+            // Parenthesized expressions have the same type as their inner expression
+            expr = &parened.expr;
+        }
         match expr {
             ExprKind::Literal(literal) => self.infer_literal(cx, literal),
             ExprKind::Variable(path) => self.infer_variable(cx, env, path),
             ExprKind::Binary(binary) => self.infer_binary(cx, env, binary),
             ExprKind::Unary(unary) => self.infer_unary(cx, env, unary),
             ExprKind::Apply(apply) => self.infer_apply(cx, env, apply),
-            // Parenthesized expressions have the same type as their inner expression
-            ExprKind::Parened(parened) => self.infer_expr(cx, env, &parened.expr),
+            ExprKind::Parened(_parened) => unreachable!("handled above"),
             ExprKind::If(if_expr) => self.infer_if(cx, env, if_expr),
             _ => Err(anyhow!("Unsupported expression type")),
         }
@@ -434,7 +438,7 @@ impl<'cx> TypeChecker<'cx> {
     fn infer_literal(
         &mut self,
         cx: &'cx TypingContext<'cx>,
-        literal: &ast::Literal<'cx, DefaultTypeFamily>,
+        literal: &ast::Literal<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         let ty = match literal {
             // String literals have string type
@@ -495,7 +499,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         _cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        path: &ast::Path<'cx, DefaultTypeFamily>,
+        path: &ast::Path<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         let var_name = path.raw;
 
@@ -519,7 +523,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        binary: &ast::Binary<'cx, DefaultTypeFamily>,
+        binary: &ast::Binary<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         // Infer types of both operands
         let (lhs_type, lhs_subst) = self.infer_expr(cx, env, &binary.lhs)?;
@@ -570,7 +574,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        unary: &ast::Unary<'cx, DefaultTypeFamily>,
+        unary: &ast::Unary<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         let (expr_type, expr_subst) = self.infer_expr(cx, env, &unary.expr)?;
 
@@ -594,7 +598,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        apply: &ast::Apply<'cx, DefaultTypeFamily>,
+        apply: &ast::Apply<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         let (func_type, func_subst) = self.infer_expr(cx, env, &apply.function)?;
 
@@ -627,7 +631,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        if_expr: &ast::If<'cx, DefaultTypeFamily>,
+        if_expr: &ast::If<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         let (cond_type, cond_subst) = self.infer_expr(cx, env, &if_expr.cond)?;
         let bool_type = cx.alloc_type(TyKind::Bool);
@@ -660,7 +664,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        block: &ast::Block<'cx, DefaultTypeFamily>,
+        block: &ast::Block<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         let mut local_env = env.extend_inherit();
         let mut combined_subst = Substitution::new();
@@ -703,7 +707,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &Environment<'cx, '_>,
-        stmt: &StatementKind<'cx, DefaultTypeFamily>,
+        stmt: &StatementKind<'cx>,
     ) -> Result<(Ty<'cx>, Substitution<'cx>)> {
         match stmt {
             StatementKind::Let(let_stmt) => self.infer_expr(cx, env, &let_stmt.rhs),
@@ -719,7 +723,7 @@ impl<'cx> TypeChecker<'cx> {
     pub fn check_program(
         &mut self,
         cx: &'cx TypingContext<'cx>,
-        program: &ast::Program<'cx, DefaultTypeFamily>,
+        program: &ast::Program<'cx>,
     ) -> Result<()> {
         // Create global environment for top-level definitions
         let mut global_env = Environment::<'cx, '_>::new();
@@ -743,7 +747,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &mut Environment<'cx, '_>,
-        func_def: &ast::FunctionDef<'cx, DefaultTypeFamily>,
+        func_def: &ast::FunctionDef<'cx>,
     ) -> Result<()> {
         let func_name = func_def.name.raw;
 
@@ -783,7 +787,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         cx: &'cx TypingContext<'cx>,
         env: &mut Environment<'cx, '_>,
-        const_def: &ast::ConstantDef<'cx, DefaultTypeFamily>,
+        const_def: &ast::ConstantDef<'cx>,
     ) -> Result<()> {
         let const_name = const_def.name.raw;
         let declared_type = self.resolve_type_from_path(const_def.ty.raw)?;
