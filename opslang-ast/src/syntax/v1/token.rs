@@ -1,3 +1,9 @@
+//! Token and keyword definitions
+//!
+//! This module has three responsibilities:
+//! - token definitions via [`declare_token`],
+//! - keyword definitions via [`declare_kw`],
+//! - public type macro [`V1Token`] from embedded token to type.
 use super::{Position, Span};
 
 pub trait Token {
@@ -16,6 +22,7 @@ pub trait IntoPosition<'cx, F: super::family::TypeFamily<'cx> = super::DefaultTy
     fn into_position(self) -> F::Position;
 }
 
+/// Declares all tokens for v1 grammar.
 macro_rules! declare_token {
     ($(pub struct $name:ident/$lit:tt $str:literal)*) => {
         $(
@@ -105,14 +112,21 @@ declare_token! {
     pub struct Question/1 "?"
     pub struct RightAngle/1 ">"
     pub struct Angle/1 "<"
+    pub struct Star/1 "*"
+    pub struct Slash/1 "/"
+    pub struct Percent/1 "%"
+    pub struct Plus/1 "+"
     pub struct BangEqual/2 "!="
     pub struct SlashEqual/2 "/="
     pub struct EqualEqual/2 "=="
     pub struct RightAngleEq/2 ">="
     pub struct AngleEq/2 "<="
     pub struct ColonEq/2 ":="
+    pub struct AndAnd/2 "&&"
+    pub struct OrOr/2 "||"
 }
 
+/// Declare all keywords for v1 grammar.
 macro_rules! declare_kw {
     ($(pub struct $name:ident $str:literal)*) => {
         $(
@@ -132,6 +146,7 @@ declare_kw! {
     pub struct Else "else"
     pub struct Proc "proc"
     pub struct Const "const"
+    pub struct In "in"
 }
 
 #[macro_export]
@@ -157,7 +172,10 @@ macro_rules! V1Token {
     (const) => {
         $crate::syntax::v1::token::Const
     };
-    
+    (in) => {
+        $crate::syntax::v1::token::In
+    };
+
     // Single character tokens
     (;) => {
         $crate::syntax::v1::token::Semi
@@ -196,7 +214,19 @@ macro_rules! V1Token {
     (<) => {
         $crate::syntax::v1::token::Angle
     };
-    
+    (*) => {
+        $crate::syntax::v1::token::Star
+    };
+    (/) => {
+        $crate::syntax::v1::token::Slash
+    };
+    (%) => {
+        $crate::syntax::v1::token::Percent
+    };
+    (+) => {
+        $crate::syntax::v1::token::Plus
+    };
+
     // Two character tokens
     (!=) => {
         $crate::syntax::v1::token::BangEqual
@@ -215,5 +245,11 @@ macro_rules! V1Token {
     };
     (:=) => {
         $crate::syntax::v1::token::ColonEq
+    };
+    (&&) => {
+        $crate::syntax::v1::token::AndAnd
+    };
+    (||) => {
+        $crate::syntax::v1::token::OrOr
     };
 }

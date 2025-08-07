@@ -53,6 +53,14 @@ macro_rules! v1_default_type_subst {
         $(Literal = $literal:ty,)?
         $(Numeric = $numeric:ty,)?
         $(Apply = $apply:ty,)?
+        $(Unary = $unary:ty,)?
+        $(Binary = $binary:ty,)?
+        $(Compare = $compare:ty,)?
+        $(Set = $set:ty,)?
+        $(InfixImport = $infix_import:ty,)?
+        $(If = $if:ty,)?
+        $(FunctionDef = $function_def:ty,)?
+        $(ConstantDef = $constant_def:ty,)?
     ) => {
         type Comment = v1_default_type_subst!{
             &'cx $crate::syntax::v1::Comment<'cx, Self>;
@@ -114,13 +122,45 @@ macro_rules! v1_default_type_subst {
             $crate::syntax::v1::Apply<'cx, Self>;
             [$($apply)?]
         };
+        type Unary = v1_default_type_subst!{
+            $crate::syntax::v1::Unary<'cx, Self>;
+            [$($unary)?]
+        };
+        type Binary = v1_default_type_subst!{
+            $crate::syntax::v1::Binary<'cx, Self>;
+            [$($binary)?]
+        };
+        type Compare = v1_default_type_subst!{
+            $crate::syntax::v1::Compare<'cx, Self>;
+            [$($compare)?]
+        };
+        type Set = v1_default_type_subst!{
+            $crate::syntax::v1::Set<'cx, Self>;
+            [$($set)?]
+        };
+        type InfixImport = v1_default_type_subst!{
+            $crate::syntax::v1::InfixImport<'cx, Self>;
+            [$($infix_import)?]
+        };
+        type If = v1_default_type_subst!{
+            $crate::syntax::v1::If<'cx, Self>;
+            [$($if)?]
+        };
+        type FunctionDef = v1_default_type_subst!{
+            $crate::syntax::v1::FunctionDef<'cx, Self>;
+            [$($function_def)?]
+        };
+        type ConstantDef = v1_default_type_subst!{
+            $crate::syntax::v1::ConstantDef<'cx, Self>;
+            [$($constant_def)?]
+        };
     };
     // Internal
-    // If the first argument (the user override) is present, use it.
+    // If the second argument (the user override) is present, use it.
     ($default:ty; [$user:ty]) => {
         $user
     };
-    // If the first argument is empty, use the default.
+    // If the second argument is empty, use the default.
     ($default:ty; []) => {
         $default
     };
@@ -149,8 +189,8 @@ pub struct Program<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A top-level definition in a program.
 pub enum Definition<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    Function(FunctionDef<'cx, F>),
-    Constant(ConstantDef<'cx, F>),
+    Function(F::FunctionDef),
+    Constant(F::ConstantDef),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -337,13 +377,13 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Parened(F::Parened),
     Qualif(F::Qualif),
     PreQualified(F::PreQualified),
-    Unary(Unary<'cx, F>),
-    Compare(Compare<'cx, F>),
-    Binary(Binary<'cx, F>),
+    Unary(F::Unary),
+    Compare(F::Compare),
+    Binary(F::Binary),
     Apply(F::Apply),
-    Set(Set<'cx, F>),
-    InfixImport(InfixImport<'cx, F>),
-    If(If<'cx, F>),
+    Set(F::Set),
+    InfixImport(F::InfixImport),
+    If(F::If),
 }
 
 mod sealed {
@@ -440,9 +480,14 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     }
 
     #[inline]
-    pub fn binary(ctx: &'cx context::Context<'cx, F>, lhs: Self, op: BinOp, rhs: Self) -> Self
+    pub fn binary(
+        ctx: &'cx context::Context<'cx, F>,
+        lhs: Self,
+        op: BinOp<'cx, F>,
+        rhs: Self,
+    ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, Binary = Binary<'cx, F>>,
     {
         let binary = Binary { lhs, op, rhs };
         ctx.alloc_expr(ExprKind::Binary(binary))
@@ -451,7 +496,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn unary(ctx: &'cx context::Context<'cx, F>, op: UnOp<'cx, F>, expr: Self) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, Unary = Unary<'cx, F>>,
     {
         let unary = Unary { op, expr };
         ctx.alloc_expr(ExprKind::Unary(unary))
@@ -464,7 +509,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         tail_with_op: Vec<(CompareOp<'cx, F>, Self)>,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, Compare = Compare<'cx, F>>,
     {
         let compare = Compare {
             head,
@@ -481,7 +526,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         rhs: Self,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, Compare = Compare<'cx, F>>,
     {
         Self::compare(ctx, lhs, vec![(op, rhs)])
     }
@@ -494,7 +539,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         rhs: Self,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, Set = Set<'cx, F>>,
     {
         let set = Set { lhs, colon_eq, rhs };
         ctx.alloc_expr(ExprKind::Set(set))
@@ -508,7 +553,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         path: F::Path,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, InfixImport = InfixImport<'cx, F>>,
     {
         let import = InfixImport {
             file,
@@ -528,7 +573,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         else_clause: F::Block,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, If = If<'cx, F>>,
     {
         let if_expr = If {
             if_kw,
@@ -549,7 +594,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         then_clause: F::Block,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, If = If<'cx, F>>,
     {
         let if_expr = If {
             if_kw,
@@ -568,7 +613,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         else_opt: Option<IfElse<'cx, F>>,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self>,
+        F: TypeFamily<'cx, Expr = Self, If = If<'cx, F>>,
     {
         let if_expr = If {
             if_kw,
@@ -951,30 +996,28 @@ pub enum NotEqualToken<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Binary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: F::Expr,
-    pub op: BinOp,
+    pub op: BinOp<'cx, F>,
     pub rhs: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum BinOp {
+pub enum BinOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     /// `&&`
-    And,
+    And(token::AndAnd<'cx, F>),
     /// `||`
-    Or,
-
+    Or(token::OrOr<'cx, F>),
     /// `in`
-    In,
-
+    In(token::In<'cx, F>),
     /// `*`
-    Mul,
+    Mul(token::Star<'cx, F>),
     /// `/`
-    Div,
+    Div(token::Slash<'cx, F>),
     /// `%`
-    Mod,
+    Mod(token::Percent<'cx, F>),
     /// `+`
-    Add,
+    Add(token::Plus<'cx, F>),
     /// `-`
-    Sub,
+    Sub(token::Hyphen<'cx, F>),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

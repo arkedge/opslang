@@ -336,7 +336,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LogicalOrExpr<'_> {
                 |acc, expr| {
                     cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
                         lhs: expr.logical_and_expr.process_token(cx),
-                        op: syn::BinOp::Or,
+                        op: syn::BinOp::Or(Token![||](expr.or_or.wrap())),
                         rhs: acc,
                     }))
                 },
@@ -357,7 +357,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LogicalAndExpr<'_> {
                 |acc, expr| {
                     cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
                         lhs: expr.infix_in_expr.process_token(cx),
-                        op: syn::BinOp::And,
+                        op: syn::BinOp::And(Token![&&](expr.amp_amp.wrap())),
                         rhs: acc,
                     }))
                 },
@@ -377,7 +377,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::InfixInExpr<'_> {
         {
             cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
                 lhs: self.compare_expr.process_token(cx),
-                op: syn::BinOp::In,
+                op: syn::BinOp::In(Token![in](self.infix_in_expr_opt.as_ref().unwrap().r#in.wrap())),
                 rhs: compare_expr.process_token(cx),
             }))
         } else {
@@ -464,12 +464,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ArithmeticExpr<'_> {
 }
 
 impl<'cx> ProcessToken<'cx> for grammar_trait::ArithmeticOp<'_> {
-    type Output = syn::BinOp;
+    type Output = syn::BinOp<'cx, syn::DefaultTypeFamily>;
 
-    fn process_token(&self, _: &'cx Context<'cx>) -> Self::Output {
+    fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         match self {
-            grammar_trait::ArithmeticOp::Plus(..) => syn::BinOp::Add,
-            grammar_trait::ArithmeticOp::Minus(..) => syn::BinOp::Sub,
+            grammar_trait::ArithmeticOp::Plus(token) => syn::BinOp::Add(Token![+](token.plus.wrap())),
+            grammar_trait::ArithmeticOp::Minus(token) => syn::BinOp::Sub(Token![-](token.minus.wrap())),
         }
     }
 }
@@ -495,13 +495,13 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FactorExpr<'_> {
 }
 
 impl<'cx> ProcessToken<'cx> for grammar_trait::FactorOp<'_> {
-    type Output = syn::BinOp;
+    type Output = syn::BinOp<'cx, syn::DefaultTypeFamily>;
 
-    fn process_token(&self, _: &'cx Context<'cx>) -> Self::Output {
+    fn process_token(&self, _cx: &'cx Context<'cx>) -> Self::Output {
         match self {
-            grammar_trait::FactorOp::Star(..) => syn::BinOp::Mul,
-            grammar_trait::FactorOp::Slash(..) => syn::BinOp::Div,
-            grammar_trait::FactorOp::Percent(..) => syn::BinOp::Mod,
+            grammar_trait::FactorOp::Star(token) => syn::BinOp::Mul(Token![*](token.star.wrap())),
+            grammar_trait::FactorOp::Slash(token) => syn::BinOp::Div(Token![/](token.slash.wrap())),
+            grammar_trait::FactorOp::Percent(token) => syn::BinOp::Mod(Token![%](token.percent.wrap())),
         }
     }
 }

@@ -884,11 +884,11 @@ impl<'cx> TypeChecker<'cx> {
 
         match binary.op {
             // Arithmetic operations require numeric types and return the same type
-            ast::BinOp::Add
-            | ast::BinOp::Sub
-            | ast::BinOp::Mul
-            | ast::BinOp::Div
-            | ast::BinOp::Mod => {
+            ast::BinOp::Add(_)
+            | ast::BinOp::Sub(_)
+            | ast::BinOp::Mul(_)
+            | ast::BinOp::Div(_)
+            | ast::BinOp::Mod(_) => {
                 let unify_subst = Self::unify(cx, unified_lhs, unified_rhs)?;
                 let final_subst = combined_subst.compose(&unify_subst, cx);
 
@@ -902,7 +902,7 @@ impl<'cx> TypeChecker<'cx> {
                 }
             }
             // Logical operations require boolean operands and return boolean
-            ast::BinOp::And | ast::BinOp::Or => {
+            ast::BinOp::And(_) | ast::BinOp::Or(_) => {
                 let bool_type = cx.alloc_type(TyKind::Bool);
                 let bool_unify_lhs = Self::unify(cx, unified_lhs, bool_type)?;
                 let bool_unify_rhs = Self::unify(cx, unified_rhs, bool_type)?;

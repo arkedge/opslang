@@ -27,6 +27,12 @@ impl Token {
 /// Types that implement this trait looks very similar to [`DefaultTypeFamily`], but
 /// accepts any `Span` and `Position` types, which allows for more flexibility in
 /// printing operations.
+///
+/// **IMPORTANT**: When modifying [`TypeFamily`] trait in opslang-ast, you must also
+/// update this trait to include the same associated types to maintain compatibility.
+/// This trait must be kept in sync with [`DefaultTypeFamily`] associated type definitions.
+/// Also you must reflect the changes into the next `impl PrintableFamily<'cx> for F`,
+/// before `trait_alias` is stabilized.
 pub trait PrintableFamily<'cx>:
     TypeFamily<
         'cx,
@@ -45,6 +51,14 @@ pub trait PrintableFamily<'cx>:
         Literal = Literal<'cx, Self>,
         Numeric = Numeric<'cx, Self>,
         Apply = Apply<'cx, Self>,
+        Unary = Unary<'cx, Self>,
+        Binary = Binary<'cx, Self>,
+        Compare = Compare<'cx, Self>,
+        Set = Set<'cx, Self>,
+        InfixImport = InfixImport<'cx, Self>,
+        If = If<'cx, Self>,
+        FunctionDef = FunctionDef<'cx, Self>,
+        ConstantDef = ConstantDef<'cx, Self>,
     >
 {
 }
@@ -71,6 +85,14 @@ impl<
             Literal = Literal<'cx, Self>,
             Numeric = Numeric<'cx, Self>,
             Apply = Apply<'cx, Self>,
+            Unary = Unary<'cx, Self>,
+            Binary = Binary<'cx, Self>,
+            Compare = Compare<'cx, Self>,
+            Set = Set<'cx, Self>,
+            InfixImport = InfixImport<'cx, Self>,
+            If = If<'cx, Self>,
+            FunctionDef = FunctionDef<'cx, Self>,
+            ConstantDef = ConstantDef<'cx, Self>,
         >,
 > PrintableFamily<'cx> for F
 {
@@ -571,14 +593,14 @@ where
         op_prec.write_with_parens(self.lhs.0, writer, options)?;
         writer.write_str(" ")?;
         match self.op {
-            BinOp::And => writer.write_str("&&")?,
-            BinOp::Or => writer.write_str("||")?,
-            BinOp::In => writer.write_str("in")?,
-            BinOp::Mul => writer.write_str("*")?,
-            BinOp::Div => writer.write_str("/")?,
-            BinOp::Mod => writer.write_str("%")?,
-            BinOp::Add => writer.write_str("+")?,
-            BinOp::Sub => writer.write_str("-")?,
+            BinOp::And(_) => writer.write_str("&&")?,
+            BinOp::Or(_) => writer.write_str("||")?,
+            BinOp::In(_) => writer.write_str("in")?,
+            BinOp::Mul(_) => writer.write_str("*")?,
+            BinOp::Div(_) => writer.write_str("/")?,
+            BinOp::Mod(_) => writer.write_str("%")?,
+            BinOp::Add(_) => writer.write_str("+")?,
+            BinOp::Sub(_) => writer.write_str("-")?,
         }
         writer.write_str(" ")?;
         op_prec.write_with_parens(self.rhs.0, writer, options)

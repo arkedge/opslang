@@ -590,14 +590,14 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Expr {
                             v0::BinOpKind::If => {
                                 unimplemented!("please report usage of infix `if`")
                             }
-                            v0::BinOpKind::And => v1::BinOp::And,
-                            v0::BinOpKind::Or => v1::BinOp::Or,
-                            v0::BinOpKind::In => v1::BinOp::In,
-                            v0::BinOpKind::Mul => v1::BinOp::Mul,
-                            v0::BinOpKind::Div => v1::BinOp::Div,
-                            v0::BinOpKind::Mod => v1::BinOp::Mod,
-                            v0::BinOpKind::Add => v1::BinOp::Add,
-                            v0::BinOpKind::Sub => v1::BinOp::Sub,
+                            v0::BinOpKind::And => v1::BinOp::And(V1Token![&&](Span)),
+                            v0::BinOpKind::Or => v1::BinOp::Or(V1Token![||](Span)),
+                            v0::BinOpKind::In => v1::BinOp::In(V1Token![in](Span)),
+                            v0::BinOpKind::Mul => v1::BinOp::Mul(V1Token![*](Position)),
+                            v0::BinOpKind::Div => v1::BinOp::Div(V1Token![/](Position)),
+                            v0::BinOpKind::Mod => v1::BinOp::Mod(V1Token![%](Position)),
+                            v0::BinOpKind::Add => v1::BinOp::Add(V1Token![+](Position)),
+                            v0::BinOpKind::Sub => v1::BinOp::Sub(V1Token![-](Position)),
                             v0::BinOpKind::Compare(_) => unreachable!(), // Already handled above
                         };
 

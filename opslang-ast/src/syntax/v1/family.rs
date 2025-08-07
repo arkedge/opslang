@@ -1,57 +1,137 @@
 use std::fmt::Debug;
 
-/// Shorthand for repeating trait constraints.
+/// Shorthand for repeating trait constraints with optional documentation.
 macro_rules! declare_family {
-    ($(type $ident:ident;)*) => {
+    ($($(#[$attr:meta])* type $ident:ident;)*) => {
         $(
+            $(#[$attr])*
             type $ident: std::fmt::Debug + PartialEq + Clone + Copy;
         )*
     };
 }
 
-/// Type family that occurs in almost every types to allow global type substitution.
-/// It is known as "trees that grow".
+/// Type family that occurs in almost every AST types to allow global type substitution.
+/// This pattern is known as "trees that grow" and allows for flexible AST transformations.
 ///
-/// # Operation in this project
+/// # Design Overview
 ///
-/// This trait takes a lifetime parameter `'cx` so that the members can refer to it
-/// regardless of whether they use it or not, and the members can have default
-/// type parameters.
+/// This trait enables the same AST structure to be used with different concrete types
+/// across different phases of compilation (parsing, type checking, IR generation, etc.).
+/// Each phase can provide its own TypeFamily implementation with appropriate concrete types.
 ///
-/// This trait carries all of possible substitution, including recursive elements.
-/// If you find yourself creating definition similar to types in this crate,
-/// try to avoid copying types by adding members of this trait.
+/// This trait takes a lifetime parameter `'cx` so that all associated types can refer to it
+/// uniformly, enabling arena-based memory allocation patterns.
 ///
-/// Modifying this will require changes of the following elements:
-/// - [`v1_default_type_subst!`] macro (for [`DefaultTypeFamily`]),
-/// - `TypeFamily` type in `opslang-ir` crate,
-/// - `v0_to_v1` module in `opslang-migration` crate.
+/// # Adding New Types
+///
+/// When adding a new associated type to this trait, you **MUST** update all of the following:
+///
+/// 1. **Core implementation in `opslang-ast`**:
+///    - Add the type to this trait definition
+///    - Add corresponding parameter to [`v1_default_type_subst!`] macro
+///    - Add implementation in the macro body to map to concrete type
+///    - Update any enums/structs to use `F::YourType` instead of `YourType<'cx, F>`
+///
+/// 2. **Printer support in `opslang-printer`**:
+///    - Add the type to `PrintableFamily` trait definition
+///    - Add the type to `PrintableFamily` implementation (the impl block before the trait)
+///
+/// 3. **IR support in `opslang-ir`**:
+///    - Add the type to `TypeFamily` implementation (maps to IR version of the type)
+///
+/// 4. **Migration support in `opslang-migration`** (if applicable):
+///    - Update conversion code if the type is used in v0 to v1 migration
+///
+/// # Type Categories
+///
+/// The associated types are organized into logical groups:
+/// - **Foundational**: `Span`, `Position` - source location information
+/// - **Structural**: `Comment`, `Row`, `Block`, etc. - document structure
+/// - **Names**: `Ident`, `Path` - identifier and path resolution
+/// - **Expressions**: `Expr` and all expression-related types
+/// - **Definitions**: Top-level constructs like function and constant definitions
 ///
 /// [`v1_default_type_subst!`]: crate::v1_default_type_subst
-/// [`DefaultTypeFamily`]: crate::v1::DefaultTypeFamily
 pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static {
     declare_family! {
+        // === Foundational Types ===
+        /// Source location span representing a range in the source code (start/end positions).
         type Span;
+
+        /// Single source position (line, column) in the source code.
         type Position;
 
+        // === Structural Types ===
+        /// Comments attached to AST nodes, preserving documentation and annotations.
         type Comment;
+
+        /// Items within a scope, which can be either rows (statements) or nested blocks.
         type ScopeItem;
+
+        /// A single row/line in the source code, containing optional content and comments.
         type Row;
+
+        /// Content of a row, typically containing a statement or expression.
         type RowContent;
+
+        /// Block of code containing a sequence of scope items (statements, nested blocks).
         type Block;
+
+        /// Return statement that yields a value from a function or block.
         type ReturnStmt;
 
+        // === Names and Identifiers ===
+        /// Simple identifier used for variable names, function names, etc.
         type Ident;
+
+        /// Path to an identifier, which may include module qualification or scope resolution.
         type Path;
 
-        // Expression types
+        // === Expression Types ===
+        /// Base expression type representing the main expression enum that contains all expression variants.
         type Expr;
 
+        /// Literal values including numbers, strings, arrays, and other constant data.
         type Literal;
+
+        /// Parenthesized expressions that group sub-expressions and control precedence.
         type Parened;
+
+        /// Qualification expressions such as attributes, decorators, and metadata annotations.
         type Qualif;
+
+        /// Pre-qualified expressions that have qualifications applied before the main expression.
         type PreQualified;
+
+        /// Numeric literal values (integers, floating-point numbers).
         type Numeric;
+
+        /// Function application/call expressions that invoke functions with arguments.
         type Apply;
+
+        /// Unary operations including negation (-), reference (&), dereference ($), etc.
+        type Unary;
+
+        /// Binary operations including arithmetic (+, -, *, /, %), logical (&&, ||), etc.
+        type Binary;
+
+        /// Comparison operations including equality (==, !=) and relational (<, >, <=, >=).
+        type Compare;
+
+        /// Assignment/set operations using the `:=` operator.
+        type Set;
+
+        /// Infix import operations that import from a file using the `file?path` syntax.
+        type InfixImport;
+
+        /// Conditional expressions with if/then/else branching logic.
+        type If;
+
+        // === Definition Types ===
+        /// Function definition declared with `proc` keyword, including parameters and body.
+        type FunctionDef;
+
+        /// Constant definition declared with `const` keyword, binding a name to a value.
+        type ConstantDef;
     }
 }

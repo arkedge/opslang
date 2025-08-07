@@ -51,14 +51,14 @@ impl<'cx, F: PrintableFamily<'cx>> HasPrecedence for ExprKind<'cx, F> {
     }
 }
 
-impl HasPrecedence for BinOp {
+impl<'cx, F: PrintableFamily<'cx>> HasPrecedence for BinOp<'cx, F> {
     fn precedence(&self) -> Precedence {
         match self {
-            BinOp::Or => Precedence::LOGICAL_OR,
-            BinOp::And => Precedence::LOGICAL_AND,
-            BinOp::In => Precedence::INFIX_IN,
-            BinOp::Add | BinOp::Sub => Precedence::ARITHMETIC,
-            BinOp::Mul | BinOp::Div | BinOp::Mod => Precedence::FACTOR,
+            BinOp::Or(_) => Precedence::LOGICAL_OR,
+            BinOp::And(_) => Precedence::LOGICAL_AND,
+            BinOp::In(_) => Precedence::INFIX_IN,
+            BinOp::Add(_) | BinOp::Sub(_) => Precedence::ARITHMETIC,
+            BinOp::Mul(_) | BinOp::Div(_) | BinOp::Mod(_) => Precedence::FACTOR,
         }
     }
 }
