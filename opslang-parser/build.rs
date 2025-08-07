@@ -25,6 +25,7 @@ fn build_parol() {
                 self.path.as_ref()
             }
         }
+        #[derive(PartialEq)]
         pub struct RustFile {
             pub path: &'static str,
             pub module: &'static str,
@@ -94,6 +95,9 @@ fn build_parol() {
             writeln!(f, "// Do not edit it manually.").unwrap();
             writeln!(f).unwrap();
             for file in [TRAIT, PARSER] {
+                if file == TRAIT {
+                    writeln!(f, "#[allow(clippy::uninlined_format_args)]").unwrap();
+                }
                 let module_name = file.module;
                 writeln!(f, "pub mod {module_name};").unwrap();
             }

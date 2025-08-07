@@ -138,9 +138,9 @@ peg::parser! {
                 s:$(['a'..='f' | 'A'..='F' | '0'..='9']) {?
                     let c = s.chars().next().unwrap();
                     match c {
-                        '0'..='9' => Ok(c as u8 - '0' as u8),
-                        'a'..='f' => Ok(c as u8 - 'a' as u8 + 10),
-                        'A'..='F' => Ok(c as u8 - 'A' as u8 + 10),
+                        '0'..='9' => Ok(c as u8 - b'0'),
+                        'a'..='f' => Ok(c as u8 - b'a' + 10),
+                        'A'..='F' => Ok(c as u8 - b'A' + 10),
                         _ => Err("invalid hex digit")
                     }
                 }
