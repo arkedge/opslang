@@ -1,8 +1,8 @@
 use opslang_ast::V1Token;
-use opslang_ast::default_type_subst;
 use opslang_ast::token::IntoPosition;
 use opslang_ast::token::IntoSpan;
 use opslang_ast::v1::context::Context;
+use opslang_ast::v1_default_type_subst;
 use opslang_printer::{Naive, PrettyPrint, PrintOptions};
 
 // Import v0 and v1 types
@@ -103,7 +103,7 @@ impl<'cx> v1::TypeFamily<'cx> for ConvertedFamily {
     type Span = Span;
     type Position = Position;
 
-    default_type_subst!();
+    v1_default_type_subst!();
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Default)]

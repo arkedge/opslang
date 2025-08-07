@@ -20,29 +20,109 @@ pub struct DefaultTypeFamily;
 
 #[macro_export]
 /// Type substitution that makes [`DefaultTypeFamily`] default.
-macro_rules! default_type_subst {
-    () => {
-        $crate::default_type_subst!(Self);
+///
+/// You can override some of the types by passing them as arguments.
+/// The arguments must be provided in the order of the fields in this macro.
+///
+/// # Examples
+///
+/// ```rust,ignore
+/// // Use all default types.
+/// v1_default_type_subst! {}
+///
+/// // Override `Expr` type.
+/// v1_default_type_subst! {
+///     Expr = MyExpr,
+/// }
+/// ```
+macro_rules! v1_default_type_subst {
+    // Note: The order of overrides must match the order below.
+    (
+        $(Comment = $comment:ty,)?
+        $(Row = $row:ty,)?
+        $(RowContent = $row_content:ty,)?
+        $(Block = $block:ty,)?
+        $(ScopeItem = $scope_item:ty,)?
+        $(ReturnStmt = $return_stmt:ty,)?
+        $(Ident = $ident:ty,)?
+        $(Path = $path:ty,)?
+        $(Expr = $expr:ty,)?
+        $(Qualif = $qualif:ty,)?
+        $(PreQualified = $pre_qualified:ty,)?
+        $(Parened = $parened:ty,)?
+        $(Literal = $literal:ty,)?
+        $(Numeric = $numeric:ty,)?
+        $(Apply = $apply:ty,)?
+    ) => {
+        type Comment = v1_default_type_subst!{
+            &'cx $crate::syntax::v1::Comment<'cx, Self>;
+            [$($comment)?]
+        };
+        type Row = v1_default_type_subst!{
+            &'cx $crate::syntax::v1::Row<'cx, Self>;
+            [$($row)?]
+        };
+        type RowContent = v1_default_type_subst!{
+            $crate::syntax::v1::StatementKind<'cx, Self>;
+            [$($row_content)?]
+        };
+        type Block = v1_default_type_subst!{
+            &'cx $crate::syntax::v1::Block<'cx, Self>;
+            [$($block)?]
+        };
+        type ScopeItem = v1_default_type_subst!{
+            $crate::syntax::v1::ScopeItem<'cx, Self>;
+            [$($scope_item)?]
+        };
+        type ReturnStmt = v1_default_type_subst!{
+            $crate::syntax::v1::ReturnStmt<'cx, Self>;
+            [$($return_stmt)?]
+        };
+        type Ident = v1_default_type_subst!{
+            $crate::syntax::v1::Ident<'cx, Self>;
+            [$($ident)?]
+        };
+        type Path = v1_default_type_subst!{
+            $crate::syntax::v1::Path<'cx, Self>;
+            [$($path)?]
+        };
+        type Expr = v1_default_type_subst!{
+            $crate::syntax::v1::Expr<'cx, Self>;
+            [$($expr)?]
+        };
+        type Qualif = v1_default_type_subst!{
+            $crate::syntax::v1::Qualif<'cx, Self>;
+            [$($qualif)?]
+        };
+        type PreQualified = v1_default_type_subst!{
+            $crate::syntax::v1::PreQualified<'cx, Self>;
+            [$($pre_qualified)?]
+        };
+        type Parened = v1_default_type_subst!{
+            $crate::syntax::v1::Parened<'cx, Self>;
+            [$($parened)?]
+        };
+        type Literal = v1_default_type_subst!{
+            $crate::syntax::v1::Literal<'cx, Self>;
+            [$($literal)?]
+        };
+        type Numeric = v1_default_type_subst!{
+            $crate::syntax::v1::Numeric<'cx, Self>;
+            [$($numeric)?]
+        };
+        type Apply = v1_default_type_subst!{
+            $crate::syntax::v1::Apply<'cx, Self>;
+            [$($apply)?]
+        };
     };
-    ($ty:ty) => {
-        type Comment = &'cx $crate::syntax::v1::Comment<'cx, $ty>;
-        type Row = &'cx $crate::syntax::v1::Row<'cx, $ty>;
-        type RowContent = $crate::syntax::v1::StatementKind<'cx, $ty>;
-        type Block = &'cx $crate::syntax::v1::Block<'cx, $ty>;
-        type ScopeItem = $crate::syntax::v1::ScopeItem<'cx, $ty>;
-        type ReturnStmt = $crate::syntax::v1::ReturnStmt<'cx, $ty>;
-
-        type Ident = $crate::syntax::v1::Ident<'cx, $ty>;
-        type Path = $crate::syntax::v1::Path<'cx, $ty>;
-
-        type Expr = $crate::syntax::v1::Expr<'cx, $ty>;
-
-        type Qualif = $crate::syntax::v1::Qualif<'cx, $ty>;
-        type PreQualified = $crate::syntax::v1::PreQualified<'cx, $ty>;
-        type Parened = $crate::syntax::v1::Parened<'cx, $ty>;
-        type Literal = $crate::syntax::v1::Literal<'cx, $ty>;
-        type Numeric = $crate::syntax::v1::Numeric<'cx, $ty>;
-        type Apply = $crate::syntax::v1::Apply<'cx, $ty>;
+    // Internal
+    // If the first argument (the user override) is present, use it.
+    ($default:ty; [$user:ty]) => {
+        $user
+    };
+    // If the first argument is empty, use the default.
+    ($default:ty; []) => {
+        $default
     };
 }
 
@@ -50,7 +130,7 @@ impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
     type Span = Span;
     type Position = Position;
 
-    default_type_subst!(Self);
+    v1_default_type_subst!();
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
