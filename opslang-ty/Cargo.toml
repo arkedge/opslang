@@ -1,0 +1,8 @@
+[package]
+name = "opslang-ty"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+typed-arena = "2.0.2"
