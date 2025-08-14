@@ -1,3 +1,4 @@
+mod derive_map_into_token;
 mod derive_position;
 mod derive_span;
 
@@ -18,6 +19,13 @@ pub fn derive_order_span(input: proc_macro::TokenStream) -> proc_macro::TokenStr
 #[proc_macro_derive(Position)]
 pub fn derive_position(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     derive_position::derive_position(input)
+        .unwrap_or_else(std::convert::identity)
+        .into()
+}
+
+#[proc_macro_derive(MapIntoToken)]
+pub fn derive_map_into_token(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    derive_map_into_token::derive_map_into_token(input)
         .unwrap_or_else(std::convert::identity)
         .into()
 }

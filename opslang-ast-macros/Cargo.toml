@@ -8,6 +8,6 @@ license.workspace = true
 proc-macro = true
 
 [dependencies]
-syn = "2.0.101"
+syn = { version = "2.0.101", features = ["visit-mut"] }
 proc-macro2 = "1.0.95"
 quote = "1.0.40"

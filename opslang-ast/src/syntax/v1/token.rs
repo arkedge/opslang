@@ -22,6 +22,14 @@ pub trait IntoPosition<'cx, F: super::family::TypeFamily<'cx> = super::DefaultTy
     fn into_position(self) -> F::Position;
 }
 
+/// Re-defined version of [`Into`], which does not have `impl<T> Into<T> for T`.
+pub trait IntoToken<T>: Sized {
+    /// Token lowering.
+    ///
+    /// Performs conversion between different AST substitutions, typically from AST into IR.
+    fn into_token(self) -> T;
+}
+
 /// Declares all tokens for v1 grammar.
 macro_rules! declare_token {
     ($(pub struct $name:ident/$lit:tt $str:literal)*) => {
@@ -41,6 +49,16 @@ macro_rules! token_define_if_1 {
         #[derive(Debug, PartialEq, Clone, Copy)]
         pub struct $name<'cx, F: super::family::TypeFamily<'cx> = super::DefaultTypeFamily> {
             pub position: F::Position,
+        }
+
+        impl<'cx, F: super::family::TypeFamily<'cx>, G: super::family::TypeFamily<'cx>>
+            IntoToken<$name<'cx, G>> for $name<'cx, F>
+        where
+            F::Position: IntoPosition<'cx, G>,
+        {
+            fn into_token(self) -> $name<'cx, G> {
+                $name(self.position)
+            }
         }
 
         #[doc(hidden)]
@@ -71,6 +89,16 @@ macro_rules! token_define_if_many {
         #[derive(Debug, PartialEq, Clone, Copy)]
         pub struct $name<'cx, F: super::family::TypeFamily<'cx> = super::DefaultTypeFamily> {
             pub span: F::Span,
+        }
+
+        impl<'cx, F: super::family::TypeFamily<'cx>, G: super::family::TypeFamily<'cx>>
+            IntoToken<$name<'cx, G>> for $name<'cx, F>
+        where
+            F::Span: IntoSpan<'cx, G>,
+        {
+            fn into_token(self) -> $name<'cx, G> {
+                $name(self.span)
+            }
         }
 
         #[doc(hidden)]
