@@ -42,7 +42,7 @@ macro_rules! v1_default_type_subst {
         $(Position = $position:ty,)?
         $(Comment = $comment:ty,)?
         $(Row = $row:ty,)?
-        $(RowContent = $row_content:ty,)?
+        $(Statement = $statement:ty,)?
         $(Block = $block:ty,)?
         $(ScopeItem = $scope_item:ty,)?
         $(ReturnStmt = $return_stmt:ty,)?
@@ -86,9 +86,9 @@ macro_rules! v1_default_type_subst {
             &'cx $crate::syntax::v1::Row<'cx, Self>;
             [$($row)?]
         };
-        type RowContent = v1_default_type_subst!{
-            $crate::syntax::v1::StatementKind<'cx, Self>;
-            [$($row_content)?]
+        type Statement = v1_default_type_subst!{
+            $crate::syntax::v1::Statement<'cx, Self>;
+            [$($statement)?]
         };
         type Block = v1_default_type_subst!{
             &'cx $crate::syntax::v1::Block<'cx, Self>;
@@ -302,7 +302,7 @@ pub enum ScopeItem<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// A single row of program with optional comments and breaks.
 pub struct Row<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub breaks: Option<token::Break<'cx, F>>,
-    pub content: Option<F::RowContent>,
+    pub statement: Option<F::Statement>,
     pub comment: Option<F::Comment>,
 }
 
@@ -310,10 +310,10 @@ impl<'cx, F: TypeFamily<'cx>> Row<'cx, F> {
     pub fn is_empty(&self) -> bool {
         let Self {
             breaks,
-            content,
+            statement,
             comment,
         } = self;
-        breaks.is_none() && content.is_none() && comment.is_none()
+        breaks.is_none() && statement.is_none() && comment.is_none()
     }
 }
 
@@ -321,7 +321,7 @@ impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
     fn default() -> Self {
         Self {
             breaks: Default::default(),
-            content: Default::default(),
+            statement: Default::default(),
             comment: Default::default(),
         }
     }
@@ -360,7 +360,7 @@ pub struct Block<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A statement kind.
-pub enum StatementKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+pub enum Statement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Let(Let<'cx, F>),
     Expr(ExprStatement<'cx, F>),
     Return(F::ReturnStmt),

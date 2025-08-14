@@ -38,7 +38,7 @@ pub trait PrintableFamily<'cx>:
         'cx,
         Comment = &'cx Comment<'cx, Self>,
         Row = &'cx Row<'cx, Self>,
-        RowContent = StatementKind<'cx, Self>,
+        Statement = Statement<'cx, Self>,
         Block = &'cx Block<'cx, Self>,
         ScopeItem = ScopeItem<'cx, Self>,
         ReturnStmt = ReturnStmt<'cx, Self>,
@@ -77,7 +77,7 @@ impl<
             'cx,
             Comment = &'cx Comment<'cx, Self>,
             Row = &'cx Row<'cx, Self>,
-            RowContent = StatementKind<'cx, Self>,
+            Statement = Statement<'cx, Self>,
             Block = &'cx Block<'cx, Self>,
             ScopeItem = ScopeItem<'cx, Self>,
             ReturnStmt = ReturnStmt<'cx, Self>,
@@ -246,18 +246,19 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Row<'cx, F> {
         // Handle breaks
         if self.breaks.is_some() {
             writer.write_char('.')?;
-        } else if options.reserve_for_break && (self.content.is_some() || self.comment.is_some()) {
+        } else if options.reserve_for_break && (self.statement.is_some() || self.comment.is_some())
+        {
             writer.write_char(' ')?;
         }
 
         // Handle content
-        if let Some(content) = &self.content {
+        if let Some(content) = &self.statement {
             PrettyPrint::<Naive>::pretty_print(content, writer, options)?;
         }
 
         // Handle comment (naive approach: just add space)
         if let Some(comment) = &self.comment {
-            if self.content.is_some() {
+            if self.statement.is_some() {
                 writer.write_str(" ")?;
             }
             PrettyPrint::<Naive>::pretty_print(*comment, writer, options)?;
@@ -310,19 +311,17 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Block<'cx, F>
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for StatementKind<'cx, F>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Statement<'cx, F>
 where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         match self {
-            StatementKind::Let(let_stmt) => {
-                PrettyPrint::<S>::pretty_print(let_stmt, writer, options)
-            }
-            StatementKind::Expr(expr_stmt) => {
+            Statement::Let(let_stmt) => PrettyPrint::<S>::pretty_print(let_stmt, writer, options),
+            Statement::Expr(expr_stmt) => {
                 PrettyPrint::<S>::pretty_print(expr_stmt, writer, options)
             }
-            StatementKind::Return(return_stmt) => {
+            Statement::Return(return_stmt) => {
                 PrettyPrint::<S>::pretty_print(return_stmt, writer, options)
             }
         }

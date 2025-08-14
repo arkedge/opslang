@@ -217,7 +217,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Row {
             None
         };
 
-        let content = if let Some(stmt) = self.content {
+        let statement = if let Some(stmt) = self.content {
             Some(stmt.convert(ctx)?)
         } else {
             None
@@ -235,7 +235,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Row {
 
         Ok(v1::Row {
             breaks,
-            content,
+            statement,
             comment,
         })
     }
@@ -280,7 +280,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Block {
 }
 
 impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
-    type Converted = v1::StatementKind<'cx, ConvertedFamily>;
+    type Converted = v1::Statement<'cx, ConvertedFamily>;
 
     fn convert(
         self,
@@ -289,16 +289,16 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
         match self {
             v0::SingleStatement::Let(let_stmt) => {
                 let converted_let = let_stmt.convert(ctx)?;
-                Ok(v1::StatementKind::Let(converted_let))
+                Ok(v1::Statement::Let(converted_let))
             }
-            v0::SingleStatement::Return => Ok(v1::StatementKind::Return(v1::ReturnStmt {
+            v0::SingleStatement::Return => Ok(v1::Statement::Return(v1::ReturnStmt {
                 return_token: V1Token![return](Span),
                 semi: V1Token![;](Position),
             })),
             v0::SingleStatement::Command(cmd) => {
                 // Convert command to expression statement
                 let expr = cmd.convert(ctx)?;
-                Ok(v1::StatementKind::Expr(v1::ExprStatement {
+                Ok(v1::Statement::Expr(v1::ExprStatement {
                     expr,
                     semi: V1Token![;](Position),
                 }))
@@ -306,7 +306,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
             v0::SingleStatement::Print(print) => {
                 // Convert print to expression statement
                 let expr = print.convert(ctx)?;
-                Ok(v1::StatementKind::Expr(v1::ExprStatement {
+                Ok(v1::Statement::Expr(v1::ExprStatement {
                     expr,
                     semi: V1Token![;](Position),
                 }))
@@ -314,7 +314,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
             v0::SingleStatement::Call(call) => {
                 // Convert call to expression statement
                 let expr = call.convert(ctx)?;
-                Ok(v1::StatementKind::Expr(v1::ExprStatement {
+                Ok(v1::Statement::Expr(v1::ExprStatement {
                     expr,
                     semi: V1Token![;](Position),
                 }))
@@ -322,7 +322,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
             v0::SingleStatement::Wait(wait) => {
                 // Convert wait to expression statement
                 let expr = wait.convert(ctx)?;
-                Ok(v1::StatementKind::Expr(v1::ExprStatement {
+                Ok(v1::Statement::Expr(v1::ExprStatement {
                     expr,
                     semi: V1Token![;](Position),
                 }))
@@ -330,7 +330,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
             v0::SingleStatement::Assert(assert) => {
                 // Convert assert to expression statement
                 let expr = assert.convert(ctx)?;
-                Ok(v1::StatementKind::Expr(v1::ExprStatement {
+                Ok(v1::Statement::Expr(v1::ExprStatement {
                     expr,
                     semi: V1Token![;](Position),
                 }))
@@ -338,7 +338,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
             v0::SingleStatement::AssertEq(assert_eq) => {
                 // Convert assert_eq to expression statement
                 let expr = assert_eq.convert(ctx)?;
-                Ok(v1::StatementKind::Expr(v1::ExprStatement {
+                Ok(v1::Statement::Expr(v1::ExprStatement {
                     expr,
                     semi: V1Token![;](Position),
                 }))
@@ -346,7 +346,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::SingleStatement {
             v0::SingleStatement::Set(set) => {
                 // Convert set to expression statement
                 let expr = set.convert(ctx)?;
-                Ok(v1::StatementKind::Expr(v1::ExprStatement {
+                Ok(v1::Statement::Expr(v1::ExprStatement {
                     expr,
                     semi: V1Token![;](Position),
                 }))

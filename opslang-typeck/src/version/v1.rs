@@ -1,7 +1,7 @@
 use anyhow::anyhow;
 use chrono::Utc;
 use opslang_ast::v1::token::IntoToken;
-use opslang_ast::v1::{self as ast, ExprKind, StatementKind};
+use opslang_ast::v1::{self as ast, ExprKind, Statement};
 use opslang_ir::version::IrTypeFamily;
 use opslang_ir::version::v1::{self as ir, NumericKind, ResolvedPath};
 use opslang_ty::version::v1::{
@@ -414,14 +414,14 @@ impl<'cx> TypeChecker<'cx> {
     ) -> Result<RowProcessResult<'cx>> {
         // Check if this row is only a comment (no content, no breaks)
         if row.breaks.is_none()
-            && row.content.is_none()
+            && row.statement.is_none()
             && let Some(comment) = &row.comment
         {
             return Ok(RowProcessResult::Comment(comment));
         }
 
         // Process as a regular row
-        let ir_content = if let Some(content) = &row.content {
+        let ir_content = if let Some(content) = &row.statement {
             let stmt = self.typeck_statement(typing_cx, ir_cx, env, subst, content)?;
             Some(stmt)
         } else {
@@ -437,7 +437,7 @@ impl<'cx> TypeChecker<'cx> {
 
         let ir_row = ast::Row {
             breaks: row.breaks.map(|b| b.into_token()),
-            content: ir_content,
+            statement: ir_content,
             comment: ir_comment,
         };
 
@@ -525,7 +525,7 @@ impl<'cx> TypeChecker<'cx> {
             let merged_comment = self.merge_comments(ir_cx, comments)?;
             let comment_row = ast::Row {
                 breaks: None,
-                content: None,
+                statement: None,
                 comment: Some(merged_comment),
             };
             ir_items.push(ast::ScopeItem::Row(ir_cx.alloc_row(comment_row)));
@@ -590,13 +590,13 @@ impl<'cx> TypeChecker<'cx> {
         ir_cx: &'cx ir::Context<'cx>,
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
-        stmt: &StatementKind<'cx>,
-    ) -> Result<StatementKind<'cx, IrTypeFamily>> {
+        stmt: &Statement<'cx>,
+    ) -> Result<Statement<'cx, IrTypeFamily>> {
         match stmt {
-            StatementKind::Let(let_stmt) => {
+            Statement::Let(let_stmt) => {
                 let ir_rhs = self.typeck_expr(typing_cx, ir_cx, env, subst, &let_stmt.rhs)?;
 
-                Ok(StatementKind::Let(ast::Let {
+                Ok(Statement::Let(ast::Let {
                     let_token: let_stmt.let_token.into_token(),
                     variable: self.resolve_ident(typing_cx, let_stmt.variable)?,
                     eq: let_stmt.eq.into_token(),
@@ -604,15 +604,15 @@ impl<'cx> TypeChecker<'cx> {
                     semi: let_stmt.semi.into_token(),
                 }))
             }
-            StatementKind::Expr(expr_stmt) => {
+            Statement::Expr(expr_stmt) => {
                 let ir_expr = self.typeck_expr(typing_cx, ir_cx, env, subst, &expr_stmt.expr)?;
 
-                Ok(StatementKind::Expr(ast::ExprStatement {
+                Ok(Statement::Expr(ast::ExprStatement {
                     expr: ir_expr,
                     semi: expr_stmt.semi.into_token(),
                 }))
             }
-            StatementKind::Return(ret_stmt) => Ok(StatementKind::Return(ret_stmt.into_token())),
+            Statement::Return(ret_stmt) => Ok(Statement::Return(ret_stmt.into_token())),
         }
     }
 

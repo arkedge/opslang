@@ -166,10 +166,10 @@ fn format_row_before_comment<'cx, F: PrintableFamily<'cx>>(
     options: &PrintOptions<CommentAligned>,
 ) -> Result<RowInfo<'cx, F>, fmt::Error> {
     // Handle meta comment first
-    if row.breaks.is_none() && row.content.is_none() && row.comment.is_some_and(|c| c.is_meta()) {
+    if row.breaks.is_none() && row.statement.is_none() && row.comment.is_some_and(|c| c.is_meta()) {
         return Ok(RowInfo {
             content: Default::default(),
-            has_content: row.content.is_some(),
+            has_content: row.statement.is_some(),
             comment: row.comment,
         });
     }
@@ -181,13 +181,13 @@ fn format_row_before_comment<'cx, F: PrintableFamily<'cx>>(
     } else if options.reserve_for_break && !row.is_empty() {
         temp_buffer.push(' ');
     }
-    if let Some(content) = &row.content {
+    if let Some(content) = &row.statement {
         PrettyPrint::<CommentAligned>::pretty_print(content, temp_buffer, options)?;
     }
 
     Ok(RowInfo {
         content: std::mem::take(temp_buffer),
-        has_content: row.content.is_some(),
+        has_content: row.statement.is_some(),
         comment: row.comment,
     })
 }

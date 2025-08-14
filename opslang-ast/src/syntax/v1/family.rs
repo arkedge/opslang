@@ -76,7 +76,7 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         type Row;
 
         /// Content of a row, typically containing a statement or expression.
-        type RowContent;
+        type Statement;
 
         /// Block of code containing a sequence of scope items (statements, nested blocks).
         type Block;

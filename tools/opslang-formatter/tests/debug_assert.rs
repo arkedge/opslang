@@ -41,7 +41,7 @@ fn debug_assert_parentheses_behavior() {
         {
             // Skip shebang
             if let opslang_ast::v1::ScopeItem::Row(row) = first_item
-                && let Some(opslang_ast::v1::StatementKind::Expr(expr_stmt)) = &row.content
+                && let Some(opslang_ast::v1::Statement::Expr(expr_stmt)) = &row.statement
             {
                 println!("AST Type: {:?}", discriminant(&expr_stmt.expr.0));
 

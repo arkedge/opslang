@@ -227,7 +227,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContent<'_> {
             end_of_line: _end_of_line,
         } = self;
         let breaks = scope_content_opt.process_token(cx);
-        let content = if let Some(scope_content_kind) = scope_content_opt0 {
+        let statement = if let Some(scope_content_kind) = scope_content_opt0 {
             match &*scope_content_kind.scope_content_kind {
                 grammar_trait::ScopeContentKind::Block(block) => {
                     let block = block.block.process_token(cx);
@@ -245,7 +245,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContent<'_> {
             .map(|comment| comment.comment.process_token(cx));
         syn::ScopeItem::Row(cx.alloc_row(syn::Row {
             breaks,
-            content,
+            statement,
             comment,
         }))
     }
@@ -264,7 +264,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Block<'_> {
 }
 
 impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
-    type Output = syn::StatementKind<'cx>;
+    type Output = syn::Statement<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let semi = Token![;](self.semi.semi.wrap());
@@ -278,7 +278,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
                     equ,
                     expr,
                 } = &**let_stmt;
-                syn::StatementKind::Let(syn::Let {
+                syn::Statement::Let(syn::Let {
                     let_token: Token![let](r#let.wrap()),
                     variable: ident.process_token(cx),
                     eq: Token![=](equ.wrap()),
@@ -287,13 +287,13 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Statement<'_> {
                 })
             }
             grammar_trait::StatementKind::Expr(statement_kind_expr) => {
-                syn::StatementKind::Expr(syn::ExprStatement {
+                syn::Statement::Expr(syn::ExprStatement {
                     expr: statement_kind_expr.expr.process_token(cx),
                     semi,
                 })
             }
             grammar_trait::StatementKind::ReturnStmt(statement_kind_return_stmt) => {
-                syn::StatementKind::Return(syn::ReturnStmt {
+                syn::Statement::Return(syn::ReturnStmt {
                     return_token: Token![return](
                         statement_kind_return_stmt.return_stmt.return_stmt.wrap(),
                     ),
@@ -398,14 +398,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareExpr<'_> {
             cx.alloc_expr(syn::ExprKind::Compare(syn::Compare {
                 head: self.arithmetic_expr.process_token(cx),
                 tail_with_op: cx.alloc_compare_op_expr_tuple_slice(
-                    self.compare_expr_list
-                        .iter()
-                        .map(|expr| {
-                            (
-                                expr.compare_op.process_token(cx),
-                                expr.arithmetic_expr.process_token(cx),
-                            )
-                        })
+                    self.compare_expr_list.iter().map(|expr| {
+                        (
+                            expr.compare_op.process_token(cx),
+                            expr.arithmetic_expr.process_token(cx),
+                        )
+                    }),
                 ),
             }))
         }
@@ -538,7 +536,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
                             prefix_expr_prefix_expr_list_apply_expr
                                 .prefix_expr_list
                                 .iter()
-                                .map(|qualif| qualif.qualif.process_token(cx))
+                                .map(|qualif| qualif.qualif.process_token(cx)),
                         ),
                         expr: prefix_expr_prefix_expr_list_apply_expr
                             .apply_expr
@@ -589,7 +587,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ApplyExpr<'_> {
                 args: cx.alloc_expr_slice(
                     self.apply_expr_list
                         .iter()
-                        .map(|arg| arg.atomic_expr.process_token(cx))
+                        .map(|arg| arg.atomic_expr.process_token(cx)),
                 ),
             }))
         }
