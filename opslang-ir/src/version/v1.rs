@@ -39,8 +39,66 @@ use opslang_ast::{
     v1::{self as syn, TypeFamily as AstTypeFamily},
     v1_default_type_subst,
 };
-use opslang_ty::version::v1::{Ident, Ty};
+use opslang_ty::version::v1::{Ident, Ty, TypingContext};
 use std::convert::Infallible;
+
+pub trait Typed<'cx> {
+    type Ty;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty;
+}
+
+impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Block<'cx, F> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        None
+    }
+}
+
+impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Scope<'cx, F> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        None
+    }
+}
+
+impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::ScopeItem<'cx, F> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        None
+    }
+}
+
+impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Statement<'cx, F> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        match self {
+            syn::Statement::Let(let_stmt) => let_stmt.ty(cx),
+            syn::Statement::Expr(expr_stmt) => expr_stmt.ty(cx),
+            syn::Statement::Return(_) => Ty::mk_unit(cx),
+        }
+    }
+}
+
+impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Let<'cx, F> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        Ty::mk_unit(cx)
+    }
+}
+
+impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::ExprStatement<'cx, F> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        Ty::mk_unit(cx)
+    }
+}
+
+impl<'cx> Typed<'cx> for Expr<'cx> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        self.ty
+    }
+}
 
 pub mod context;
 pub use context::Context;

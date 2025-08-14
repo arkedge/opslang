@@ -2,8 +2,8 @@ use anyhow::anyhow;
 use chrono::Utc;
 use opslang_ast::v1::token::IntoToken;
 use opslang_ast::v1::{self as ast, ExprKind, Statement};
-use opslang_ir::version::IrTypeFamily;
 use opslang_ir::version::v1::{self as ir, NumericKind, ResolvedPath};
+use opslang_ir::version::{IrTypeFamily, Typed};
 use opslang_ty::version::v1::{
     Ident, Identifier, Module, ModuleItem, ModuleLoader, Ty, TyKind, TypeVariable, TypingContext,
 };
@@ -24,27 +24,27 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
     // Add all builtin primitive types
     builtin.add_item(ModuleItem::Type {
         id: cx.alloc_toplevel_ident("i32"),
-        ty: cx.alloc_type(TyKind::Int),
+        ty: Ty::mk_int(cx),
     });
     builtin.add_item(ModuleItem::Type {
         id: cx.alloc_toplevel_ident("f64"),
-        ty: cx.alloc_type(TyKind::Float),
+        ty: Ty::mk_float(cx),
     });
     builtin.add_item(ModuleItem::Type {
         id: cx.alloc_toplevel_ident("string"),
-        ty: cx.alloc_type(TyKind::String),
+        ty: Ty::mk_string(cx),
     });
     builtin.add_item(ModuleItem::Type {
         id: cx.alloc_toplevel_ident("bool"),
-        ty: cx.alloc_type(TyKind::Bool),
+        ty: Ty::mk_bool(cx),
     });
     builtin.add_item(ModuleItem::Type {
         id: cx.alloc_toplevel_ident("duration"),
-        ty: cx.alloc_type(TyKind::Duration),
+        ty: Ty::mk_duration(cx),
     });
     builtin.add_item(ModuleItem::Type {
         id: cx.alloc_toplevel_ident("time"),
-        ty: cx.alloc_type(TyKind::Time),
+        ty: Ty::mk_time(cx),
     });
 
     cx.alloc_module(builtin)
@@ -167,15 +167,19 @@ impl<'cx, 'env> Default for Environment<'cx, 'env> {
 ///
 /// The type checker maintains state for generating fresh type variables
 /// and manages module loading for resolving external types and functions.
-#[derive(Debug)]
 pub struct TypeChecker<'cx> {
     /// Module loader for resolving external symbols
     module_loader: ModuleLoader<'cx>,
+    typing_cx: &'cx TypingContext<'cx>,
+    ir_cx: &'cx ir::Context<'cx>,
 }
 
-impl<'cx> Default for TypeChecker<'cx> {
-    fn default() -> Self {
-        Self::new()
+impl core::fmt::Debug for TypeChecker<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        let TypeChecker { module_loader, .. } = self;
+        f.debug_struct("TypeChecker")
+            .field("module_loader", &module_loader)
+            .finish()
     }
 }
 
@@ -183,17 +187,27 @@ impl<'cx> TypeChecker<'cx> {
     /// Creates a new type checker with empty module loader.
     ///
     /// The type checker starts with no modules loaded.
-    pub fn new() -> Self {
+    pub fn new(typing_cx: &'cx TypingContext<'cx>, ir_cx: &'cx ir::Context<'cx>) -> Self {
         Self {
             module_loader: ModuleLoader::new(),
+            typing_cx,
+            ir_cx,
         }
     }
 
     /// Creates a new type checker with the given module loader.
     ///
     /// This allows pre-loading modules before starting type checking operations.
-    pub fn with_module_loader(module_loader: ModuleLoader<'cx>) -> Self {
-        Self { module_loader }
+    pub fn with_module_loader(
+        module_loader: ModuleLoader<'cx>,
+        typing_cx: &'cx TypingContext<'cx>,
+        ir_cx: &'cx ir::Context<'cx>,
+    ) -> Self {
+        Self {
+            module_loader,
+            typing_cx,
+            ir_cx,
+        }
     }
 
     /// Adds a module to the type checker's module loader.
@@ -218,8 +232,6 @@ impl<'cx> TypeChecker<'cx> {
     /// and converts the AST to a typed IR representation.
     pub fn typeck(
         &mut self,
-        typing_cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         program: &ast::Program<'cx>,
     ) -> Result<ast::Program<'cx, IrTypeFamily>> {
         // Create global environment for top-level definitions
@@ -229,10 +241,10 @@ impl<'cx> TypeChecker<'cx> {
         for definition in program.definitions {
             match definition {
                 ast::Definition::Function(func_def) => {
-                    self.register_function_signature(typing_cx, &mut global_env, func_def)?;
+                    self.register_function_signature(&mut global_env, func_def)?;
                 }
                 ast::Definition::Constant(const_def) => {
-                    self.register_constant_signature(typing_cx, &mut global_env, const_def)?;
+                    self.register_constant_signature(&mut global_env, const_def)?;
                 }
             }
         }
@@ -242,25 +254,23 @@ impl<'cx> TypeChecker<'cx> {
         for definition in program.definitions {
             match definition {
                 ast::Definition::Function(func_def) => {
-                    let ir_func = self.typeck_function(typing_cx, ir_cx, &global_env, func_def)?;
+                    let ir_func = self.typeck_function(&global_env, func_def)?;
                     ir_definitions.push(ast::Definition::Function(ir_func));
                 }
                 ast::Definition::Constant(const_def) => {
-                    let ir_const =
-                        self.typeck_constant(typing_cx, ir_cx, &global_env, const_def)?;
+                    let ir_const = self.typeck_constant(&global_env, const_def)?;
                     ir_definitions.push(ast::Definition::Constant(ir_const));
                 }
             }
         }
 
         Ok(ast::Program {
-            definitions: ir_cx.alloc_definition_slice(ir_definitions),
+            definitions: self.ir_cx.alloc_definition_slice(ir_definitions),
         })
     }
 
     fn register_function_signature(
         &mut self,
-        cx: &'cx TypingContext<'cx>,
         env: &mut Environment<'cx, '_>,
         func_def: &ast::FunctionDef<'cx>,
     ) -> Result<()> {
@@ -273,19 +283,15 @@ impl<'cx> TypeChecker<'cx> {
         }
 
         // For now, infer return type from body during implementation
-        let return_var = TyKind::Variable(self.fresh_type_var());
-        let return_type = cx.alloc_type(return_var);
+        let return_type = Ty::mk_variable(self.typing_cx, self.fresh_type_var());
 
-        let func_type = cx.alloc_type(TyKind::Function {
-            arg: param_types,
-            ret: return_type,
-        });
+        let func_type = Ty::mk_function(self.typing_cx, param_types, return_type);
 
         let func_identifier = Identifier {
             name: func_name,
             scope_depth: env.scope_depth(),
         };
-        let func_identifier_id = cx.alloc_ident(func_identifier);
+        let func_identifier_id = self.typing_cx.alloc_ident(func_identifier);
         env.bind(func_name, func_identifier_id, func_type);
 
         Ok(())
@@ -293,7 +299,6 @@ impl<'cx> TypeChecker<'cx> {
 
     fn register_constant_signature(
         &mut self,
-        cx: &'cx TypingContext<'cx>,
         env: &mut Environment<'cx, '_>,
         const_def: &ast::ConstantDef<'cx>,
     ) -> Result<()> {
@@ -304,7 +309,7 @@ impl<'cx> TypeChecker<'cx> {
             name: const_name,
             scope_depth: env.scope_depth(),
         };
-        let const_identifier_id = cx.alloc_ident(const_identifier);
+        let const_identifier_id = self.typing_cx.alloc_ident(const_identifier);
         env.bind(const_name, const_identifier_id, declared_type);
 
         Ok(())
@@ -312,8 +317,6 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_function(
         &mut self,
-        typing_cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         global_env: &Environment<'cx, '_>,
         func_def: &ast::FunctionDef<'cx>,
     ) -> Result<ast::FunctionDef<'cx, IrTypeFamily>> {
@@ -331,31 +334,25 @@ impl<'cx> TypeChecker<'cx> {
                 name: param_name,
                 scope_depth: func_env.scope_depth(),
             };
-            let param_identifier_id = typing_cx.alloc_ident(param_identifier);
+            let param_identifier_id = self.typing_cx.alloc_ident(param_identifier);
             func_env.bind(param_name, param_identifier_id, param_type);
 
             let ir_param = ast::Parameter {
                 name: param_identifier_id,
                 colon: param.colon.into_token(),
-                ty: self.resolve_path(typing_cx, &param.ty)?,
+                ty: self.resolve_path(&param.ty)?,
             };
             ir_parameters.push(ir_param);
         }
 
         // Type check function body
-        let ir_body = self.typeck_block(
-            typing_cx,
-            ir_cx,
-            &func_env,
-            &mut Substitution::new(),
-            func_def.body,
-        )?;
+        let ir_body = self.typeck_block(&func_env, &mut Substitution::new(), func_def.body)?;
 
         Ok(ast::FunctionDef {
             proc_token: func_def.proc_token.into_token(),
-            name: self.resolve_ident(typing_cx, func_def.name)?,
+            name: self.resolve_ident(func_def.name)?,
             left_paren: func_def.left_paren.into_token(),
-            parameters: ir_cx.alloc_parameter_slice(ir_parameters),
+            parameters: self.ir_cx.alloc_parameter_slice(ir_parameters),
             right_paren: func_def.right_paren.into_token(),
             body: ir_body,
         })
@@ -363,24 +360,22 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_constant(
         &mut self,
-        typing_cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         env: &Environment<'cx, '_>,
         const_def: &'cx ast::ConstantDef<'cx>,
     ) -> Result<ast::ConstantDef<'cx, IrTypeFamily>> {
         let declared_type = self.resolve_type_from_path(const_def.ty.raw)?;
         let mut subst = Substitution::new();
         let subst = &mut subst;
-        let mut inferred_expr = self.typeck_expr(typing_cx, ir_cx, env, subst, &const_def.value)?;
+        let mut inferred_expr = self.typeck_expr(env, subst, &const_def.value)?;
 
-        Self::unify(typing_cx, subst, declared_type, inferred_expr.ty)?;
-        subst.apply_substitution(typing_cx, &mut inferred_expr.ty);
+        Self::unify(self.typing_cx, subst, declared_type, inferred_expr.ty)?;
+        subst.apply_substitution(self.typing_cx, &mut inferred_expr.ty);
 
-        let ir_ty = self.resolve_path(typing_cx, &const_def.ty)?;
+        let ir_ty = self.resolve_path(&const_def.ty)?;
 
         Ok(ast::ConstantDef {
             const_token: const_def.const_token.into_token(),
-            name: self.resolve_ident(typing_cx, const_def.name)?,
+            name: self.resolve_ident(const_def.name)?,
             colon: const_def.colon.into_token(),
             ty: ir_ty,
             eq: const_def.eq.into_token(),
@@ -406,8 +401,6 @@ enum RowProcessResult<'cx> {
 impl<'cx> TypeChecker<'cx> {
     fn typeck_row(
         &mut self,
-        typing_cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         row: &ast::Row<'cx>,
@@ -422,14 +415,14 @@ impl<'cx> TypeChecker<'cx> {
 
         // Process as a regular row
         let ir_content = if let Some(content) = &row.statement {
-            let stmt = self.typeck_statement(typing_cx, ir_cx, env, subst, content)?;
+            let stmt = self.typeck_statement(env, subst, content)?;
             Some(stmt)
         } else {
             None
         };
 
         let ir_comment = if let Some(comment) = &row.comment {
-            let converted_comment = self.convert_comment(ir_cx, comment)?;
+            let converted_comment = self.convert_comment(comment)?;
             Some(converted_comment)
         } else {
             None
@@ -442,15 +435,11 @@ impl<'cx> TypeChecker<'cx> {
         };
 
         Ok(RowProcessResult::ScopeItem(ast::ScopeItem::Row(
-            ir_cx.alloc_row(ir_row),
+            self.ir_cx.alloc_row(ir_row),
         )))
     }
 
-    fn convert_comment(
-        &self,
-        _ir_cx: &'cx ir::Context<'cx>,
-        comment: &'cx ast::Comment<'cx>,
-    ) -> Result<ir::Comment<'cx>> {
+    fn convert_comment(&self, comment: &'cx ast::Comment<'cx>) -> Result<ir::Comment<'cx>> {
         // For single comment conversion (used when comment is part of a regular row)
         Ok(ir::Comment {
             content: comment.content,
@@ -461,8 +450,6 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_block(
         &mut self,
-        typing_cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         block: &ast::Block<'cx>,
@@ -474,36 +461,31 @@ impl<'cx> TypeChecker<'cx> {
         for item in block.scope.items {
             match item {
                 ast::ScopeItem::Row(row) => {
-                    match self.typeck_row(typing_cx, ir_cx, &local_env, subst, row)? {
+                    match self.typeck_row(&local_env, subst, row)? {
                         RowProcessResult::Comment(comment) => {
                             pending_comments.push(comment);
                         }
                         RowProcessResult::ScopeItem(scope_item) => {
                             // Flush any pending comments before adding the regular item
-                            self.flush_comments_to_items(
-                                ir_cx,
-                                &mut pending_comments,
-                                &mut ir_items,
-                            )?;
+                            self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
                             ir_items.push(scope_item);
                         }
                     }
                 }
                 ast::ScopeItem::Block(nested_block) => {
                     // Flush any pending comments before adding the block
-                    self.flush_comments_to_items(ir_cx, &mut pending_comments, &mut ir_items)?;
-                    let ir_block =
-                        self.typeck_block(typing_cx, ir_cx, &local_env, subst, nested_block)?;
+                    self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
+                    let ir_block = self.typeck_block(&local_env, subst, nested_block)?;
                     ir_items.push(ast::ScopeItem::Block(ir_block));
                 }
             }
         }
 
         // Flush any remaining comments at the end
-        self.flush_comments_to_items(ir_cx, &mut pending_comments, &mut ir_items)?;
+        self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
 
         let ir_scope = ast::Scope {
-            items: ir_cx.alloc_scope_item_slice(ir_items),
+            items: self.ir_cx.alloc_scope_item_slice(ir_items),
         };
 
         let ir_block = ast::Block {
@@ -512,23 +494,22 @@ impl<'cx> TypeChecker<'cx> {
             right_brace: block.right_brace.into_token(),
         };
 
-        Ok(ir_cx.alloc_block(ir_block))
+        Ok(self.ir_cx.alloc_block(ir_block))
     }
 
     fn flush_comments_to_items(
         &self,
-        ir_cx: &'cx ir::Context<'cx>,
         comments: &mut Vec<&'cx ast::Comment<'cx>>,
         ir_items: &mut Vec<ast::ScopeItem<'cx, IrTypeFamily>>,
     ) -> Result<()> {
         if !comments.is_empty() {
-            let merged_comment = self.merge_comments(ir_cx, comments)?;
+            let merged_comment = self.merge_comments(self.ir_cx, comments)?;
             let comment_row = ast::Row {
                 breaks: None,
                 statement: None,
                 comment: Some(merged_comment),
             };
-            ir_items.push(ast::ScopeItem::Row(ir_cx.alloc_row(comment_row)));
+            ir_items.push(ast::ScopeItem::Row(self.ir_cx.alloc_row(comment_row)));
             comments.clear();
         }
         Ok(())
@@ -554,8 +535,8 @@ impl<'cx> TypeChecker<'cx> {
 
         // Multiple comments - merge content and spans
         let mut merged_content = String::new();
-        let first_span = comments[0].span;
-        let mut last_span = comments[0].span;
+        let start = comments[0].span.start;
+        let mut end = comments[0].span.end;
 
         for (i, comment) in comments.iter().enumerate() {
             if i > 0 {
@@ -565,14 +546,11 @@ impl<'cx> TypeChecker<'cx> {
 
             // Track the overall span from first to last
             if i == comments.len() - 1 {
-                last_span = comment.span;
+                end = comment.span.end;
             }
         }
 
-        let merged_span = ast::Span {
-            start: first_span.start,
-            end: last_span.end,
-        };
+        let merged_span = ast::Span { start, end };
 
         // Allocate the merged content in the context
         let content_ref = ir_cx.alloc_str(&merged_content);
@@ -586,26 +564,24 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_statement(
         &mut self,
-        typing_cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         stmt: &Statement<'cx>,
     ) -> Result<Statement<'cx, IrTypeFamily>> {
         match stmt {
             Statement::Let(let_stmt) => {
-                let ir_rhs = self.typeck_expr(typing_cx, ir_cx, env, subst, &let_stmt.rhs)?;
+                let ir_rhs = self.typeck_expr(env, subst, &let_stmt.rhs)?;
 
                 Ok(Statement::Let(ast::Let {
                     let_token: let_stmt.let_token.into_token(),
-                    variable: self.resolve_ident(typing_cx, let_stmt.variable)?,
+                    variable: self.resolve_ident(let_stmt.variable)?,
                     eq: let_stmt.eq.into_token(),
                     rhs: ir_rhs,
                     semi: let_stmt.semi.into_token(),
                 }))
             }
             Statement::Expr(expr_stmt) => {
-                let ir_expr = self.typeck_expr(typing_cx, ir_cx, env, subst, &expr_stmt.expr)?;
+                let ir_expr = self.typeck_expr(env, subst, &expr_stmt.expr)?;
 
                 Ok(Statement::Expr(ast::ExprStatement {
                     expr: ir_expr,
@@ -622,8 +598,6 @@ impl<'cx> TypeChecker<'cx> {
     /// It updates the provided substitution with any new type constraints discovered during checking.
     fn typeck_expr(
         &mut self,
-        cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         mut expr: &'cx ast::ExprKind<'cx>,
@@ -634,7 +608,7 @@ impl<'cx> TypeChecker<'cx> {
         }
         match expr {
             ExprKind::Parened(_parened) => unreachable!("handled above"),
-            ExprKind::Literal(literal) => self.typeck_literal(cx, ir_cx, env, subst, literal),
+            ExprKind::Literal(literal) => self.typeck_literal(env, subst, literal),
             ExprKind::Variable(path) => {
                 let var_name = path.raw;
 
@@ -647,16 +621,18 @@ impl<'cx> TypeChecker<'cx> {
                     }
                 };
 
-                let resolved_path = self.resolve_path(cx, path)?;
-                let ir_expr =
-                    ir::Expr::new(ast::Expr::variable(ir_cx, resolved_path), inferred_type);
+                let resolved_path = self.resolve_path(path)?;
+                let ir_expr = ir::Expr::new(
+                    ast::Expr::variable(self.ir_cx, resolved_path),
+                    inferred_type,
+                );
                 Ok(ir_expr)
             }
             ExprKind::Binary(binary) => {
-                let mut lhs_ir = self.typeck_expr(cx, ir_cx, env, subst, &binary.lhs)?;
-                let mut rhs_ir = self.typeck_expr(cx, ir_cx, env, subst, &binary.rhs)?;
-                subst.apply_substitution(cx, &mut lhs_ir.ty);
-                subst.apply_substitution(cx, &mut rhs_ir.ty);
+                let mut lhs_ir = self.typeck_expr(env, subst, &binary.lhs)?;
+                let mut rhs_ir = self.typeck_expr(env, subst, &binary.rhs)?;
+                subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
+                subst.apply_substitution(self.typing_cx, &mut rhs_ir.ty);
 
                 match binary.op {
                     ast::BinOp::Add(_)
@@ -664,18 +640,18 @@ impl<'cx> TypeChecker<'cx> {
                     | ast::BinOp::Mul(_)
                     | ast::BinOp::Div(_)
                     | ast::BinOp::Mod(_) => {
-                        Self::unify(cx, subst, lhs_ir.ty, lhs_ir.ty)?;
-                        subst.apply_substitution(cx, &mut lhs_ir.ty);
+                        Self::unify(self.typing_cx, subst, lhs_ir.ty, lhs_ir.ty)?;
+                        subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
                         match lhs_ir.ty.kind() {
                             TyKind::Int | TyKind::Float => {
                                 // Apply final substitution to operands
-                                subst.apply_substitution(cx, &mut lhs_ir.ty);
-                                subst.apply_substitution(cx, &mut rhs_ir.ty);
+                                subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
+                                subst.apply_substitution(self.typing_cx, &mut rhs_ir.ty);
 
                                 // Create IR binary expression
                                 let ir_expr = ir::Expr::new(
                                     ast::Expr::binary(
-                                        ir_cx,
+                                        self.ir_cx,
                                         lhs_ir,
                                         binary.op.into_token(),
                                         rhs_ir,
@@ -686,22 +662,22 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => Err(anyhow!(
                                 "Arithmetic operation requires numeric type, got {}",
-                                lhs_ir.ty.display(cx)
+                                lhs_ir.ty.display(self.typing_cx)
                             )),
                         }
                     }
                     ast::BinOp::And(_) | ast::BinOp::Or(_) => {
-                        let bool_type = cx.alloc_type(TyKind::Bool);
-                        Self::unify(cx, subst, lhs_ir.ty, bool_type)?;
-                        Self::unify(cx, subst, lhs_ir.ty, bool_type)?;
+                        let bool_type = Ty::mk_bool(self.typing_cx);
+                        Self::unify(self.typing_cx, subst, lhs_ir.ty, bool_type)?;
+                        Self::unify(self.typing_cx, subst, lhs_ir.ty, bool_type)?;
 
                         // Apply final substitution to operands
-                        subst.apply_substitution(cx, &mut lhs_ir.ty);
-                        subst.apply_substitution(cx, &mut rhs_ir.ty);
+                        subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
+                        subst.apply_substitution(self.typing_cx, &mut rhs_ir.ty);
 
                         // Create IR binary expression
                         let ir_expr = ir::Expr::new(
-                            ast::Expr::binary(ir_cx, lhs_ir, binary.op.into_token(), rhs_ir),
+                            ast::Expr::binary(self.ir_cx, lhs_ir, binary.op.into_token(), rhs_ir),
                             bool_type,
                         );
                         Ok(ir_expr)
@@ -709,21 +685,21 @@ impl<'cx> TypeChecker<'cx> {
                     ast::BinOp::In(_) => {
                         // For 'in' operator, lhs is an element and rhs should be a collection
                         // The result type is always bool
-                        let bool_type = cx.alloc_type(TyKind::Bool);
+                        let bool_type = Ty::mk_bool(self.typing_cx);
 
                         // Check that rhs is an array type
                         match lhs_ir.ty.kind() {
                             TyKind::Array { inner } => {
                                 // Unify lhs type with array element type
-                                Self::unify(cx, subst, lhs_ir.ty, *inner)?;
+                                Self::unify(self.typing_cx, subst, lhs_ir.ty, *inner)?;
                                 // Apply final substitution to operands
-                                subst.apply_substitution(cx, &mut lhs_ir.ty);
-                                subst.apply_substitution(cx, &mut rhs_ir.ty);
+                                subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
+                                subst.apply_substitution(self.typing_cx, &mut rhs_ir.ty);
 
                                 // Create IR binary expression
                                 let ir_expr = ir::Expr::new(
                                     ast::Expr::binary(
-                                        ir_cx,
+                                        self.ir_cx,
                                         lhs_ir,
                                         binary.op.into_token(),
                                         rhs_ir,
@@ -734,33 +710,38 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => Err(anyhow!(
                                 "'in' operator requires array on right side, got {}",
-                                lhs_ir.ty.display(cx)
+                                lhs_ir.ty.display(self.typing_cx)
                             )),
                         }
                     }
                 }
             }
             ExprKind::Unary(unary) => {
-                let mut expr_ir = self.typeck_expr(cx, ir_cx, env, subst, &unary.expr)?;
+                let mut expr_ir = self.typeck_expr(env, subst, &unary.expr)?;
 
                 match unary.op {
                     ast::UnOp::Neg(_) => {
-                        subst.apply_substitution(cx, &mut expr_ir.ty);
+                        subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
                         match expr_ir.ty.kind() {
                             TyKind::Int | TyKind::Float => {
                                 // Ok, do nothing
                             }
                             _ => {
                                 // resolve to int
-                                Self::unify(cx, subst, expr_ir.ty, cx.alloc_type(TyKind::Int))?
+                                Self::unify(
+                                    self.typing_cx,
+                                    subst,
+                                    expr_ir.ty,
+                                    Ty::mk_int(self.typing_cx),
+                                )?
                             }
                         }
                         // Create IR operand with unified type
-                        subst.apply_substitution(cx, &mut expr_ir.ty);
+                        subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
 
                         // Create IR unary expression
                         let ir_result = ir::Expr::new(
-                            ast::Expr::unary(ir_cx, unary.op.into_token(), expr_ir),
+                            ast::Expr::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             expr_ir.ty,
                         );
                         Ok(ir_result)
@@ -769,11 +750,11 @@ impl<'cx> TypeChecker<'cx> {
                         // IdRef (&expr) - creates a reference to the expression
                         // For now, we'll implement this as a simple unary operation
                         // The type system may need extension for proper reference types
-                        subst.apply_substitution(cx, &mut expr_ir.ty);
+                        subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
 
                         // Create IR unary expression - result type is the same for now
                         let ir_result = ir::Expr::new(
-                            ast::Expr::unary(ir_cx, unary.op.into_token(), expr_ir),
+                            ast::Expr::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             expr_ir.ty,
                         );
                         Ok(ir_result)
@@ -782,10 +763,10 @@ impl<'cx> TypeChecker<'cx> {
                         // Deref ($expr) - dereferences a reference
                         // For now, we'll implement this as a simple unary operation
                         // The type system may need extension for proper reference types
-                        subst.apply_substitution(cx, &mut expr_ir.ty);
+                        subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
                         // Create IR unary expression - result type is the same for now
                         let ir_result = ir::Expr::new(
-                            ast::Expr::unary(ir_cx, unary.op.into_token(), expr_ir),
+                            ast::Expr::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             expr_ir.ty,
                         );
                         Ok(ir_result)
@@ -793,69 +774,73 @@ impl<'cx> TypeChecker<'cx> {
                 }
             }
             ExprKind::Apply(apply) => {
-                let mut func_ir = self.typeck_expr(cx, ir_cx, env, subst, &apply.function)?;
+                let mut func_ir = self.typeck_expr(env, subst, &apply.function)?;
                 let mut arg_types = Vec::new();
                 let mut ir_args = Vec::new();
 
                 for arg in apply.args {
-                    let mut arg_ir = self.typeck_expr(cx, ir_cx, env, subst, arg)?;
-                    subst.apply_substitution(cx, &mut arg_ir.ty);
+                    let mut arg_ir = self.typeck_expr(env, subst, arg)?;
+                    subst.apply_substitution(self.typing_cx, &mut arg_ir.ty);
                     arg_types.push(arg_ir.ty);
                     ir_args.push(arg_ir);
                 }
 
-                let return_var = TyKind::Variable(self.fresh_type_var());
-                let mut return_type = cx.alloc_type(return_var);
-                let expected_func_type = cx.alloc_type(TyKind::Function {
-                    arg: arg_types,
-                    ret: return_type,
-                });
+                let mut return_type = Ty::mk_variable(self.typing_cx, self.fresh_type_var());
+                let expected_func_type = Ty::mk_function(self.typing_cx, arg_types, return_type);
 
-                subst.apply_substitution(cx, &mut func_ir.ty);
-                Self::unify(cx, subst, func_ir.ty, expected_func_type)?;
-                subst.apply_substitution(cx, &mut return_type);
+                subst.apply_substitution(self.typing_cx, &mut func_ir.ty);
+                Self::unify(self.typing_cx, subst, func_ir.ty, expected_func_type)?;
+                subst.apply_substitution(self.typing_cx, &mut return_type);
 
                 // Convert arguments to IR with final types
                 for arg_ir in &mut ir_args {
-                    subst.apply_substitution(cx, &mut arg_ir.ty);
+                    subst.apply_substitution(self.typing_cx, &mut arg_ir.ty);
                 }
 
                 // Convert function to IR with final type
-                subst.apply_substitution(cx, &mut func_ir.ty);
+                subst.apply_substitution(self.typing_cx, &mut func_ir.ty);
 
                 // Create IR Apply expression
                 let ir_apply = ir::Apply {
                     function: func_ir,
-                    args: ir_cx.alloc_expr_slice(ir_args),
+                    args: self.ir_cx.alloc_expr_slice(ir_args),
                     qualifications: &[], // No qualifications for now (they're resolved elsewhere)
                     resolved_function: None, // Function resolution would be done in a separate pass
                 };
                 let ir_expr_kind = ExprKind::Apply(ir_apply);
-                let ir_expr = ir_cx.alloc_expr_with_type(ir_expr_kind, return_type);
+                let ir_expr = self.ir_cx.alloc_expr_with_type(ir_expr_kind, return_type);
                 Ok(ir_expr)
             }
             ExprKind::If(if_expr) => {
-                let cond_ir = self.typeck_expr(cx, ir_cx, env, subst, &if_expr.cond)?;
-                let bool_type = cx.alloc_type(TyKind::Bool);
-                Self::unify(cx, subst, cond_ir.ty, bool_type)?;
-                let ir_then_block =
-                    self.typeck_block(cx, ir_cx, env, subst, if_expr.then_clause)?;
+                let mut cond_ir = self.typeck_expr(env, subst, &if_expr.cond)?;
+                let bool_type = Ty::mk_bool(self.typing_cx);
+                Self::unify(self.typing_cx, subst, cond_ir.ty, bool_type)?;
+                let ir_then_block = self.typeck_block(env, subst, if_expr.then_clause)?;
 
                 if let Some(else_clause) = &if_expr.else_opt {
-                    let ir_else_block =
-                        self.typeck_block(cx, ir_cx, env, subst, else_clause.else_clause)?;
-                    let unified_then = subst.apply_substitution_pure(cx, todo!("ir_then_block"));
-                    let unified_else = subst.apply_substitution_pure(cx, todo!("ir_else_block"));
-                    Self::unify(cx, subst, unified_then, unified_else)?;
-                    let result_type = subst.apply_substitution_pure(cx, unified_then);
+                    let ir_else_block = self.typeck_block(env, subst, else_clause.else_clause)?;
+                    let unified_then = subst.apply_substitution_pure(
+                        self.typing_cx,
+                        ir_then_block
+                            .ty(self.typing_cx)
+                            .unwrap_or(Ty::mk_unit(self.typing_cx)),
+                    );
+                    let unified_else = subst.apply_substitution_pure(
+                        self.typing_cx,
+                        ir_else_block
+                            .ty(self.typing_cx)
+                            .unwrap_or(Ty::mk_unit(self.typing_cx)),
+                    );
+                    Self::unify(self.typing_cx, subst, unified_then, unified_else)?;
+                    let result_type = subst.apply_substitution_pure(self.typing_cx, unified_then);
 
                     // Convert condition to IR
-                    subst.apply_substitution(cx, &mut cond_ir.ty);
+                    subst.apply_substitution(self.typing_cx, &mut cond_ir.ty);
 
                     // Create IR if-else expression
                     let ir_expr = ir::Expr::new(
                         ast::Expr::if_then_else(
-                            ir_cx,
+                            self.ir_cx,
                             if_expr.if_kw.into_token(),
                             cond_ir,
                             ir_then_block,
@@ -867,16 +852,18 @@ impl<'cx> TypeChecker<'cx> {
                     Ok(ir_expr)
                 } else {
                     // no else
-                    let unit_type = cx.alloc_type(TyKind::Unit);
-                    Self::unify(cx, subst, todo!("ir_else_block"), unit_type)?;
+                    let unit_type = Ty::mk_unit(self.typing_cx);
+                    if let Some(ty) = ir_then_block.ty(self.typing_cx) {
+                        Self::unify(self.typing_cx, subst, ty, unit_type)?;
+                    }
 
                     // Convert condition to IR
-                    subst.apply_substitution(cx, &mut cond_ir.ty);
+                    subst.apply_substitution(self.typing_cx, &mut cond_ir.ty);
 
                     // Create IR if expression (without else)
                     let ir_expr = ir::Expr::new(
                         ast::Expr::if_then(
-                            ir_cx,
+                            self.ir_cx,
                             if_expr.if_kw.into_token(),
                             cond_ir,
                             ir_then_block,
@@ -894,67 +881,68 @@ impl<'cx> TypeChecker<'cx> {
             }
             ExprKind::Compare(compare) => {
                 // Compare expressions have a head expression and a tail of (op, expr) pairs
-                let mut head_ir = self.typeck_expr(cx, ir_cx, env, subst, &compare.head)?;
+                let mut head_ir = self.typeck_expr(env, subst, &compare.head)?;
                 let mut ir_tail = Vec::new();
 
                 // Type check all comparison operands - they should all have the same type
                 let mut expected_type = head_ir.ty;
 
                 for (op, expr) in compare.tail_with_op {
-                    let mut expr_ir = self.typeck_expr(cx, ir_cx, env, subst, expr)?;
+                    let mut expr_ir = self.typeck_expr(env, subst, expr)?;
 
                     // Unify with expected type
-                    Self::unify(cx, subst, expected_type, expr_ir.ty)?;
-                    subst.apply_substitution(cx, &mut expr_ir.ty);
-                    subst.apply_substitution(cx, &mut expected_type);
+                    Self::unify(self.typing_cx, subst, expected_type, expr_ir.ty)?;
+                    subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
+                    subst.apply_substitution(self.typing_cx, &mut expected_type);
 
                     // Apply final substitution to the expression
-                    subst.apply_substitution(cx, &mut expr_ir.ty);
+                    subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
 
                     ir_tail.push((op.into_token(), expr_ir));
                     expected_type = expr_ir.ty;
                 }
 
                 // Apply final substitution to head
-                subst.apply_substitution(cx, &mut head_ir.ty);
+                subst.apply_substitution(self.typing_cx, &mut head_ir.ty);
 
                 // Create IR Compare expression - result is always bool
-                let bool_type = cx.alloc_type(TyKind::Bool);
-                let ir_expr = ir::Expr::new(ast::Expr::compare(ir_cx, head_ir, ir_tail), bool_type);
+                let bool_type = Ty::mk_bool(self.typing_cx);
+                let ir_expr =
+                    ir::Expr::new(ast::Expr::compare(self.ir_cx, head_ir, ir_tail), bool_type);
                 Ok(ir_expr)
             }
             ExprKind::Set(set) => {
                 // Set expressions are assignment-like operations (lhs := rhs)
-                let mut lhs_ir = self.typeck_expr(cx, ir_cx, env, subst, &set.lhs)?;
-                let mut rhs_ir = self.typeck_expr(cx, ir_cx, env, subst, &set.rhs)?;
+                let mut lhs_ir = self.typeck_expr(env, subst, &set.lhs)?;
+                let mut rhs_ir = self.typeck_expr(env, subst, &set.rhs)?;
 
                 // Unify lhs and rhs types - they should be the same
-                Self::unify(cx, subst, lhs_ir.ty, rhs_ir.ty)?;
+                Self::unify(self.typing_cx, subst, lhs_ir.ty, rhs_ir.ty)?;
                 // Apply final substitution to operands
-                subst.apply_substitution(cx, &mut lhs_ir.ty);
-                subst.apply_substitution(cx, &mut rhs_ir.ty);
+                subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
+                subst.apply_substitution(self.typing_cx, &mut rhs_ir.ty);
 
                 // Create IR Set expression - result is unit type
-                let unit_type = cx.alloc_type(TyKind::Unit);
+                let unit_type = Ty::mk_unit(self.typing_cx);
                 let ir_expr = ir::Expr::new(
-                    ast::Expr::set(ir_cx, lhs_ir, set.colon_eq.into_token(), rhs_ir),
+                    ast::Expr::set(self.ir_cx, lhs_ir, set.colon_eq.into_token(), rhs_ir),
                     unit_type,
                 );
                 Ok(ir_expr)
             }
             ExprKind::InfixImport(infix_import) => {
                 // InfixImport expressions are like "file ? path" operations
-                let mut file_ir = self.typeck_expr(cx, ir_cx, env, subst, &infix_import.file)?;
+                let mut file_ir = self.typeck_expr(env, subst, &infix_import.file)?;
 
                 // File should be a string type
-                let string_type = cx.alloc_type(TyKind::String);
-                Self::unify(cx, subst, file_ir.ty, string_type)?;
+                let string_type = Ty::mk_string(self.typing_cx);
+                Self::unify(self.typing_cx, subst, file_ir.ty, string_type)?;
 
                 // Apply final substitution to file
-                subst.apply_substitution(cx, &mut file_ir.ty);
+                subst.apply_substitution(self.typing_cx, &mut file_ir.ty);
 
                 // Convert path to resolved path
-                let ir_path = self.resolve_path(cx, &infix_import.path)?;
+                let ir_path = self.resolve_path(&infix_import.path)?;
 
                 // InfixImport result type depends on what's being imported
                 // For now, assume it returns the type of the imported item
@@ -970,7 +958,12 @@ impl<'cx> TypeChecker<'cx> {
 
                 // Create IR InfixImport expression
                 let ir_expr = ir::Expr::new(
-                    ast::Expr::import(ir_cx, file_ir, infix_import.question.into_token(), ir_path),
+                    ast::Expr::import(
+                        self.ir_cx,
+                        file_ir,
+                        infix_import.question.into_token(),
+                        ir_path,
+                    ),
                     import_type,
                 );
                 Ok(ir_expr)
@@ -980,8 +973,6 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_literal(
         &mut self,
-        cx: &'cx TypingContext<'cx>,
-        ir_cx: &'cx ir::Context<'cx>,
         typing_env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         literal: &'cx ast::Literal<'cx>,
@@ -993,8 +984,9 @@ impl<'cx> TypeChecker<'cx> {
                     syn: s,
                 };
                 let ir_literal = ast::Literal::String(ir_string);
-                let string_type = cx.alloc_type(TyKind::String);
-                let ir_expr = ir::Expr::new(ast::Expr::literal(ir_cx, ir_literal), string_type);
+                let string_type = Ty::mk_string(self.typing_cx);
+                let ir_expr =
+                    ir::Expr::new(ast::Expr::literal(self.ir_cx, ir_literal), string_type);
                 Ok(ir_expr)
             }
             ast::Literal::Numeric(numeric) => {
@@ -1031,21 +1023,19 @@ impl<'cx> TypeChecker<'cx> {
                     syn: numeric,
                 };
                 let ir_literal = ast::Literal::Numeric(ir_numeric);
-                let numeric_type = cx.alloc_type(match numeric.kind {
-                    ast::literal::NumericKind::Integer(_) => TyKind::Int,
-                    ast::literal::NumericKind::Float => TyKind::Float,
-                });
-                let ir_expr = ir::Expr::new(ast::Expr::literal(ir_cx, ir_literal), numeric_type);
+                let numeric_type = match numeric.kind {
+                    ast::literal::NumericKind::Integer(_) => Ty::mk_int(self.typing_cx),
+                    ast::literal::NumericKind::Float => Ty::mk_float(self.typing_cx),
+                };
+                let ir_expr =
+                    ir::Expr::new(ast::Expr::literal(self.ir_cx, ir_literal), numeric_type);
                 Ok(ir_expr)
             }
             ast::Literal::Array(array) => {
                 if array.exprs.is_empty() {
                     // Empty array - use a type variable for the element type
-                    let element_var = TyKind::Variable(self.fresh_type_var());
-                    let element_type = cx.alloc_type(element_var);
-                    let array_type = cx.alloc_type(TyKind::Array {
-                        inner: element_type,
-                    });
+                    let element_type = Ty::mk_variable(self.typing_cx, self.fresh_type_var());
+                    let array_type = Ty::mk_array(self.typing_cx, element_type);
 
                     let ir_array = ast::literal::Array {
                         left_bracket: array.left_bracket.into_token(),
@@ -1053,68 +1043,68 @@ impl<'cx> TypeChecker<'cx> {
                         right_bracket: array.right_bracket.into_token(),
                     };
                     let ir_literal = ast::Literal::Array(ir_array);
-                    let ir_expr = ir::Expr::new(ast::Expr::literal(ir_cx, ir_literal), array_type);
+                    let ir_expr =
+                        ir::Expr::new(ast::Expr::literal(self.ir_cx, ir_literal), array_type);
                     Ok(ir_expr)
                 } else {
                     // Non-empty array - type check all elements
                     let mut ir_exprs = Vec::new();
 
                     // Type check first element to establish the element type
-                    let mut first_ir =
-                        self.typeck_expr(cx, ir_cx, typing_env, subst, &array.exprs[0])?;
+                    let mut first_ir = self.typeck_expr(typing_env, subst, &array.exprs[0])?;
 
-                    subst.apply_substitution(cx, &mut first_ir.ty);
+                    subst.apply_substitution(self.typing_cx, &mut first_ir.ty);
                     let ty = first_ir.ty;
                     ir_exprs.push(first_ir);
                     let mut element_type = ty;
 
                     // Type check remaining elements and unify with element type
                     for expr in &array.exprs[1..] {
-                        let mut expr_ir = self.typeck_expr(cx, ir_cx, typing_env, subst, expr)?;
+                        let mut expr_ir = self.typeck_expr(typing_env, subst, expr)?;
 
-                        Self::unify(cx, subst, element_type, expr_ir.ty)?;
-                        subst.apply_substitution(cx, &mut element_type);
-                        subst.apply_substitution(cx, &mut expr_ir.ty);
+                        Self::unify(self.typing_cx, subst, element_type, expr_ir.ty)?;
+                        subst.apply_substitution(self.typing_cx, &mut element_type);
+                        subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
 
-                        subst.apply_substitution(cx, &mut expr_ir.ty);
+                        subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
                         let ty = expr_ir.ty;
                         ir_exprs.push(expr_ir);
                         element_type = ty;
                     }
 
-                    let array_type = cx.alloc_type(TyKind::Array {
-                        inner: element_type,
-                    });
+                    let array_type = Ty::mk_array(self.typing_cx, element_type);
                     let ir_array = ast::Literal::array(
                         array.left_bracket.into_token(),
-                        ir_cx.alloc_expr_slice(ir_exprs),
+                        self.ir_cx.alloc_expr_slice(ir_exprs),
                         array.right_bracket.into_token(),
                     );
-                    let ir_expr = ir::Expr::new(ast::Expr::literal(ir_cx, ir_array), array_type);
+                    let ir_expr =
+                        ir::Expr::new(ast::Expr::literal(self.ir_cx, ir_array), array_type);
                     Ok(ir_expr)
                 }
             }
             ast::Literal::Bytes(bytes) => {
-                let byte_data = ir_cx.alloc_bytes(bytes.raw.as_bytes());
+                let byte_data = self.ir_cx.alloc_bytes(bytes.raw.as_bytes());
                 let ir_bytes = ir::Bytes {
                     value: byte_data,
                     syn: bytes,
                 };
                 let ir_literal = ast::Literal::Bytes(ir_bytes);
-                let bytes_type = cx.alloc_type(TyKind::String);
-                let ir_expr = ir::Expr::new(ast::Expr::literal(ir_cx, ir_literal), bytes_type);
+                let bytes_type = Ty::mk_string(self.typing_cx);
+                let ir_expr = ir::Expr::new(ast::Expr::literal(self.ir_cx, ir_literal), bytes_type);
                 Ok(ir_expr)
             }
             ast::Literal::HexBytes(hex_bytes) => {
                 // For now, treat hex bytes as empty byte array
-                let byte_data = ir_cx.alloc_bytes(&[]);
+                let byte_data = self.ir_cx.alloc_bytes(&[]);
                 let ir_hex_bytes = ir::HexBytes {
                     value: byte_data,
                     syn: hex_bytes,
                 };
                 let ir_literal = ast::Literal::HexBytes(ir_hex_bytes);
-                let hex_bytes_type = cx.alloc_type(TyKind::String);
-                let ir_expr = ir::Expr::new(ast::Expr::literal(ir_cx, ir_literal), hex_bytes_type);
+                let hex_bytes_type = Ty::mk_string(self.typing_cx);
+                let ir_expr =
+                    ir::Expr::new(ast::Expr::literal(self.ir_cx, ir_literal), hex_bytes_type);
                 Ok(ir_expr)
             }
             ast::Literal::DateTime(dt) => {
@@ -1131,33 +1121,25 @@ impl<'cx> TypeChecker<'cx> {
                     syn: dt,
                 };
                 let ir_literal = ast::Literal::DateTime(ir_datetime);
-                let time_type = cx.alloc_type(TyKind::Time);
-                let ir_expr = ir::Expr::new(ast::Expr::literal(ir_cx, ir_literal), time_type);
+                let time_type = Ty::mk_time(self.typing_cx);
+                let ir_expr = ir::Expr::new(ast::Expr::literal(self.ir_cx, ir_literal), time_type);
                 Ok(ir_expr)
             }
         }
     }
 
-    fn resolve_ident(
-        &self,
-        typing_cx: &'cx TypingContext<'cx>,
-        ident: ast::Ident<'cx>,
-    ) -> Result<Ident<'cx>> {
+    fn resolve_ident(&self, ident: ast::Ident<'cx>) -> Result<Ident<'cx>> {
         let identifier = Identifier {
             name: ident.raw,
             scope_depth: 0, // 適切なスコープ深度の計算が必要
         };
-        Ok(typing_cx.alloc_ident(identifier))
+        Ok(self.typing_cx.alloc_ident(identifier))
     }
 
-    fn resolve_path(
-        &self,
-        typing_cx: &'cx TypingContext<'cx>,
-        path: &'cx ast::Path<'cx>,
-    ) -> Result<ResolvedPath<'cx>> {
+    fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvedPath<'cx>> {
         match self.module_loader.resolve_path(path.raw) {
             Some(item) => Ok(ResolvedPath {
-                item: typing_cx.alloc_module_item(item),
+                item: self.typing_cx.alloc_module_item(item),
                 original_path: path,
             }),
             None => Err(anyhow!("Cannot resolve path: {}", path.raw)),
@@ -1173,8 +1155,8 @@ mod tests {
     fn test_typing_context() {
         let cx = TypingContext::new();
 
-        let int_type = cx.alloc_type(TyKind::Int);
-        let array_type = cx.alloc_type(TyKind::Array { inner: int_type });
+        let int_type = Ty::mk_int(&cx);
+        let array_type = Ty::mk_array(&cx, int_type);
 
         assert_eq!(cx.display_type(int_type), "i32");
         assert_eq!(cx.display_type(array_type), "[i32]");
@@ -1221,12 +1203,13 @@ mod tests {
     #[test]
     fn test_type_checker_with_modules() {
         let cx = TypingContext::new();
+        let ir_cx = ir::Context::new();
         let builtin = create_builtin_module(&cx);
 
         let mut loader = ModuleLoader::new();
         loader.add_module(builtin);
 
-        let checker = TypeChecker::with_module_loader(loader);
+        let checker = TypeChecker::with_module_loader(loader, &cx, &ir_cx);
 
         let i32_type = checker.resolve_type_from_path("i32").unwrap();
         assert!(matches!(i32_type.kind(), TyKind::Int));
@@ -1239,12 +1222,12 @@ mod tests {
     fn test_substitution() {
         let cx = TypingContext::new();
         let var = TypeVariable::fresh();
-        let int_type = cx.alloc_type(TyKind::Int);
+        let int_type = Ty::mk_int(&cx);
 
         let mut subst = Substitution::new();
         subst.insert(var, int_type);
 
-        let var_type = cx.alloc_type(TyKind::Variable(var));
+        let var_type = Ty::mk_variable(&cx, var);
         let result = subst.apply_substitution_pure(&cx, var_type);
 
         assert!(matches!(result.kind(), TyKind::Int));
@@ -1254,9 +1237,9 @@ mod tests {
     fn test_unify_basic() {
         let cx = TypingContext::new();
 
-        let int_type1 = cx.alloc_type(TyKind::Int);
-        let int_type2 = cx.alloc_type(TyKind::Int);
-        let float_type = cx.alloc_type(TyKind::Float);
+        let int_type1 = Ty::mk_int(&cx);
+        let int_type2 = Ty::mk_int(&cx);
+        let float_type = Ty::mk_float(&cx);
 
         let result = TypeChecker::unify_pure(&cx, int_type1, int_type2);
         assert!(result.is_ok());
@@ -1269,16 +1252,17 @@ mod tests {
     #[test]
     fn test_variable_resolution_priority() {
         let cx = TypingContext::new();
+        let ir_cx = ir::Context::new();
         let builtin = create_builtin_module(&cx);
 
         let mut loader = ModuleLoader::new();
         loader.add_module(builtin);
-        let mut _checker = TypeChecker::with_module_loader(loader);
+        let mut _checker = TypeChecker::with_module_loader(loader, &cx, &ir_cx);
 
         let mut env = Environment::<'_, '_>::new();
 
         // ローカル変数 "i32" を定義（組み込み型をシャドーイング）
-        let local_i32_type = cx.alloc_type(TyKind::String);
+        let local_i32_type = Ty::mk_string(&cx);
         let local_identifier = Identifier {
             name: "i32",
             scope_depth: 0,

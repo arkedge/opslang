@@ -155,6 +155,48 @@ impl<'cx> TyKind<'cx> {
     }
 }
 
+impl<'cx> Ty<'cx> {
+    pub fn mk_int(cx: &'cx TypingContext<'cx>) -> Self {
+        cx.alloc_type(TyKind::Int)
+    }
+
+    pub fn mk_float(cx: &'cx TypingContext<'cx>) -> Self {
+        cx.alloc_type(TyKind::Float)
+    }
+
+    pub fn mk_string(cx: &'cx TypingContext<'cx>) -> Self {
+        cx.alloc_type(TyKind::String)
+    }
+
+    pub fn mk_bool(cx: &'cx TypingContext<'cx>) -> Self {
+        cx.alloc_type(TyKind::Bool)
+    }
+
+    pub fn mk_duration(cx: &'cx TypingContext<'cx>) -> Self {
+        cx.alloc_type(TyKind::Duration)
+    }
+
+    pub fn mk_time(cx: &'cx TypingContext<'cx>) -> Self {
+        cx.alloc_type(TyKind::Time)
+    }
+
+    pub fn mk_array(cx: &'cx TypingContext<'cx>, inner: Ty<'cx>) -> Self {
+        cx.alloc_type(TyKind::Array { inner })
+    }
+
+    pub fn mk_function(cx: &'cx TypingContext<'cx>, arg: Vec<Ty<'cx>>, ret: Ty<'cx>) -> Self {
+        cx.alloc_type(TyKind::Function { arg, ret })
+    }
+
+    pub fn mk_variable(cx: &'cx TypingContext<'cx>, var: TypeVariable) -> Self {
+        cx.alloc_type(TyKind::Variable(var))
+    }
+
+    pub fn mk_unit(cx: &'cx TypingContext<'cx>) -> Self {
+        cx.alloc_type(TyKind::Unit)
+    }
+}
+
 /// The main context for type checking operations.
 ///
 /// This structure manages memory allocation for types, identifiers, and modules
