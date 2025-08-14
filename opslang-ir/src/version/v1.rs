@@ -134,6 +134,12 @@ pub struct Expr<'cx> {
     pub ty: Ty<'cx>,
 }
 
+impl<'cx> Expr<'cx> {
+    pub fn new(kind: syn::Expr<'cx, IrTypeFamily>, ty: Ty<'cx>) -> Self {
+        Self { kind, ty }
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A parsed string literal in the IR.
 pub struct String<'cx> {

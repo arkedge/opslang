@@ -1,9 +1,10 @@
+use super::syn;
 use super::{
     Apply, Bytes, Comment, DateTime, Expr, HexBytes, IrTypeFamily, Numeric, ResolvedPath, String,
 };
-use opslang_ast::syntax::v1::context::Context as AstContext;
-use opslang_ast::v1::{Block, ExprKind, Row};
 use opslang_ty::version::v1::Ty;
+use syn::context::Context as AstContext;
+use syn::{Block, ExprKind, Row};
 use typed_arena::Arena;
 
 /// A context for constructing IR expressions with type information.

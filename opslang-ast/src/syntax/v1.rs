@@ -488,11 +488,11 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn parened(
         ctx: &'cx context::Context<'cx, F>,
         left_paren: token::OpenParen<'cx, F>,
-        expr: Self,
+        expr: F::Expr,
         right_paren: token::CloseParen<'cx, F>,
     ) -> Self
     where
-        F: TypeFamily<'cx, Parened = Parened<'cx, F>, Expr = Self>,
+        F: TypeFamily<'cx, Parened = Parened<'cx, F>>,
     {
         let parened = Parened {
             left_paren,
@@ -503,9 +503,9 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     }
 
     #[inline]
-    pub fn apply(ctx: &'cx context::Context<'cx, F>, function: Self, args: Vec<Self>) -> Self
+    pub fn apply(ctx: &'cx context::Context<'cx, F>, function: F::Expr, args: Vec<F::Expr>) -> Self
     where
-        F: TypeFamily<'cx, Apply = Apply<'cx, F>, Expr = Self>,
+        F: TypeFamily<'cx, Apply = Apply<'cx, F>>,
     {
         let apply = Apply {
             function,
@@ -517,21 +517,21 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn binary(
         ctx: &'cx context::Context<'cx, F>,
-        lhs: Self,
+        lhs: F::Expr,
         op: BinOp<'cx, F>,
-        rhs: Self,
+        rhs: F::Expr,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, Binary = Binary<'cx, F>>,
+        F: TypeFamily<'cx, Binary = Binary<'cx, F>>,
     {
         let binary = Binary { lhs, op, rhs };
         ctx.alloc_expr(ExprKind::Binary(binary))
     }
 
     #[inline]
-    pub fn unary(ctx: &'cx context::Context<'cx, F>, op: UnOp<'cx, F>, expr: Self) -> Self
+    pub fn unary(ctx: &'cx context::Context<'cx, F>, op: UnOp<'cx, F>, expr: F::Expr) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, Unary = Unary<'cx, F>>,
+        F: TypeFamily<'cx, Unary = Unary<'cx, F>>,
     {
         let unary = Unary { op, expr };
         ctx.alloc_expr(ExprKind::Unary(unary))
@@ -540,11 +540,11 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn compare(
         ctx: &'cx context::Context<'cx, F>,
-        head: Self,
-        tail_with_op: Vec<(CompareOp<'cx, F>, Self)>,
+        head: F::Expr,
+        tail_with_op: Vec<(CompareOp<'cx, F>, F::Expr)>,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, Compare = Compare<'cx, F>>,
+        F: TypeFamily<'cx, Compare = Compare<'cx, F>>,
     {
         let compare = Compare {
             head,
@@ -556,12 +556,12 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn compare_single(
         ctx: &'cx context::Context<'cx, F>,
-        lhs: Self,
+        lhs: F::Expr,
         op: CompareOp<'cx, F>,
-        rhs: Self,
+        rhs: F::Expr,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, Compare = Compare<'cx, F>>,
+        F: TypeFamily<'cx, Compare = Compare<'cx, F>>,
     {
         Self::compare(ctx, lhs, vec![(op, rhs)])
     }
@@ -569,12 +569,12 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn set(
         ctx: &'cx context::Context<'cx, F>,
-        lhs: Self,
+        lhs: F::Expr,
         colon_eq: token::ColonEq<'cx, F>,
-        rhs: Self,
+        rhs: F::Expr,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, Set = Set<'cx, F>>,
+        F: TypeFamily<'cx, Set = Set<'cx, F>>,
     {
         let set = Set { lhs, colon_eq, rhs };
         ctx.alloc_expr(ExprKind::Set(set))
@@ -583,12 +583,12 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn import(
         ctx: &'cx context::Context<'cx, F>,
-        file: Self,
+        file: F::Expr,
         question: token::Question<'cx, F>,
         path: F::Path,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, InfixImport = InfixImport<'cx, F>>,
+        F: TypeFamily<'cx, InfixImport = InfixImport<'cx, F>>,
     {
         let import = InfixImport {
             file,
@@ -602,13 +602,13 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn if_then_else(
         ctx: &'cx context::Context<'cx, F>,
         if_kw: token::If<'cx, F>,
-        cond: Self,
+        cond: F::Expr,
         then_clause: F::Block,
         else_kw: token::Else<'cx, F>,
         else_clause: F::Block,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, If = If<'cx, F>>,
+        F: TypeFamily<'cx, If = If<'cx, F>>,
     {
         let if_expr = If {
             if_kw,
@@ -625,11 +625,11 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn if_then(
         ctx: &'cx context::Context<'cx, F>,
         if_kw: token::If<'cx, F>,
-        cond: Self,
+        cond: F::Expr,
         then_clause: F::Block,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, If = If<'cx, F>>,
+        F: TypeFamily<'cx, If = If<'cx, F>>,
     {
         let if_expr = If {
             if_kw,
@@ -643,12 +643,12 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn if_expr(
         ctx: &'cx context::Context<'cx, F>,
         if_kw: token::If<'cx, F>,
-        cond: Self,
+        cond: F::Expr,
         then_clause: F::Block,
         else_opt: Option<IfElse<'cx, F>>,
     ) -> Self
     where
-        F: TypeFamily<'cx, Expr = Self, If = If<'cx, F>>,
+        F: TypeFamily<'cx, If = If<'cx, F>>,
     {
         let if_expr = If {
             if_kw,
@@ -668,10 +668,10 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     pub fn pre_qualified(
         ctx: &'cx context::Context<'cx, F>,
         qualifs: Vec<F::Qualif>,
-        expr: Self,
+        expr: F::Expr,
     ) -> Self
     where
-        F: TypeFamily<'cx, PreQualified = PreQualified<'cx, F>, Expr = Self>,
+        F: TypeFamily<'cx, PreQualified = PreQualified<'cx, F>>,
     {
         let pre_qualified = PreQualified {
             qualifs: ctx.alloc_qualif_slice(qualifs),
