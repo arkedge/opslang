@@ -110,7 +110,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Program<'_> {
             .map(|def| def.definition.process_token(cx))
             .collect();
         syn::Program {
-            definitions: Box::leak(definitions.into_boxed_slice()),
+            definitions: cx.alloc_definition_slice(definitions),
         }
     }
 }
@@ -159,7 +159,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FunctionDef<'_> {
             proc_token: Token![proc](self.proc.wrap()),
             name: self.ident.process_token(cx),
             left_paren: syn::token::OpenParen(self.l_paren.wrap()),
-            parameters: Box::leak(params.into_boxed_slice()),
+            parameters: cx.alloc_parameter_slice(params),
             right_paren: syn::token::CloseParen(self.r_paren.wrap()),
             body: cx.alloc_block(self.block.process_token(cx)),
         }
@@ -203,7 +203,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Scope<'_> {
             .map(|x| x.scope_content.process_token(cx))
             .collect();
         syn::Scope {
-            items: Box::leak(vec.into_boxed_slice()),
+            items: cx.alloc_scope_item_slice(vec),
         }
     }
 }
@@ -397,7 +397,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareExpr<'_> {
         } else {
             cx.alloc_expr(syn::ExprKind::Compare(syn::Compare {
                 head: self.arithmetic_expr.process_token(cx),
-                tail_with_op: Box::leak(
+                tail_with_op: cx.alloc_compare_op_expr_tuple_slice(
                     self.compare_expr_list
                         .iter()
                         .map(|expr| {
@@ -406,8 +406,6 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareExpr<'_> {
                                 expr.arithmetic_expr.process_token(cx),
                             )
                         })
-                        .collect::<Vec<_>>()
-                        .into_boxed_slice(),
                 ),
             }))
         }
@@ -536,13 +534,11 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
                         .process_token(cx)
                 } else {
                     cx.alloc_expr(syn::ExprKind::PreQualified(syn::PreQualified {
-                        qualifs: Box::leak(
+                        qualifs: cx.alloc_qualif_slice(
                             prefix_expr_prefix_expr_list_apply_expr
                                 .prefix_expr_list
                                 .iter()
                                 .map(|qualif| qualif.qualif.process_token(cx))
-                                .collect::<Vec<_>>()
-                                .into_boxed_slice(),
                         ),
                         expr: prefix_expr_prefix_expr_list_apply_expr
                             .apply_expr
@@ -590,12 +586,10 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ApplyExpr<'_> {
         } else {
             cx.alloc_expr(syn::ExprKind::Apply(syn::Apply {
                 function: self.lower_prefix_expr.process_token(cx),
-                args: Box::leak(
+                args: cx.alloc_expr_slice(
                     self.apply_expr_list
                         .iter()
                         .map(|arg| arg.atomic_expr.process_token(cx))
-                        .collect::<Vec<_>>()
-                        .into_boxed_slice(),
                 ),
             }))
         }
@@ -711,7 +705,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Literal<'_> {
                             elements = &comma_sep_elements.comma_sep_elements;
                         }
                     }
-                    Box::leak(exprs.into_boxed_slice())
+                    cx.alloc_expr_slice(exprs)
                 },
                 right_bracket: syn::token::CloseSquare(literal_array.array.r_bracket.wrap()),
             }),
@@ -897,7 +891,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Path<'_> {
         }
         syn::Path {
             raw: cx.alloc_str(&raw),
-            segments: Box::leak(segments.into_boxed_slice()),
+            segments: cx.alloc_ident_slice(segments),
         }
     }
 }

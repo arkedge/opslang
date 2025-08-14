@@ -509,7 +509,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     {
         let apply = Apply {
             function,
-            args: Box::leak(args.into_boxed_slice()),
+            args: ctx.alloc_expr_slice(args),
         };
         ctx.alloc_expr(ExprKind::Apply(apply))
     }
@@ -548,7 +548,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     {
         let compare = Compare {
             head,
-            tail_with_op: Box::leak(tail_with_op.into_boxed_slice()),
+            tail_with_op: ctx.alloc_compare_op_expr_tuple_slice(tail_with_op),
         };
         ctx.alloc_expr(ExprKind::Compare(compare))
     }
@@ -674,7 +674,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         F: TypeFamily<'cx, PreQualified = PreQualified<'cx, F>, Expr = Self>,
     {
         let pre_qualified = PreQualified {
-            qualifs: Box::leak(qualifs.into_boxed_slice()),
+            qualifs: ctx.alloc_qualif_slice(qualifs),
             expr,
         };
         ctx.alloc_expr(ExprKind::PreQualified(pre_qualified))
@@ -703,7 +703,7 @@ impl<'cx, F: TypeFamily<'cx>> Path<'cx, F> {
     pub fn single(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self {
         assert!(!name.contains('.'));
         let ident = Ident::new(ctx, name, span);
-        let segments = Box::leak(vec![ident].into_boxed_slice());
+        let segments = ctx.alloc_ident_slice(vec![ident]);
         Path::new_unchecked(ctx, name, segments)
     }
 }

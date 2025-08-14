@@ -35,31 +35,19 @@ location information and tooling support.
 
 use chrono::Utc;
 use opslang_ast::{
+    token::{IntoPosition, IntoSpan},
     v1::{self as syn, TypeFamily as AstTypeFamily},
     v1_default_type_subst,
 };
 use opslang_ty::version::v1::{Ident, Ty};
 use std::convert::Infallible;
 
+pub mod context;
+pub use context::Context;
+
 #[derive(Debug, PartialEq, Clone, Copy, Default)]
 /// IR type family that includes type information and resolved names.
 pub struct IrTypeFamily;
-
-#[derive(Debug, Clone, Copy)]
-/// A resolved path reference to a definition or module item.
-pub struct ResolvedPath<'cx> {
-    /// Reference to the resolved module item.
-    pub item: &'cx opslang_ty::version::v1::ModuleItem<'cx>,
-    /// The original path that was resolved.
-    pub original_path: &'cx syn::Path<'cx>,
-}
-
-impl<'cx> PartialEq for ResolvedPath<'cx> {
-    fn eq(&self, other: &Self) -> bool {
-        // Compare by pointer address since ModuleItems should be unique
-        std::ptr::eq(self.item, other.item) && self.original_path == other.original_path
-    }
-}
 
 impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
     v1_default_type_subst! {
@@ -91,6 +79,18 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
     }
 }
 
+impl<'cx> IntoSpan<'cx, IrTypeFamily> for syn::Span {
+    fn into_span(self) -> <IrTypeFamily as AstTypeFamily<'cx>>::Span {
+        Some(self)
+    }
+}
+
+impl<'cx> IntoPosition<'cx, IrTypeFamily> for syn::Position {
+    fn into_position(self) -> <IrTypeFamily as AstTypeFamily<'cx>>::Position {
+        Some(self)
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A merged comment block in the IR.
 ///
@@ -106,6 +106,22 @@ pub struct Comment<'cx> {
     pub source_comments: &'cx [&'cx syn::Comment<'cx>],
 }
 
+#[derive(Debug, Clone, Copy)]
+/// A resolved path reference to a definition or module item.
+pub struct ResolvedPath<'cx> {
+    /// Reference to the resolved module item.
+    pub item: &'cx opslang_ty::version::v1::ModuleItem<'cx>,
+    /// The original path that was resolved.
+    pub original_path: &'cx syn::Path<'cx>,
+}
+
+impl<'cx> PartialEq for ResolvedPath<'cx> {
+    fn eq(&self, other: &Self) -> bool {
+        // Compare by pointer address since ModuleItems should be unique
+        std::ptr::eq(self.item, other.item) && self.original_path == other.original_path
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A typed expression in the IR.
 ///
@@ -113,7 +129,7 @@ pub struct Comment<'cx> {
 /// type information from the type inference process.
 pub struct Expr<'cx> {
     /// The expression kind/content.
-    pub kind: &'cx syn::ExprKind<'cx, IrTypeFamily>,
+    pub kind: syn::Expr<'cx, IrTypeFamily>,
     /// The inferred type of this expression.
     pub ty: Ty<'cx>,
 }
@@ -166,8 +182,8 @@ pub struct Numeric<'cx> {
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A parsed numeric literal in the IR.
 pub enum NumericKind {
-    Int(i64),
-    Float(f32),
+    Int(syn::literal::IntegerPrefix, i64),
+    Float(f64),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]

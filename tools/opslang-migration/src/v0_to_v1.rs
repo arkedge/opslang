@@ -167,9 +167,8 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
             }
         }
 
-        // Temporary: Convert Vec to slice (need to add alloc_slice to Context)
         let scope = v1::Scope {
-            items: Box::leak(scope_items.into_boxed_slice()),
+            items: ctx.alloc_scope_item_slice(scope_items),
         };
 
         // Wrap the entire v0 program in a main function
@@ -187,7 +186,7 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
         };
 
         let definition = v1::Definition::Function(main_function);
-        let definitions = Box::leak(vec![definition].into_boxed_slice());
+        let definitions = ctx.alloc_definition_slice(vec![definition]);
 
         Ok(v1::Program { definitions })
     }
@@ -268,9 +267,8 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Block {
             scope_items.push(v1::ScopeItem::Row(converted_row));
         }
 
-        // Temporary: Convert Vec to slice (need to add alloc_slice to Context)
         let scope = v1::Scope {
-            items: Box::leak(scope_items.into_boxed_slice()),
+            items: ctx.alloc_scope_item_slice(scope_items),
         };
 
         Ok(v1::Block {
@@ -404,7 +402,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::VariablePath {
         Ok(v1::Path::new_unchecked(
             ctx,
             &self.raw,
-            Box::leak(segments.into_boxed_slice()),
+            ctx.alloc_ident_slice(segments),
         ))
     }
 }
@@ -433,7 +431,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
             .map(|seg| v1::Ident::new(ctx, seg, Span))
             .collect::<Vec<_>>();
         let command_path =
-            v1::Path::new_unchecked(ctx, &path_string, Box::leak(segments.into_boxed_slice()));
+            v1::Path::new_unchecked(ctx, &path_string, ctx.alloc_ident_slice(segments));
 
         // Create the function expression (command name as a variable)
         let function_expr = v1::Expr::variable(ctx, command_path);
@@ -455,7 +453,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
             let path = v1::Path::new_unchecked(
                 ctx,
                 &receiver_component.exec_method,
-                Box::leak(segments.into_boxed_slice()),
+                ctx.alloc_ident_slice(segments),
             );
             let kind_spec = v1::Modifier {
                 at_token: V1Token![@](Position),
@@ -643,7 +641,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Literal {
                     }
                     v1::literal::Literal::Array(v1::literal::Array {
                         left_bracket: v1::token::OpenSquare(Position),
-                        exprs: Box::leak(converted_exprs.into_boxed_slice()),
+                        exprs: ctx.alloc_expr_slice(converted_exprs),
                         right_bracket: v1::token::CloseSquare(Position),
                     })
                 }
@@ -660,12 +658,10 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Literal {
                     let path = v1::Path::new_unchecked(
                         ctx,
                         &tlm_id,
-                        Box::leak(
+                        ctx.alloc_ident_slice(
                             tlm_id
                                 .split('.')
-                                .map(|segment| v1::Ident::new(ctx, segment, Span))
-                                .collect::<Vec<_>>()
-                                .into_boxed_slice(),
+                                .map(|segment| v1::Ident::new(ctx, segment, Span)),
                         ),
                     );
                     return Ok(v1::Expr::unary(

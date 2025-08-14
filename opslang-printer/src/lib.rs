@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::fmt::{self, Write};
 use std::marker::PhantomData;
 use std::ops::Deref;
@@ -88,10 +89,10 @@ pub enum NewlineStyle {
 }
 
 /// Basic pretty-print options without comment alignment
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct BasePrintOptions {
     /// String used for indentation (usually spaces or tabs)
-    pub indent_str: &'static str,
+    pub indent_str: Cow<'static, str>,
     /// Current indentation level
     pub indent_level: usize,
     /// Whether to reserve a space for break tokens
@@ -103,7 +104,7 @@ pub struct BasePrintOptions {
 }
 
 /// Complete pretty-print options with comment alignment
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct PrintOptions<S: Strategy> {
     /// Base options
     pub base: BasePrintOptions,
@@ -115,7 +116,7 @@ pub struct PrintOptions<S: Strategy> {
 impl Default for BasePrintOptions {
     fn default() -> Self {
         Self {
-            indent_str: "    ", // 4 spaces
+            indent_str: Cow::Borrowed("    "), // 4 spaces
             indent_level: 0,
             reserve_for_break: true,
             max_width: 80,
@@ -127,7 +128,7 @@ impl Default for BasePrintOptions {
 impl BasePrintOptions {
     /// Create a new BasePrintOptions with increased indentation level
     pub fn with_increased_indent(&self) -> Self {
-        let mut new_opts = *self;
+        let mut new_opts = self.clone();
         new_opts.indent_level += 1;
         new_opts
     }
@@ -424,14 +425,14 @@ mod tests {
     #[test]
     fn test_construction_methods() {
         let base = BasePrintOptions {
-            indent_str: "\t",
+            indent_str: Cow::Borrowed("\t"),
             indent_level: 1,
             reserve_for_break: true,
             max_width: 120,
             newline_style: NewlineStyle::Windows,
         };
 
-        let opts_default = PrintOptions::<Naive>::from_base(base);
+        let opts_default = PrintOptions::<Naive>::from_base(base.clone());
         assert_eq!(opts_default.indent_str, "\t");
         assert!(matches!(
             opts_default.comment_alignment.position,

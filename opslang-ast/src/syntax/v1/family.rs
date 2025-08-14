@@ -56,9 +56,13 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
     declare_family! {
         // === Foundational Types ===
         /// Source location span representing a range in the source code (start/end positions).
+        ///
+        /// It is useful to implement [`super::token::IntoSpan`] for conversion into this type.
         type Span;
 
         /// Single source position (line, column) in the source code.
+        ///
+        /// It is useful to implement [`super::token::IntoPosition`] for conversion into this type.
         type Position;
 
         // === Structural Types ===

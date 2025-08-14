@@ -1,7 +1,9 @@
-use super::{Block, Comment, DefaultTypeFamily, Expr, ExprKind, Row, family::TypeFamily};
+use super::{
+    Block, Comment, CompareOp, DefaultTypeFamily, Definition, Expr, ExprKind, Ident, Parameter,
+    Row, ScopeItem, family::TypeFamily,
+};
 use typed_arena::Arena;
 
-#[derive(Default)]
 /// A context for constructing expressions.
 ///
 /// This type exists to hold the contents of reference types, which is introduced:
@@ -13,6 +15,15 @@ pub struct Context<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     row_arena: Arena<Row<'cx, F>>,
     block_arena: Arena<Block<'cx, F>>,
     comment_arena: Arena<Comment<'cx, F>>,
+
+    // Slice arenas for different types
+    definition_slice_arena: Arena<Definition<'cx, F>>,
+    parameter_slice_arena: Arena<Parameter<'cx, F>>,
+    scope_item_slice_arena: Arena<ScopeItem<'cx, F>>,
+    expr_slice_arena: Arena<F::Expr>,
+    ident_slice_arena: Arena<Ident<'cx, F>>,
+    qualif_slice_arena: Arena<F::Qualif>,
+    compare_op_expr_tuple_slice_arena: Arena<(CompareOp<'cx, F>, F::Expr)>,
 }
 
 impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
@@ -42,7 +53,73 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
         self.comment_arena.alloc(comment)
     }
 
+    // Slice allocation methods
+    pub fn alloc_definition_slice(
+        &'cx self,
+        definitions: impl IntoIterator<Item = Definition<'cx, F>>,
+    ) -> &'cx [Definition<'cx, F>] {
+        self.definition_slice_arena.alloc_extend(definitions)
+    }
+
+    pub fn alloc_parameter_slice(
+        &'cx self,
+        parameters: impl IntoIterator<Item = Parameter<'cx, F>>,
+    ) -> &'cx [Parameter<'cx, F>] {
+        self.parameter_slice_arena.alloc_extend(parameters)
+    }
+
+    pub fn alloc_scope_item_slice(
+        &'cx self,
+        items: impl IntoIterator<Item = ScopeItem<'cx, F>>,
+    ) -> &'cx [ScopeItem<'cx, F>] {
+        self.scope_item_slice_arena.alloc_extend(items)
+    }
+
+    pub fn alloc_expr_slice(&'cx self, exprs: impl IntoIterator<Item = F::Expr>) -> &'cx [F::Expr] {
+        self.expr_slice_arena.alloc_extend(exprs)
+    }
+
+    pub fn alloc_ident_slice(
+        &'cx self,
+        idents: impl IntoIterator<Item = Ident<'cx, F>>,
+    ) -> &'cx [Ident<'cx, F>] {
+        self.ident_slice_arena.alloc_extend(idents)
+    }
+
+    pub fn alloc_qualif_slice(
+        &'cx self,
+        qualifs: impl IntoIterator<Item = F::Qualif>,
+    ) -> &'cx [F::Qualif] {
+        self.qualif_slice_arena.alloc_extend(qualifs)
+    }
+
+    pub fn alloc_compare_op_expr_tuple_slice(
+        &'cx self,
+        tuples: impl IntoIterator<Item = (CompareOp<'cx, F>, F::Expr)>,
+    ) -> &'cx [(CompareOp<'cx, F>, F::Expr)] {
+        self.compare_op_expr_tuple_slice_arena.alloc_extend(tuples)
+    }
+
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            str_arena: Arena::new(),
+            expr_arena: Arena::new(),
+            row_arena: Arena::new(),
+            block_arena: Arena::new(),
+            comment_arena: Arena::new(),
+            definition_slice_arena: Arena::new(),
+            parameter_slice_arena: Arena::new(),
+            scope_item_slice_arena: Arena::new(),
+            expr_slice_arena: Arena::new(),
+            ident_slice_arena: Arena::new(),
+            qualif_slice_arena: Arena::new(),
+            compare_op_expr_tuple_slice_arena: Arena::new(),
+        }
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> Default for Context<'cx, F> {
+    fn default() -> Self {
+        Self::new()
     }
 }

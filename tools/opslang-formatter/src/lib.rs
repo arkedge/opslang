@@ -3,6 +3,7 @@ use opslang_ast::v1::context::Context;
 use opslang_parser::{ParseOps, ParserInput};
 use opslang_printer::{CommentAligned, Naive, PrettyPrint, PrintOptions};
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 use std::fs;
 use std::path::Path;
 
@@ -150,14 +151,7 @@ impl FormatterConfig {
 impl From<&FormatterConfig> for PrintOptions<Naive> {
     fn from(config: &FormatterConfig) -> Self {
         let base = opslang_printer::BasePrintOptions {
-            indent_str: Box::leak(
-                config
-                    .print_options
-                    .base
-                    .indent_str
-                    .clone()
-                    .into_boxed_str(),
-            ),
+            indent_str: Cow::Owned(config.print_options.base.indent_str.clone()),
             indent_level: config.print_options.base.indent_level,
             reserve_for_break: config.print_options.base.reserve_for_break,
             max_width: config.print_options.base.max_width,
@@ -174,14 +168,7 @@ impl From<&FormatterConfig> for PrintOptions<Naive> {
 impl From<&FormatterConfig> for PrintOptions<CommentAligned> {
     fn from(config: &FormatterConfig) -> Self {
         let base = opslang_printer::BasePrintOptions {
-            indent_str: Box::leak(
-                config
-                    .print_options
-                    .base
-                    .indent_str
-                    .clone()
-                    .into_boxed_str(),
-            ),
+            indent_str: Cow::Owned(config.print_options.base.indent_str.clone()),
             indent_level: config.print_options.base.indent_level,
             reserve_for_break: config.print_options.base.reserve_for_break,
             max_width: config.print_options.base.max_width,
