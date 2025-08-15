@@ -25,15 +25,17 @@ CommentContent
     : <Cmnt>/[^\r\n]*/
     ;
 
-Program: { Definition };
+// `Definition [ EndOfLine Program ]` don't work (?) 
+Program
+    : Definition EndOfLine Program
+    | Definition;
 
 Definition
-    : FunctionDef
-    | ConstantDef
+    : [ FunctionDef | ConstantDef ] [ Comment ]
     ;
 
 FunctionDef
-    : 'proc' Ident '(' [ ParameterList ] ')' Block
+    : 'prc' Ident '(' [ ParameterList ] ')' Block
     ;
 
 ParameterList
@@ -52,10 +54,12 @@ ConstantDef
     : 'const' Ident ':' Path '=' Expr
     ;
 
-Scope: { ScopeContent };
+Scope
+    : ScopeContent [ EndOfLine Scope ]
+    ;
 
 ScopeContent
-    : [ Break ] [ ScopeContentKind ] [ Comment ] EndOfLine
+    : [ Break ] [ ScopeContentKind ] [ Comment ]
     ;
 
 ScopeContentKind

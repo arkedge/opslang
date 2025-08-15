@@ -173,7 +173,7 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
 
         // Wrap the entire v0 program in a main function
         let main_function = v1::FunctionDef {
-            proc_token: V1Token![proc](Span),
+            proc_token: V1Token![prc](Span),
             name: v1::Ident::new(ctx, "main", Span),
             left_paren: v1::token::OpenParen(Position),
             parameters: &[],
@@ -185,7 +185,10 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
             }),
         };
 
-        let definition = v1::Definition::Function(main_function);
+        let definition = v1::Definition {
+            kind: Some(v1::DefinitionKind::Function(main_function)),
+            ..Default::default()
+        };
         let definitions = ctx.alloc_definition_slice(vec![definition]);
 
         Ok(v1::Program { definitions })
@@ -852,7 +855,7 @@ mod tests {
         assert!(result.is_ok());
         let program = result.unwrap();
         assert_eq!(program.definitions.len(), 1);
-        if let v1::Definition::Function(func_def) = &program.definitions[0] {
+        if let Some(v1::DefinitionKind::Function(func_def)) = &program.definitions[0].kind {
             assert_eq!(func_def.name.raw, "main");
             assert_eq!(func_def.parameters.len(), 0);
             assert_eq!(func_def.body.scope.items.len(), 0);

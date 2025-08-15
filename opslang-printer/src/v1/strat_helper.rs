@@ -1,6 +1,8 @@
+use crate::v1::indent_break;
+
 use super::{
-    Comment, CommentAligned, CommentPosition, Indent, Newline, PrettyPrint, PrintOptions,
-    PrintableFamily, Row, Scope, ScopeItem, Write, fmt,
+    Comment, CommentAligned, CommentPosition, Newline, PrettyPrint, PrintOptions, PrintableFamily,
+    Row, Scope, ScopeItem, Write, fmt,
 };
 
 /// Implementation for consecutive grouping: group rows separated by empty lines
@@ -38,7 +40,6 @@ pub fn pretty_print_consecutive<'cx, F: PrintableFamily<'cx>>(
                 }
                 // Output the block
                 PrettyPrint::<CommentAligned>::pretty_print(*block, writer, options)?;
-                Newline.write(writer, options)?;
             }
         }
     }
@@ -77,7 +78,6 @@ pub fn pretty_print_per_block<'cx, F: PrintableFamily<'cx>>(
                 }
                 // Output the block (recursively handles its own alignment)
                 PrettyPrint::<CommentAligned>::pretty_print(*block, writer, options)?;
-                Newline.write(writer, options)?;
             }
         }
     }
@@ -173,14 +173,7 @@ fn format_row_before_comment<'cx, F: PrintableFamily<'cx>>(
             comment: row.comment,
         });
     }
-    if !row.is_empty() {
-        Indent.write(temp_buffer, options)?;
-    }
-    if row.breaks.is_some() {
-        temp_buffer.push('.');
-    } else if options.reserve_for_break && !row.is_empty() {
-        temp_buffer.push(' ');
-    }
+    indent_break(row, temp_buffer, options)?;
     if let Some(content) = &row.statement {
         PrettyPrint::<CommentAligned>::pretty_print(content, temp_buffer, options)?;
     }

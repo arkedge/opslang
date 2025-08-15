@@ -1,6 +1,6 @@
 use super::generated::grammar_trait::{self, ActionTrait, Program};
 use opslang_ast::{
-    V1Token as Token,
+    ScopeItem, V1Token as Token,
     token::{IntoPosition, IntoSpan},
     v1::{self as syn, context::Context},
 };
@@ -104,11 +104,20 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Program<'_> {
     type Output = syn::Program<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        let definitions: Vec<_> = self
-            .program_list
-            .iter()
-            .map(|def| def.definition.process_token(cx))
-            .collect();
+        let mut definitions = Vec::new();
+        let mut program = self;
+        loop {
+            match program {
+                Program::DefinitionEndOfLineProgram(x) => {
+                    definitions.push(x.definition.process_token(cx));
+                    program = &x.program;
+                }
+                Program::Definition(x) => {
+                    definitions.push(x.definition.process_token(cx));
+                    break;
+                }
+            }
+        }
         syn::Program {
             definitions: cx.alloc_definition_slice(definitions),
         }
@@ -119,14 +128,22 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Definition<'_> {
     type Output = syn::Definition<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        match self {
-            grammar_trait::Definition::FunctionDef(function_def) => {
-                syn::Definition::Function(function_def.function_def.process_token(cx))
-            }
-            grammar_trait::Definition::ConstantDef(constant_def) => {
-                syn::Definition::Constant(constant_def.constant_def.process_token(cx))
-            }
-        }
+        let kind = self
+            .definition_opt
+            .as_ref()
+            .map(|def| match &*def.definition_opt_group {
+                grammar_trait::DefinitionOptGroup::FunctionDef(function_def) => {
+                    syn::DefinitionKind::Function(function_def.function_def.process_token(cx))
+                }
+                grammar_trait::DefinitionOptGroup::ConstantDef(constant_def) => {
+                    syn::DefinitionKind::Constant(constant_def.constant_def.process_token(cx))
+                }
+            });
+        let comment = self
+            .definition_opt0
+            .as_ref()
+            .map(|c| c.comment.process_token(cx));
+        syn::Definition { kind, comment }
     }
 }
 
@@ -156,7 +173,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FunctionDef<'_> {
         };
 
         syn::FunctionDef {
-            proc_token: Token![proc](self.proc.wrap()),
+            proc_token: Token![prc](self.prc.wrap()),
             name: self.ident.process_token(cx),
             left_paren: syn::token::OpenParen(self.l_paren.wrap()),
             parameters: cx.alloc_parameter_slice(params),
@@ -197,13 +214,28 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Scope<'_> {
     type Output = syn::Scope<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        let vec: Vec<_> = self
-            .scope_list
+        let mut items = Vec::new();
+        let mut scope = self;
+        items.push(scope.scope_content.process_token(cx));
+        while let Some(content) = &scope.scope_opt {
+            scope = &content.scope;
+            items.push(scope.scope_content.process_token(cx));
+        }
+        fn non_empty<'cx>(item: &ScopeItem<'cx>) -> bool {
+            match item {
+                ScopeItem::Row(row) => !row.is_empty(),
+                ScopeItem::Block(_) => true,
+            }
+        }
+        let begin = items.iter().position(non_empty).unwrap_or(items.len());
+        let end = items
             .iter()
-            .map(|x| x.scope_content.process_token(cx))
-            .collect();
+            .rposition(non_empty)
+            .map(|i| i + 1)
+            .unwrap_or(0);
+        let len = end.saturating_sub(begin);
         syn::Scope {
-            items: cx.alloc_scope_item_slice(vec),
+            items: cx.alloc_scope_item_slice(items.into_iter().skip(begin).take(len)),
         }
     }
 }
@@ -224,7 +256,6 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ScopeContent<'_> {
             scope_content_opt,
             scope_content_opt0,
             scope_content_opt1,
-            end_of_line: _end_of_line,
         } = self;
         let breaks = scope_content_opt.process_token(cx);
         let statement = if let Some(scope_content_kind) = scope_content_opt0 {

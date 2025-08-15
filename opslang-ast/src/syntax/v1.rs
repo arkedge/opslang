@@ -221,11 +221,33 @@ pub struct Program<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub definitions: &'cx [Definition<'cx, F>],
 }
 
+#[derive(Debug, PartialEq)]
+pub struct Definition<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub kind: Option<DefinitionKind<'cx, F>>,
+    pub comment: Option<F::Comment>,
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A top-level definition in a program.
-pub enum Definition<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+pub enum DefinitionKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Function(F::FunctionDef),
     Constant(F::ConstantDef),
+}
+
+impl<'cx, F: TypeFamily<'cx>> Definition<'cx, F> {
+    pub fn is_empty(&self) -> bool {
+        let Self { kind, comment } = self;
+        kind.is_none() && comment.is_none()
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> Default for Definition<'cx, F> {
+    fn default() -> Self {
+        Self {
+            kind: Default::default(),
+            comment: Default::default(),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -242,7 +264,7 @@ pub enum Definition<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// }
 /// ```
 pub struct FunctionDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub proc_token: token::Proc<'cx, F>,
+    pub proc_token: token::Prc<'cx, F>,
     pub name: F::Ident,
     pub left_paren: token::OpenParen<'cx, F>,
     pub parameters: &'cx [Parameter<'cx, F>],

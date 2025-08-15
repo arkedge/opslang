@@ -1,5 +1,5 @@
 use opslang_ast::{
-    Definition,
+    DefinitionKind,
     v1::{ExprKind, Program, context::Context},
 };
 use opslang_formatter::{FormatterConfig, format_source};
@@ -11,13 +11,13 @@ fn debug_assert_parentheses_behavior() {
 
     let test_cases = [
         // Case 1: Simple assert with comparison
-        "#! lang=v1\nassert 2 == 2;\n",
+        "#! lang=v1\nprc main() { assert 2 == 2; }\n",
         // Case 2: Assert with explicit parentheses
-        "#! lang=v1\nassert (2 == 2);\n",
+        "#! lang=v1\nprc main() { assert (2 == 2); }\n",
         // Case 3: Simple assert with single value
-        "#! lang=v1\nassert true;\n",
+        "#! lang=v1\nprc main() { assert true; }\n",
         // Case 4: Assert with complex expression
-        "#! lang=v1\nassert (1 + 1 == 2);\n",
+        "#! lang=v1\nprc main() { assert (1 + 1 == 2); }\n",
     ];
 
     for (i, input) in test_cases.iter().enumerate() {
@@ -36,7 +36,7 @@ fn debug_assert_parentheses_behavior() {
         };
         let program: Program = Program::parse(parser_input, &ctx).expect("Failed to parse");
 
-        if let Definition::Function(f) = &program.definitions[0]
+        if let Some(DefinitionKind::Function(f)) = &program.definitions[0].kind
             && let Some(first_item) = f.body.scope.items.get(1)
         {
             // Skip shebang
@@ -100,7 +100,7 @@ fn test_specific_assert_cases() {
     let config = FormatterConfig::default();
 
     // Test the exact case from test_v1.ops
-    let input = "#! lang=v1\nassert (2 == 2);\n";
+    let input = "#! lang=v1\nprc main() {assert (2 == 2);}\n";
     let output = format_source(input, &config).expect("Failed to format");
 
     println!("Input: assert (2 == 2);");
@@ -111,7 +111,7 @@ fn test_specific_assert_cases() {
     // Answer: Because parser correctly sees Apply(assert, [Parened(Compare(...))])
 
     // Test without explicit parentheses
-    let input2 = "#! lang=v1\nassert 2 == 2;\n";
+    let input2 = "#! lang=v1\nprc main() {assert 2 == 2;}\n";
     let output2 = format_source(input2, &config).expect("Failed to format");
 
     println!("Input2: assert 2 == 2;");

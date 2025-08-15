@@ -5,7 +5,7 @@ use std::fs;
 fn test_format_ocaml_style_application() {
     let config = FormatterConfig::default();
 
-    let input = "#! lang=v1\nassert 2 == 2;\n";
+    let input = "#! lang=v1\nprc main() { assert 2 == 2; }\n";
     let output = format_source(input, &config).expect("Failed to format");
 
     // Should use OCaml-style function application (f x y) not C-style (f(x, y))
@@ -17,7 +17,7 @@ fn test_format_ocaml_style_application() {
 fn test_format_preserves_basic_structure() {
     let config = FormatterConfig::default();
 
-    let input = "#! lang=v1\nlet x = 42;\nprint x;\n";
+    let input = "#! lang=v1\nprc main() { let x = 42;\nprint x; }\n";
     let output = format_source(input, &config).expect("Failed to format");
 
     // Should preserve basic statements
@@ -30,7 +30,7 @@ fn test_format_preserves_basic_structure() {
 fn test_format_with_parentheses() {
     let config = FormatterConfig::default();
 
-    let input = "#! lang=v1\nprint (1 + 2);\n";
+    let input = "#! lang=v1\nprc main() { print (1 + 2); }\n";
     let output = format_source(input, &config).expect("Failed to format");
 
     // Should use OCaml-style function application

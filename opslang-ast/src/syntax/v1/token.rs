@@ -172,7 +172,7 @@ declare_kw! {
     pub struct Let "let"
     pub struct If "if"
     pub struct Else "else"
-    pub struct Proc "proc"
+    pub struct Prc "prc"
     pub struct Const "const"
     pub struct In "in"
 }
@@ -194,8 +194,8 @@ macro_rules! V1Token {
     (else) => {
         $crate::syntax::v1::token::Else
     };
-    (proc) => {
-        $crate::syntax::v1::token::Proc
+    (prc) => {
+        $crate::syntax::v1::token::Prc
     };
     (const) => {
         $crate::syntax::v1::token::Const

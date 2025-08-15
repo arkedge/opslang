@@ -8,17 +8,12 @@ use std::fs;
 use std::path::Path;
 
 /// Runtime strategy selection for formatting
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum FormatterStrategy {
     Naive,
+    #[default]
     CommentAligned,
-}
-
-impl Default for FormatterStrategy {
-    fn default() -> Self {
-        Self::CommentAligned
-    }
 }
 
 /// Configuration for the formatter

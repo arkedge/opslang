@@ -113,7 +113,6 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Program<'cx, F> {
         for (i, definition) in self.definitions.iter().enumerate() {
             if i > 0 {
                 Newline.write(writer, options)?;
-                Newline.write(writer, options)?;
             }
             PrettyPrint::<Naive>::pretty_print(definition, writer, options)?;
         }
@@ -130,7 +129,6 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Program<'cx, 
         for (i, definition) in self.definitions.iter().enumerate() {
             if i > 0 {
                 Newline.write(writer, options)?;
-                Newline.write(writer, options)?;
             }
             PrettyPrint::<CommentAligned>::pretty_print(definition, writer, options)?;
         }
@@ -144,14 +142,20 @@ where
     ExprKind<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        match self {
-            Definition::Function(func_def) => {
-                PrettyPrint::<S>::pretty_print(func_def, writer, options)
-            }
-            Definition::Constant(const_def) => {
-                PrettyPrint::<S>::pretty_print(const_def, writer, options)
+        if let Some(kind) = &self.kind {
+            match kind {
+                DefinitionKind::Function(func_def) => {
+                    PrettyPrint::<S>::pretty_print(func_def, writer, options)?;
+                }
+                DefinitionKind::Constant(const_def) => {
+                    PrettyPrint::<S>::pretty_print(const_def, writer, options)?;
+                }
             }
         }
+        if let Some(comment) = self.comment {
+            PrettyPrint::<S>::pretty_print(comment, writer, options)?;
+        }
+        Ok(())
     }
 }
 
@@ -239,17 +243,35 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Scope<'cx, F>
 
 // Strategy-specific implementations for Row (where comment formatting matters)
 
+fn indent_break<'cx, S: Strategy, F: PrintableFamily<'cx>>(
+    row: &Row<'cx, F>,
+    writer: &mut impl Write,
+    options: &PrintOptions<S>,
+) -> fmt::Result {
+    if row.breaks.is_some() {
+        let mut indent_str = options.current_indent();
+        if let Some(c) = indent_str.pop() {
+            writer.write_str(&indent_str)?;
+            writer.write_char('.')?;
+            if c == '\t' {
+                // assuming tab size >= 2
+                writer.write_char('\t')?;
+            }
+        } else {
+            writer.write_char('.')?;
+        }
+    } else if options.reserve_for_break && !row.is_empty() && options.current_indent().is_empty() {
+        writer.write_char(' ')?;
+    } else {
+        Indent.write(writer, options)?;
+    }
+    Ok(())
+}
+
 impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Row<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
-        Indent.write(writer, options)?;
-
         // Handle breaks
-        if self.breaks.is_some() {
-            writer.write_char('.')?;
-        } else if options.reserve_for_break && (self.statement.is_some() || self.comment.is_some())
-        {
-            writer.write_char(' ')?;
-        }
+        indent_break(self, writer, options)?;
 
         // Handle content
         if let Some(content) = &self.statement {
@@ -279,33 +301,17 @@ impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Comment<'cx, 
     }
 }
 
-impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Block<'cx, F> {
-    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Block<'cx, F>
+where
+    Scope<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         Token.write(self.left_brace, writer)?;
         Newline.write(writer, options)?;
 
         let nested_options = options.with_increased_indent();
-        PrettyPrint::<Naive>::pretty_print(&self.scope, writer, &nested_options)?;
+        PrettyPrint::<S>::pretty_print(&self.scope, writer, &nested_options)?;
 
-        Newline.write(writer, options)?;
-        Indent.write(writer, options)?;
-        Token.write(self.right_brace, writer)
-    }
-}
-
-impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Block<'cx, F> {
-    fn pretty_print(
-        &self,
-        writer: &mut impl Write,
-        options: &PrintOptions<CommentAligned>,
-    ) -> fmt::Result {
-        Token.write(self.left_brace, writer)?;
-        Newline.write(writer, options)?;
-
-        let nested_options = options.with_increased_indent();
-        PrettyPrint::<CommentAligned>::pretty_print(&self.scope, writer, &nested_options)?;
-
-        Newline.write(writer, options)?;
         Indent.write(writer, options)?;
         Token.write(self.right_brace, writer)
     }

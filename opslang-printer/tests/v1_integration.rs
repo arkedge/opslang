@@ -23,8 +23,10 @@ fn parse_source<'cx>(
 #[test]
 fn test_naive_vs_comment_aligned_simple() {
     let source = r#"#! lang=v1
-let x = value1;               # comment1
-let very_long_var = value2;   # comment2
+prc main() {
+    let x = value1;               # comment1
+    let very_long_var = value2;   # comment2
+}
 "#;
 
     let context = Context::new();
@@ -54,10 +56,12 @@ let very_long_var = value2;   # comment2
 #[test]
 fn test_consecutive_vs_per_block_grouping() {
     let source = r#"#! lang=v1
-let x = val1;           # comment1
-let very_long_var = val2;   # comment2
+prc main() {
+    let x = val1;           # comment1
+    let very_long_var = val2;   # comment2
 
-let y = val3;               # comment3
+    let y = val3;               # comment3
+}
 "#;
 
     let context = Context::new();
@@ -97,8 +101,10 @@ let y = val3;               # comment3
 #[test]
 fn test_position_strategies() {
     let source = r#"#! lang=v1
-let x = val1;               # comment1
-let very_long_variable = val2;  # comment2
+prc main() {
+    let x = val1;               # comment1
+    let very_long_variable = val2;  # comment2
+}
 "#;
 
     let context = Context::new();
@@ -158,8 +164,10 @@ let very_long_variable = val2;  # comment2
 #[test]
 fn test_fallback_to_longest_behavior() {
     let source = r#"#! lang=v1
-let x = val1;                               # comment1
-let this_is_a_very_very_long_variable_name = val2;  # comment2
+prc main() {
+    let x = val1;                               # comment1
+    let this_is_a_very_very_long_variable_name = val2;  # comment2
+}
 "#;
 
     let context = Context::new();
@@ -205,11 +213,13 @@ let this_is_a_very_very_long_variable_name = val2;  # comment2
 #[test]
 fn test_empty_lines_with_consecutive_grouping() {
     let source = r#"#! lang=v1
-let x = val1;       # comment1
-let y = val2;       # comment2
+prc main() {
+    let x = val1;       # comment1
+    let y = val2;       # comment2
 
-let very_long_var = val3;  # comment3
-let z = val4;       # comment4
+    let very_long_var = val3;  # comment3
+    let z = val4;       # comment4
+}
 "#;
 
     let context = Context::new();

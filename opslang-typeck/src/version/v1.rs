@@ -239,12 +239,14 @@ impl<'cx> TypeChecker<'cx> {
 
         // First pass: collect all function and constant signatures
         for definition in program.definitions {
-            match definition {
-                ast::Definition::Function(func_def) => {
-                    self.register_function_signature(&mut global_env, func_def)?;
-                }
-                ast::Definition::Constant(const_def) => {
-                    self.register_constant_signature(&mut global_env, const_def)?;
+            if let Some(kind) = &definition.kind {
+                match kind {
+                    ast::DefinitionKind::Function(func_def) => {
+                        self.register_function_signature(&mut global_env, func_def)?;
+                    }
+                    ast::DefinitionKind::Constant(const_def) => {
+                        self.register_constant_signature(&mut global_env, const_def)?;
+                    }
                 }
             }
         }
@@ -252,16 +254,26 @@ impl<'cx> TypeChecker<'cx> {
         // Second pass: type check implementations
         let mut ir_definitions = Vec::new();
         for definition in program.definitions {
-            match definition {
-                ast::Definition::Function(func_def) => {
-                    let ir_func = self.typeck_function(&global_env, func_def)?;
-                    ir_definitions.push(ast::Definition::Function(ir_func));
-                }
-                ast::Definition::Constant(const_def) => {
-                    let ir_const = self.typeck_constant(&global_env, const_def)?;
-                    ir_definitions.push(ast::Definition::Constant(ir_const));
-                }
-            }
+            let kind = if let Some(kind) = &definition.kind {
+                let kind = match kind {
+                    ast::DefinitionKind::Function(func_def) => {
+                        let ir_func = self.typeck_function(&global_env, func_def)?;
+                        ast::DefinitionKind::Function(ir_func)
+                    }
+                    ast::DefinitionKind::Constant(const_def) => {
+                        let ir_const = self.typeck_constant(&global_env, const_def)?;
+                        ast::DefinitionKind::Constant(ir_const)
+                    }
+                };
+                Some(kind)
+            } else {
+                None
+            };
+            ir_definitions.push(ast::Definition {
+                kind,
+                // FIXME
+                comment: None,
+            });
         }
 
         Ok(ast::Program {
