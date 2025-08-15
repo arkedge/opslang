@@ -410,11 +410,11 @@ impl<'cx> ModuleLoader<'cx> {
     ///
     /// Currently supports only flat paths that resolve to items in the builtin module.
     /// In the future, this will support hierarchical paths like "module::item".
-    pub fn resolve_path(&self, path: &str) -> Option<ModuleItem<'cx>> {
+    pub fn resolve_path(&self, path: &str) -> Option<&'cx ModuleItem<'cx>> {
         // Currently only supports non-hierarchical paths
         // Future enhancement: support "module::item" format
         if let Some(module) = self.modules.get("builtin") {
-            module.lookup_item(path).cloned()
+            (*module).lookup_item(path)
         } else {
             None
         }

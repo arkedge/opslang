@@ -127,17 +127,17 @@ impl<'cx> Substitution<'cx> {
     }
 }
 
-impl super::TypeChecker<'_> {
+impl<'cx> super::TypeChecker<'cx> {
     /// Attempts to unify two types, producing a substitution that makes them equal.
     ///
     /// Unification is the core algorithm for type inference, determining what type variables
     /// must be bound to make two types compatible. This implements the standard unification
     /// algorithm with occurs check to prevent infinite types.
-    pub fn unify<'a>(
-        cx: &'a TypingContext<'a>,
-        subst: &mut Substitution<'a>,
-        t1: Ty<'a>,
-        t2: Ty<'a>,
+    pub fn unify(
+        &self,
+        subst: &mut Substitution<'cx>,
+        t1: Ty<'cx>,
+        t2: Ty<'cx>,
     ) -> super::Result<()> {
         match (t1.kind(), t2.kind()) {
             // Two identical type variables unify trivially
@@ -148,7 +148,7 @@ impl super::TypeChecker<'_> {
                     Err(anyhow!(
                         "Occurs check failed: {} occurs in {}",
                         var,
-                        ty.display(cx)
+                        ty.display(self.typing_cx)
                     ))
                 } else {
                     subst.insert(*var, Ty(ty));
@@ -165,7 +165,7 @@ impl super::TypeChecker<'_> {
             | (TyKind::Unit, TyKind::Unit) => Ok(()),
             // Array types unify if their element types unify
             (TyKind::Array { inner: inner1 }, TyKind::Array { inner: inner2 }) => {
-                Self::unify(cx, subst, *inner1, *inner2)
+                self.unify(subst, *inner1, *inner2)
             }
             // Function types unify if they have the same arity and corresponding types unify
             (
@@ -188,31 +188,27 @@ impl super::TypeChecker<'_> {
 
                 // Unify corresponding argument types
                 for (arg1, arg2) in args1.iter().zip(args2.iter()) {
-                    Self::unify(cx, subst, *arg1, *arg2)?;
+                    self.unify(subst, *arg1, *arg2)?;
                 }
 
                 // Apply accumulated substitutions to return types before unifying
-                let substituted_ret1 = subst.apply_substitution_pure(cx, *ret1);
-                let substituted_ret2 = subst.apply_substitution_pure(cx, *ret2);
-                Self::unify(cx, subst, substituted_ret1, substituted_ret2)?;
+                let substituted_ret1 = subst.apply_substitution_pure(self.typing_cx, *ret1);
+                let substituted_ret2 = subst.apply_substitution_pure(self.typing_cx, *ret2);
+                self.unify(subst, substituted_ret1, substituted_ret2)?;
                 Ok(())
             }
             // All other combinations are incompatible
             _ => Err(anyhow!(
                 "Cannot unify {} and {}",
-                t1.display(cx),
-                t2.display(cx)
+                t1.display(self.typing_cx),
+                t2.display(self.typing_cx)
             )),
         }
     }
 
-    pub fn unify_pure<'a>(
-        cx: &'a TypingContext<'a>,
-        t1: Ty<'a>,
-        t2: Ty<'a>,
-    ) -> super::Result<Substitution<'a>> {
+    pub fn unify_pure(&self, t1: Ty<'cx>, t2: Ty<'cx>) -> super::Result<Substitution<'cx>> {
         let mut subst = Substitution::new();
-        Self::unify(cx, &mut subst, t1, t2)?;
+        self.unify(&mut subst, t1, t2)?;
         Ok(subst)
     }
 }

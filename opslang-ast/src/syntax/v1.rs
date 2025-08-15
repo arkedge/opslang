@@ -48,6 +48,8 @@ macro_rules! v1_default_type_subst {
         $(ReturnStmt = $return_stmt:ty,)?
         $(Ident = $ident:ty,)?
         $(Path = $path:ty,)?
+        $(Ty = $ty:ty,)?
+        $(FnReturnTy = $fn_return_ty:ty,)?
         $(Expr = $expr:ty,)?
         $(Qualif = $qualif:ty,)?
         $(PreQualified = $pre_qualified:ty,)?
@@ -109,6 +111,14 @@ macro_rules! v1_default_type_subst {
         type Path = v1_default_type_subst!{
             $crate::syntax::v1::Path<'cx, Self>;
             [$($path)?]
+        };
+        type Ty = v1_default_type_subst!{
+            $crate::syntax::v1::Path<'cx, Self>;
+            [$($ty)?]
+        };
+        type FnReturnType = v1_default_type_subst!{
+            Option<($crate::syntax::token::Arrow<'cx, Self>, Self::Path)>;
+            [$($fn_return_ty)?]
         };
         type Expr = v1_default_type_subst!{
             $crate::syntax::v1::Expr<'cx, Self>;
@@ -269,6 +279,7 @@ pub struct FunctionDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_paren: token::OpenParen<'cx, F>,
     pub parameters: &'cx [Parameter<'cx, F>],
     pub right_paren: token::CloseParen<'cx, F>,
+    pub return_type: F::FnReturnType,
     pub body: F::Block,
 }
 
@@ -283,7 +294,7 @@ pub struct FunctionDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 pub struct Parameter<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub name: F::Ident,
     pub colon: token::Colon<'cx, F>,
-    pub ty: F::Path,
+    pub ty: F::Ty,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -946,16 +957,42 @@ pub mod literal {
         pub span: F::Span,
     }
 
+    impl<'cx, F: TypeFamily<'cx>> String<'cx, F> {
+        pub fn unescape(&self) -> Result<std::string::String, escape8259::UnescapeError> {
+            escape8259::unescape(self.raw)
+        }
+    }
+
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct Bytes<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
         pub span: F::Span,
     }
 
+    impl<'cx, F: TypeFamily<'cx>> Bytes<'cx, F> {
+        pub fn as_bytes(&self) -> &'cx [u8] {
+            self.raw.as_bytes()
+        }
+    }
+
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub struct HexBytes<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub raw: &'cx str,
         pub span: F::Span,
+    }
+
+    impl<'cx, F: TypeFamily<'cx>> HexBytes<'cx, F> {
+        pub fn as_bytes(&self) -> Result<Vec<u8>, char> {
+            self.raw
+                .chars()
+                .map(|c| match c {
+                    c @ '0'..='9' => Ok(c as u8 - b'0'),
+                    c @ 'a'..='f' => Ok(c as u8 - b'a' + 10),
+                    c @ 'A'..='F' => Ok(c as u8 - b'A' + 10),
+                    c => Err(c),
+                })
+                .collect()
+        }
     }
 
     #[derive(Debug, PartialEq, Clone, Copy)]

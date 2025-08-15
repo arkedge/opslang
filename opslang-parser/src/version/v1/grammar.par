@@ -35,7 +35,7 @@ Definition
     ;
 
 FunctionDef
-    : 'prc' Ident '(' [ ParameterList ] ')' Block
+    : 'prc' Ident '(' [ ParameterList ] ')' [ '->' Path ] Block
     ;
 
 ParameterList

@@ -118,6 +118,8 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
         // Resolved name types
         Ident = Ident<'cx>,
         Path = ResolvedPath<'cx>,
+        Ty = Ty<'cx>,
+        FnReturnTy = Ty<'cx>,
 
         // Typed expression
         Expr = Expr<'cx>,

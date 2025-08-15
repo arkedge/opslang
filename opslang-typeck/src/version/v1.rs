@@ -287,6 +287,12 @@ impl<'cx> TypeChecker<'cx> {
         func_def: &ast::FunctionDef<'cx>,
     ) -> Result<()> {
         let func_name = func_def.name.raw;
+
+        // Check if function with same name already exists
+        if env.lookup_name(func_name).is_some() {
+            return Err(anyhow!("Function '{func_name}' is already defined"));
+        }
+
         let mut param_types = Vec::new();
 
         for param in func_def.parameters {
@@ -294,8 +300,11 @@ impl<'cx> TypeChecker<'cx> {
             param_types.push(param_type);
         }
 
-        // For now, infer return type from body during implementation
-        let return_type = Ty::mk_variable(self.typing_cx, self.fresh_type_var());
+        // Handle return type from function definition
+        let return_type = match &func_def.return_type {
+            Some((_, return_path)) => self.resolve_type_from_path(return_path.raw)?,
+            None => Ty::mk_unit(self.typing_cx),
+        };
 
         let func_type = Ty::mk_function(self.typing_cx, param_types, return_type);
 
@@ -330,29 +339,38 @@ impl<'cx> TypeChecker<'cx> {
     fn typeck_function(
         &mut self,
         global_env: &Environment<'cx, '_>,
-        func_def: &ast::FunctionDef<'cx>,
+        func_def: &'cx ast::FunctionDef<'cx>,
     ) -> Result<ast::FunctionDef<'cx, IrTypeFamily>> {
-        let mut param_types = Vec::new();
+        let func_name = func_def.name.raw;
+
+        // Retrieve the already resolved function type from the environment
+        let func_type = global_env
+            .lookup_variable(func_name)
+            .ok_or_else(|| anyhow!("Function '{func_name}' not found in environment"))?;
+
+        let (param_types, return_type) = match func_type.kind() {
+            TyKind::Function { arg, ret } => (arg.clone(), *ret),
+            _ => return Err(anyhow!("Expected function type for '{func_name}'")),
+        };
+
         let mut func_env = global_env.extend_inherit();
 
-        // Convert parameters to IR
+        // Convert parameters to IR using the already resolved types
         let mut ir_parameters = Vec::new();
-        for param in func_def.parameters {
+        for (param, param_type) in func_def.parameters.iter().zip(param_types.iter()) {
             let param_name = param.name.raw;
-            let param_type = self.resolve_type_from_path(param.ty.raw)?;
-            param_types.push(param_type);
 
             let param_identifier = Identifier {
                 name: param_name,
                 scope_depth: func_env.scope_depth(),
             };
             let param_identifier_id = self.typing_cx.alloc_ident(param_identifier);
-            func_env.bind(param_name, param_identifier_id, param_type);
+            func_env.bind(param_name, param_identifier_id, *param_type);
 
             let ir_param = ast::Parameter {
                 name: param_identifier_id,
                 colon: param.colon.into_token(),
-                ty: self.resolve_path(&param.ty)?,
+                ty: self.resolve_path(&param.ty)?.item.ty(),
             };
             ir_parameters.push(ir_param);
         }
@@ -366,6 +384,7 @@ impl<'cx> TypeChecker<'cx> {
             left_paren: func_def.left_paren.into_token(),
             parameters: self.ir_cx.alloc_parameter_slice(ir_parameters),
             right_paren: func_def.right_paren.into_token(),
+            return_type,
             body: ir_body,
         })
     }
@@ -380,7 +399,7 @@ impl<'cx> TypeChecker<'cx> {
         let subst = &mut subst;
         let mut inferred_expr = self.typeck_expr(env, subst, &const_def.value)?;
 
-        Self::unify(self.typing_cx, subst, declared_type, inferred_expr.ty)?;
+        self.unify(subst, declared_type, inferred_expr.ty)?;
         subst.apply_substitution(self.typing_cx, &mut inferred_expr.ty);
 
         let ir_ty = self.resolve_path(&const_def.ty)?;
@@ -397,7 +416,7 @@ impl<'cx> TypeChecker<'cx> {
 
     fn resolve_type_from_path(&self, path: &str) -> Result<Ty<'cx>> {
         match self.module_loader.resolve_path(path) {
-            Some(ModuleItem::Type { ty, .. }) => Ok(ty),
+            Some(ModuleItem::Type { ty, .. }) => Ok(*ty),
             Some(_) => Err(anyhow!("Path '{path}' does not refer to a type")),
             None => Err(anyhow!("Unknown type: {path}")),
         }
@@ -652,7 +671,7 @@ impl<'cx> TypeChecker<'cx> {
                     | ast::BinOp::Mul(_)
                     | ast::BinOp::Div(_)
                     | ast::BinOp::Mod(_) => {
-                        Self::unify(self.typing_cx, subst, lhs_ir.ty, lhs_ir.ty)?;
+                        self.unify(subst, lhs_ir.ty, lhs_ir.ty)?;
                         subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
                         match lhs_ir.ty.kind() {
                             TyKind::Int | TyKind::Float => {
@@ -680,8 +699,8 @@ impl<'cx> TypeChecker<'cx> {
                     }
                     ast::BinOp::And(_) | ast::BinOp::Or(_) => {
                         let bool_type = Ty::mk_bool(self.typing_cx);
-                        Self::unify(self.typing_cx, subst, lhs_ir.ty, bool_type)?;
-                        Self::unify(self.typing_cx, subst, lhs_ir.ty, bool_type)?;
+                        self.unify(subst, lhs_ir.ty, bool_type)?;
+                        self.unify(subst, lhs_ir.ty, bool_type)?;
 
                         // Apply final substitution to operands
                         subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
@@ -703,7 +722,7 @@ impl<'cx> TypeChecker<'cx> {
                         match lhs_ir.ty.kind() {
                             TyKind::Array { inner } => {
                                 // Unify lhs type with array element type
-                                Self::unify(self.typing_cx, subst, lhs_ir.ty, *inner)?;
+                                self.unify(subst, lhs_ir.ty, *inner)?;
                                 // Apply final substitution to operands
                                 subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
                                 subst.apply_substitution(self.typing_cx, &mut rhs_ir.ty);
@@ -740,12 +759,7 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => {
                                 // resolve to int
-                                Self::unify(
-                                    self.typing_cx,
-                                    subst,
-                                    expr_ir.ty,
-                                    Ty::mk_int(self.typing_cx),
-                                )?
+                                self.unify(subst, expr_ir.ty, Ty::mk_int(self.typing_cx))?
                             }
                         }
                         // Create IR operand with unified type
@@ -801,7 +815,7 @@ impl<'cx> TypeChecker<'cx> {
                 let expected_func_type = Ty::mk_function(self.typing_cx, arg_types, return_type);
 
                 subst.apply_substitution(self.typing_cx, &mut func_ir.ty);
-                Self::unify(self.typing_cx, subst, func_ir.ty, expected_func_type)?;
+                self.unify(subst, func_ir.ty, expected_func_type)?;
                 subst.apply_substitution(self.typing_cx, &mut return_type);
 
                 // Convert arguments to IR with final types
@@ -826,7 +840,7 @@ impl<'cx> TypeChecker<'cx> {
             ExprKind::If(if_expr) => {
                 let mut cond_ir = self.typeck_expr(env, subst, &if_expr.cond)?;
                 let bool_type = Ty::mk_bool(self.typing_cx);
-                Self::unify(self.typing_cx, subst, cond_ir.ty, bool_type)?;
+                self.unify(subst, cond_ir.ty, bool_type)?;
                 let ir_then_block = self.typeck_block(env, subst, if_expr.then_clause)?;
 
                 if let Some(else_clause) = &if_expr.else_opt {
@@ -843,7 +857,7 @@ impl<'cx> TypeChecker<'cx> {
                             .ty(self.typing_cx)
                             .unwrap_or(Ty::mk_unit(self.typing_cx)),
                     );
-                    Self::unify(self.typing_cx, subst, unified_then, unified_else)?;
+                    self.unify(subst, unified_then, unified_else)?;
                     let result_type = subst.apply_substitution_pure(self.typing_cx, unified_then);
 
                     // Convert condition to IR
@@ -866,7 +880,7 @@ impl<'cx> TypeChecker<'cx> {
                     // no else
                     let unit_type = Ty::mk_unit(self.typing_cx);
                     if let Some(ty) = ir_then_block.ty(self.typing_cx) {
-                        Self::unify(self.typing_cx, subst, ty, unit_type)?;
+                        self.unify(subst, ty, unit_type)?;
                     }
 
                     // Convert condition to IR
@@ -903,7 +917,7 @@ impl<'cx> TypeChecker<'cx> {
                     let mut expr_ir = self.typeck_expr(env, subst, expr)?;
 
                     // Unify with expected type
-                    Self::unify(self.typing_cx, subst, expected_type, expr_ir.ty)?;
+                    self.unify(subst, expected_type, expr_ir.ty)?;
                     subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
                     subst.apply_substitution(self.typing_cx, &mut expected_type);
 
@@ -929,7 +943,7 @@ impl<'cx> TypeChecker<'cx> {
                 let mut rhs_ir = self.typeck_expr(env, subst, &set.rhs)?;
 
                 // Unify lhs and rhs types - they should be the same
-                Self::unify(self.typing_cx, subst, lhs_ir.ty, rhs_ir.ty)?;
+                self.unify(subst, lhs_ir.ty, rhs_ir.ty)?;
                 // Apply final substitution to operands
                 subst.apply_substitution(self.typing_cx, &mut lhs_ir.ty);
                 subst.apply_substitution(self.typing_cx, &mut rhs_ir.ty);
@@ -948,7 +962,7 @@ impl<'cx> TypeChecker<'cx> {
 
                 // File should be a string type
                 let string_type = Ty::mk_string(self.typing_cx);
-                Self::unify(self.typing_cx, subst, file_ir.ty, string_type)?;
+                self.unify(subst, file_ir.ty, string_type)?;
 
                 // Apply final substitution to file
                 subst.apply_substitution(self.typing_cx, &mut file_ir.ty);
@@ -956,8 +970,7 @@ impl<'cx> TypeChecker<'cx> {
                 // Convert path to resolved path
                 let ir_path = self.resolve_path(&infix_import.path)?;
 
-                // InfixImport result type depends on what's being imported
-                // For now, assume it returns the type of the imported item
+                // InfixImport result type is that of the imported item
                 let import_type = match self.module_loader.resolve_path(infix_import.path.raw) {
                     Some(item) => item.ty(),
                     None => {
@@ -992,7 +1005,7 @@ impl<'cx> TypeChecker<'cx> {
         match literal {
             ast::Literal::String(s) => {
                 let ir_string = ir::String {
-                    value: s.raw,
+                    value: self.ir_cx.alloc_str(&s.unescape()?),
                     syn: s,
                 };
                 let ir_literal = ast::Literal::String(ir_string);
@@ -1074,7 +1087,7 @@ impl<'cx> TypeChecker<'cx> {
                     for expr in &array.exprs[1..] {
                         let mut expr_ir = self.typeck_expr(typing_env, subst, expr)?;
 
-                        Self::unify(self.typing_cx, subst, element_type, expr_ir.ty)?;
+                        self.unify(subst, element_type, expr_ir.ty)?;
                         subst.apply_substitution(self.typing_cx, &mut element_type);
                         subst.apply_substitution(self.typing_cx, &mut expr_ir.ty);
 
@@ -1096,7 +1109,7 @@ impl<'cx> TypeChecker<'cx> {
                 }
             }
             ast::Literal::Bytes(bytes) => {
-                let byte_data = self.ir_cx.alloc_bytes(bytes.raw.as_bytes());
+                let byte_data = self.ir_cx.alloc_bytes(bytes.as_bytes());
                 let ir_bytes = ir::Bytes {
                     value: byte_data,
                     syn: bytes,
@@ -1107,8 +1120,11 @@ impl<'cx> TypeChecker<'cx> {
                 Ok(ir_expr)
             }
             ast::Literal::HexBytes(hex_bytes) => {
-                // For now, treat hex bytes as empty byte array
-                let byte_data = self.ir_cx.alloc_bytes(&[]);
+                let byte_data = self.ir_cx.alloc_bytes(
+                    &hex_bytes
+                        .as_bytes()
+                        .map_err(|c| anyhow!("illegal hex charactor: {c}"))?,
+                );
                 let ir_hex_bytes = ir::HexBytes {
                     value: byte_data,
                     syn: hex_bytes,
@@ -1151,7 +1167,7 @@ impl<'cx> TypeChecker<'cx> {
     fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvedPath<'cx>> {
         match self.module_loader.resolve_path(path.raw) {
             Some(item) => Ok(ResolvedPath {
-                item: self.typing_cx.alloc_module_item(item),
+                item,
                 original_path: path,
             }),
             None => Err(anyhow!("Cannot resolve path: {}", path.raw)),
@@ -1248,16 +1264,19 @@ mod tests {
     #[test]
     fn test_unify_basic() {
         let cx = TypingContext::new();
+        let ir_cx = ir::Context::new();
 
         let int_type1 = Ty::mk_int(&cx);
         let int_type2 = Ty::mk_int(&cx);
         let float_type = Ty::mk_float(&cx);
 
-        let result = TypeChecker::unify_pure(&cx, int_type1, int_type2);
+        let chk = TypeChecker::new(&cx, &ir_cx);
+
+        let result = chk.unify_pure(int_type1, int_type2);
         assert!(result.is_ok());
         assert!(result.unwrap().is_empty());
 
-        let result = TypeChecker::unify_pure(&cx, int_type1, float_type);
+        let result = chk.unify_pure(int_type1, float_type);
         assert!(result.is_err());
     }
 

@@ -91,6 +91,10 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Path to an identifier, which may include module qualification or scope resolution.
         type Path;
 
+        type Ty;
+
+        type FnReturnType;
+
         // === Expression Types ===
         /// Base expression type representing the main expression enum that contains all expression variants.
         type Expr;

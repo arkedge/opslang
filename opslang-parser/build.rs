@@ -96,7 +96,7 @@ fn build_parol() {
             writeln!(f).unwrap();
             for file in [TRAIT, PARSER] {
                 if file == TRAIT {
-                    writeln!(f, "#[allow(clippy::uninlined_format_args)]").unwrap();
+                    writeln!(f, "#[allow(clippy::all)]").unwrap();
                 }
                 let module_name = file.module;
                 writeln!(f, "pub mod {module_name};").unwrap();

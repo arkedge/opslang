@@ -178,6 +178,7 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
             left_paren: v1::token::OpenParen(Position),
             parameters: &[],
             right_paren: v1::token::CloseParen(Position),
+            return_type: None,
             body: ctx.alloc_block(v1::Block {
                 left_brace: v1::token::OpenBrace(Position),
                 scope,

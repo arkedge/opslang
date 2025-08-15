@@ -152,6 +152,7 @@ declare_token! {
     pub struct ColonEq/2 ":="
     pub struct AndAnd/2 "&&"
     pub struct OrOr/2 "||"
+    pub struct Arrow/2 "->"
 }
 
 /// Declare all keywords for v1 grammar.
@@ -279,5 +280,8 @@ macro_rules! V1Token {
     };
     (||) => {
         $crate::syntax::v1::token::OrOr
+    };
+    (->) => {
+        $crate::syntax::v1::token::Arrow
     };
 }
