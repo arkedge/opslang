@@ -301,7 +301,7 @@ impl<'cx> TypeChecker<'cx> {
         }
 
         // Handle return type from function definition
-        let return_type = match &func_def.return_type {
+        let return_type = match &func_def.return_type.0 {
             Some((_, return_path)) => self.resolve_type_from_path(return_path.raw)?,
             None => Ty::mk_unit(self.typing_cx),
         };

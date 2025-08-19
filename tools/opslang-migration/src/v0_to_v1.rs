@@ -2,7 +2,6 @@ use opslang_ast::V1Token;
 use opslang_ast::token::IntoPosition;
 use opslang_ast::token::IntoSpan;
 use opslang_ast::v1::context::Context;
-use opslang_ast::v1_default_type_subst;
 use opslang_printer::{Naive, PrettyPrint, PrintOptions};
 
 // Import v0 and v1 types
@@ -100,7 +99,7 @@ pub trait ConvertV0ToV1<'cx> {
 pub struct ConvertedFamily;
 
 impl<'cx> v1::TypeFamily<'cx> for ConvertedFamily {
-    v1_default_type_subst! {
+    opslang_ast_macros::v1_default_type_subst! {
         Span = Span,
         Position = Position,
         ..
@@ -178,7 +177,7 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
             left_paren: v1::token::OpenParen(Position),
             parameters: &[],
             right_paren: v1::token::CloseParen(Position),
-            return_type: None,
+            return_type: v1::FnReturnTy(None),
             body: ctx.alloc_block(v1::Block {
                 left_brace: v1::token::OpenBrace(Position),
                 scope,

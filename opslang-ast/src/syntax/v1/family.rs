@@ -93,7 +93,7 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
 
         type Ty;
 
-        type FnReturnType;
+        type FnReturnTy;
 
         // === Expression Types ===
         /// Base expression type representing the main expression enum that contains all expression variants.

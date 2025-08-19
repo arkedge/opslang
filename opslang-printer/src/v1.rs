@@ -22,19 +22,29 @@ impl Token {
     }
 }
 
-/// Alias for printable family used in this module.
-///
-/// Types that implement this trait looks very similar to [`DefaultTypeFamily`], but
-/// accepts any `Span` and `Position` types, which allows for more flexibility in
-/// printing operations.
-///
-/// **IMPORTANT**: When modifying [`TypeFamily`] trait in opslang-ast, you must also
-/// update this trait to include the same associated types to maintain compatibility.
-/// This trait must be kept in sync with [`DefaultTypeFamily`] associated type definitions.
-/// Also you must reflect the changes into the next `impl PrintableFamily<'cx> for F`,
-/// before `trait_alias` is stabilized.
-pub trait PrintableFamily<'cx>:
-    TypeFamily<
+/// Macro to define a trait alias for TypeFamily with specific associated types.
+macro_rules! define_trait_alias {
+    (
+        $(#[$attr:meta])*
+        pub trait $trait_name:ident<$lifetime:lifetime> = $base_trait:path
+    ) => {
+        pub trait $trait_name<$lifetime>: $base_trait {}
+
+        impl<$lifetime, F: $base_trait> $trait_name<$lifetime> for F {}
+    };
+}
+
+define_trait_alias!(
+    /// Alias for printable family used in this module.
+    ///
+    /// Types that implement this trait looks very similar to [`DefaultTypeFamily`], but
+    /// accepts any `Span` and `Position` types, which allows for more flexibility in
+    /// printing operations.
+    ///
+    /// **IMPORTANT**: When modifying [`TypeFamily`] trait in opslang-ast, you must also
+    /// update this trait to include the same associated types to maintain compatibility.
+    /// This trait must be kept in sync with [`DefaultTypeFamily`] associated type definitions.
+    pub trait PrintableFamily<'cx> = TypeFamily<
         'cx,
         Comment = &'cx Comment<'cx, Self>,
         Row = &'cx Row<'cx, Self>,
@@ -66,49 +76,15 @@ pub trait PrintableFamily<'cx>:
         FunctionDef = FunctionDef<'cx, Self>,
         ConstantDef = ConstantDef<'cx, Self>,
     >
-{
-}
+);
 
-// This implementation is needed to define `PrintableFamily` as an alias for
-// such family. This can be removed using trait aliases feature, which is currently
-// unstable.
-impl<
-    'cx,
-    F: TypeFamily<
-            'cx,
-            Comment = &'cx Comment<'cx, Self>,
-            Row = &'cx Row<'cx, Self>,
-            Statement = Statement<'cx, Self>,
-            Block = &'cx Block<'cx, Self>,
-            ScopeItem = ScopeItem<'cx, Self>,
-            ReturnStmt = ReturnStmt<'cx, Self>,
-            Ident = Ident<'cx, Self>,
-            Path = Path<'cx, Self>,
-            Ty = Path<'cx, Self>,
-            Expr = Expr<'cx, Self>,
-            Qualif = Qualif<'cx, Self>,
-            PreQualified = PreQualified<'cx, Self>,
-            Parened = Parened<'cx, Self>,
-            Literal = Literal<'cx, Self>,
-            Array = Array<'cx, Self>,
-            String = String<'cx, Self>,
-            Bytes = Bytes<'cx, Self>,
-            HexBytes = HexBytes<'cx, Self>,
-            DateTime = DateTime<'cx, Self>,
-            Numeric = Numeric<'cx, Self>,
-            Apply = Apply<'cx, Self>,
-            Unary = Unary<'cx, Self>,
-            Binary = Binary<'cx, Self>,
-            Compare = Compare<'cx, Self>,
-            Set = Set<'cx, Self>,
-            InfixImport = InfixImport<'cx, Self>,
-            If = If<'cx, Self>,
-            FunctionDef = FunctionDef<'cx, Self>,
-            ConstantDef = ConstantDef<'cx, Self>,
-        >,
-> PrintableFamily<'cx> for F
-{
-}
+#[doc(hidden)]
+const _: () = {
+    /// Assert that `opslang_ast::DefaultTypeFamily: for<'cx> PrintableFamily<'cx>`,
+    /// which means `opslang-printer` can print AST.
+    const fn check_impl<T: for<'cx> PrintableFamily<'cx>>() {}
+    check_impl::<opslang_ast::DefaultTypeFamily>();
+};
 
 impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Program<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {

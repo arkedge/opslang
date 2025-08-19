@@ -18,202 +18,8 @@ pub type Position = BytePos;
 /// This type does not take any lifetime parameters because [`TypeFamily`] trait has them.
 pub struct DefaultTypeFamily;
 
-#[macro_export]
-/// Type substitution that makes [`DefaultTypeFamily`] default.
-///
-/// You can override some of the types by passing them as arguments.
-/// The arguments must be provided in the order of the fields in this macro.
-///
-/// # Examples
-///
-/// ```rust,ignore
-/// // Use all default types.
-/// v1_default_type_subst! {}
-///
-/// // Override `Expr` type.
-/// v1_default_type_subst! {
-///     Expr = MyExpr,
-/// }
-/// ```
-macro_rules! v1_default_type_subst {
-    // Note: The order of overrides must match the order below.
-    (
-        $(Span = $span:ty,)?
-        $(Position = $position:ty,)?
-        $(Comment = $comment:ty,)?
-        $(Row = $row:ty,)?
-        $(Statement = $statement:ty,)?
-        $(Block = $block:ty,)?
-        $(ScopeItem = $scope_item:ty,)?
-        $(ReturnStmt = $return_stmt:ty,)?
-        $(Ident = $ident:ty,)?
-        $(Path = $path:ty,)?
-        $(Ty = $ty:ty,)?
-        $(FnReturnTy = $fn_return_ty:ty,)?
-        $(Expr = $expr:ty,)?
-        $(Qualif = $qualif:ty,)?
-        $(PreQualified = $pre_qualified:ty,)?
-        $(Parened = $parened:ty,)?
-        $(Literal = $literal:ty,)?
-        $(Array = $array:ty,)?
-        $(String = $string:ty,)?
-        $(Bytes = $bytes:ty,)?
-        $(HexBytes = $hex_bytes:ty,)?
-        $(DateTime = $date_time:ty,)?
-        $(Numeric = $numeric:ty,)?
-        $(Apply = $apply:ty,)?
-        $(Unary = $unary:ty,)?
-        $(Binary = $binary:ty,)?
-        $(Compare = $compare:ty,)?
-        $(Set = $set:ty,)?
-        $(InfixImport = $infix_import:ty,)?
-        $(If = $if:ty,)?
-        $(FunctionDef = $function_def:ty,)?
-        $(ConstantDef = $constant_def:ty,)?
-        ..
-    ) => {
-        type Span = v1_default_type_subst!{
-            $crate::syntax::v1::Span;
-            [$($span)?]
-        };
-        type Position = v1_default_type_subst!{
-            $crate::syntax::v1::Position;
-            [$($position)?]
-        };
-        type Comment = v1_default_type_subst!{
-            &'cx $crate::syntax::v1::Comment<'cx, Self>;
-            [$($comment)?]
-        };
-        type Row = v1_default_type_subst!{
-            &'cx $crate::syntax::v1::Row<'cx, Self>;
-            [$($row)?]
-        };
-        type Statement = v1_default_type_subst!{
-            $crate::syntax::v1::Statement<'cx, Self>;
-            [$($statement)?]
-        };
-        type Block = v1_default_type_subst!{
-            &'cx $crate::syntax::v1::Block<'cx, Self>;
-            [$($block)?]
-        };
-        type ScopeItem = v1_default_type_subst!{
-            $crate::syntax::v1::ScopeItem<'cx, Self>;
-            [$($scope_item)?]
-        };
-        type ReturnStmt = v1_default_type_subst!{
-            $crate::syntax::v1::ReturnStmt<'cx, Self>;
-            [$($return_stmt)?]
-        };
-        type Ident = v1_default_type_subst!{
-            $crate::syntax::v1::Ident<'cx, Self>;
-            [$($ident)?]
-        };
-        type Path = v1_default_type_subst!{
-            $crate::syntax::v1::Path<'cx, Self>;
-            [$($path)?]
-        };
-        type Ty = v1_default_type_subst!{
-            $crate::syntax::v1::Path<'cx, Self>;
-            [$($ty)?]
-        };
-        type FnReturnType = v1_default_type_subst!{
-            Option<($crate::syntax::token::Arrow<'cx, Self>, Self::Path)>;
-            [$($fn_return_ty)?]
-        };
-        type Expr = v1_default_type_subst!{
-            $crate::syntax::v1::Expr<'cx, Self>;
-            [$($expr)?]
-        };
-        type Qualif = v1_default_type_subst!{
-            $crate::syntax::v1::Qualif<'cx, Self>;
-            [$($qualif)?]
-        };
-        type PreQualified = v1_default_type_subst!{
-            $crate::syntax::v1::PreQualified<'cx, Self>;
-            [$($pre_qualified)?]
-        };
-        type Parened = v1_default_type_subst!{
-            $crate::syntax::v1::Parened<'cx, Self>;
-            [$($parened)?]
-        };
-        type Literal = v1_default_type_subst!{
-            $crate::syntax::v1::Literal<'cx, Self>;
-            [$($literal)?]
-        };
-        type Array = v1_default_type_subst!{
-            $crate::syntax::v1::literal::Array<'cx, Self>;
-            [$($array)?]
-        };
-        type String = v1_default_type_subst!{
-            $crate::syntax::v1::literal::String<'cx, Self>;
-            [$($string)?]
-        };
-        type Bytes = v1_default_type_subst!{
-            $crate::syntax::v1::literal::Bytes<'cx, Self>;
-            [$($bytes)?]
-        };
-        type HexBytes = v1_default_type_subst!{
-            $crate::syntax::v1::literal::HexBytes<'cx, Self>;
-            [$($hex_bytes)?]
-        };
-        type DateTime = v1_default_type_subst!{
-            $crate::syntax::v1::literal::DateTime<'cx, Self>;
-            [$($date_time)?]
-        };
-        type Numeric = v1_default_type_subst!{
-            $crate::syntax::v1::literal::Numeric<'cx, Self>;
-            [$($numeric)?]
-        };
-        type Apply = v1_default_type_subst!{
-            $crate::syntax::v1::Apply<'cx, Self>;
-            [$($apply)?]
-        };
-        type Unary = v1_default_type_subst!{
-            $crate::syntax::v1::Unary<'cx, Self>;
-            [$($unary)?]
-        };
-        type Binary = v1_default_type_subst!{
-            $crate::syntax::v1::Binary<'cx, Self>;
-            [$($binary)?]
-        };
-        type Compare = v1_default_type_subst!{
-            $crate::syntax::v1::Compare<'cx, Self>;
-            [$($compare)?]
-        };
-        type Set = v1_default_type_subst!{
-            $crate::syntax::v1::Set<'cx, Self>;
-            [$($set)?]
-        };
-        type InfixImport = v1_default_type_subst!{
-            $crate::syntax::v1::InfixImport<'cx, Self>;
-            [$($infix_import)?]
-        };
-        type If = v1_default_type_subst!{
-            $crate::syntax::v1::If<'cx, Self>;
-            [$($if)?]
-        };
-        type FunctionDef = v1_default_type_subst!{
-            $crate::syntax::v1::FunctionDef<'cx, Self>;
-            [$($function_def)?]
-        };
-        type ConstantDef = v1_default_type_subst!{
-            $crate::syntax::v1::ConstantDef<'cx, Self>;
-            [$($constant_def)?]
-        };
-    };
-    // Internal
-    // If the second argument (the user override) is present, use it.
-    ($default:ty; [$user:ty]) => {
-        $user
-    };
-    // If the second argument is empty, use the default.
-    ($default:ty; []) => {
-        $default
-    };
-}
-
 impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
-    v1_default_type_subst! {
+    opslang_ast_macros::v1_default_type_subst_internal! {
         ..
     }
 }
@@ -279,7 +85,7 @@ pub struct FunctionDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_paren: token::OpenParen<'cx, F>,
     pub parameters: &'cx [Parameter<'cx, F>],
     pub right_paren: token::CloseParen<'cx, F>,
-    pub return_type: F::FnReturnType,
+    pub return_type: F::FnReturnTy,
     pub body: F::Block,
 }
 
@@ -296,6 +102,11 @@ pub struct Parameter<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub colon: token::Colon<'cx, F>,
     pub ty: F::Ty,
 }
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct FnReturnTy<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(
+    pub Option<(token::Arrow<'cx, F>, F::Path)>,
+);
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// A constant definition.

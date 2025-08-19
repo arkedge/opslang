@@ -37,7 +37,6 @@ use chrono::Utc;
 use opslang_ast::{
     token::{IntoPosition, IntoSpan},
     v1::{self as syn, TypeFamily as AstTypeFamily},
-    v1_default_type_subst,
 };
 use opslang_ty::version::v1::{Ident, Ty, TypingContext};
 use std::convert::Infallible;
@@ -108,7 +107,7 @@ pub use context::Context;
 pub struct IrTypeFamily;
 
 impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
-    v1_default_type_subst! {
+    opslang_ast_macros::v1_default_type_subst! {
         Span = Option<syn::Span>,
         Position = Option<syn::Position>,
 

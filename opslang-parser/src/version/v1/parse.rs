@@ -178,12 +178,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FunctionDef<'_> {
             left_paren: syn::token::OpenParen(self.l_paren.wrap()),
             parameters: cx.alloc_parameter_slice(params),
             right_paren: syn::token::CloseParen(self.r_paren.wrap()),
-            return_type: self.function_def_opt0.as_ref().map(|return_opt| {
+            return_type: syn::FnReturnTy(self.function_def_opt0.as_ref().map(|return_opt| {
                 (
                     Token![->](return_opt.minus_g_t.wrap()),
                     return_opt.path.process_token(cx),
                 )
-            }),
+            })),
             body: cx.alloc_block(self.block.process_token(cx)),
         }
     }
