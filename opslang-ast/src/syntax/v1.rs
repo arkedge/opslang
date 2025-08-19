@@ -67,20 +67,20 @@ impl<'cx, F: TypeFamily<'cx>> Default for Definition<'cx, F> {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// A function definition with `prec` keyword.
+/// A function definition with `prc` keyword.
 ///
 /// # Examples
 ///
 /// ```ops
-/// prec main() {
+/// prc main() {
 ///     NOP;
 /// }
-/// prec add(x: i32, y: i32) {
+/// prc add(x: i32, y: i32) {
 ///     return x + y;
 /// }
 /// ```
 pub struct FunctionDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub proc_token: token::Prc<'cx, F>,
+    pub prc_token: token::Prc<'cx, F>,
     pub name: F::Ident,
     pub left_paren: token::OpenParen<'cx, F>,
     pub parameters: &'cx [Parameter<'cx, F>],

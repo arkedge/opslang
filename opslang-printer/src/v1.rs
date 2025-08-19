@@ -142,7 +142,7 @@ where
     Block<'cx, F>: PrettyPrint<S>,
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
-        Token.write(self.proc_token, writer)?;
+        Token.write(self.prc_token, writer)?;
         writer.write_str(" ")?;
         PrettyPrint::<S>::pretty_print(&self.name, writer, options)?;
         Token.write(self.left_paren, writer)?;

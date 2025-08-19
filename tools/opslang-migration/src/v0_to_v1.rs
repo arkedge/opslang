@@ -172,7 +172,7 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
 
         // Wrap the entire v0 program in a main function
         let main_function = v1::FunctionDef {
-            proc_token: V1Token![prc](Span),
+            prc_token: V1Token![prc](Span),
             name: v1::Ident::new(ctx, "main", Span),
             left_paren: v1::token::OpenParen(Position),
             parameters: &[],

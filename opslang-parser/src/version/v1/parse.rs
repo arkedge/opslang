@@ -173,7 +173,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FunctionDef<'_> {
         };
 
         syn::FunctionDef {
-            proc_token: Token![prc](self.prc.wrap()),
+            prc_token: Token![prc](self.prc.wrap()),
             name: self.ident.process_token(cx),
             left_paren: syn::token::OpenParen(self.l_paren.wrap()),
             parameters: cx.alloc_parameter_slice(params),

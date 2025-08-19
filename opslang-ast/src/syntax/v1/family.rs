@@ -151,7 +151,7 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         type If;
 
         // === Definition Types ===
-        /// Function definition declared with `proc` keyword, including parameters and body.
+        /// Function definition declared with `prc` keyword, including parameters and body.
         type FunctionDef;
 
         /// Constant definition declared with `const` keyword, binding a name to a value.

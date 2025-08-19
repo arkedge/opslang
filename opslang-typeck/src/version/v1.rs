@@ -379,7 +379,7 @@ impl<'cx> TypeChecker<'cx> {
         let ir_body = self.typeck_block(&func_env, &mut Substitution::new(), func_def.body)?;
 
         Ok(ast::FunctionDef {
-            proc_token: func_def.proc_token.into_token(),
+            prc_token: func_def.prc_token.into_token(),
             name: self.resolve_ident(func_def.name)?,
             left_paren: func_def.left_paren.into_token(),
             parameters: self.ir_cx.alloc_parameter_slice(ir_parameters),
