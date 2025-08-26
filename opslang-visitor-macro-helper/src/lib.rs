@@ -22,8 +22,6 @@ pub struct VisitorImpl {
 
 impl Parse for VisitorImpl {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        input.parse::<Token![impl]>()?;
-
         let mut impl_generics = input.parse::<Generics>()?;
 
         input.parse::<Token![for]>()?;
