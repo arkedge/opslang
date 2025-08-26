@@ -411,6 +411,7 @@ impl<'cx> TypeChecker<'cx> {
             ty: ir_ty,
             eq: const_def.eq.into_token(),
             value: inferred_expr,
+            semi: const_def.semi.into_token(),
         })
     }
 

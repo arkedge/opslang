@@ -212,6 +212,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::ConstantDef<'_> {
             ty: self.path.process_token(cx),
             eq: Token![=](self.equ.wrap()),
             value: self.expr.process_token(cx),
+            semi: Token![;](self.semi.semi.wrap()),
         }
     }
 }

@@ -51,7 +51,7 @@ Parameter
     ;
 
 ConstantDef
-    : 'const' Ident ':' Path '=' Expr
+    : 'const' Ident ':' Path '=' Expr Semi
     ;
 
 Scope

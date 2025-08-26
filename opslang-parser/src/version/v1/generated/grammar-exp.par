@@ -40,7 +40,7 @@
 /*  25 */ CommaParameterListOpt /* Option<T>::Some */: ParameterList;
 /*  26 */ CommaParameterListOpt /* Option<T>::None */: ;
 /*  27 */ Parameter: Ident ':' Path;
-/*  28 */ ConstantDef: 'const' Ident ':' Path '=' Expr;
+/*  28 */ ConstantDef: 'const' Ident ':' Path '=' Expr Semi;
 /*  29 */ Scope: ScopeContent ScopeOpt /* Option */;
 /*  30 */ ScopeOpt /* Option<T>::Some */: EndOfLine Scope;
 /*  31 */ ScopeOpt /* Option<T>::None */: ;

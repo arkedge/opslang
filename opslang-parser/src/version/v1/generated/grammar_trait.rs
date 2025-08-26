@@ -1134,6 +1134,7 @@ pub struct ConstantDef<'t> {
     pub path: Box<Path<'t>>,
     pub equ: Token<'t>, /* = */
     pub expr: Box<Expr<'t>>,
+    pub semi: Box<Semi<'t>>,
 }
 
 ///
@@ -2522,7 +2523,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 28:
     ///
-    /// `ConstantDef: 'const' Ident ':' Path '=' Expr;`
+    /// `ConstantDef: 'const' Ident ':' Path '=' Expr Semi;`
     ///
     #[parol_runtime::function_name::named]
     fn constant_def(
@@ -2533,12 +2534,14 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         _path: &ParseTreeType<'t>,
         equ: &ParseTreeType<'t>,
         _expr: &ParseTreeType<'t>,
+        _semi: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
         let r#const = r#const.token()?.clone();
         let colon = colon.token()?.clone();
         let equ = equ.token()?.clone();
+        let semi = pop_item!(self, semi, Semi, context);
         let expr = pop_item!(self, expr, Expr, context);
         let path = pop_item!(self, path, Path, context);
         let ident = pop_item!(self, ident, Ident, context);
@@ -2549,6 +2552,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
             path: Box::new(path),
             equ,
             expr: Box::new(expr),
+            semi: Box::new(semi),
         };
         // Calling user action here
         self.user_grammar.constant_def(&constant_def_built)?;
@@ -4885,6 +4889,7 @@ impl<'t> UserActionsTrait<'t> for ActionAuto<'t, '_> {
                 &children[3],
                 &children[4],
                 &children[5],
+                &children[6],
             ),
             29 => self.scope(&children[0], &children[1]),
             30 => self.scope_opt_0(&children[0], &children[1]),

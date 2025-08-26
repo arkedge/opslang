@@ -119,6 +119,7 @@ pub struct ConstantDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub ty: F::Path,
     pub eq: token::Eq<'cx, F>,
     pub value: F::Expr,
+    pub semi: token::Semi<'cx, F>,
 }
 
 impl Versioned for Program<'_, DefaultTypeFamily> {

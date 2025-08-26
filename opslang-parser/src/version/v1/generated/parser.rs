@@ -330,49 +330,49 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         /* 13 */ LRAction::Shift(42),
         /* 14 */ LRAction::Shift(48),
         /* 15 */ LRAction::Shift(51),
-        /* 16 */ LRAction::Shift(55),
-        /* 17 */ LRAction::Shift(61),
-        /* 18 */ LRAction::Shift(66),
-        /* 19 */ LRAction::Shift(69),
-        /* 20 */ LRAction::Shift(70),
-        /* 21 */ LRAction::Shift(82),
+        /* 16 */ LRAction::Shift(53),
+        /* 17 */ LRAction::Shift(57),
+        /* 18 */ LRAction::Shift(63),
+        /* 19 */ LRAction::Shift(68),
+        /* 20 */ LRAction::Shift(71),
+        /* 21 */ LRAction::Shift(72),
         /* 22 */ LRAction::Shift(84),
-        /* 23 */ LRAction::Shift(89),
-        /* 24 */ LRAction::Shift(91),
-        /* 25 */ LRAction::Shift(92),
-        /* 26 */ LRAction::Shift(93),
-        /* 27 */ LRAction::Shift(94),
-        /* 28 */ LRAction::Shift(95),
-        /* 29 */ LRAction::Shift(96),
-        /* 30 */ LRAction::Shift(97),
-        /* 31 */ LRAction::Shift(99),
-        /* 32 */ LRAction::Shift(100),
-        /* 33 */ LRAction::Shift(102),
-        /* 34 */ LRAction::Shift(106),
-        /* 35 */ LRAction::Shift(108),
-        /* 36 */ LRAction::Shift(109),
-        /* 37 */ LRAction::Shift(114),
-        /* 38 */ LRAction::Shift(115),
-        /* 39 */ LRAction::Shift(116),
-        /* 40 */ LRAction::Shift(118),
-        /* 41 */ LRAction::Shift(119),
-        /* 42 */ LRAction::Shift(126),
-        /* 43 */ LRAction::Shift(127),
-        /* 44 */ LRAction::Shift(128),
-        /* 45 */ LRAction::Shift(129),
-        /* 46 */ LRAction::Shift(130),
-        /* 47 */ LRAction::Shift(131),
-        /* 48 */ LRAction::Shift(132),
-        /* 49 */ LRAction::Shift(133),
-        /* 50 */ LRAction::Shift(134),
-        /* 51 */ LRAction::Shift(135),
-        /* 52 */ LRAction::Shift(151),
-        /* 53 */ LRAction::Shift(161),
-        /* 54 */ LRAction::Shift(165),
-        /* 55 */ LRAction::Shift(167),
-        /* 56 */ LRAction::Shift(168),
-        /* 57 */ LRAction::Shift(169),
-        /* 58 */ LRAction::Shift(177),
+        /* 23 */ LRAction::Shift(86),
+        /* 24 */ LRAction::Shift(92),
+        /* 25 */ LRAction::Shift(93),
+        /* 26 */ LRAction::Shift(94),
+        /* 27 */ LRAction::Shift(95),
+        /* 28 */ LRAction::Shift(96),
+        /* 29 */ LRAction::Shift(97),
+        /* 30 */ LRAction::Shift(98),
+        /* 31 */ LRAction::Shift(100),
+        /* 32 */ LRAction::Shift(101),
+        /* 33 */ LRAction::Shift(103),
+        /* 34 */ LRAction::Shift(107),
+        /* 35 */ LRAction::Shift(109),
+        /* 36 */ LRAction::Shift(110),
+        /* 37 */ LRAction::Shift(115),
+        /* 38 */ LRAction::Shift(116),
+        /* 39 */ LRAction::Shift(117),
+        /* 40 */ LRAction::Shift(119),
+        /* 41 */ LRAction::Shift(120),
+        /* 42 */ LRAction::Shift(127),
+        /* 43 */ LRAction::Shift(128),
+        /* 44 */ LRAction::Shift(129),
+        /* 45 */ LRAction::Shift(130),
+        /* 46 */ LRAction::Shift(131),
+        /* 47 */ LRAction::Shift(132),
+        /* 48 */ LRAction::Shift(133),
+        /* 49 */ LRAction::Shift(134),
+        /* 50 */ LRAction::Shift(135),
+        /* 51 */ LRAction::Shift(136),
+        /* 52 */ LRAction::Shift(152),
+        /* 53 */ LRAction::Shift(162),
+        /* 54 */ LRAction::Shift(166),
+        /* 55 */ LRAction::Shift(168),
+        /* 56 */ LRAction::Shift(169),
+        /* 57 */ LRAction::Shift(170),
+        /* 58 */ LRAction::Shift(178),
         /* 59 */ LRAction::Reduce(0 /* ApplyExpr */, 86),
         /* 60 */ LRAction::Reduce(1 /* ApplyExprList */, 87),
         /* 61 */ LRAction::Reduce(1 /* ApplyExprList */, 88),
@@ -609,9 +609,6 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 9
         LR1State {
             actions: &[
-                (0, 128),  /* '<$>' => LRAction::Reduce(Ident, 116) */
-                (5, 128),  /* '\r?\n|\r' => LRAction::Reduce(Ident, 116) */
-                (6, 128),  /* '#' => LRAction::Reduce(Ident, 116) */
                 (9, 128),  /* '(' => LRAction::Reduce(Ident, 116) */
                 (10, 128), /* ')' => LRAction::Reduce(Ident, 116) */
                 (12, 128), /* ',' => LRAction::Reduce(Ident, 116) */
@@ -841,9 +838,6 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 28
         LR1State {
             actions: &[
-                (0, 172),  /* '<$>' => LRAction::Reduce(PathList, 115) */
-                (5, 172),  /* '\r?\n|\r' => LRAction::Reduce(PathList, 115) */
-                (6, 172),  /* '#' => LRAction::Reduce(PathList, 115) */
                 (9, 172),  /* '(' => LRAction::Reduce(PathList, 115) */
                 (10, 172), /* ')' => LRAction::Reduce(PathList, 115) */
                 (12, 172), /* ',' => LRAction::Reduce(PathList, 115) */
@@ -941,9 +935,6 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 35
         LR1State {
             actions: &[
-                (0, 170),  /* '<$>' => LRAction::Reduce(Path, 113) */
-                (5, 170),  /* '\r?\n|\r' => LRAction::Reduce(Path, 113) */
-                (6, 170),  /* '#' => LRAction::Reduce(Path, 113) */
                 (9, 170),  /* '(' => LRAction::Reduce(Path, 113) */
                 (10, 170), /* ')' => LRAction::Reduce(Path, 113) */
                 (12, 170), /* ',' => LRAction::Reduce(Path, 113) */
@@ -1061,27 +1052,20 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         },
         // State 43
         LR1State {
-            actions: &[
-                (0, 103), /* '<$>' => LRAction::Reduce(ConstantDef, 28) */
-                (5, 103), /* '\r?\n|\r' => LRAction::Reduce(ConstantDef, 28) */
-                (6, 103), /* '#' => LRAction::Reduce(ConstantDef, 28) */
-            ],
-            gotos: &[],
+            actions: &[(17, 15) /* ';' => LRAction::Shift(51) */],
+            gotos: &[(83, 52) /* Semi => 52 */],
         },
         // State 44
         LR1State {
             actions: &[
-                (0, 198),  /* '<$>' => LRAction::Reduce(SetExprOpt, 51) */
-                (5, 198),  /* '\r?\n|\r' => LRAction::Reduce(SetExprOpt, 51) */
-                (6, 198),  /* '#' => LRAction::Reduce(SetExprOpt, 51) */
                 (10, 198), /* ')' => LRAction::Reduce(SetExprOpt, 51) */
                 (12, 198), /* ',' => LRAction::Reduce(SetExprOpt, 51) */
                 (17, 198), /* ';' => LRAction::Reduce(SetExprOpt, 51) */
-                (19, 15),  /* ':=' => LRAction::Shift(51) */
+                (19, 16),  /* ':=' => LRAction::Shift(53) */
                 (44, 198), /* ']' => LRAction::Reduce(SetExprOpt, 51) */
                 (54, 198), /* '{' => LRAction::Reduce(SetExprOpt, 51) */
             ],
-            gotos: &[(85, 52) /* SetExprOpt => 52 */],
+            gotos: &[(85, 54) /* SetExprOpt => 54 */],
         },
         // State 45
         LR1State {
@@ -1104,16 +1088,13 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 149), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalAndExprList, 57) */
             ],
             gotos: &[
-                (53, 53), /* LogicalAndExpr => 53 */
-                (54, 54), /* LogicalAndExprList => 54 */
+                (53, 55), /* LogicalAndExpr => 55 */
+                (54, 56), /* LogicalAndExprList => 56 */
             ],
         },
         // State 46
         LR1State {
             actions: &[
-                (0, 113),  /* '<$>' => LRAction::Reduce(Expr, 48) */
-                (5, 113),  /* '\r?\n|\r' => LRAction::Reduce(Expr, 48) */
-                (6, 113),  /* '#' => LRAction::Reduce(Expr, 48) */
                 (10, 113), /* ')' => LRAction::Reduce(Expr, 48) */
                 (12, 113), /* ',' => LRAction::Reduce(Expr, 48) */
                 (17, 113), /* ';' => LRAction::Reduce(Expr, 48) */
@@ -1135,7 +1116,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (5, 188),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (6, 188),  /* '#' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (9, 188),  /* '(' => LRAction::Reduce(ScopeContentOpt, 38) */
-                (16, 16),  /* '.' => LRAction::Shift(55) */
+                (16, 17),  /* '.' => LRAction::Shift(57) */
                 (18, 188), /* 'let' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (31, 188), /* '-' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (35, 188), /* '&' => LRAction::Reduce(ScopeContentOpt, 38) */
@@ -1157,10 +1138,10 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (55, 188), /* '}' => LRAction::Reduce(ScopeContentOpt, 38) */
             ],
             gotos: &[
-                (10, 56), /* Break => 56 */
-                (76, 57), /* Scope => 57 */
-                (77, 58), /* ScopeContent => 58 */
-                (79, 59), /* ScopeContentOpt => 59 */
+                (10, 58), /* Break => 58 */
+                (76, 59), /* Scope => 59 */
+                (77, 60), /* ScopeContent => 60 */
+                (79, 61), /* ScopeContentOpt => 61 */
             ],
         },
         // State 49
@@ -1175,9 +1156,6 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 50
         LR1State {
             actions: &[
-                (0, 171),  /* '<$>' => LRAction::Reduce(PathList, 114) */
-                (5, 171),  /* '\r?\n|\r' => LRAction::Reduce(PathList, 114) */
-                (6, 171),  /* '#' => LRAction::Reduce(PathList, 114) */
                 (9, 171),  /* '(' => LRAction::Reduce(PathList, 114) */
                 (10, 171), /* ')' => LRAction::Reduce(PathList, 114) */
                 (12, 171), /* ',' => LRAction::Reduce(PathList, 114) */
@@ -1225,6 +1203,25 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 51
         LR1State {
             actions: &[
+                (0, 195),  /* '<$>' => LRAction::Reduce(Semi, 43) */
+                (5, 195),  /* '\r?\n|\r' => LRAction::Reduce(Semi, 43) */
+                (6, 195),  /* '#' => LRAction::Reduce(Semi, 43) */
+                (55, 195), /* '}' => LRAction::Reduce(Semi, 43) */
+            ],
+            gotos: &[],
+        },
+        // State 52
+        LR1State {
+            actions: &[
+                (0, 103), /* '<$>' => LRAction::Reduce(ConstantDef, 28) */
+                (5, 103), /* '\r?\n|\r' => LRAction::Reduce(ConstantDef, 28) */
+                (6, 103), /* '#' => LRAction::Reduce(ConstantDef, 28) */
+            ],
+            gotos: &[],
+        },
+        // State 53
+        LR1State {
+            actions: &[
                 (9, 152),  /* '(' => LRAction::Reduce(LogicalOrExprList, 54) */
                 (31, 152), /* '-' => LRAction::Reduce(LogicalOrExprList, 54) */
                 (35, 152), /* '&' => LRAction::Reduce(LogicalOrExprList, 54) */
@@ -1243,16 +1240,13 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 152), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalOrExprList, 54) */
             ],
             gotos: &[
-                (55, 60), /* LogicalOrExpr => 60 */
+                (55, 62), /* LogicalOrExpr => 62 */
                 (56, 45), /* LogicalOrExprList => 45 */
             ],
         },
-        // State 52
+        // State 54
         LR1State {
             actions: &[
-                (0, 196),  /* '<$>' => LRAction::Reduce(SetExpr, 49) */
-                (5, 196),  /* '\r?\n|\r' => LRAction::Reduce(SetExpr, 49) */
-                (6, 196),  /* '#' => LRAction::Reduce(SetExpr, 49) */
                 (10, 196), /* ')' => LRAction::Reduce(SetExpr, 49) */
                 (12, 196), /* ',' => LRAction::Reduce(SetExpr, 49) */
                 (17, 196), /* ';' => LRAction::Reduce(SetExpr, 49) */
@@ -1261,23 +1255,20 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 53
+        // State 55
         LR1State {
             actions: &[
-                (0, 150),  /* '<$>' => LRAction::Reduce(LogicalOrExpr, 52) */
-                (5, 150),  /* '\r?\n|\r' => LRAction::Reduce(LogicalOrExpr, 52) */
-                (6, 150),  /* '#' => LRAction::Reduce(LogicalOrExpr, 52) */
                 (10, 150), /* ')' => LRAction::Reduce(LogicalOrExpr, 52) */
                 (12, 150), /* ',' => LRAction::Reduce(LogicalOrExpr, 52) */
                 (17, 150), /* ';' => LRAction::Reduce(LogicalOrExpr, 52) */
                 (19, 150), /* ':=' => LRAction::Reduce(LogicalOrExpr, 52) */
-                (20, 17),  /* '||' => LRAction::Shift(61) */
+                (20, 18),  /* '||' => LRAction::Shift(63) */
                 (44, 150), /* ']' => LRAction::Reduce(LogicalOrExpr, 52) */
                 (54, 150), /* '{' => LRAction::Reduce(LogicalOrExpr, 52) */
             ],
             gotos: &[],
         },
-        // State 54
+        // State 56
         LR1State {
             actions: &[
                 (9, 64),  /* '(' => LRAction::Reduce(ArithmeticExprList, 73) */
@@ -1298,13 +1289,13 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 64), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ArithmeticExprList, 73) */
             ],
             gotos: &[
-                (2, 62),  /* ArithmeticExpr => 62 */
-                (3, 63),  /* ArithmeticExprList => 63 */
-                (22, 64), /* CompareExpr => 64 */
-                (48, 65), /* InfixInExpr => 65 */
+                (2, 64),  /* ArithmeticExpr => 64 */
+                (3, 65),  /* ArithmeticExprList => 65 */
+                (22, 66), /* CompareExpr => 66 */
+                (48, 67), /* InfixInExpr => 67 */
             ],
         },
-        // State 55
+        // State 57
         LR1State {
             actions: &[
                 (5, 75),  /* '\r?\n|\r' => LRAction::Reduce(Break, 42) */
@@ -1332,7 +1323,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 56
+        // State 58
         LR1State {
             actions: &[
                 (5, 187),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt, 37) */
@@ -1360,29 +1351,29 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 57
+        // State 59
         LR1State {
-            actions: &[(55, 18) /* '}' => LRAction::Shift(66) */],
+            actions: &[(55, 19) /* '}' => LRAction::Shift(68) */],
             gotos: &[],
         },
-        // State 58
+        // State 60
         LR1State {
             actions: &[
                 (5, 3),    /* '\r?\n|\r' => LRAction::Shift(12) */
                 (55, 194), /* '}' => LRAction::Reduce(ScopeOpt, 31) */
             ],
             gotos: &[
-                (31, 67), /* EndOfLine => 67 */
-                (82, 68), /* ScopeOpt => 68 */
+                (31, 69), /* EndOfLine => 69 */
+                (82, 70), /* ScopeOpt => 70 */
             ],
         },
-        // State 59
+        // State 61
         LR1State {
             actions: &[
                 (5, 190),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt0, 36) */
                 (6, 190),  /* '#' => LRAction::Reduce(ScopeContentOpt0, 36) */
                 (9, 152),  /* '(' => LRAction::Reduce(LogicalOrExprList, 54) */
-                (18, 19),  /* 'let' => LRAction::Shift(69) */
+                (18, 20),  /* 'let' => LRAction::Shift(71) */
                 (31, 152), /* '-' => LRAction::Reduce(LogicalOrExprList, 54) */
                 (35, 152), /* '&' => LRAction::Reduce(LogicalOrExprList, 54) */
                 (36, 152), /* '$' => LRAction::Reduce(LogicalOrExprList, 54) */
@@ -1398,30 +1389,27 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (50, 152), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Reduce(LogicalOrExprList, 54) */
                 (51, 152), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Reduce(LogicalOrExprList, 54) */
                 (52, 152), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalOrExprList, 54) */
-                (53, 20),  /* 'return' => LRAction::Shift(70) */
+                (53, 21),  /* 'return' => LRAction::Shift(72) */
                 (54, 14),  /* '{' => LRAction::Shift(48) */
                 (55, 190), /* '}' => LRAction::Reduce(ScopeContentOpt0, 36) */
             ],
             gotos: &[
-                (9, 71),  /* Block => 71 */
-                (32, 72), /* Expr => 72 */
-                (51, 73), /* LetStmt => 73 */
+                (9, 73),  /* Block => 73 */
+                (32, 74), /* Expr => 74 */
+                (51, 75), /* LetStmt => 75 */
                 (55, 44), /* LogicalOrExpr => 44 */
                 (56, 45), /* LogicalOrExprList => 45 */
-                (74, 74), /* ReturnStmt => 74 */
-                (78, 75), /* ScopeContentKind => 75 */
-                (80, 76), /* ScopeContentOpt0 => 76 */
+                (74, 76), /* ReturnStmt => 76 */
+                (78, 77), /* ScopeContentKind => 77 */
+                (80, 78), /* ScopeContentOpt0 => 78 */
                 (84, 46), /* SetExpr => 46 */
-                (86, 77), /* Statement => 77 */
-                (87, 78), /* StatementKind => 78 */
+                (86, 79), /* Statement => 79 */
+                (87, 80), /* StatementKind => 80 */
             ],
         },
-        // State 60
+        // State 62
         LR1State {
             actions: &[
-                (0, 197),  /* '<$>' => LRAction::Reduce(SetExprOpt, 50) */
-                (5, 197),  /* '\r?\n|\r' => LRAction::Reduce(SetExprOpt, 50) */
-                (6, 197),  /* '#' => LRAction::Reduce(SetExprOpt, 50) */
                 (10, 197), /* ')' => LRAction::Reduce(SetExprOpt, 50) */
                 (12, 197), /* ',' => LRAction::Reduce(SetExprOpt, 50) */
                 (17, 197), /* ';' => LRAction::Reduce(SetExprOpt, 50) */
@@ -1430,7 +1418,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 61
+        // State 63
         LR1State {
             actions: &[
                 (9, 151),  /* '(' => LRAction::Reduce(LogicalOrExprList, 53) */
@@ -1452,12 +1440,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 62
+        // State 64
         LR1State {
             actions: &[
-                (0, 95),  /* '<$>' => LRAction::Reduce(CompareExprList, 63) */
-                (5, 95),  /* '\r?\n|\r' => LRAction::Reduce(CompareExprList, 63) */
-                (6, 95),  /* '#' => LRAction::Reduce(CompareExprList, 63) */
                 (10, 95), /* ')' => LRAction::Reduce(CompareExprList, 63) */
                 (12, 95), /* ',' => LRAction::Reduce(CompareExprList, 63) */
                 (17, 95), /* ';' => LRAction::Reduce(CompareExprList, 63) */
@@ -1475,9 +1460,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (44, 95), /* ']' => LRAction::Reduce(CompareExprList, 63) */
                 (54, 95), /* '{' => LRAction::Reduce(CompareExprList, 63) */
             ],
-            gotos: &[(23, 79) /* CompareExprList => 79 */],
+            gotos: &[(23, 81) /* CompareExprList => 81 */],
         },
-        // State 63
+        // State 65
         LR1State {
             actions: &[
                 (9, 116),  /* '(' => LRAction::Reduce(FactorExprList, 78) */
@@ -1498,46 +1483,40 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 116), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(FactorExprList, 78) */
             ],
             gotos: &[
-                (33, 80), /* FactorExpr => 80 */
-                (34, 81), /* FactorExprList => 81 */
+                (33, 82), /* FactorExpr => 82 */
+                (34, 83), /* FactorExprList => 83 */
             ],
         },
-        // State 64
+        // State 66
         LR1State {
             actions: &[
-                (0, 138),  /* '<$>' => LRAction::Reduce(InfixInExprOpt, 60) */
-                (5, 138),  /* '\r?\n|\r' => LRAction::Reduce(InfixInExprOpt, 60) */
-                (6, 138),  /* '#' => LRAction::Reduce(InfixInExprOpt, 60) */
                 (10, 138), /* ')' => LRAction::Reduce(InfixInExprOpt, 60) */
                 (12, 138), /* ',' => LRAction::Reduce(InfixInExprOpt, 60) */
                 (17, 138), /* ';' => LRAction::Reduce(InfixInExprOpt, 60) */
                 (19, 138), /* ':=' => LRAction::Reduce(InfixInExprOpt, 60) */
                 (20, 138), /* '||' => LRAction::Reduce(InfixInExprOpt, 60) */
                 (21, 138), /* '&&' => LRAction::Reduce(InfixInExprOpt, 60) */
-                (22, 21),  /* 'in' => LRAction::Shift(82) */
+                (22, 22),  /* 'in' => LRAction::Shift(84) */
                 (44, 138), /* ']' => LRAction::Reduce(InfixInExprOpt, 60) */
                 (54, 138), /* '{' => LRAction::Reduce(InfixInExprOpt, 60) */
             ],
-            gotos: &[(49, 83) /* InfixInExprOpt => 83 */],
+            gotos: &[(49, 85) /* InfixInExprOpt => 85 */],
         },
-        // State 65
+        // State 67
         LR1State {
             actions: &[
-                (0, 147),  /* '<$>' => LRAction::Reduce(LogicalAndExpr, 55) */
-                (5, 147),  /* '\r?\n|\r' => LRAction::Reduce(LogicalAndExpr, 55) */
-                (6, 147),  /* '#' => LRAction::Reduce(LogicalAndExpr, 55) */
                 (10, 147), /* ')' => LRAction::Reduce(LogicalAndExpr, 55) */
                 (12, 147), /* ',' => LRAction::Reduce(LogicalAndExpr, 55) */
                 (17, 147), /* ';' => LRAction::Reduce(LogicalAndExpr, 55) */
                 (19, 147), /* ':=' => LRAction::Reduce(LogicalAndExpr, 55) */
                 (20, 147), /* '||' => LRAction::Reduce(LogicalAndExpr, 55) */
-                (21, 22),  /* '&&' => LRAction::Shift(84) */
+                (21, 23),  /* '&&' => LRAction::Shift(86) */
                 (44, 147), /* ']' => LRAction::Reduce(LogicalAndExpr, 55) */
                 (54, 147), /* '{' => LRAction::Reduce(LogicalAndExpr, 55) */
             ],
             gotos: &[],
         },
-        // State 66
+        // State 68
         LR1State {
             actions: &[
                 (0, 74),  /* '<$>' => LRAction::Reduce(Block, 145) */
@@ -1585,13 +1564,13 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 67
+        // State 69
         LR1State {
             actions: &[
                 (5, 188),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (6, 188),  /* '#' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (9, 188),  /* '(' => LRAction::Reduce(ScopeContentOpt, 38) */
-                (16, 16),  /* '.' => LRAction::Shift(55) */
+                (16, 17),  /* '.' => LRAction::Shift(57) */
                 (18, 188), /* 'let' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (31, 188), /* '-' => LRAction::Reduce(ScopeContentOpt, 38) */
                 (35, 188), /* '&' => LRAction::Reduce(ScopeContentOpt, 38) */
@@ -1613,32 +1592,32 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (55, 188), /* '}' => LRAction::Reduce(ScopeContentOpt, 38) */
             ],
             gotos: &[
-                (10, 56), /* Break => 56 */
-                (76, 85), /* Scope => 85 */
-                (77, 58), /* ScopeContent => 58 */
-                (79, 59), /* ScopeContentOpt => 59 */
+                (10, 58), /* Break => 58 */
+                (76, 87), /* Scope => 87 */
+                (77, 60), /* ScopeContent => 60 */
+                (79, 61), /* ScopeContentOpt => 61 */
             ],
         },
-        // State 68
+        // State 70
         LR1State {
             actions: &[(55, 183) /* '}' => LRAction::Reduce(Scope, 29) */],
             gotos: &[],
         },
-        // State 69
+        // State 71
         LR1State {
             actions: &[
                 (42, 2), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
             ],
-            gotos: &[(42, 86) /* Ident => 86 */],
+            gotos: &[(42, 88) /* Ident => 88 */],
         },
-        // State 70
+        // State 72
         LR1State {
             actions: &[
                 (17, 181), /* ';' => LRAction::Reduce(ReturnStmt, 144) */
             ],
             gotos: &[],
         },
-        // State 71
+        // State 73
         LR1State {
             actions: &[
                 (5, 186),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentKind, 40) */
@@ -1647,28 +1626,28 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 72
+        // State 74
         LR1State {
             actions: &[
                 (17, 201), /* ';' => LRAction::Reduce(StatementKind, 45) */
             ],
             gotos: &[],
         },
-        // State 73
+        // State 75
         LR1State {
             actions: &[
                 (17, 200), /* ';' => LRAction::Reduce(StatementKind, 44) */
             ],
             gotos: &[],
         },
-        // State 74
+        // State 76
         LR1State {
             actions: &[
                 (17, 202), /* ';' => LRAction::Reduce(StatementKind, 46) */
             ],
             gotos: &[],
         },
-        // State 75
+        // State 77
         LR1State {
             actions: &[
                 (5, 189),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt0, 35) */
@@ -1677,7 +1656,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 76
+        // State 78
         LR1State {
             actions: &[
                 (5, 192),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt1, 34) */
@@ -1685,12 +1664,12 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (55, 192), /* '}' => LRAction::Reduce(ScopeContentOpt1, 34) */
             ],
             gotos: &[
-                (19, 87), /* Comment => 87 */
+                (19, 89), /* Comment => 89 */
                 (39, 17), /* Hash => 17 */
-                (81, 88), /* ScopeContentOpt1 => 88 */
+                (81, 90), /* ScopeContentOpt1 => 90 */
             ],
         },
-        // State 77
+        // State 79
         LR1State {
             actions: &[
                 (5, 185),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentKind, 39) */
@@ -1699,17 +1678,14 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 78
+        // State 80
         LR1State {
-            actions: &[(17, 23) /* ';' => LRAction::Shift(89) */],
-            gotos: &[(83, 90) /* Semi => 90 */],
+            actions: &[(17, 15) /* ';' => LRAction::Shift(51) */],
+            gotos: &[(83, 91) /* Semi => 91 */],
         },
-        // State 79
+        // State 81
         LR1State {
             actions: &[
-                (0, 93),  /* '<$>' => LRAction::Reduce(CompareExpr, 61) */
-                (5, 93),  /* '\r?\n|\r' => LRAction::Reduce(CompareExpr, 61) */
-                (6, 93),  /* '#' => LRAction::Reduce(CompareExpr, 61) */
                 (10, 93), /* ')' => LRAction::Reduce(CompareExpr, 61) */
                 (12, 93), /* ',' => LRAction::Reduce(CompareExpr, 61) */
                 (17, 93), /* ';' => LRAction::Reduce(CompareExpr, 61) */
@@ -1717,24 +1693,21 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (20, 93), /* '||' => LRAction::Reduce(CompareExpr, 61) */
                 (21, 93), /* '&&' => LRAction::Reduce(CompareExpr, 61) */
                 (22, 93), /* 'in' => LRAction::Reduce(CompareExpr, 61) */
-                (23, 24), /* '>=' => LRAction::Shift(91) */
-                (24, 25), /* '<=' => LRAction::Shift(92) */
-                (25, 26), /* '>' => LRAction::Shift(93) */
-                (26, 27), /* '<' => LRAction::Shift(94) */
-                (27, 28), /* '!=' => LRAction::Shift(95) */
-                (28, 29), /* '/=' => LRAction::Shift(96) */
-                (29, 30), /* '==' => LRAction::Shift(97) */
+                (23, 24), /* '>=' => LRAction::Shift(92) */
+                (24, 25), /* '<=' => LRAction::Shift(93) */
+                (25, 26), /* '>' => LRAction::Shift(94) */
+                (26, 27), /* '<' => LRAction::Shift(95) */
+                (27, 28), /* '!=' => LRAction::Shift(96) */
+                (28, 29), /* '/=' => LRAction::Shift(97) */
+                (29, 30), /* '==' => LRAction::Shift(98) */
                 (44, 93), /* ']' => LRAction::Reduce(CompareExpr, 61) */
                 (54, 93), /* '{' => LRAction::Reduce(CompareExpr, 61) */
             ],
-            gotos: &[(24, 98) /* CompareOp => 98 */],
+            gotos: &[(24, 99) /* CompareOp => 99 */],
         },
-        // State 80
+        // State 82
         LR1State {
             actions: &[
-                (0, 62),  /* '<$>' => LRAction::Reduce(ArithmeticExpr, 71) */
-                (5, 62),  /* '\r?\n|\r' => LRAction::Reduce(ArithmeticExpr, 71) */
-                (6, 62),  /* '#' => LRAction::Reduce(ArithmeticExpr, 71) */
                 (10, 62), /* ')' => LRAction::Reduce(ArithmeticExpr, 71) */
                 (12, 62), /* ',' => LRAction::Reduce(ArithmeticExpr, 71) */
                 (17, 62), /* ';' => LRAction::Reduce(ArithmeticExpr, 71) */
@@ -1749,18 +1722,18 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (27, 62), /* '!=' => LRAction::Reduce(ArithmeticExpr, 71) */
                 (28, 62), /* '/=' => LRAction::Reduce(ArithmeticExpr, 71) */
                 (29, 62), /* '==' => LRAction::Reduce(ArithmeticExpr, 71) */
-                (30, 31), /* '+' => LRAction::Shift(99) */
-                (31, 32), /* '-' => LRAction::Shift(100) */
+                (30, 31), /* '+' => LRAction::Shift(100) */
+                (31, 32), /* '-' => LRAction::Shift(101) */
                 (44, 62), /* ']' => LRAction::Reduce(ArithmeticExpr, 71) */
                 (54, 62), /* '{' => LRAction::Reduce(ArithmeticExpr, 71) */
             ],
-            gotos: &[(4, 101) /* ArithmeticOp => 101 */],
+            gotos: &[(4, 102) /* ArithmeticOp => 102 */],
         },
-        // State 81
+        // State 83
         LR1State {
             actions: &[
                 (9, 176),  /* '(' => LRAction::Reduce(PrefixExprList, 85) */
-                (31, 33),  /* '-' => LRAction::Shift(102) */
+                (31, 33),  /* '-' => LRAction::Shift(103) */
                 (35, 176), /* '&' => LRAction::Reduce(PrefixExprList, 85) */
                 (36, 176), /* '$' => LRAction::Reduce(PrefixExprList, 85) */
                 (40, 176), /* '~' => LRAction::Reduce(PrefixExprList, 85) */
@@ -1777,11 +1750,11 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 176), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(PrefixExprList, 85) */
             ],
             gotos: &[
-                (69, 103), /* PrefixExpr => 103 */
-                (70, 104), /* PrefixExprList => 104 */
+                (69, 104), /* PrefixExpr => 104 */
+                (70, 105), /* PrefixExprList => 105 */
             ],
         },
-        // State 82
+        // State 84
         LR1State {
             actions: &[
                 (9, 64),  /* '(' => LRAction::Reduce(ArithmeticExprList, 73) */
@@ -1802,17 +1775,14 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 64), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ArithmeticExprList, 73) */
             ],
             gotos: &[
-                (2, 62),   /* ArithmeticExpr => 62 */
-                (3, 63),   /* ArithmeticExprList => 63 */
-                (22, 105), /* CompareExpr => 105 */
+                (2, 64),   /* ArithmeticExpr => 64 */
+                (3, 65),   /* ArithmeticExprList => 65 */
+                (22, 106), /* CompareExpr => 106 */
             ],
         },
-        // State 83
+        // State 85
         LR1State {
             actions: &[
-                (0, 136),  /* '<$>' => LRAction::Reduce(InfixInExpr, 58) */
-                (5, 136),  /* '\r?\n|\r' => LRAction::Reduce(InfixInExpr, 58) */
-                (6, 136),  /* '#' => LRAction::Reduce(InfixInExpr, 58) */
                 (10, 136), /* ')' => LRAction::Reduce(InfixInExpr, 58) */
                 (12, 136), /* ',' => LRAction::Reduce(InfixInExpr, 58) */
                 (17, 136), /* ';' => LRAction::Reduce(InfixInExpr, 58) */
@@ -1824,7 +1794,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 84
+        // State 86
         LR1State {
             actions: &[
                 (9, 148),  /* '(' => LRAction::Reduce(LogicalAndExprList, 56) */
@@ -1846,17 +1816,17 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 85
+        // State 87
         LR1State {
             actions: &[(55, 193) /* '}' => LRAction::Reduce(ScopeOpt, 30) */],
             gotos: &[],
         },
-        // State 86
+        // State 88
         LR1State {
-            actions: &[(15, 34) /* '=' => LRAction::Shift(106) */],
+            actions: &[(15, 34) /* '=' => LRAction::Shift(107) */],
             gotos: &[],
         },
-        // State 87
+        // State 89
         LR1State {
             actions: &[
                 (5, 191),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContentOpt1, 33) */
@@ -1864,7 +1834,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 88
+        // State 90
         LR1State {
             actions: &[
                 (5, 184),  /* '\r?\n|\r' => LRAction::Reduce(ScopeContent, 32) */
@@ -1872,16 +1842,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 89
-        LR1State {
-            actions: &[
-                (5, 195),  /* '\r?\n|\r' => LRAction::Reduce(Semi, 43) */
-                (6, 195),  /* '#' => LRAction::Reduce(Semi, 43) */
-                (55, 195), /* '}' => LRAction::Reduce(Semi, 43) */
-            ],
-            gotos: &[],
-        },
-        // State 90
+        // State 91
         LR1State {
             actions: &[
                 (5, 199),  /* '\r?\n|\r' => LRAction::Reduce(Statement, 41) */
@@ -1890,7 +1851,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 91
+        // State 92
         LR1State {
             actions: &[
                 (9, 96),  /* '(' => LRAction::Reduce(CompareOp, 64) */
@@ -1912,7 +1873,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 92
+        // State 93
         LR1State {
             actions: &[
                 (9, 97),  /* '(' => LRAction::Reduce(CompareOp, 65) */
@@ -1934,7 +1895,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 93
+        // State 94
         LR1State {
             actions: &[
                 (9, 98),  /* '(' => LRAction::Reduce(CompareOp, 66) */
@@ -1956,7 +1917,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 94
+        // State 95
         LR1State {
             actions: &[
                 (9, 99),  /* '(' => LRAction::Reduce(CompareOp, 67) */
@@ -1978,7 +1939,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 95
+        // State 96
         LR1State {
             actions: &[
                 (9, 100),  /* '(' => LRAction::Reduce(CompareOp, 68) */
@@ -2000,7 +1961,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 96
+        // State 97
         LR1State {
             actions: &[
                 (9, 101),  /* '(' => LRAction::Reduce(CompareOp, 69) */
@@ -2022,7 +1983,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 97
+        // State 98
         LR1State {
             actions: &[
                 (9, 102),  /* '(' => LRAction::Reduce(CompareOp, 70) */
@@ -2044,7 +2005,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 98
+        // State 99
         LR1State {
             actions: &[
                 (9, 64),  /* '(' => LRAction::Reduce(ArithmeticExprList, 73) */
@@ -2065,11 +2026,11 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 64), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ArithmeticExprList, 73) */
             ],
             gotos: &[
-                (2, 107), /* ArithmeticExpr => 107 */
-                (3, 63),  /* ArithmeticExprList => 63 */
+                (2, 108), /* ArithmeticExpr => 108 */
+                (3, 65),  /* ArithmeticExprList => 65 */
             ],
         },
-        // State 99
+        // State 100
         LR1State {
             actions: &[
                 (9, 65),  /* '(' => LRAction::Reduce(ArithmeticOp, 74) */
@@ -2091,7 +2052,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 100
+        // State 101
         LR1State {
             actions: &[
                 (9, 66),  /* '(' => LRAction::Reduce(ArithmeticOp, 75) */
@@ -2113,7 +2074,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 101
+        // State 102
         LR1State {
             actions: &[
                 (9, 63),  /* '(' => LRAction::Reduce(ArithmeticExprList, 72) */
@@ -2135,12 +2096,12 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 102
+        // State 103
         LR1State {
             actions: &[
                 (9, 155),  /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
-                (35, 35),  /* '&' => LRAction::Shift(108) */
-                (36, 36),  /* '$' => LRAction::Shift(109) */
+                (35, 35),  /* '&' => LRAction::Shift(109) */
+                (36, 36),  /* '$' => LRAction::Shift(110) */
                 (42, 155), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
                 (43, 155), /* '[' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
                 (45, 155), /* '"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
@@ -2153,18 +2114,15 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 155), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
             ],
             gotos: &[
-                (0, 110),  /* ApplyExpr => 110 */
-                (57, 111), /* LowerPrefixExpr => 111 */
-                (58, 112), /* LowerPrefixExprOpt => 112 */
-                (59, 113), /* LowerPrefixOp => 113 */
+                (0, 111),  /* ApplyExpr => 111 */
+                (57, 112), /* LowerPrefixExpr => 112 */
+                (58, 113), /* LowerPrefixExprOpt => 113 */
+                (59, 114), /* LowerPrefixOp => 114 */
             ],
         },
-        // State 103
+        // State 104
         LR1State {
             actions: &[
-                (0, 114),  /* '<$>' => LRAction::Reduce(FactorExpr, 76) */
-                (5, 114),  /* '\r?\n|\r' => LRAction::Reduce(FactorExpr, 76) */
-                (6, 114),  /* '#' => LRAction::Reduce(FactorExpr, 76) */
                 (10, 114), /* ')' => LRAction::Reduce(FactorExpr, 76) */
                 (12, 114), /* ',' => LRAction::Reduce(FactorExpr, 76) */
                 (17, 114), /* ';' => LRAction::Reduce(FactorExpr, 76) */
@@ -2181,22 +2139,22 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (29, 114), /* '==' => LRAction::Reduce(FactorExpr, 76) */
                 (30, 114), /* '+' => LRAction::Reduce(FactorExpr, 76) */
                 (31, 114), /* '-' => LRAction::Reduce(FactorExpr, 76) */
-                (32, 37),  /* '*' => LRAction::Shift(114) */
-                (33, 38),  /* '/' => LRAction::Shift(115) */
-                (34, 39),  /* '%' => LRAction::Shift(116) */
+                (32, 37),  /* '*' => LRAction::Shift(115) */
+                (33, 38),  /* '/' => LRAction::Shift(116) */
+                (34, 39),  /* '%' => LRAction::Shift(117) */
                 (44, 114), /* ']' => LRAction::Reduce(FactorExpr, 76) */
                 (54, 114), /* '{' => LRAction::Reduce(FactorExpr, 76) */
             ],
-            gotos: &[(35, 117) /* FactorOp => 117 */],
+            gotos: &[(35, 118) /* FactorOp => 118 */],
         },
-        // State 104
+        // State 105
         LR1State {
             actions: &[
                 (9, 155),  /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
-                (35, 35),  /* '&' => LRAction::Shift(108) */
-                (36, 36),  /* '$' => LRAction::Shift(109) */
-                (40, 40),  /* '~' => LRAction::Shift(118) */
-                (41, 41),  /* '@' => LRAction::Shift(119) */
+                (35, 35),  /* '&' => LRAction::Shift(109) */
+                (36, 36),  /* '$' => LRAction::Shift(110) */
+                (40, 40),  /* '~' => LRAction::Shift(119) */
+                (41, 41),  /* '@' => LRAction::Shift(120) */
                 (42, 155), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
                 (43, 155), /* '[' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
                 (45, 155), /* '"(\\.|[^"])*"' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
@@ -2209,21 +2167,18 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 155), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
             ],
             gotos: &[
-                (0, 120),  /* ApplyExpr => 120 */
-                (26, 121), /* DefaultModifier => 121 */
-                (57, 111), /* LowerPrefixExpr => 111 */
-                (58, 112), /* LowerPrefixExprOpt => 112 */
-                (59, 113), /* LowerPrefixOp => 113 */
-                (60, 122), /* Modifier => 122 */
-                (73, 123), /* Qualif => 123 */
+                (0, 121),  /* ApplyExpr => 121 */
+                (26, 122), /* DefaultModifier => 122 */
+                (57, 112), /* LowerPrefixExpr => 112 */
+                (58, 113), /* LowerPrefixExprOpt => 113 */
+                (59, 114), /* LowerPrefixOp => 114 */
+                (60, 123), /* Modifier => 123 */
+                (73, 124), /* Qualif => 124 */
             ],
         },
-        // State 105
+        // State 106
         LR1State {
             actions: &[
-                (0, 137),  /* '<$>' => LRAction::Reduce(InfixInExprOpt, 59) */
-                (5, 137),  /* '\r?\n|\r' => LRAction::Reduce(InfixInExprOpt, 59) */
-                (6, 137),  /* '#' => LRAction::Reduce(InfixInExprOpt, 59) */
                 (10, 137), /* ')' => LRAction::Reduce(InfixInExprOpt, 59) */
                 (12, 137), /* ',' => LRAction::Reduce(InfixInExprOpt, 59) */
                 (17, 137), /* ';' => LRAction::Reduce(InfixInExprOpt, 59) */
@@ -2235,7 +2190,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 106
+        // State 107
         LR1State {
             actions: &[
                 (9, 152),  /* '(' => LRAction::Reduce(LogicalOrExprList, 54) */
@@ -2256,18 +2211,15 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 152), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalOrExprList, 54) */
             ],
             gotos: &[
-                (32, 124), /* Expr => 124 */
+                (32, 125), /* Expr => 125 */
                 (55, 44),  /* LogicalOrExpr => 44 */
                 (56, 45),  /* LogicalOrExprList => 45 */
                 (84, 46),  /* SetExpr => 46 */
             ],
         },
-        // State 107
+        // State 108
         LR1State {
             actions: &[
-                (0, 94),  /* '<$>' => LRAction::Reduce(CompareExprList, 62) */
-                (5, 94),  /* '\r?\n|\r' => LRAction::Reduce(CompareExprList, 62) */
-                (6, 94),  /* '#' => LRAction::Reduce(CompareExprList, 62) */
                 (10, 94), /* ')' => LRAction::Reduce(CompareExprList, 62) */
                 (12, 94), /* ',' => LRAction::Reduce(CompareExprList, 62) */
                 (17, 94), /* ';' => LRAction::Reduce(CompareExprList, 62) */
@@ -2287,7 +2239,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 108
+        // State 109
         LR1State {
             actions: &[
                 (9, 156),  /* '(' => LRAction::Reduce(LowerPrefixOp, 92) */
@@ -2304,7 +2256,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 109
+        // State 110
         LR1State {
             actions: &[
                 (9, 157),  /* '(' => LRAction::Reduce(LowerPrefixOp, 93) */
@@ -2321,12 +2273,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 110
+        // State 111
         LR1State {
             actions: &[
-                (0, 173),  /* '<$>' => LRAction::Reduce(PrefixExpr, 82) */
-                (5, 173),  /* '\r?\n|\r' => LRAction::Reduce(PrefixExpr, 82) */
-                (6, 173),  /* '#' => LRAction::Reduce(PrefixExpr, 82) */
                 (10, 173), /* ')' => LRAction::Reduce(PrefixExpr, 82) */
                 (12, 173), /* ',' => LRAction::Reduce(PrefixExpr, 82) */
                 (17, 173), /* ';' => LRAction::Reduce(PrefixExpr, 82) */
@@ -2351,12 +2300,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 111
+        // State 112
         LR1State {
             actions: &[
-                (0, 61),  /* '<$>' => LRAction::Reduce(ApplyExprList, 88) */
-                (5, 61),  /* '\r?\n|\r' => LRAction::Reduce(ApplyExprList, 88) */
-                (6, 61),  /* '#' => LRAction::Reduce(ApplyExprList, 88) */
                 (9, 61),  /* '(' => LRAction::Reduce(ApplyExprList, 88) */
                 (10, 61), /* ')' => LRAction::Reduce(ApplyExprList, 88) */
                 (12, 61), /* ',' => LRAction::Reduce(ApplyExprList, 88) */
@@ -2395,41 +2341,41 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 61), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ApplyExprList, 88) */
                 (54, 61), /* '{' => LRAction::Reduce(ApplyExprList, 88) */
             ],
-            gotos: &[(1, 125) /* ApplyExprList => 125 */],
-        },
-        // State 112
-        LR1State {
-            actions: &[
-                (9, 42),  /* '(' => LRAction::Shift(126) */
-                (42, 2),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
-                (43, 43), /* '[' => LRAction::Shift(127) */
-                (45, 44), /* '"(\\.|[^"])*"' => LRAction::Shift(128) */
-                (46, 45), /* 'b"(\\.|[^"])*"' => LRAction::Shift(129) */
-                (47, 46), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(130) */
-                (48, 47), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(131) */
-                (49, 48), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(132) */
-                (50, 49), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(133) */
-                (51, 50), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(134) */
-                (52, 51), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(135) */
-            ],
-            gotos: &[
-                (5, 136),  /* Array => 136 */
-                (8, 137),  /* BinaryInteger => 137 */
-                (11, 138), /* ByteLiteral => 138 */
-                (12, 139), /* Callable => 139 */
-                (40, 140), /* HexByteLiteral => 140 */
-                (41, 141), /* HexadecimalInteger => 141 */
-                (42, 28),  /* Ident => 28 */
-                (43, 142), /* Ieee754Float => 142 */
-                (52, 143), /* Literal => 143 */
-                (62, 144), /* Numeric => 144 */
-                (63, 145), /* OctalInteger => 145 */
-                (67, 146), /* Path => 146 */
-                (75, 147), /* Rfc3339DateTime => 147 */
-                (88, 148), /* String => 148 */
-            ],
+            gotos: &[(1, 126) /* ApplyExprList => 126 */],
         },
         // State 113
+        LR1State {
+            actions: &[
+                (9, 42),  /* '(' => LRAction::Shift(127) */
+                (42, 2),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
+                (43, 43), /* '[' => LRAction::Shift(128) */
+                (45, 44), /* '"(\\.|[^"])*"' => LRAction::Shift(129) */
+                (46, 45), /* 'b"(\\.|[^"])*"' => LRAction::Shift(130) */
+                (47, 46), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(131) */
+                (48, 47), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(132) */
+                (49, 48), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(133) */
+                (50, 49), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(134) */
+                (51, 50), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(135) */
+                (52, 51), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(136) */
+            ],
+            gotos: &[
+                (5, 137),  /* Array => 137 */
+                (8, 138),  /* BinaryInteger => 138 */
+                (11, 139), /* ByteLiteral => 139 */
+                (12, 140), /* Callable => 140 */
+                (40, 141), /* HexByteLiteral => 141 */
+                (41, 142), /* HexadecimalInteger => 142 */
+                (42, 28),  /* Ident => 28 */
+                (43, 143), /* Ieee754Float => 143 */
+                (52, 144), /* Literal => 144 */
+                (62, 145), /* Numeric => 145 */
+                (63, 146), /* OctalInteger => 146 */
+                (67, 147), /* Path => 147 */
+                (75, 148), /* Rfc3339DateTime => 148 */
+                (88, 149), /* String => 149 */
+            ],
+        },
+        // State 114
         LR1State {
             actions: &[
                 (9, 154),  /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 90) */
@@ -2446,7 +2392,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 114
+        // State 115
         LR1State {
             actions: &[
                 (9, 117),  /* '(' => LRAction::Reduce(FactorOp, 79) */
@@ -2468,7 +2414,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 115
+        // State 116
         LR1State {
             actions: &[
                 (9, 118),  /* '(' => LRAction::Reduce(FactorOp, 80) */
@@ -2490,7 +2436,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 116
+        // State 117
         LR1State {
             actions: &[
                 (9, 119),  /* '(' => LRAction::Reduce(FactorOp, 81) */
@@ -2512,7 +2458,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 117
+        // State 118
         LR1State {
             actions: &[
                 (9, 115),  /* '(' => LRAction::Reduce(FactorExprList, 77) */
@@ -2534,16 +2480,6 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 118
-        LR1State {
-            actions: &[
-                (42, 2), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
-            ],
-            gotos: &[
-                (42, 28),  /* Ident => 28 */
-                (67, 149), /* Path => 149 */
-            ],
-        },
         // State 119
         LR1State {
             actions: &[
@@ -2557,9 +2493,16 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
         // State 120
         LR1State {
             actions: &[
-                (0, 174),  /* '<$>' => LRAction::Reduce(PrefixExpr, 83) */
-                (5, 174),  /* '\r?\n|\r' => LRAction::Reduce(PrefixExpr, 83) */
-                (6, 174),  /* '#' => LRAction::Reduce(PrefixExpr, 83) */
+                (42, 2), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
+            ],
+            gotos: &[
+                (42, 28),  /* Ident => 28 */
+                (67, 151), /* Path => 151 */
+            ],
+        },
+        // State 121
+        LR1State {
+            actions: &[
                 (10, 174), /* ')' => LRAction::Reduce(PrefixExpr, 83) */
                 (12, 174), /* ',' => LRAction::Reduce(PrefixExpr, 83) */
                 (17, 174), /* ';' => LRAction::Reduce(PrefixExpr, 83) */
@@ -2584,12 +2527,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 121
+        // State 122
         LR1State {
             actions: &[
-                (0, 180),  /* '<$>' => LRAction::Reduce(Qualif, 107) */
-                (5, 180),  /* '\r?\n|\r' => LRAction::Reduce(Qualif, 107) */
-                (6, 180),  /* '#' => LRAction::Reduce(Qualif, 107) */
                 (9, 180),  /* '(' => LRAction::Reduce(Qualif, 107) */
                 (10, 180), /* ')' => LRAction::Reduce(Qualif, 107) */
                 (12, 180), /* ',' => LRAction::Reduce(Qualif, 107) */
@@ -2630,12 +2570,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 122
+        // State 123
         LR1State {
             actions: &[
-                (0, 179),  /* '<$>' => LRAction::Reduce(Qualif, 106) */
-                (5, 179),  /* '\r?\n|\r' => LRAction::Reduce(Qualif, 106) */
-                (6, 179),  /* '#' => LRAction::Reduce(Qualif, 106) */
                 (9, 179),  /* '(' => LRAction::Reduce(Qualif, 106) */
                 (10, 179), /* ')' => LRAction::Reduce(Qualif, 106) */
                 (12, 179), /* ',' => LRAction::Reduce(Qualif, 106) */
@@ -2676,7 +2613,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 123
+        // State 124
         LR1State {
             actions: &[
                 (9, 175),  /* '(' => LRAction::Reduce(PrefixExprList, 84) */
@@ -2697,17 +2634,14 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 124
+        // State 125
         LR1State {
             actions: &[(17, 140) /* ';' => LRAction::Reduce(LetStmt, 47) */],
             gotos: &[],
         },
-        // State 125
+        // State 126
         LR1State {
             actions: &[
-                (0, 59),   /* '<$>' => LRAction::Reduce(ApplyExpr, 86) */
-                (5, 59),   /* '\r?\n|\r' => LRAction::Reduce(ApplyExpr, 86) */
-                (6, 59),   /* '#' => LRAction::Reduce(ApplyExpr, 86) */
                 (9, 155),  /* '(' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
                 (10, 59),  /* ')' => LRAction::Reduce(ApplyExpr, 86) */
                 (12, 59),  /* ',' => LRAction::Reduce(ApplyExpr, 86) */
@@ -2728,11 +2662,11 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (32, 59),  /* '*' => LRAction::Reduce(ApplyExpr, 86) */
                 (33, 59),  /* '/' => LRAction::Reduce(ApplyExpr, 86) */
                 (34, 59),  /* '%' => LRAction::Reduce(ApplyExpr, 86) */
-                (35, 35),  /* '&' => LRAction::Shift(108) */
-                (36, 36),  /* '$' => LRAction::Shift(109) */
-                (38, 52),  /* 'if' => LRAction::Shift(151) */
-                (40, 40),  /* '~' => LRAction::Shift(118) */
-                (41, 41),  /* '@' => LRAction::Shift(119) */
+                (35, 35),  /* '&' => LRAction::Shift(109) */
+                (36, 36),  /* '$' => LRAction::Shift(110) */
+                (38, 52),  /* 'if' => LRAction::Shift(152) */
+                (40, 40),  /* '~' => LRAction::Shift(119) */
+                (41, 41),  /* '@' => LRAction::Shift(120) */
                 (42, 155), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
                 (43, 155), /* '[' => LRAction::Reduce(LowerPrefixExprOpt, 91) */
                 (44, 59),  /* ']' => LRAction::Reduce(ApplyExpr, 86) */
@@ -2747,18 +2681,18 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (54, 59),  /* '{' => LRAction::Reduce(ApplyExpr, 86) */
             ],
             gotos: &[
-                (7, 152),  /* AtomicExpr => 152 */
-                (26, 121), /* DefaultModifier => 121 */
-                (44, 153), /* IfExpr => 153 */
-                (46, 154), /* ImportExpr => 154 */
-                (57, 155), /* LowerPrefixExpr => 155 */
-                (58, 112), /* LowerPrefixExprOpt => 112 */
-                (59, 113), /* LowerPrefixOp => 113 */
-                (60, 122), /* Modifier => 122 */
-                (73, 156), /* Qualif => 156 */
+                (7, 153),  /* AtomicExpr => 153 */
+                (26, 122), /* DefaultModifier => 122 */
+                (44, 154), /* IfExpr => 154 */
+                (46, 155), /* ImportExpr => 155 */
+                (57, 156), /* LowerPrefixExpr => 156 */
+                (58, 113), /* LowerPrefixExprOpt => 113 */
+                (59, 114), /* LowerPrefixOp => 114 */
+                (60, 123), /* Modifier => 123 */
+                (73, 157), /* Qualif => 157 */
             ],
         },
-        // State 126
+        // State 127
         LR1State {
             actions: &[
                 (9, 152),  /* '(' => LRAction::Reduce(LogicalOrExprList, 54) */
@@ -2779,13 +2713,13 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 152), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalOrExprList, 54) */
             ],
             gotos: &[
-                (32, 157), /* Expr => 157 */
+                (32, 158), /* Expr => 158 */
                 (55, 44),  /* LogicalOrExpr => 44 */
                 (56, 45),  /* LogicalOrExprList => 45 */
                 (84, 46),  /* SetExpr => 46 */
             ],
         },
-        // State 127
+        // State 128
         LR1State {
             actions: &[
                 (9, 152),  /* '(' => LRAction::Reduce(LogicalOrExprList, 54) */
@@ -2807,20 +2741,17 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 152), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalOrExprList, 54) */
             ],
             gotos: &[
-                (6, 158),  /* ArrayOpt => 158 */
-                (17, 159), /* CommaSepElements => 159 */
-                (32, 160), /* Expr => 160 */
+                (6, 159),  /* ArrayOpt => 159 */
+                (17, 160), /* CommaSepElements => 160 */
+                (32, 161), /* Expr => 161 */
                 (55, 44),  /* LogicalOrExpr => 44 */
                 (56, 45),  /* LogicalOrExprList => 45 */
                 (84, 46),  /* SetExpr => 46 */
             ],
         },
-        // State 128
+        // State 129
         LR1State {
             actions: &[
-                (0, 203),  /* '<$>' => LRAction::Reduce(String, 132) */
-                (5, 203),  /* '\r?\n|\r' => LRAction::Reduce(String, 132) */
-                (6, 203),  /* '#' => LRAction::Reduce(String, 132) */
                 (9, 203),  /* '(' => LRAction::Reduce(String, 132) */
                 (10, 203), /* ')' => LRAction::Reduce(String, 132) */
                 (12, 203), /* ',' => LRAction::Reduce(String, 132) */
@@ -2862,12 +2793,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 129
+        // State 130
         LR1State {
             actions: &[
-                (0, 76),  /* '<$>' => LRAction::Reduce(ByteLiteral, 133) */
-                (5, 76),  /* '\r?\n|\r' => LRAction::Reduce(ByteLiteral, 133) */
-                (6, 76),  /* '#' => LRAction::Reduce(ByteLiteral, 133) */
                 (9, 76),  /* '(' => LRAction::Reduce(ByteLiteral, 133) */
                 (10, 76), /* ')' => LRAction::Reduce(ByteLiteral, 133) */
                 (12, 76), /* ',' => LRAction::Reduce(ByteLiteral, 133) */
@@ -2909,12 +2837,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 130
+        // State 131
         LR1State {
             actions: &[
-                (0, 126),  /* '<$>' => LRAction::Reduce(HexByteLiteral, 134) */
-                (5, 126),  /* '\r?\n|\r' => LRAction::Reduce(HexByteLiteral, 134) */
-                (6, 126),  /* '#' => LRAction::Reduce(HexByteLiteral, 134) */
                 (9, 126),  /* '(' => LRAction::Reduce(HexByteLiteral, 134) */
                 (10, 126), /* ')' => LRAction::Reduce(HexByteLiteral, 134) */
                 (12, 126), /* ',' => LRAction::Reduce(HexByteLiteral, 134) */
@@ -2956,12 +2881,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 131
+        // State 132
         LR1State {
             actions: &[
-                (0, 73),  /* '<$>' => LRAction::Reduce(BinaryInteger, 139) */
-                (5, 73),  /* '\r?\n|\r' => LRAction::Reduce(BinaryInteger, 139) */
-                (6, 73),  /* '#' => LRAction::Reduce(BinaryInteger, 139) */
                 (9, 73),  /* '(' => LRAction::Reduce(BinaryInteger, 139) */
                 (10, 73), /* ')' => LRAction::Reduce(BinaryInteger, 139) */
                 (12, 73), /* ',' => LRAction::Reduce(BinaryInteger, 139) */
@@ -3003,12 +2925,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 132
+        // State 133
         LR1State {
             actions: &[
-                (0, 165),  /* '<$>' => LRAction::Reduce(OctalInteger, 140) */
-                (5, 165),  /* '\r?\n|\r' => LRAction::Reduce(OctalInteger, 140) */
-                (6, 165),  /* '#' => LRAction::Reduce(OctalInteger, 140) */
                 (9, 165),  /* '(' => LRAction::Reduce(OctalInteger, 140) */
                 (10, 165), /* ')' => LRAction::Reduce(OctalInteger, 140) */
                 (12, 165), /* ',' => LRAction::Reduce(OctalInteger, 140) */
@@ -3050,12 +2969,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 133
+        // State 134
         LR1State {
             actions: &[
-                (0, 127),  /* '<$>' => LRAction::Reduce(HexadecimalInteger, 141) */
-                (5, 127),  /* '\r?\n|\r' => LRAction::Reduce(HexadecimalInteger, 141) */
-                (6, 127),  /* '#' => LRAction::Reduce(HexadecimalInteger, 141) */
                 (9, 127),  /* '(' => LRAction::Reduce(HexadecimalInteger, 141) */
                 (10, 127), /* ')' => LRAction::Reduce(HexadecimalInteger, 141) */
                 (12, 127), /* ',' => LRAction::Reduce(HexadecimalInteger, 141) */
@@ -3097,12 +3013,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 134
+        // State 135
         LR1State {
             actions: &[
-                (0, 129),  /* '<$>' => LRAction::Reduce(Ieee754Float, 142) */
-                (5, 129),  /* '\r?\n|\r' => LRAction::Reduce(Ieee754Float, 142) */
-                (6, 129),  /* '#' => LRAction::Reduce(Ieee754Float, 142) */
                 (9, 129),  /* '(' => LRAction::Reduce(Ieee754Float, 142) */
                 (10, 129), /* ')' => LRAction::Reduce(Ieee754Float, 142) */
                 (12, 129), /* ',' => LRAction::Reduce(Ieee754Float, 142) */
@@ -3144,12 +3057,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 135
+        // State 136
         LR1State {
             actions: &[
-                (0, 182),  /* '<$>' => LRAction::Reduce(Rfc3339DateTime, 143) */
-                (5, 182),  /* '\r?\n|\r' => LRAction::Reduce(Rfc3339DateTime, 143) */
-                (6, 182),  /* '#' => LRAction::Reduce(Rfc3339DateTime, 143) */
                 (9, 182),  /* '(' => LRAction::Reduce(Rfc3339DateTime, 143) */
                 (10, 182), /* ')' => LRAction::Reduce(Rfc3339DateTime, 143) */
                 (12, 182), /* ',' => LRAction::Reduce(Rfc3339DateTime, 143) */
@@ -3191,12 +3101,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 136
+        // State 137
         LR1State {
             actions: &[
-                (0, 141),  /* '<$>' => LRAction::Reduce(Literal, 117) */
-                (5, 141),  /* '\r?\n|\r' => LRAction::Reduce(Literal, 117) */
-                (6, 141),  /* '#' => LRAction::Reduce(Literal, 117) */
                 (9, 141),  /* '(' => LRAction::Reduce(Literal, 117) */
                 (10, 141), /* ')' => LRAction::Reduce(Literal, 117) */
                 (12, 141), /* ',' => LRAction::Reduce(Literal, 117) */
@@ -3238,12 +3145,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 137
+        // State 138
         LR1State {
             actions: &[
-                (0, 161),  /* '<$>' => LRAction::Reduce(Numeric, 135) */
-                (5, 161),  /* '\r?\n|\r' => LRAction::Reduce(Numeric, 135) */
-                (6, 161),  /* '#' => LRAction::Reduce(Numeric, 135) */
                 (9, 161),  /* '(' => LRAction::Reduce(Numeric, 135) */
                 (10, 161), /* ')' => LRAction::Reduce(Numeric, 135) */
                 (12, 161), /* ',' => LRAction::Reduce(Numeric, 135) */
@@ -3285,12 +3189,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 138
+        // State 139
         LR1State {
             actions: &[
-                (0, 143),  /* '<$>' => LRAction::Reduce(Literal, 119) */
-                (5, 143),  /* '\r?\n|\r' => LRAction::Reduce(Literal, 119) */
-                (6, 143),  /* '#' => LRAction::Reduce(Literal, 119) */
                 (9, 143),  /* '(' => LRAction::Reduce(Literal, 119) */
                 (10, 143), /* ')' => LRAction::Reduce(Literal, 119) */
                 (12, 143), /* ',' => LRAction::Reduce(Literal, 119) */
@@ -3332,12 +3233,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 139
+        // State 140
         LR1State {
             actions: &[
-                (0, 153),  /* '<$>' => LRAction::Reduce(LowerPrefixExpr, 89) */
-                (5, 153),  /* '\r?\n|\r' => LRAction::Reduce(LowerPrefixExpr, 89) */
-                (6, 153),  /* '#' => LRAction::Reduce(LowerPrefixExpr, 89) */
                 (9, 153),  /* '(' => LRAction::Reduce(LowerPrefixExpr, 89) */
                 (10, 153), /* ')' => LRAction::Reduce(LowerPrefixExpr, 89) */
                 (12, 153), /* ',' => LRAction::Reduce(LowerPrefixExpr, 89) */
@@ -3379,12 +3277,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 140
+        // State 141
         LR1State {
             actions: &[
-                (0, 144),  /* '<$>' => LRAction::Reduce(Literal, 120) */
-                (5, 144),  /* '\r?\n|\r' => LRAction::Reduce(Literal, 120) */
-                (6, 144),  /* '#' => LRAction::Reduce(Literal, 120) */
                 (9, 144),  /* '(' => LRAction::Reduce(Literal, 120) */
                 (10, 144), /* ')' => LRAction::Reduce(Literal, 120) */
                 (12, 144), /* ',' => LRAction::Reduce(Literal, 120) */
@@ -3426,12 +3321,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 141
+        // State 142
         LR1State {
             actions: &[
-                (0, 163),  /* '<$>' => LRAction::Reduce(Numeric, 137) */
-                (5, 163),  /* '\r?\n|\r' => LRAction::Reduce(Numeric, 137) */
-                (6, 163),  /* '#' => LRAction::Reduce(Numeric, 137) */
                 (9, 163),  /* '(' => LRAction::Reduce(Numeric, 137) */
                 (10, 163), /* ')' => LRAction::Reduce(Numeric, 137) */
                 (12, 163), /* ',' => LRAction::Reduce(Numeric, 137) */
@@ -3473,12 +3365,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 142
+        // State 143
         LR1State {
             actions: &[
-                (0, 164),  /* '<$>' => LRAction::Reduce(Numeric, 138) */
-                (5, 164),  /* '\r?\n|\r' => LRAction::Reduce(Numeric, 138) */
-                (6, 164),  /* '#' => LRAction::Reduce(Numeric, 138) */
                 (9, 164),  /* '(' => LRAction::Reduce(Numeric, 138) */
                 (10, 164), /* ')' => LRAction::Reduce(Numeric, 138) */
                 (12, 164), /* ',' => LRAction::Reduce(Numeric, 138) */
@@ -3520,12 +3409,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 143
+        // State 144
         LR1State {
             actions: &[
-                (0, 78),  /* '<$>' => LRAction::Reduce(Callable, 95) */
-                (5, 78),  /* '\r?\n|\r' => LRAction::Reduce(Callable, 95) */
-                (6, 78),  /* '#' => LRAction::Reduce(Callable, 95) */
                 (9, 78),  /* '(' => LRAction::Reduce(Callable, 95) */
                 (10, 78), /* ')' => LRAction::Reduce(Callable, 95) */
                 (12, 78), /* ',' => LRAction::Reduce(Callable, 95) */
@@ -3567,12 +3453,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 144
+        // State 145
         LR1State {
             actions: &[
-                (0, 145),  /* '<$>' => LRAction::Reduce(Literal, 121) */
-                (5, 145),  /* '\r?\n|\r' => LRAction::Reduce(Literal, 121) */
-                (6, 145),  /* '#' => LRAction::Reduce(Literal, 121) */
                 (9, 145),  /* '(' => LRAction::Reduce(Literal, 121) */
                 (10, 145), /* ')' => LRAction::Reduce(Literal, 121) */
                 (12, 145), /* ',' => LRAction::Reduce(Literal, 121) */
@@ -3614,12 +3497,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 145
+        // State 146
         LR1State {
             actions: &[
-                (0, 162),  /* '<$>' => LRAction::Reduce(Numeric, 136) */
-                (5, 162),  /* '\r?\n|\r' => LRAction::Reduce(Numeric, 136) */
-                (6, 162),  /* '#' => LRAction::Reduce(Numeric, 136) */
                 (9, 162),  /* '(' => LRAction::Reduce(Numeric, 136) */
                 (10, 162), /* ')' => LRAction::Reduce(Numeric, 136) */
                 (12, 162), /* ',' => LRAction::Reduce(Numeric, 136) */
@@ -3661,12 +3541,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 146
+        // State 147
         LR1State {
             actions: &[
-                (0, 77),  /* '<$>' => LRAction::Reduce(Callable, 94) */
-                (5, 77),  /* '\r?\n|\r' => LRAction::Reduce(Callable, 94) */
-                (6, 77),  /* '#' => LRAction::Reduce(Callable, 94) */
                 (9, 77),  /* '(' => LRAction::Reduce(Callable, 94) */
                 (10, 77), /* ')' => LRAction::Reduce(Callable, 94) */
                 (12, 77), /* ',' => LRAction::Reduce(Callable, 94) */
@@ -3708,12 +3585,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 147
+        // State 148
         LR1State {
             actions: &[
-                (0, 146),  /* '<$>' => LRAction::Reduce(Literal, 122) */
-                (5, 146),  /* '\r?\n|\r' => LRAction::Reduce(Literal, 122) */
-                (6, 146),  /* '#' => LRAction::Reduce(Literal, 122) */
                 (9, 146),  /* '(' => LRAction::Reduce(Literal, 122) */
                 (10, 146), /* ')' => LRAction::Reduce(Literal, 122) */
                 (12, 146), /* ',' => LRAction::Reduce(Literal, 122) */
@@ -3755,12 +3629,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 148
+        // State 149
         LR1State {
             actions: &[
-                (0, 142),  /* '<$>' => LRAction::Reduce(Literal, 118) */
-                (5, 142),  /* '\r?\n|\r' => LRAction::Reduce(Literal, 118) */
-                (6, 142),  /* '#' => LRAction::Reduce(Literal, 118) */
                 (9, 142),  /* '(' => LRAction::Reduce(Literal, 118) */
                 (10, 142), /* ')' => LRAction::Reduce(Literal, 118) */
                 (12, 142), /* ',' => LRAction::Reduce(Literal, 118) */
@@ -3802,12 +3673,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 149
+        // State 150
         LR1State {
             actions: &[
-                (0, 104),  /* '<$>' => LRAction::Reduce(DefaultModifier, 108) */
-                (5, 104),  /* '\r?\n|\r' => LRAction::Reduce(DefaultModifier, 108) */
-                (6, 104),  /* '#' => LRAction::Reduce(DefaultModifier, 108) */
                 (9, 104),  /* '(' => LRAction::Reduce(DefaultModifier, 108) */
                 (10, 104), /* ')' => LRAction::Reduce(DefaultModifier, 108) */
                 (12, 104), /* ',' => LRAction::Reduce(DefaultModifier, 108) */
@@ -3848,16 +3716,13 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 150
+        // State 151
         LR1State {
             actions: &[
-                (0, 160),  /* '<$>' => LRAction::Reduce(ModifierOpt, 111) */
-                (5, 160),  /* '\r?\n|\r' => LRAction::Reduce(ModifierOpt, 111) */
-                (6, 160),  /* '#' => LRAction::Reduce(ModifierOpt, 111) */
                 (9, 160),  /* '(' => LRAction::Reduce(ModifierOpt, 111) */
                 (10, 160), /* ')' => LRAction::Reduce(ModifierOpt, 111) */
                 (12, 160), /* ',' => LRAction::Reduce(ModifierOpt, 111) */
-                (13, 53),  /* ':' => LRAction::Shift(161) */
+                (13, 53),  /* ':' => LRAction::Shift(162) */
                 (17, 160), /* ';' => LRAction::Reduce(ModifierOpt, 111) */
                 (19, 160), /* ':=' => LRAction::Reduce(ModifierOpt, 111) */
                 (20, 160), /* '||' => LRAction::Reduce(ModifierOpt, 111) */
@@ -3894,11 +3759,11 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (54, 160), /* '{' => LRAction::Reduce(ModifierOpt, 111) */
             ],
             gotos: &[
-                (50, 162), /* KindArg => 162 */
-                (61, 163), /* ModifierOpt => 163 */
+                (50, 163), /* KindArg => 163 */
+                (61, 164), /* ModifierOpt => 164 */
             ],
         },
-        // State 151
+        // State 152
         LR1State {
             actions: &[
                 (9, 152),  /* '(' => LRAction::Reduce(LogicalOrExprList, 54) */
@@ -3919,18 +3784,15 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 152), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalOrExprList, 54) */
             ],
             gotos: &[
-                (32, 164), /* Expr => 164 */
+                (32, 165), /* Expr => 165 */
                 (55, 44),  /* LogicalOrExpr => 44 */
                 (56, 45),  /* LogicalOrExprList => 45 */
                 (84, 46),  /* SetExpr => 46 */
             ],
         },
-        // State 152
+        // State 153
         LR1State {
             actions: &[
-                (0, 60),  /* '<$>' => LRAction::Reduce(ApplyExprList, 87) */
-                (5, 60),  /* '\r?\n|\r' => LRAction::Reduce(ApplyExprList, 87) */
-                (6, 60),  /* '#' => LRAction::Reduce(ApplyExprList, 87) */
                 (9, 60),  /* '(' => LRAction::Reduce(ApplyExprList, 87) */
                 (10, 60), /* ')' => LRAction::Reduce(ApplyExprList, 87) */
                 (12, 60), /* ',' => LRAction::Reduce(ApplyExprList, 87) */
@@ -3971,12 +3833,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 153
+        // State 154
         LR1State {
             actions: &[
-                (0, 72),  /* '<$>' => LRAction::Reduce(AtomicExpr, 99) */
-                (5, 72),  /* '\r?\n|\r' => LRAction::Reduce(AtomicExpr, 99) */
-                (6, 72),  /* '#' => LRAction::Reduce(AtomicExpr, 99) */
                 (9, 72),  /* '(' => LRAction::Reduce(AtomicExpr, 99) */
                 (10, 72), /* ')' => LRAction::Reduce(AtomicExpr, 99) */
                 (12, 72), /* ',' => LRAction::Reduce(AtomicExpr, 99) */
@@ -4017,12 +3876,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 154
+        // State 155
         LR1State {
             actions: &[
-                (0, 71),  /* '<$>' => LRAction::Reduce(AtomicExpr, 98) */
-                (5, 71),  /* '\r?\n|\r' => LRAction::Reduce(AtomicExpr, 98) */
-                (6, 71),  /* '#' => LRAction::Reduce(AtomicExpr, 98) */
                 (9, 71),  /* '(' => LRAction::Reduce(AtomicExpr, 98) */
                 (10, 71), /* ')' => LRAction::Reduce(AtomicExpr, 98) */
                 (12, 71), /* ',' => LRAction::Reduce(AtomicExpr, 98) */
@@ -4063,12 +3919,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 155
+        // State 156
         LR1State {
             actions: &[
-                (0, 135),  /* '<$>' => LRAction::Reduce(ImportExprOpt, 102) */
-                (5, 135),  /* '\r?\n|\r' => LRAction::Reduce(ImportExprOpt, 102) */
-                (6, 135),  /* '#' => LRAction::Reduce(ImportExprOpt, 102) */
                 (9, 135),  /* '(' => LRAction::Reduce(ImportExprOpt, 102) */
                 (10, 135), /* ')' => LRAction::Reduce(ImportExprOpt, 102) */
                 (12, 135), /* ',' => LRAction::Reduce(ImportExprOpt, 102) */
@@ -4091,7 +3944,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (34, 135), /* '%' => LRAction::Reduce(ImportExprOpt, 102) */
                 (35, 135), /* '&' => LRAction::Reduce(ImportExprOpt, 102) */
                 (36, 135), /* '$' => LRAction::Reduce(ImportExprOpt, 102) */
-                (37, 54),  /* '?' => LRAction::Shift(165) */
+                (37, 54),  /* '?' => LRAction::Shift(166) */
                 (38, 135), /* 'if' => LRAction::Reduce(ImportExprOpt, 102) */
                 (40, 135), /* '~' => LRAction::Reduce(ImportExprOpt, 102) */
                 (41, 135), /* '@' => LRAction::Reduce(ImportExprOpt, 102) */
@@ -4108,14 +3961,11 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 135), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(ImportExprOpt, 102) */
                 (54, 135), /* '{' => LRAction::Reduce(ImportExprOpt, 102) */
             ],
-            gotos: &[(47, 166) /* ImportExprOpt => 166 */],
+            gotos: &[(47, 167) /* ImportExprOpt => 167 */],
         },
-        // State 156
+        // State 157
         LR1State {
             actions: &[
-                (0, 70),  /* '<$>' => LRAction::Reduce(AtomicExpr, 97) */
-                (5, 70),  /* '\r?\n|\r' => LRAction::Reduce(AtomicExpr, 97) */
-                (6, 70),  /* '#' => LRAction::Reduce(AtomicExpr, 97) */
                 (9, 70),  /* '(' => LRAction::Reduce(AtomicExpr, 97) */
                 (10, 70), /* ')' => LRAction::Reduce(AtomicExpr, 97) */
                 (12, 70), /* ',' => LRAction::Reduce(AtomicExpr, 97) */
@@ -4156,70 +4006,67 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 157
-        LR1State {
-            actions: &[(10, 55) /* ')' => LRAction::Shift(167) */],
-            gotos: &[],
-        },
         // State 158
         LR1State {
-            actions: &[(44, 56) /* ']' => LRAction::Shift(168) */],
+            actions: &[(10, 55) /* ')' => LRAction::Shift(168) */],
             gotos: &[],
         },
         // State 159
         LR1State {
-            actions: &[(44, 68) /* ']' => LRAction::Reduce(ArrayOpt, 124) */],
+            actions: &[(44, 56) /* ']' => LRAction::Shift(169) */],
             gotos: &[],
         },
         // State 160
         LR1State {
-            actions: &[
-                (12, 57), /* ',' => LRAction::Shift(169) */
-                (44, 88), /* ']' => LRAction::Reduce(CommaSepElementsOpt, 128) */
-            ],
-            gotos: &[
-                (13, 170), /* CommaExprList => 170 */
-                (18, 171), /* CommaSepElementsOpt => 171 */
-            ],
+            actions: &[(44, 68) /* ']' => LRAction::Reduce(ArrayOpt, 124) */],
+            gotos: &[],
         },
         // State 161
         LR1State {
             actions: &[
-                (9, 42),  /* '(' => LRAction::Shift(126) */
-                (42, 2),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
-                (43, 43), /* '[' => LRAction::Shift(127) */
-                (45, 44), /* '"(\\.|[^"])*"' => LRAction::Shift(128) */
-                (46, 45), /* 'b"(\\.|[^"])*"' => LRAction::Shift(129) */
-                (47, 46), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(130) */
-                (48, 47), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(131) */
-                (49, 48), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(132) */
-                (50, 49), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(133) */
-                (51, 50), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(134) */
-                (52, 51), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(135) */
+                (12, 57), /* ',' => LRAction::Shift(170) */
+                (44, 88), /* ']' => LRAction::Reduce(CommaSepElementsOpt, 128) */
             ],
             gotos: &[
-                (5, 136),  /* Array => 136 */
-                (8, 137),  /* BinaryInteger => 137 */
-                (11, 138), /* ByteLiteral => 138 */
-                (12, 172), /* Callable => 172 */
-                (40, 140), /* HexByteLiteral => 140 */
-                (41, 141), /* HexadecimalInteger => 141 */
-                (42, 28),  /* Ident => 28 */
-                (43, 142), /* Ieee754Float => 142 */
-                (52, 143), /* Literal => 143 */
-                (62, 144), /* Numeric => 144 */
-                (63, 145), /* OctalInteger => 145 */
-                (67, 146), /* Path => 146 */
-                (75, 147), /* Rfc3339DateTime => 147 */
-                (88, 148), /* String => 148 */
+                (13, 171), /* CommaExprList => 171 */
+                (18, 172), /* CommaSepElementsOpt => 172 */
             ],
         },
         // State 162
         LR1State {
             actions: &[
-                (0, 159),  /* '<$>' => LRAction::Reduce(ModifierOpt, 110) */
-                (5, 159),  /* '\r?\n|\r' => LRAction::Reduce(ModifierOpt, 110) */
-                (6, 159),  /* '#' => LRAction::Reduce(ModifierOpt, 110) */
+                (9, 42),  /* '(' => LRAction::Shift(127) */
+                (42, 2),  /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
+                (43, 43), /* '[' => LRAction::Shift(128) */
+                (45, 44), /* '"(\\.|[^"])*"' => LRAction::Shift(129) */
+                (46, 45), /* 'b"(\\.|[^"])*"' => LRAction::Shift(130) */
+                (47, 46), /* 'bx"[0-9a-fA-F_]*"' => LRAction::Shift(131) */
+                (48, 47), /* '0b[01_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(132) */
+                (49, 48), /* '0o[0-7_]+([a-zA-Z](\w|[\/-])*)?' => LRAction::Shift(133) */
+                (50, 49), /* '0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?' => LRAction::Shift(134) */
+                (51, 50), /* '[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?' => LRAction::Shift(135) */
+                (52, 51), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Shift(136) */
+            ],
+            gotos: &[
+                (5, 137),  /* Array => 137 */
+                (8, 138),  /* BinaryInteger => 138 */
+                (11, 139), /* ByteLiteral => 139 */
+                (12, 173), /* Callable => 173 */
+                (40, 141), /* HexByteLiteral => 141 */
+                (41, 142), /* HexadecimalInteger => 142 */
+                (42, 28),  /* Ident => 28 */
+                (43, 143), /* Ieee754Float => 143 */
+                (52, 144), /* Literal => 144 */
+                (62, 145), /* Numeric => 145 */
+                (63, 146), /* OctalInteger => 146 */
+                (67, 147), /* Path => 147 */
+                (75, 148), /* Rfc3339DateTime => 148 */
+                (88, 149), /* String => 149 */
+            ],
+        },
+        // State 163
+        LR1State {
+            actions: &[
                 (9, 159),  /* '(' => LRAction::Reduce(ModifierOpt, 110) */
                 (10, 159), /* ')' => LRAction::Reduce(ModifierOpt, 110) */
                 (12, 159), /* ',' => LRAction::Reduce(ModifierOpt, 110) */
@@ -4260,12 +4107,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 163
+        // State 164
         LR1State {
             actions: &[
-                (0, 158),  /* '<$>' => LRAction::Reduce(Modifier, 109) */
-                (5, 158),  /* '\r?\n|\r' => LRAction::Reduce(Modifier, 109) */
-                (6, 158),  /* '#' => LRAction::Reduce(Modifier, 109) */
                 (9, 158),  /* '(' => LRAction::Reduce(Modifier, 109) */
                 (10, 158), /* ')' => LRAction::Reduce(Modifier, 109) */
                 (12, 158), /* ',' => LRAction::Reduce(Modifier, 109) */
@@ -4306,27 +4150,24 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 164
+        // State 165
         LR1State {
             actions: &[(54, 14) /* '{' => LRAction::Shift(48) */],
-            gotos: &[(9, 173) /* Block => 173 */],
+            gotos: &[(9, 174) /* Block => 174 */],
         },
-        // State 165
+        // State 166
         LR1State {
             actions: &[
                 (42, 2), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Shift(9) */
             ],
             gotos: &[
                 (42, 28),  /* Ident => 28 */
-                (67, 174), /* Path => 174 */
+                (67, 175), /* Path => 175 */
             ],
         },
-        // State 166
+        // State 167
         LR1State {
             actions: &[
-                (0, 133),  /* '<$>' => LRAction::Reduce(ImportExpr, 100) */
-                (5, 133),  /* '\r?\n|\r' => LRAction::Reduce(ImportExpr, 100) */
-                (6, 133),  /* '#' => LRAction::Reduce(ImportExpr, 100) */
                 (9, 133),  /* '(' => LRAction::Reduce(ImportExpr, 100) */
                 (10, 133), /* ')' => LRAction::Reduce(ImportExpr, 100) */
                 (12, 133), /* ',' => LRAction::Reduce(ImportExpr, 100) */
@@ -4367,12 +4208,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 167
+        // State 168
         LR1State {
             actions: &[
-                (0, 79),  /* '<$>' => LRAction::Reduce(Callable, 96) */
-                (5, 79),  /* '\r?\n|\r' => LRAction::Reduce(Callable, 96) */
-                (6, 79),  /* '#' => LRAction::Reduce(Callable, 96) */
                 (9, 79),  /* '(' => LRAction::Reduce(Callable, 96) */
                 (10, 79), /* ')' => LRAction::Reduce(Callable, 96) */
                 (12, 79), /* ',' => LRAction::Reduce(Callable, 96) */
@@ -4414,12 +4252,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 168
+        // State 169
         LR1State {
             actions: &[
-                (0, 67),  /* '<$>' => LRAction::Reduce(Array, 123) */
-                (5, 67),  /* '\r?\n|\r' => LRAction::Reduce(Array, 123) */
-                (6, 67),  /* '#' => LRAction::Reduce(Array, 123) */
                 (9, 67),  /* '(' => LRAction::Reduce(Array, 123) */
                 (10, 67), /* ')' => LRAction::Reduce(Array, 123) */
                 (12, 67), /* ',' => LRAction::Reduce(Array, 123) */
@@ -4461,7 +4296,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 169
+        // State 170
         LR1State {
             actions: &[
                 (9, 152),  /* '(' => LRAction::Reduce(LogicalOrExprList, 54) */
@@ -4483,34 +4318,31 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 152), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(LogicalOrExprList, 54) */
             ],
             gotos: &[
-                (14, 175), /* CommaExprListOpt => 175 */
-                (17, 176), /* CommaSepElements => 176 */
-                (32, 160), /* Expr => 160 */
+                (14, 176), /* CommaExprListOpt => 176 */
+                (17, 177), /* CommaSepElements => 177 */
+                (32, 161), /* Expr => 161 */
                 (55, 44),  /* LogicalOrExpr => 44 */
                 (56, 45),  /* LogicalOrExprList => 45 */
                 (84, 46),  /* SetExpr => 46 */
             ],
         },
-        // State 170
+        // State 171
         LR1State {
             actions: &[
                 (44, 87), /* ']' => LRAction::Reduce(CommaSepElementsOpt, 127) */
             ],
             gotos: &[],
         },
-        // State 171
+        // State 172
         LR1State {
             actions: &[
                 (44, 86), /* ']' => LRAction::Reduce(CommaSepElements, 126) */
             ],
             gotos: &[],
         },
-        // State 172
+        // State 173
         LR1State {
             actions: &[
-                (0, 139),  /* '<$>' => LRAction::Reduce(KindArg, 112) */
-                (5, 139),  /* '\r?\n|\r' => LRAction::Reduce(KindArg, 112) */
-                (6, 139),  /* '#' => LRAction::Reduce(KindArg, 112) */
                 (9, 139),  /* '(' => LRAction::Reduce(KindArg, 112) */
                 (10, 139), /* ')' => LRAction::Reduce(KindArg, 112) */
                 (12, 139), /* ',' => LRAction::Reduce(KindArg, 112) */
@@ -4551,12 +4383,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 173
+        // State 174
         LR1State {
             actions: &[
-                (0, 132),  /* '<$>' => LRAction::Reduce(IfExprOpt, 105) */
-                (5, 132),  /* '\r?\n|\r' => LRAction::Reduce(IfExprOpt, 105) */
-                (6, 132),  /* '#' => LRAction::Reduce(IfExprOpt, 105) */
                 (9, 132),  /* '(' => LRAction::Reduce(IfExprOpt, 105) */
                 (10, 132), /* ')' => LRAction::Reduce(IfExprOpt, 105) */
                 (12, 132), /* ',' => LRAction::Reduce(IfExprOpt, 105) */
@@ -4580,7 +4409,7 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (35, 132), /* '&' => LRAction::Reduce(IfExprOpt, 105) */
                 (36, 132), /* '$' => LRAction::Reduce(IfExprOpt, 105) */
                 (38, 132), /* 'if' => LRAction::Reduce(IfExprOpt, 105) */
-                (39, 58),  /* 'else' => LRAction::Shift(177) */
+                (39, 58),  /* 'else' => LRAction::Shift(178) */
                 (40, 132), /* '~' => LRAction::Reduce(IfExprOpt, 105) */
                 (41, 132), /* '@' => LRAction::Reduce(IfExprOpt, 105) */
                 (42, 132), /* '[_a-zA-Z](\w|[\/-])*' => LRAction::Reduce(IfExprOpt, 105) */
@@ -4596,14 +4425,11 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
                 (52, 132), /* '\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})' => LRAction::Reduce(IfExprOpt, 105) */
                 (54, 132), /* '{' => LRAction::Reduce(IfExprOpt, 105) */
             ],
-            gotos: &[(45, 178) /* IfExprOpt => 178 */],
+            gotos: &[(45, 179) /* IfExprOpt => 179 */],
         },
-        // State 174
+        // State 175
         LR1State {
             actions: &[
-                (0, 134),  /* '<$>' => LRAction::Reduce(ImportExprOpt, 101) */
-                (5, 134),  /* '\r?\n|\r' => LRAction::Reduce(ImportExprOpt, 101) */
-                (6, 134),  /* '#' => LRAction::Reduce(ImportExprOpt, 101) */
                 (9, 134),  /* '(' => LRAction::Reduce(ImportExprOpt, 101) */
                 (10, 134), /* ')' => LRAction::Reduce(ImportExprOpt, 101) */
                 (12, 134), /* ',' => LRAction::Reduce(ImportExprOpt, 101) */
@@ -4644,31 +4470,28 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 175
+        // State 176
         LR1State {
             actions: &[
                 (44, 80), /* ']' => LRAction::Reduce(CommaExprList, 129) */
             ],
             gotos: &[],
         },
-        // State 176
+        // State 177
         LR1State {
             actions: &[
                 (44, 81), /* ']' => LRAction::Reduce(CommaExprListOpt, 130) */
             ],
             gotos: &[],
         },
-        // State 177
-        LR1State {
-            actions: &[(54, 14) /* '{' => LRAction::Shift(48) */],
-            gotos: &[(9, 179) /* Block => 179 */],
-        },
         // State 178
         LR1State {
+            actions: &[(54, 14) /* '{' => LRAction::Shift(48) */],
+            gotos: &[(9, 180) /* Block => 180 */],
+        },
+        // State 179
+        LR1State {
             actions: &[
-                (0, 130),  /* '<$>' => LRAction::Reduce(IfExpr, 103) */
-                (5, 130),  /* '\r?\n|\r' => LRAction::Reduce(IfExpr, 103) */
-                (6, 130),  /* '#' => LRAction::Reduce(IfExpr, 103) */
                 (9, 130),  /* '(' => LRAction::Reduce(IfExpr, 103) */
                 (10, 130), /* ')' => LRAction::Reduce(IfExpr, 103) */
                 (12, 130), /* ',' => LRAction::Reduce(IfExpr, 103) */
@@ -4709,12 +4532,9 @@ static PARSE_TABLE: LRParseTable = LRParseTable {
             ],
             gotos: &[],
         },
-        // State 179
+        // State 180
         LR1State {
             actions: &[
-                (0, 131),  /* '<$>' => LRAction::Reduce(IfExprOpt, 104) */
-                (5, 131),  /* '\r?\n|\r' => LRAction::Reduce(IfExprOpt, 104) */
-                (6, 131),  /* '#' => LRAction::Reduce(IfExprOpt, 104) */
                 (9, 131),  /* '(' => LRAction::Reduce(IfExprOpt, 104) */
                 (10, 131), /* ')' => LRAction::Reduce(IfExprOpt, 104) */
                 (12, 131), /* ',' => LRAction::Reduce(IfExprOpt, 104) */
@@ -4815,8 +4635,8 @@ pub const PRODUCTIONS: &[LRProduction; 146] = &[
     LRProduction { lhs: 16, len: 0 },
     // 27 - Parameter: Ident ':' Path;
     LRProduction { lhs: 64, len: 3 },
-    // 28 - ConstantDef: 'const' Ident ':' Path '=' Expr;
-    LRProduction { lhs: 25, len: 6 },
+    // 28 - ConstantDef: 'const' Ident ':' Path '=' Expr Semi;
+    LRProduction { lhs: 25, len: 7 },
     // 29 - Scope: ScopeContent ScopeOpt /* Option */;
     LRProduction { lhs: 76, len: 2 },
     // 30 - ScopeOpt: EndOfLine Scope;
