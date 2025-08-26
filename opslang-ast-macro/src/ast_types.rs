@@ -1,3 +1,5 @@
+use convert_case::{Case, Casing};
+
 /// Represents a generic type in the AST that can be instantiated with a lifetime.
 ///
 /// # Invariants
@@ -16,6 +18,13 @@
 ///
 /// This ensures that the procedural macros using this struct can correctly generate
 /// code that references these lifetime-annotated AST types.
+///
+/// # Context-specific types
+///
+/// Different usage contexts have different requirements for path generation.
+/// Use the context-specific newtypes instead of accessing `full_path()` or `type_path()` directly:
+/// - [`CrateQualifiedType`] for external crate references
+/// - [`SuperQualifiedType`] for relative references within the same crate
 #[derive(Clone, Debug)]
 pub struct AstType {
     name: &'static str,
@@ -38,23 +47,33 @@ impl AstType {
     }
 
     /// Generate full path for this type with proper module qualification.
-    pub fn full_path(&self) -> String {
+    ///
+    /// # Private
+    ///
+    /// This method is private to prevent direct usage. Use [`AstType::as_crate_qualified`]
+    /// or [`AstType::as_super_qualified`] to get context-appropriate types.
+    fn full_path(&self) -> String {
         match self.module_path {
-            Some(module) => format!("syntax::v1::{module}::{}<'cx>", self.name),
-            None => format!("syntax::v1::{}<'cx>", self.name),
+            Some(module) => format!("::opslang_ast::syntax::v1::{module}::{}<'cx>", self.name),
+            None => format!("::opslang_ast::syntax::v1::{}<'cx>", self.name),
         }
     }
 
     /// Generate identifier-safe name for method generation, avoiding conflicts.
     pub fn ident_safe_name(&self) -> String {
         match self.module_path {
-            Some(module) => format!("{module}_{}", self.name),
-            None => self.name.to_string(),
+            Some(module) => format!("{module}_{}", self.name.to_case(Case::Snake)),
+            None => self.name.to_case(Case::Snake),
         }
     }
 
     /// Generate syn path for this type with proper module qualification.
-    pub fn type_path(&self) -> proc_macro2::TokenStream {
+    ///
+    /// # Private
+    ///
+    /// This method is private to prevent direct usage. Use [`AstType::as_crate_qualified`]
+    /// or [`AstType::as_super_qualified`] to get context-appropriate types.
+    fn type_path(&self) -> proc_macro2::TokenStream {
         use quote::quote;
         let type_ident = syn::Ident::new(self.name, proc_macro2::Span::call_site());
         match self.module_path {
@@ -85,6 +104,22 @@ impl AstType {
     pub const fn get_v1_ast_types() -> &'static [AstType] {
         V1_AST_TYPES
     }
+
+    /// Convert to a crate-qualified type for external references.
+    ///
+    /// This creates a type that generates paths like `::opslang_ast::syntax::v1::Type<'cx>`
+    /// for use in contexts where the full crate path is needed.
+    pub const fn outside_of_ast_crate(&self) -> OutsideAstCrateType<'_> {
+        OutsideAstCrateType { inner: self }
+    }
+
+    /// Convert to a super-qualified type for relative references.
+    ///
+    /// This creates a type that generates paths like `super::Type<'cx>` or `super::module::Type<'cx>`
+    /// for use in trait declarations within the same crate.
+    pub const fn inside_of_v1_child_mod(&self) -> InsideV1ChildModType<'_> {
+        InsideV1ChildModType { inner: self }
+    }
 }
 
 /// A macro to define AST types in a more Rust-like syntax with module grouping.
@@ -100,6 +135,46 @@ macro_rules! define_ast_types {
             $($(AstType::with_module(stringify!($mod_name), stringify!($module))),*)*
         ]
     };
+}
+
+/// A newtyped wrapper for [`AstType`] that ensures crate-qualified paths.
+///
+/// This type generates paths like `::opslang_ast::syntax::v1::Type<'cx>` and is intended
+/// for contexts where external crate references are needed, such as in visitor implementations
+/// that reference types from outside the current crate.
+#[derive(Clone, Debug)]
+pub struct OutsideAstCrateType<'a> {
+    inner: &'a AstType,
+}
+
+impl OutsideAstCrateType<'_> {
+    /// Generate fully qualified path with crate prefix.
+    ///
+    /// Returns a string like `::opslang_ast::syntax::v1::Type<'cx>` suitable for
+    /// external references to AST types.
+    pub fn full_crate_path(&self) -> String {
+        self.inner.full_path()
+    }
+}
+
+/// A newtyped wrapper for [`AstType`] that ensures super-qualified paths.
+///
+/// This type generates paths like `super::Type<'cx>` or `super::module::Type<'cx>` and is
+/// intended for contexts where relative references within the same crate are appropriate,
+/// such as in trait declarations.
+#[derive(Clone, Debug)]
+pub struct InsideV1ChildModType<'a> {
+    inner: &'a AstType,
+}
+
+impl InsideV1ChildModType<'_> {
+    /// Generate super-qualified token stream path.
+    ///
+    /// Returns a [`proc_macro2::TokenStream`] representing paths like `super::Type<'cx>`
+    /// suitable for relative references within the same crate.
+    pub fn super_path(&self) -> proc_macro2::TokenStream {
+        self.inner.type_path()
+    }
 }
 
 /// All AST types for v1 syntax including token types.

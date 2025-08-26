@@ -1,4 +1,3 @@
-use convert_case::{Case, Casing};
 use quote::{format_ident, quote};
 use syn::{Token, braced, token};
 
@@ -38,46 +37,41 @@ pub fn declare_ast_visitor_trait(
     let all_ast_types = crate::ast_types::AstType::get_v1_ast_types();
 
     // Generate visit_* and super_* method signatures
-    let visit_methods = all_ast_types.iter().map(|ast_type| {
+    let (visit_signatures, visit_methods): (Vec<_>, Vec<_>) = all_ast_types.iter().map(|ast_type| {
         let safe_name = ast_type.ident_safe_name();
-        let method_ident = format_ident!("visit_{}", safe_name.to_case(Case::Snake));
-        let super_method_ident = format_ident!("super_{}", safe_name.to_case(Case::Snake));
-        let type_path = ast_type.type_path();
+        let method_ident = format_ident!("visit_{safe_name}");
+        let super_method_ident = format_ident!("super_{safe_name}");
+        let super_qualified = ast_type.inside_of_v1_child_mod();
+        let type_path = super_qualified.super_path();
 
-        quote! {
-            fn #method_ident(&mut self, node: &#type_path) {
-                ::opslang_visitor::Visitor::<#type_path>::visit(self, node)
-            }
-
-            fn #super_method_ident(&mut self, node: &#type_path) {
-                <#type_path as ::opslang_visitor::TemplateVisit<V>>::super_visit(node, self)
-            }
-        }
-    });
-
-    let visit_signatures = all_ast_types.iter().map(|ast_type| {
-        let safe_name = ast_type.ident_safe_name();
-        let method_ident = format_ident!("visit_{}", safe_name.to_case(Case::Snake));
-        let super_method_ident = format_ident!("super_{}", safe_name.to_case(Case::Snake));
-        let type_path = ast_type.type_path();
-
-        quote! {
+        let sig = quote! {
             #[doc = "This method can be overridden by [`opslang_ast_macro::v1_ast_visitor_impl!`]."]
             fn #method_ident(&mut self, node: &#type_path);
             #[doc = "This method cannot be overridden."]
             fn #super_method_ident(&mut self, node: &#type_path);
-        }
-    });
+        };
+        let method = quote! {
+            fn #method_ident(&mut self, node: &#type_path) {
+                ::opslang_visitor::Visitor::<#type_path>::visit(self, node)
+            }
+            fn #super_method_ident(&mut self, node: &#type_path) {
+                <#type_path as ::opslang_visitor::TemplateVisit<V>>::super_visit(node, self)
+            }
+        };
+        (sig, method)
+    }).unzip();
 
     // Generate trait bounds for Self: Visitor<Type1> + Visitor<Type2> + ...
     let visitor_bounds = all_ast_types.iter().map(|ast_type| {
-        let type_path = ast_type.type_path();
+        let super_qualified = ast_type.inside_of_v1_child_mod();
+        let type_path = super_qualified.super_path();
         quote! {
             ::opslang_visitor::Visitor<#type_path>
         }
     });
     let ast_type_bounds = all_ast_types.iter().map(|ast_type| {
-        let type_path = ast_type.type_path();
+        let super_qualified = ast_type.inside_of_v1_child_mod();
+        let type_path = super_qualified.super_path();
         quote! {
             #type_path: ::opslang_visitor::TemplateVisit<V>
         }

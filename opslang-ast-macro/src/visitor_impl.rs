@@ -14,7 +14,8 @@ pub fn visitor_impl(
     let visitor_types: Vec<opslang_visitor_macro_helper::VisitorType> = all_ast_types
         .iter()
         .map(|ast_type| {
-            let full_path = format!("::opslang_ast::{}", ast_type.full_path());
+            let crate_qualified = ast_type.outside_of_ast_crate();
+            let full_path = crate_qualified.full_crate_path();
             let path = syn::parse_str(&full_path)
                 .unwrap_or_else(|e| panic!("Failed to parse path '{full_path}': {e}"));
             let visit_method_name = ast_type.generate_visit_method_name();
