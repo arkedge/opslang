@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use convert_case::{Case, Casing};
 use quote::quote;
 use syn::{
     Generics, ItemFn, Path, Token, Type,
@@ -48,6 +47,7 @@ impl Parse for VisitorImpl {
 pub struct VisitorType {
     pub generics: Generics,
     pub path: Path,
+    pub visit_method_name: String,
 }
 
 /// Check if generics are empty (equivalent to default)
@@ -111,11 +111,9 @@ pub fn generate_visitor_impl(
 
     // Generate Visitor implementations for each AST type
     let visitor_impls = types.iter().map(|visitor_type| {
-        let VisitorType { generics, path } = visitor_type;
-        let type_ident = &path.segments.last().unwrap().ident;
-        let visit_method_name = format!("visit_{}", type_ident.to_string().to_case(Case::Snake));
+        let VisitorType { generics, path, visit_method_name } = visitor_type;
 
-        let visit_fn = if let Some(user_method) = user_method_map.get(&visit_method_name) {
+        let visit_fn = if let Some(user_method) = user_method_map.get(visit_method_name.as_str()) {
             let block = &user_method.block;
             // Use user-defined method
             quote! {

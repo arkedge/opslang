@@ -49,12 +49,14 @@ pub fn generate_generic_visitor_impls(
 ) -> proc_macro2::TokenStream {
     use quote::quote;
 
+    let t = quote!(#impl_type #ty_generics);
+
     assert!(updated_generics.lt_token.is_some());
     let (impl_generics, _, where_clause) = updated_generics.split_for_impl();
 
     // Base implementation for str (no additional generics)
     let str_impl = quote! {
-        ::opslang_visitor::impl_visitor!(#impl_generics #impl_type #ty_generics [visit] str #where_clause);
+        ::opslang_visitor::impl_visitor!(#impl_generics #t [visit] str #where_clause);
     };
 
     // Add T to generics for Option<T> and [T]
@@ -68,8 +70,8 @@ pub fn generate_generic_visitor_impls(
     let (t_impl_generics, _, t_where_clause) = t_generics.split_for_impl();
 
     let generic_impls = quote! {
-        ::opslang_visitor::impl_visitor!(#t_impl_generics #impl_type #ty_generics [visit] Option<T> #t_where_clause);
-        ::opslang_visitor::impl_visitor!(#t_impl_generics #impl_type #ty_generics [visit] [T] #t_where_clause);
+        ::opslang_visitor::impl_visitor!(#t_impl_generics #t [visit] Option<T> #t_where_clause);
+        ::opslang_visitor::impl_visitor!(#t_impl_generics #t [visit] [T] #t_where_clause);
     };
 
     // Generate the implementation by manually constructing the generics tokens
@@ -82,7 +84,7 @@ pub fn generate_generic_visitor_impls(
     let (ref_t_impl_generics, _, ref_t_where_clause) = ref_t_generics.split_for_impl();
 
     let ref_impl = quote! {
-        ::opslang_visitor::impl_visitor!(#ref_t_impl_generics #impl_type #ty_generics [visit] &T #ref_t_where_clause);
+        ::opslang_visitor::impl_visitor!(#ref_t_impl_generics #t [visit] &T #ref_t_where_clause);
     };
 
     // Add tuple implementations
@@ -102,7 +104,7 @@ pub fn generate_generic_visitor_impls(
     let (tuple2_impl_generics, _, tuple2_where_clause) = tuple2_generics.split_for_impl();
 
     let tuple2_impl = quote! {
-        ::opslang_visitor::impl_visitor!(#tuple2_impl_generics #impl_type #ty_generics [visit] (T1, T2) #tuple2_where_clause);
+        ::opslang_visitor::impl_visitor!(#tuple2_impl_generics #t [visit] (T1, T2) #tuple2_where_clause);
     };
 
     quote! {

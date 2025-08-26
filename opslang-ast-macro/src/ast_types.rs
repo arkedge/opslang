@@ -66,6 +66,21 @@ impl AstType {
         }
     }
 
+    /// Generate appropriate visit method name based on the type.
+    /// If module_path exists, generates `visit_{module}_{name}`, otherwise `visit_{name}`.
+    pub fn generate_visit_method_name(&self) -> String {
+        use convert_case::{Case, Casing};
+
+        let snake_name = self.name.to_case(Case::Snake);
+
+        if let Some(module) = self.module_path {
+            let snake_module = module.to_case(Case::Snake);
+            format!("visit_{snake_module}_{snake_name}")
+        } else {
+            format!("visit_{snake_name}")
+        }
+    }
+
     /// Returns all AST types for v1 syntax including token types.
     pub const fn get_v1_ast_types() -> &'static [AstType] {
         V1_AST_TYPES
@@ -106,7 +121,7 @@ const V1_AST_TYPES: &[AstType] = define_ast_types! {
     type Let;
     type ExprStatement;
     type ReturnStmt;
-    type ExprKind;
+    type Expr;
     type Path;
     type Ident;
     type Qualif;

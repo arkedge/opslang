@@ -14,11 +14,15 @@ pub fn visitor_impl(
     let visitor_types: Vec<opslang_visitor_macro_helper::VisitorType> = all_ast_types
         .iter()
         .map(|ast_type| {
-            let full_path = format!("crate::{}", ast_type.full_path());
+            let full_path = format!("::opslang_ast::{}", ast_type.full_path());
+            let path = syn::parse_str(&full_path)
+                .unwrap_or_else(|e| panic!("Failed to parse path '{full_path}': {e}"));
+            let visit_method_name = ast_type.generate_visit_method_name();
+
             opslang_visitor_macro_helper::VisitorType {
                 generics: syn::parse_quote!(<'cx>),
-                path: syn::parse_str(&full_path)
-                    .unwrap_or_else(|e| panic!("Failed to parse path '{full_path}': {e}")),
+                path,
+                visit_method_name,
             }
         })
         .collect();
@@ -71,11 +75,11 @@ fn generate_additional_visitor_impls(
     }
 
     let specific_impls = impl_by_default! {
-        impl crate::DefaultTypeFamily;
-        impl crate::syntax::v1::Span;
-        impl crate::syntax::v1::BytePos;
-        impl crate::syntax::v1::literal::NumericKind;
-        impl crate::syntax::v1::Expr<'__cx>;
+        impl ::opslang_ast::DefaultTypeFamily;
+        impl ::opslang_ast::syntax::v1::Span;
+        impl ::opslang_ast::syntax::v1::BytePos;
+        impl ::opslang_ast::syntax::v1::literal::NumericKind;
+        impl ::opslang_ast::syntax::v1::ExprKind<'__cx>;
     };
 
     quote! {
