@@ -1,4 +1,5 @@
-use crate::{ast_types::AstType, no_intermediate_helper};
+use crate::ast_types::AstType;
+use opslang_visitor_macro_helper::no_intermediate_helper;
 
 /// Generates visitor implementation for AST types.
 pub fn visitor_impl(

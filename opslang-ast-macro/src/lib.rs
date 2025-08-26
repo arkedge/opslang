@@ -3,7 +3,6 @@ mod declare_ast_visitor;
 mod derive_map_into_token;
 mod derive_position;
 mod derive_span;
-mod no_intermediate_helper;
 mod v1_default_type_subst;
 mod visitor_impl;
 

@@ -41,7 +41,8 @@ pub fn update_generics(
 ///
 /// # Panics
 ///
-/// Panics if `updated_generics.lt_token` is `None`, indicating the generics don't have angle brackets.
+/// Panics if `updated_generics.params.is_empty()`, indicating the generics don't have parameters,
+/// which disrupts `::opslang_visitor::impl_visitor!` call.
 pub fn generate_generic_visitor_impls(
     ty_generics: &syn::TypeGenerics,
     updated_generics: &syn::Generics,
@@ -51,7 +52,7 @@ pub fn generate_generic_visitor_impls(
 
     let t = quote!(#impl_type #ty_generics);
 
-    assert!(updated_generics.lt_token.is_some());
+    assert!(!updated_generics.params.is_empty());
     let (impl_generics, _, where_clause) = updated_generics.split_for_impl();
 
     // Base implementation for str (no additional generics)

@@ -6,6 +6,8 @@ use syn::{
     parse::{Parse, ParseStream},
 };
 
+pub mod no_intermediate_helper;
+
 /// Validated visitor method with checked parameter and block.
 pub struct VisitorMethod {
     pub attrs: Vec<Attribute>,
@@ -159,28 +161,25 @@ fn is_empty_generics(generics: &Generics) -> bool {
 }
 
 /// Concatenates two Generics, combining parameters and where clauses.
-fn concatenate_generics<'a>(
-    impl_generics: &'a Generics,
-    type_generics: &'a Generics,
-) -> Cow<'a, Generics> {
-    if is_empty_generics(impl_generics) {
-        return Cow::Borrowed(type_generics);
-    } else if is_empty_generics(type_generics) {
-        return Cow::Borrowed(impl_generics);
+fn concatenate_generics<'a>(left: &'a Generics, right: &'a Generics) -> Cow<'a, Generics> {
+    if is_empty_generics(left) {
+        return Cow::Borrowed(right);
+    } else if is_empty_generics(right) {
+        return Cow::Borrowed(left);
     }
-    let mut combined = impl_generics.clone();
+    let mut combined = left.clone();
 
     // Extend parameters
-    combined.params.extend(type_generics.params.iter().cloned());
+    combined.params.extend(right.params.iter().cloned());
 
     // Ensure we have angle bracket tokens if we have parameters
     if !combined.params.is_empty() && combined.lt_token.is_none() {
-        combined.lt_token = Some(impl_generics.lt_token.or(type_generics.lt_token).unwrap());
-        combined.gt_token = Some(impl_generics.gt_token.or(type_generics.gt_token).unwrap());
+        combined.lt_token = Some(left.lt_token.or(right.lt_token).unwrap());
+        combined.gt_token = Some(left.gt_token.or(right.gt_token).unwrap());
     }
 
     // Combine where clauses
-    match (&combined.where_clause, &type_generics.where_clause) {
+    match (&combined.where_clause, &right.where_clause) {
         (Some(impl_where), Some(type_where)) => {
             let mut combined_where = impl_where.clone();
             combined_where
@@ -207,8 +206,8 @@ pub fn generate_visitor_impl(
     let user_methods = &visitor_impl.methods;
 
     // Collect user-defined methods
-    let user_method_map: std::collections::HashMap<String, &VisitorMethod> =
-        user_methods.iter().map(|m| (m.name.clone(), m)).collect();
+    let user_method_map: std::collections::HashMap<&str, &VisitorMethod> =
+        user_methods.iter().map(|m| (m.name.as_str(), m)).collect();
 
     // Generate Visitor implementations for each AST type
     let visitor_impls = types.iter().map(|visitor_type| {
@@ -225,7 +224,7 @@ fn generate_single_visitor_impl(
     visitor_type: &VisitorType,
     impl_generics: &Generics,
     impl_type: &Type,
-    user_method_map: &std::collections::HashMap<String, &VisitorMethod>,
+    user_method_map: &std::collections::HashMap<&str, &VisitorMethod>,
 ) -> proc_macro2::TokenStream {
     let VisitorType {
         generics,
