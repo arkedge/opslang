@@ -99,7 +99,7 @@ pub trait ConvertV0ToV1<'cx> {
 pub struct ConvertedFamily;
 
 impl<'cx> v1::TypeFamily<'cx> for ConvertedFamily {
-    opslang_ast_macros::v1_default_type_subst! {
+    opslang_ast_macro::v1_default_type_subst! {
         Span = Span,
         Position = Position,
         ..

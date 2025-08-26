@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 pub use family::TypeFamily;
-use opslang_ast_macros::OrderSpan;
+use opslang_ast_macro::OrderSpan;
 use opslang_visitor_macro::Visit;
 
 pub mod context;
@@ -22,7 +22,7 @@ pub type Position = BytePos;
 pub struct DefaultTypeFamily;
 
 impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
-    opslang_ast_macros::v1_default_type_subst_internal! {
+    opslang_ast_macro::v1_default_type_subst_internal! {
         ..
     }
 }
@@ -211,7 +211,7 @@ pub struct ExprStatement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub semi: token::Semi<'cx, F>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macros::MapIntoToken)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macro::MapIntoToken)]
 /// A `return` statement.
 ///
 /// # Examples
@@ -453,7 +453,7 @@ pub struct Unary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub expr: F::Expr,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macros::MapIntoToken)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macro::MapIntoToken)]
 pub enum UnOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     /// Negates an expression.
     Neg(token::Hyphen<'cx, F>),
@@ -472,7 +472,7 @@ pub struct Compare<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub tail_with_op: &'cx [(CompareOp<'cx, F>, F::Expr)],
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macros::MapIntoToken)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macro::MapIntoToken)]
 pub enum CompareOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     GreaterEq(token::RightAngleEq<'cx, F>),
     LessEq(token::AngleEq<'cx, F>),
@@ -482,7 +482,7 @@ pub enum CompareOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Equal(token::EqualEqual<'cx, F>),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macros::MapIntoToken)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macro::MapIntoToken)]
 pub enum NotEqualToken<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     /// `!=`
     BangEqual(token::BangEqual<'cx, F>),
@@ -497,7 +497,7 @@ pub struct Binary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub rhs: F::Expr,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macros::MapIntoToken)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macro::MapIntoToken)]
 pub enum BinOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     /// `&&`
     And(token::AndAnd<'cx, F>),

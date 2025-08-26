@@ -10,7 +10,7 @@ path = "src/main.rs"
 
 [dependencies]
 opslang-ast = { path = "../../opslang-ast", version = "0.4.0" }
-opslang-ast-macros = { path = "../../opslang-ast-macros", version = "0.4.0" }
+opslang-ast-macro = { path = "../../opslang-ast-macro", version = "0.4.0" }
 opslang-parser = { path = "../../opslang-parser", version = "0.4.0" }
 opslang-printer = { path = "../../opslang-printer", version = "0.4.0" }
 thiserror = "1.0"

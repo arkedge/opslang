@@ -107,7 +107,7 @@ pub use context::Context;
 pub struct IrTypeFamily;
 
 impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
-    opslang_ast_macros::v1_default_type_subst! {
+    opslang_ast_macro::v1_default_type_subst! {
         Span = Option<syn::Span>,
         Position = Option<syn::Position>,
 

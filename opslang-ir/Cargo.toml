@@ -7,7 +7,7 @@ description = "ops file language IR"
 
 [dependencies]
 opslang-ast = { path = "../opslang-ast", version = "0.4.0" }
-opslang-ast-macros = { path = "../opslang-ast-macros", version = "0.4.0" }
+opslang-ast-macro = { path = "../opslang-ast-macro", version = "0.4.0" }
 opslang-ty = { path = "../opslang-ty", version = "0.4.0" }
 chrono = "0.4.41"
 typed-arena = "2.0"
