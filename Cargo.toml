@@ -9,6 +9,9 @@ members = [
     "opslang-printer",
     "opslang-ty",
     "opslang-typeck",
+    "opslang-visitor",
+    "opslang-visitor-macro",
+    "opslang-visitor-macro-helper",
     "tools/opslang-migration",
     "tools/opslang-formatter",
 ]

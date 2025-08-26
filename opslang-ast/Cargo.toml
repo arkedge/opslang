@@ -12,6 +12,8 @@ default = ["v0", "v1"]
 
 [dependencies]
 opslang-ast-macros = { path = "../opslang-ast-macros", version = "0.4.0" }
+opslang-visitor = { path = "../opslang-visitor", version = "0.4.0" }
+opslang-visitor-macro = { path = "../opslang-visitor-macro", version = "0.4.0" }
 typed-arena.version = "2.0.2"
 typed-arena.optional = true
 

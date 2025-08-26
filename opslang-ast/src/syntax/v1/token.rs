@@ -40,6 +40,8 @@ macro_rules! declare_token {
             impl<'cx, F: super::family::TypeFamily<'cx>> Token for $name<'cx, F> {
                 const REPR: &'static str = $str;
             }
+
+            derive_visit!($name);
         )*
     };
 }
@@ -121,6 +123,19 @@ macro_rules! token_define_if_many {
     };
 }
 
+macro_rules! derive_visit {
+    ($name:ident) => {
+        impl<'cx, F: super::family::TypeFamily<'cx>, V: ?Sized> opslang_visitor::TemplateVisit<V>
+            for $name<'cx, F>
+        {
+        }
+        impl<'cx, F: super::family::TypeFamily<'cx>, V: ?Sized> opslang_visitor::TemplateVisitMut<V>
+            for $name<'cx, F>
+        {
+        }
+    };
+}
+
 declare_token! {
     pub struct Semi/1 ";"
     pub struct Break/1 "."
@@ -164,6 +179,8 @@ macro_rules! declare_kw {
             impl<'cx, F: super::family::TypeFamily<'cx>> Token for $name<'cx, F> {
                 const REPR: &'static str = $str;
             }
+
+            derive_visit!($name);
         )*
     };
 }
@@ -181,6 +198,8 @@ declare_kw! {
 #[macro_export]
 /// A type-macro that expands to the name of the Rust type representation of a
 /// given token.
+///
+/// Usage is similar to `syn::Token!`.
 macro_rules! V1Token {
     // Keywords
     (return) => {
