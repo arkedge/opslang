@@ -19,3 +19,7 @@ typed-arena.optional = true
 
 escape8259 = "0.5.3"
 chrono = "0.4.33"
+
+[dev-dependencies]
+opslang-ast-macro = { path = "../opslang-ast-macro", version = "0.4.0" }
+opslang-parser = { path = "../opslang-parser", version = "0.4.0" }
