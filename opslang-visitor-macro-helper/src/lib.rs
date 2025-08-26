@@ -2,12 +2,13 @@ use std::borrow::Cow;
 
 use quote::quote;
 use syn::{
-    Block, FnArg, Generics, ItemFn, PatType, Path, ReturnType, Token, Type,
+    Attribute, Block, FnArg, Generics, ItemFn, PatType, Path, ReturnType, Token, Type,
     parse::{Parse, ParseStream},
 };
 
 /// Validated visitor method with checked parameter and block.
 pub struct VisitorMethod {
+    pub attrs: Vec<Attribute>,
     pub name: String,
     pub param: PatType,
     pub block: Block,
@@ -138,6 +139,7 @@ fn validate_visitor_method(item_fn: ItemFn) -> syn::Result<VisitorMethod> {
     };
 
     Ok(VisitorMethod {
+        attrs: item_fn.attrs,
         name: sig.ident.to_string(),
         param,
         block: *item_fn.block,
@@ -232,11 +234,13 @@ fn generate_single_visitor_impl(
     } = visitor_type;
 
     let visit_fn = if let Some(user_method) = user_method_map.get(visit_method_name.as_str()) {
+        let attrs = &user_method.attrs;
         let PatType { pat, ty, .. } = &user_method.param;
         let block = &user_method.block;
 
         // Use user-defined method with their exact parameter and type
         quote! {
+            #(#attrs)*
             fn visit(&mut self, #pat: #ty) {
                 #block
             }
