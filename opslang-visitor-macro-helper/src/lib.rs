@@ -2,15 +2,22 @@ use std::borrow::Cow;
 
 use quote::quote;
 use syn::{
-    Generics, ItemFn, Path, Token, Type,
+    Block, FnArg, Generics, ItemFn, PatType, Path, ReturnType, Token, Type,
     parse::{Parse, ParseStream},
 };
+
+/// Validated visitor method with checked parameter and block.
+pub struct VisitorMethod {
+    pub name: String,
+    pub param: PatType,
+    pub block: Block,
+}
 
 /// Structure representing a visitor implementation block.
 pub struct VisitorImpl {
     pub impl_generics: Generics,
     pub impl_type: Type,
-    pub methods: Vec<ItemFn>,
+    pub methods: Vec<VisitorMethod>,
 }
 
 impl Parse for VisitorImpl {
@@ -32,7 +39,9 @@ impl Parse for VisitorImpl {
 
         let mut methods = Vec::new();
         while !content.is_empty() {
-            methods.push(content.parse::<ItemFn>()?);
+            let item_fn = content.parse::<ItemFn>()?;
+            let validated_method = validate_visitor_method(item_fn)?;
+            methods.push(validated_method);
         }
 
         Ok(VisitorImpl {
@@ -41,6 +50,100 @@ impl Parse for VisitorImpl {
             methods,
         })
     }
+}
+
+/// Validates a visitor method function to ensure it has the correct signature.
+fn validate_visitor_method(item_fn: ItemFn) -> syn::Result<VisitorMethod> {
+    let sig = &item_fn.sig;
+
+    // Check for invalid modifiers
+    if sig.constness.is_some() {
+        return Err(syn::Error::new_spanned(
+            sig.constness,
+            "visitor methods cannot be const",
+        ));
+    }
+    if sig.asyncness.is_some() {
+        return Err(syn::Error::new_spanned(
+            sig.asyncness,
+            "visitor methods cannot be async",
+        ));
+    }
+    if sig.unsafety.is_some() {
+        return Err(syn::Error::new_spanned(
+            sig.unsafety,
+            "visitor methods cannot be unsafe",
+        ));
+    }
+    if sig.abi.is_some() {
+        return Err(syn::Error::new_spanned(
+            &sig.abi,
+            "visitor methods cannot have custom ABI",
+        ));
+    }
+
+    // Check return type (should be () or omitted)
+    match &sig.output {
+        ReturnType::Default => {}
+        ReturnType::Type(_, ty) => {
+            if let Type::Tuple(tuple) = ty.as_ref() {
+                if !tuple.elems.is_empty() {
+                    return Err(syn::Error::new_spanned(
+                        ty,
+                        "visitor methods must return () or have no return type",
+                    ));
+                }
+            } else {
+                return Err(syn::Error::new_spanned(
+                    ty,
+                    "visitor methods must return () or have no return type",
+                ));
+            }
+        }
+    }
+
+    // Check that signature has exactly 2 parameters: &mut self and one other parameter
+    if sig.inputs.len() != 2 {
+        return Err(syn::Error::new_spanned(
+            &sig.inputs,
+            "visitor methods must have exactly 2 parameters: &mut self and the node parameter",
+        ));
+    }
+
+    // Check first parameter is &mut self
+    if let Some(FnArg::Receiver(receiver)) = sig.inputs.first() {
+        if receiver.reference.is_none() || receiver.mutability.is_none() {
+            return Err(syn::Error::new_spanned(
+                receiver,
+                "first parameter must be &mut self",
+            ));
+        }
+    } else {
+        return Err(syn::Error::new_spanned(
+            sig.inputs.first().unwrap(),
+            "first parameter must be &mut self",
+        ));
+    }
+
+    let sig = item_fn.sig;
+
+    // The second parameter should be a reference, we'll validate the exact type later
+    let arg = sig.inputs.into_iter().nth(1).unwrap();
+    let param = if let FnArg::Typed(param) = arg {
+        // Valid - we have a typed parameter
+        param
+    } else {
+        return Err(syn::Error::new_spanned(
+            arg,
+            "second parameter must be a typed parameter",
+        ));
+    };
+
+    Ok(VisitorMethod {
+        name: sig.ident.to_string(),
+        param,
+        block: *item_fn.block,
+    })
 }
 
 /// Type definition for visitor implementation generation.
@@ -104,44 +207,58 @@ pub fn generate_visitor_impl(
     let user_methods = &visitor_impl.methods;
 
     // Collect user-defined methods
-    let user_method_map: std::collections::HashMap<String, &ItemFn> = user_methods
-        .iter()
-        .map(|m| (m.sig.ident.to_string(), m))
-        .collect();
+    let user_method_map: std::collections::HashMap<String, &VisitorMethod> =
+        user_methods.iter().map(|m| (m.name.clone(), m)).collect();
 
     // Generate Visitor implementations for each AST type
     let visitor_impls = types.iter().map(|visitor_type| {
-        let VisitorType { generics, path, visit_method_name } = visitor_type;
-
-        let visit_fn = if let Some(user_method) = user_method_map.get(visit_method_name.as_str()) {
-            let block = &user_method.block;
-            // Use user-defined method
-            quote! {
-                fn visit(&mut self, node: &#path) {
-                    #block
-                }
-            }
-        } else {
-            quote! {
-                fn visit(&mut self, node: &#path) {
-                    <#path as ::opslang_visitor::TemplateVisit<Self>>::super_visit(node, self);
-                }
-            }
-        };
-
-        // Concatenate generics properly
-        let combined_generics = concatenate_generics(impl_generics, generics);
-        let (combined_impl_generics, _, combined_where_clause) = combined_generics.split_for_impl();
-
-        quote! {
-            impl #combined_impl_generics ::opslang_visitor::Visitor<#path> for #impl_type #combined_where_clause {
-                #visit_fn
-            }
-        }
+        generate_single_visitor_impl(visitor_type, impl_generics, impl_type, &user_method_map)
     });
 
     quote! {
         #(#visitor_impls)*
+    }
+}
+
+/// Generate a single visitor implementation for a specific AST type.
+fn generate_single_visitor_impl(
+    visitor_type: &VisitorType,
+    impl_generics: &Generics,
+    impl_type: &Type,
+    user_method_map: &std::collections::HashMap<String, &VisitorMethod>,
+) -> proc_macro2::TokenStream {
+    let VisitorType {
+        generics,
+        path,
+        visit_method_name,
+    } = visitor_type;
+
+    let visit_fn = if let Some(user_method) = user_method_map.get(visit_method_name.as_str()) {
+        let PatType { pat, ty, .. } = &user_method.param;
+        let block = &user_method.block;
+
+        // Use user-defined method with their exact parameter and type
+        quote! {
+            fn visit(&mut self, #pat: #ty) {
+                #block
+            }
+        }
+    } else {
+        quote! {
+            fn visit(&mut self, node: &#path) {
+                <#path as ::opslang_visitor::TemplateVisit<Self>>::super_visit(node, self);
+            }
+        }
+    };
+
+    // Concatenate generics properly
+    let combined_generics = concatenate_generics(impl_generics, generics);
+    let (combined_impl_generics, _, combined_where_clause) = combined_generics.split_for_impl();
+
+    quote! {
+        impl #combined_impl_generics ::opslang_visitor::Visitor<#path> for #impl_type #combined_where_clause {
+            #visit_fn
+        }
     }
 }
 
@@ -155,7 +272,7 @@ mod tests {
         // Test simple case without generics
         let input = parse_quote! {
             impl for TestVisitor {
-                fn visit_test(&mut self) {
+                fn visit_test(&mut self, node: &TestNode) {
                     println!("test");
                 }
             }
@@ -166,12 +283,49 @@ mod tests {
         // Test with generics
         let input2 = parse_quote! {
             impl<T> for T {
-                fn visit_generic(&mut self) {
+                fn visit_generic(&mut self, item: &GenericNode) {
                     println!("generic");
                 }
             }
         };
         let parsed2: VisitorImpl = input2;
         assert_eq!(parsed2.methods.len(), 1);
+    }
+
+    #[test]
+    fn test_visitor_method_validation() {
+        use syn::parse_quote;
+
+        // Valid method
+        let valid_fn: ItemFn = parse_quote! {
+            fn visit_test(&mut self, node: &TestNode) {
+                println!("test");
+            }
+        };
+        assert!(validate_visitor_method(valid_fn).is_ok());
+
+        // Invalid: const method
+        let const_fn: ItemFn = parse_quote! {
+            const fn visit_test(&mut self, node: &TestNode) {
+                println!("test");
+            }
+        };
+        assert!(validate_visitor_method(const_fn).is_err());
+
+        // Invalid: async method
+        let async_fn: ItemFn = parse_quote! {
+            async fn visit_test(&mut self, node: &TestNode) {
+                println!("test");
+            }
+        };
+        assert!(validate_visitor_method(async_fn).is_err());
+
+        // Invalid: wrong number of parameters
+        let wrong_params: ItemFn = parse_quote! {
+            fn visit_test(&mut self) {
+                println!("test");
+            }
+        };
+        assert!(validate_visitor_method(wrong_params).is_err());
     }
 }
