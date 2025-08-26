@@ -62,7 +62,9 @@ pub fn declare_ast_visitor_trait(
         let type_path = ast_type.type_path();
 
         quote! {
+            #[doc = "This method can be overridden by [`opslang_ast_macro::v1_ast_visitor_impl!`]."]
             fn #method_ident(&mut self, node: &#type_path);
+            #[doc = "This method cannot be overridden."]
             fn #super_method_ident(&mut self, node: &#type_path);
         }
     });
@@ -86,8 +88,9 @@ pub fn declare_ast_visitor_trait(
         #vis trait #name #ty_generics {
             #(#visit_signatures)*
         }
-        impl<'cx, V: ?Sized #(+ #visitor_bounds)*> #name #ty_generics for V
+        impl<'cx, V> #name #ty_generics for V
         where
+            V: ?Sized #(+ #visitor_bounds)*,
             #(#ast_type_bounds),*
         {
             #(#visit_methods)*

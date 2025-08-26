@@ -49,6 +49,56 @@ pub fn v1_default_type_subst_internal(input: proc_macro::TokenStream) -> proc_ma
         .into()
 }
 
+/// Generates comprehensive AST visitor implementations for v1 syntax nodes.
+///
+/// This procedural macro implements the visitor pattern for AST traversal by generating
+/// `Visitor<T>` trait implementations for all v1 AST node types. It enables differential
+/// programming where you can provide custom implementations for specific node types while
+/// automatically getting default traversal behavior for all others.
+///
+/// # Implementation Details
+///
+/// The macro generates `Visitor<NodeType>` implementations for every AST node type defined
+/// in the v1 syntax. For methods you provide, it uses your custom implementation exactly.
+/// For methods you don't provide, it generates default implementations that automatically
+/// traverse child nodes. Additionally, your visitor type will implement the `AstVisitor`
+/// trait, which provides convenient `visit_*` and `super_*` method pairs.
+///
+/// # Syntax
+///
+/// ```ignore (illustrative)
+/// opslang_ast_macro::v1_ast_visitor_impl!(for YourVisitor {
+///     fn visit_some_node(&mut self, node: &SomeNode<'cx>) {
+///         // Your custom logic here
+///         self.super_some_node(node); // Continue traversal
+///     }
+/// });
+/// ```
+///
+/// # Method Pairs
+///
+/// The `AstVisitor` trait provides two methods for each AST node type:
+/// - `visit_*`: Entry point for visiting a node (delegates to `Visitor<T>::visit`)
+/// - `super_*`: Default traversal behavior that visits all child nodes
+///
+/// This design allows you to easily override specific node handling while preserving
+/// automatic traversal of the entire AST structure.
+///
+/// # Example
+///
+/// ```ignore (illustrative)
+/// #[derive(Default)]
+/// struct CountingVisitor {
+///     function_count: usize,
+/// }
+///
+/// opslang_ast_macro::v1_ast_visitor_impl!(for CountingVisitor {
+///     fn visit_function_def(&mut self, node: &opslang_ast::v1::FunctionDef<'cx>) {
+///         self.function_count += 1;
+///         self.super_function_def(node); // Continue visiting child nodes
+///     }
+/// });
+/// ```
 #[proc_macro]
 pub fn v1_ast_visitor_impl(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     visitor_impl::visitor_impl(input)
@@ -57,7 +107,7 @@ pub fn v1_ast_visitor_impl(input: proc_macro::TokenStream) -> proc_macro::TokenS
 }
 
 #[proc_macro_attribute]
-pub fn declare_ast_visitor_trait(
+pub fn v1_declare_ast_visitor_trait(
     _attr: proc_macro::TokenStream,
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {

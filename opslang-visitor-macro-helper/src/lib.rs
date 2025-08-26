@@ -273,7 +273,7 @@ mod tests {
     fn test_visitor_impl_parse() {
         // Test simple case without generics
         let input = parse_quote! {
-            impl for TestVisitor {
+            for TestVisitor {
                 fn visit_test(&mut self, node: &TestNode) {
                     println!("test");
                 }
@@ -284,7 +284,7 @@ mod tests {
 
         // Test with generics
         let input2 = parse_quote! {
-            impl<T> for T {
+            <T> for T {
                 fn visit_generic(&mut self, item: &GenericNode) {
                     println!("generic");
                 }
