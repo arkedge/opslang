@@ -1,6 +1,8 @@
 use quote::{format_ident, quote};
 use syn::{Token, braced, token};
 
+use crate::ast_types::MethodKind;
+
 struct TraitDeclaration {
     attrs: Vec<syn::Attribute>,
     vis: syn::Visibility,
@@ -34,13 +36,14 @@ pub fn declare_ast_visitor_trait(
     let vis = &trait_decl.vis;
     let name = &trait_decl.ident;
     let ty_generics = &trait_decl.generics;
-    let all_ast_types = crate::ast_types::AstType::get_v1_ast_types();
+    let all_ast_types = crate::ast_types::AstType::get_v1_ast_node_types();
 
     // Generate visit_* and super_* method signatures
     let (visit_signatures, visit_methods): (Vec<_>, Vec<_>) = all_ast_types.iter().map(|ast_type| {
-        let safe_name = ast_type.ident_safe_name();
-        let method_ident = format_ident!("visit_{safe_name}");
-        let super_method_ident = format_ident!("super_{safe_name}");
+        let visit_name = ast_type.generate_visit_method_name(MethodKind::Visit);
+        let super_name = ast_type.generate_visit_method_name(MethodKind::Super);
+        let method_ident = format_ident!("{visit_name}");
+        let super_method_ident = format_ident!("{super_name}");
         let super_qualified = ast_type.inside_of_v1_child_mod();
         let type_path = super_qualified.super_path();
 

@@ -9,22 +9,24 @@ pub fn visitor_impl(
         .map_err(|e| e.to_compile_error())?;
 
     // Get all AST types for v1 syntax
-    let all_ast_types = AstType::get_v1_ast_types();
+    let ast_node_types = AstType::get_v1_ast_node_types();
 
     // Convert AST types to VisitorType format with 'cx lifetime
-    let visitor_types: Vec<opslang_visitor_macro_helper::VisitorType> = all_ast_types
+    // Generate both Visit and VisitMut implementations for each type
+    let visitor_types = ast_node_types
         .iter()
         .map(|ast_type| {
             let crate_qualified = ast_type.outside_of_ast_crate();
-            let full_path = crate_qualified.full_crate_path();
-            let path = syn::parse_str(&full_path)
-                .unwrap_or_else(|e| panic!("Failed to parse path '{full_path}': {e}"));
-            let visit_method_name = ast_type.generate_visit_method_name();
+            let path = crate_qualified.full_crate_path();
+            let visit_method_name =
+                ast_type.generate_visit_method_name(crate::ast_types::MethodKind::Visit);
 
+            // Generate Visit version
             opslang_visitor_macro_helper::VisitorType {
                 generics: syn::parse_quote!(<'cx>),
                 path,
                 visit_method_name,
+                mode: opslang_visitor_macro_helper::VisitorMode::Visit,
             }
         })
         .collect();
@@ -32,10 +34,11 @@ pub fn visitor_impl(
     // Note: Generic implementations are now handled separately in generate_generic_visitor_impls
 
     // Generate additional implementations for generic types like &[T], Option<T>, etc.
-    let additional_impls = generate_additional_visitor_impls(&visitor_impl);
+    let additional_impls = generate_adhoc_visitor_impls(&visitor_impl);
 
     let main_expanded =
-        opslang_visitor_macro_helper::generate_visitor_impl(visitor_impl, visitor_types);
+        opslang_visitor_macro_helper::generate_visitor_impl(visitor_impl, visitor_types)
+            .map_err(|e| e.to_compile_error())?;
 
     Ok(quote::quote! {
         #main_expanded
@@ -44,7 +47,7 @@ pub fn visitor_impl(
 }
 
 /// Generate additional Visitor implementations for generic types.
-fn generate_additional_visitor_impls(
+fn generate_adhoc_visitor_impls(
     visitor_impl: &opslang_visitor_macro_helper::VisitorImpl,
 ) -> proc_macro2::TokenStream {
     use quote::quote;

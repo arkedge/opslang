@@ -1,6 +1,12 @@
 use crate::{TemplateVisit, TemplateVisitMut, Visitor, VisitorMut};
 
-impl_template_visit_base_case!(str);
+impl_template_visit_base_case!(
+    str,
+    std::convert::Infallible,
+    usize,
+    u8,
+    chrono::DateTime<chrono::Utc>
+);
 
 impl<V: ?Sized + Visitor<T>, T> TemplateVisit<V> for Option<T> {
     fn super_visit(&self, visitor: &mut V) {
@@ -19,6 +25,24 @@ impl<V: ?Sized + VisitorMut<T>, T> TemplateVisitMut<V> for Option<T> {
 }
 
 impl<V: ?Sized + Visitor<T>, T: ?Sized> TemplateVisit<V> for &T {
+    fn super_visit(&self, visitor: &mut V) {
+        <V as Visitor<T>>::visit(visitor, &**self);
+    }
+}
+
+/// Enables immutable visitation during mutable visitor traversal.
+///
+/// This implementation is more important than it appears. When encountering an immutable reference
+/// during a mutable visitor traversal, it allows the visitor to continue with immutable visitation
+/// of the inner type, ensuring the visitor pattern remains consistent and type-safe.
+impl<V: ?Sized + Visitor<T>, T: ?Sized> TemplateVisitMut<V> for &T {
+    fn super_visit_mut(&mut self, visitor: &mut V) {
+        <V as Visitor<T>>::visit(visitor, &**self);
+    }
+}
+
+/// Enables immutable visitation of mutable references.
+impl<V: ?Sized + Visitor<T>, T: ?Sized> TemplateVisit<V> for &mut T {
     fn super_visit(&self, visitor: &mut V) {
         <V as Visitor<T>>::visit(visitor, &**self);
     }

@@ -1,3 +1,4 @@
+use opslang_visitor_macro::Visit;
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -8,7 +9,7 @@ use typed_arena::Arena;
 ///
 /// This enum defines all possible type variants that can exist in the language,
 /// including primitive types, compound types, and type variables for inference.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Visit)]
 pub enum TyKind<'cx> {
     /// 32-bit signed integer type
     Int,
@@ -36,7 +37,7 @@ pub enum TyKind<'cx> {
 ///
 /// This is a lightweight wrapper around a reference to TyKind that allows
 /// for efficient sharing of type information across the type checker.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Visit)]
 pub struct Ty<'cx>(pub &'cx TyKind<'cx>);
 
 impl<'cx> Ty<'cx> {
@@ -80,7 +81,7 @@ impl TypeVariable {
 ///
 /// Identifiers are used to distinguish variables and functions across different scopes,
 /// allowing proper name resolution in nested contexts.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Visit)]
 pub struct Identifier<'cx> {
     /// The string name of the identifier
     pub name: &'cx str,
@@ -92,8 +93,8 @@ pub struct Identifier<'cx> {
 ///
 /// This is a lightweight wrapper around an Identifier reference that enables
 /// efficient passing and comparison of identifiers.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Ident<'cx>(&'cx Identifier<'cx>);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+pub struct Ident<'cx>(pub &'cx Identifier<'cx>);
 
 impl<'cx> Borrow<str> for Ident<'cx> {
     fn borrow(&self) -> &str {
@@ -285,7 +286,7 @@ impl<'cx> Default for TypingContext<'cx> {
 ///
 /// Module items define the public interface of a module, including constants,
 /// type definitions, and function definitions that can be imported by other modules.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Visit)]
 pub enum ModuleItem<'cx> {
     /// A constant value with its associated type
     Constant { id: Ident<'cx>, ty: Ty<'cx> },
@@ -426,3 +427,5 @@ impl<'cx> Default for ModuleLoader<'cx> {
         Self::new()
     }
 }
+
+opslang_visitor::impl_template_visit_base_case!(TypeVariable);

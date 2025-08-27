@@ -1,5 +1,8 @@
-use synstructure::decl_derive;
-
 mod derive_visit;
 
-decl_derive!([Visit] => derive_visit::derive_visit);
+#[proc_macro_derive(Visit, attributes(skip_visit))]
+pub fn derive_visit(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    derive_visit::derive_visit(input)
+        .unwrap_or_else(std::convert::identity)
+        .into()
+}

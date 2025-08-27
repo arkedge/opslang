@@ -30,7 +30,7 @@ pub trait Visitor<T: ?Sized> {
 }
 
 #[diagnostic::on_unimplemented(
-    message = "`{Self}` does not visit `T` mutably",
+    message = "`{Self}` does not visit `{T}` mutably",
     label = "lacking `{Self}: VisitorMut<{T}>`",
     note = "add impl `VisitorMut<{T}> for `{Self}` using macro"
 )]
@@ -107,7 +107,7 @@ macro_rules! impl_visitor {
         }
     };
     (< $( $lt:tt $( : $clt:tt $(+ $dlt:tt )* )? ),* > $v:ty [visit_mut] $t:ty $(where $($tt:tt)*)?) => {
-        impl < $( $lt $( : $clt $(+ $dlt )* )? ),* > $crate::VisitorMut<$t> for $v {
+        impl < $( $lt $( : $clt $(+ $dlt )* )? ),* > $crate::VisitorMut<$t> for $v $(where $($tt)*)? {
             fn visit_mut(&mut self, node: &mut $t) {
                 <$t as $crate::TemplateVisitMut<Self>>::super_visit_mut(node, self);
             }

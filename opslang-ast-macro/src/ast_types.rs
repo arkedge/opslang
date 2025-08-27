@@ -1,4 +1,11 @@
-use convert_case::{Case, Casing};
+/// Method kind for generating method names.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MethodKind {
+    /// Generate `visit_*` method names
+    Visit,
+    /// Generate `super_*` method names (for identifier-safe names)
+    Super,
+}
 
 /// Represents a generic type in the AST that can be instantiated with a lifetime.
 ///
@@ -52,19 +59,12 @@ impl AstType {
     ///
     /// This method is private to prevent direct usage. Use [`AstType::as_crate_qualified`]
     /// or [`AstType::as_super_qualified`] to get context-appropriate types.
-    fn full_path(&self) -> String {
-        match self.module_path {
+    fn full_path(&self) -> syn::Path {
+        let str = match self.module_path {
             Some(module) => format!("::opslang_ast::syntax::v1::{module}::{}<'cx>", self.name),
             None => format!("::opslang_ast::syntax::v1::{}<'cx>", self.name),
-        }
-    }
-
-    /// Generate identifier-safe name for method generation, avoiding conflicts.
-    pub fn ident_safe_name(&self) -> String {
-        match self.module_path {
-            Some(module) => format!("{module}_{}", self.name.to_case(Case::Snake)),
-            None => self.name.to_case(Case::Snake),
-        }
+        };
+        syn::parse_str(&str).unwrap()
     }
 
     /// Generate syn path for this type with proper module qualification.
@@ -85,24 +85,28 @@ impl AstType {
         }
     }
 
-    /// Generate appropriate visit method name based on the type.
-    /// If module_path exists, generates `visit_{module}_{name}`, otherwise `visit_{name}`.
-    pub fn generate_visit_method_name(&self) -> String {
+    /// Generate appropriate method name based on the type and method kind.
+    /// If module_path exists, generates `{prefix}_{module}_{name}`, otherwise `{prefix}_{name}`.
+    pub fn generate_visit_method_name(&self, kind: MethodKind) -> String {
         use convert_case::{Case, Casing};
 
         let snake_name = self.name.to_case(Case::Snake);
+        let prefix = match kind {
+            MethodKind::Visit => "visit",
+            MethodKind::Super => "super",
+        };
 
         if let Some(module) = self.module_path {
             let snake_module = module.to_case(Case::Snake);
-            format!("visit_{snake_module}_{snake_name}")
+            format!("{prefix}_{snake_module}_{snake_name}")
         } else {
-            format!("visit_{snake_name}")
+            format!("{prefix}_{snake_name}")
         }
     }
 
     /// Returns all AST types for v1 syntax including token types.
-    pub const fn get_v1_ast_types() -> &'static [AstType] {
-        V1_AST_TYPES
+    pub const fn get_v1_ast_node_types() -> &'static [AstType] {
+        V1_AST_NODE_TYPES
     }
 
     /// Convert to a crate-qualified type for external references.
@@ -123,7 +127,7 @@ impl AstType {
 }
 
 /// A macro to define AST types in a more Rust-like syntax with module grouping.
-macro_rules! define_ast_types {
+macro_rules! define_ast_node_types {
     (
         $(type $name:ident;)*
         $(mod $module:ident {
@@ -132,7 +136,7 @@ macro_rules! define_ast_types {
     ) => {
         &[
             $(AstType::new(stringify!($name)),)*
-            $($(AstType::with_module(stringify!($mod_name), stringify!($module))),*)*
+            $($(AstType::with_module(stringify!($mod_name), stringify!($module)),)*)*
         ]
     };
 }
@@ -152,7 +156,7 @@ impl OutsideAstCrateType<'_> {
     ///
     /// Returns a string like `::opslang_ast::syntax::v1::Type<'cx>` suitable for
     /// external references to AST types.
-    pub fn full_crate_path(&self) -> String {
+    pub fn full_crate_path(&self) -> syn::Path {
         self.inner.full_path()
     }
 }
@@ -178,7 +182,7 @@ impl InsideV1ChildModType<'_> {
 }
 
 /// All AST types for v1 syntax including token types.
-const V1_AST_TYPES: &[AstType] = define_ast_types! {
+const V1_AST_NODE_TYPES: &[AstType] = define_ast_node_types! {
     // Main AST types
     type Program;
     type Definition;
@@ -203,14 +207,6 @@ const V1_AST_TYPES: &[AstType] = define_ast_types! {
     type Modifier;
     type ModifierParam;
     type DefaultModifier;
-    type Literal;
-    type Array;
-    type String;
-    type Bytes;
-    type HexBytes;
-    type Numeric;
-    type NumericSuffix;
-    type DateTime;
     type Parened;
     type PreQualified;
     type Unary;
@@ -225,6 +221,16 @@ const V1_AST_TYPES: &[AstType] = define_ast_types! {
     type InfixImport;
     type If;
     type IfElse;
+
+    // Literal types
+    type Literal;
+    type Array;
+    type String;
+    type Bytes;
+    type HexBytes;
+    type Numeric;
+    type NumericSuffix;
+    type DateTime;
 
     // Token types
     mod token {

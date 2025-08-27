@@ -1,4 +1,4 @@
-use opslang_visitor::{TemplateVisit, Visitor, impl_template_visit_base_case};
+use opslang_visitor::{TemplateVisit, TemplateVisitMut, Visitor, impl_template_visit_base_case};
 
 /// A comprehensive visitor trait for all V1 AST types.
 ///
@@ -49,13 +49,24 @@ impl_template_visit_base_case!(
     super::NumericKind,
 );
 
-/// Implement [`Visitor`] for [`Expr`], ignoring sealed field.
+/// Implement [`TemplateVisit`] for [`Expr`], ignoring sealed field.
 ///
 /// [`Expr`]: super::Expr
 impl<'cx, F: super::TypeFamily<'cx>, V: ?Sized + Visitor<&'cx super::ExprKind<'cx, F>>>
     TemplateVisit<V> for super::Expr<'cx, F>
 {
     fn super_visit(&self, visitor: &mut V) {
+        visitor.visit(&self.0)
+    }
+}
+
+/// Implement [`TemplateVisitMut`] for [`Expr`], ignoring sealed field.
+///
+/// [`Expr`]: super::Expr
+impl<'cx, F: super::TypeFamily<'cx>, V: ?Sized + Visitor<&'cx super::ExprKind<'cx, F>>>
+    TemplateVisitMut<V> for super::Expr<'cx, F>
+{
+    fn super_visit_mut(&mut self, visitor: &mut V) {
         visitor.visit(&self.0)
     }
 }

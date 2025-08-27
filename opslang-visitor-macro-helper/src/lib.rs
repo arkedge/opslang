@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::VecDeque};
 
 use quote::quote;
 use syn::{
@@ -14,6 +14,9 @@ pub struct VisitorMethod {
     pub name: String,
     pub param: PatType,
     pub block: Block,
+
+    /// For diagnostic purpose
+    pub name_span: proc_macro2::Span,
 }
 
 /// Structure representing a visitor implementation block.
@@ -143,9 +146,38 @@ fn validate_visitor_method(item_fn: ItemFn) -> syn::Result<VisitorMethod> {
     Ok(VisitorMethod {
         attrs: item_fn.attrs,
         name: sig.ident.to_string(),
+        name_span: sig.ident.span(),
         param,
         block: *item_fn.block,
     })
+}
+
+/// Visitor mode indicating whether to generate immutable or mutable visitor implementations.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum VisitorMode {
+    /// Generate immutable visitor implementations (`Visitor` trait, `visit` method)
+    Visit,
+    /// Generate mutable visitor implementations (`VisitorMut` trait, `visit_mut` method)  
+    VisitMut,
+}
+
+impl VisitorMode {
+    /// Returns the trait name for this visitor mode.
+    pub fn trait_name(&self) -> proc_macro2::TokenStream {
+        use quote::quote;
+        match self {
+            VisitorMode::Visit => quote!(::opslang_visitor::Visitor),
+            VisitorMode::VisitMut => quote!(::opslang_visitor::VisitorMut),
+        }
+    }
+
+    /// Returns the method name for this visitor mode.
+    pub fn method_name(&self) -> &'static str {
+        match self {
+            VisitorMode::Visit => "visit",
+            VisitorMode::VisitMut => "visit_mut",
+        }
+    }
 }
 
 /// Type definition for visitor implementation generation.
@@ -153,6 +185,7 @@ pub struct VisitorType {
     pub generics: Generics,
     pub path: Path,
     pub visit_method_name: String,
+    pub mode: VisitorMode,
 }
 
 /// Check if generics are empty (equivalent to default)
@@ -179,18 +212,15 @@ fn concatenate_generics<'a>(left: &'a Generics, right: &'a Generics) -> Cow<'a, 
     }
 
     // Combine where clauses
-    match (&combined.where_clause, &right.where_clause) {
-        (Some(impl_where), Some(type_where)) => {
-            let mut combined_where = impl_where.clone();
-            combined_where
+    if let Some(type_where) = &right.where_clause {
+        if combined.where_clause.is_some() {
+            combined
+                .make_where_clause()
                 .predicates
                 .extend(type_where.predicates.iter().cloned());
-            combined.where_clause = Some(combined_where);
+        } else {
+            *combined.make_where_clause() = type_where.clone();
         }
-        (None, Some(type_where)) => {
-            combined.where_clause = Some(type_where.clone());
-        }
-        _ => {} // Keep existing or none
     }
 
     Cow::Owned(combined)
@@ -200,23 +230,51 @@ fn concatenate_generics<'a>(left: &'a Generics, right: &'a Generics) -> Cow<'a, 
 pub fn generate_visitor_impl(
     visitor_impl: VisitorImpl,
     types: Vec<VisitorType>,
-) -> proc_macro2::TokenStream {
+) -> syn::Result<proc_macro2::TokenStream> {
     let impl_type = &visitor_impl.impl_type;
     let impl_generics = &visitor_impl.impl_generics;
     let user_methods = &visitor_impl.methods;
 
     // Collect user-defined methods
-    let user_method_map: std::collections::HashMap<&str, &VisitorMethod> =
-        user_methods.iter().map(|m| (m.name.as_str(), m)).collect();
+    let mut user_method_map: std::collections::HashMap<String, &VisitorMethod> =
+        user_methods.iter().map(|m| (m.name.clone(), m)).collect();
 
     // Generate Visitor implementations for each AST type
-    let visitor_impls = types.iter().map(|visitor_type| {
-        generate_single_visitor_impl(visitor_type, impl_generics, impl_type, &user_method_map)
-    });
-
-    quote! {
-        #(#visitor_impls)*
+    let mut visitor_impls = Vec::new();
+    for visitor_type in &types {
+        visitor_impls.push(generate_single_visitor_impl(
+            visitor_type,
+            impl_generics,
+            impl_type,
+            &mut user_method_map,
+        )?);
     }
+
+    // Check for unused user methods and report errors
+    if !user_method_map.is_empty() {
+        let mut errors: VecDeque<syn::Error> = user_method_map
+            .into_iter()
+            .map(|(unused_name, unused_method)| {
+                syn::Error::new(
+                    unused_method.name_span,
+                    format!(
+                        "invalid visitor method `{unused_name}`\nfound no matching type for hook"
+                    ),
+                )
+            })
+            .collect();
+
+        // Combine all errors into a single error
+        let mut combined_error = errors.pop_front().unwrap();
+        for error in errors {
+            combined_error.combine(error);
+        }
+        return Err(combined_error);
+    }
+
+    Ok(quote! {
+        #(#visitor_impls)*
+    })
 }
 
 /// Generate a single visitor implementation for a specific AST type.
@@ -224,15 +282,20 @@ fn generate_single_visitor_impl(
     visitor_type: &VisitorType,
     impl_generics: &Generics,
     impl_type: &Type,
-    user_method_map: &std::collections::HashMap<&str, &VisitorMethod>,
-) -> proc_macro2::TokenStream {
+    user_method_map: &mut std::collections::HashMap<String, &VisitorMethod>,
+) -> syn::Result<proc_macro2::TokenStream> {
     let VisitorType {
         generics,
         path,
         visit_method_name,
+        mode,
     } = visitor_type;
 
-    let visit_fn = if let Some(user_method) = user_method_map.get(visit_method_name.as_str()) {
+    let trait_name = mode.trait_name();
+    let method_name_str = mode.method_name();
+    let method_name_ident = syn::Ident::new(method_name_str, proc_macro2::Span::call_site());
+
+    let visit_fn = if let Some(user_method) = user_method_map.remove(visit_method_name) {
         let attrs = &user_method.attrs;
         let PatType { pat, ty, .. } = &user_method.param;
         let block = &user_method.block;
@@ -240,15 +303,24 @@ fn generate_single_visitor_impl(
         // Use user-defined method with their exact parameter and type
         quote! {
             #(#attrs)*
-            fn visit(&mut self, #pat: #ty) {
+            fn #method_name_ident(&mut self, #pat: #ty) {
                 #block
             }
         }
     } else {
-        quote! {
-            fn visit(&mut self, node: &#path) {
-                <#path as ::opslang_visitor::TemplateVisit<Self>>::super_visit(node, self);
-            }
+        match mode {
+            VisitorMode::Visit => quote! {
+                #[inline]
+                fn #method_name_ident(&mut self, node: &#path) {
+                    <#path as ::opslang_visitor::TemplateVisit<Self>>::super_visit(node, self);
+                }
+            },
+            VisitorMode::VisitMut => quote! {
+                #[inline]
+                fn #method_name_ident(&mut self, node: &mut #path) {
+                    <#path as ::opslang_visitor::TemplateVisitMut<Self>>::super_visit_mut(node, self);
+                }
+            },
         }
     };
 
@@ -256,11 +328,11 @@ fn generate_single_visitor_impl(
     let combined_generics = concatenate_generics(impl_generics, generics);
     let (combined_impl_generics, _, combined_where_clause) = combined_generics.split_for_impl();
 
-    quote! {
-        impl #combined_impl_generics ::opslang_visitor::Visitor<#path> for #impl_type #combined_where_clause {
+    Ok(quote! {
+        impl #combined_impl_generics #trait_name<#path> for #impl_type #combined_where_clause {
             #visit_fn
         }
-    }
+    })
 }
 
 #[cfg(test)]

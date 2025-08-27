@@ -5,6 +5,7 @@ members = [
     "opslang-ast-macro",
     "opslang-diag",
     "opslang-ir",
+    "opslang-ir-macro",
     "opslang-parser",
     "opslang-printer",
     "opslang-ty",

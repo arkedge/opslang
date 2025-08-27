@@ -39,6 +39,8 @@ use opslang_ast::{
     v1::{self as syn, TypeFamily as AstTypeFamily},
 };
 use opslang_ty::version::v1::{Ident, Ty, TypingContext};
+use opslang_visitor::impl_template_visit_base_case;
+use opslang_visitor_macro::Visit;
 use std::convert::Infallible;
 
 pub trait Typed<'cx> {
@@ -134,6 +136,9 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
         DateTime = DateTime<'cx>,
         Numeric = Numeric<'cx>,
         Apply = Apply<'cx>,
+
+        // Parentheses are removed
+        Parened = Infallible,
         ..
     }
 }
@@ -150,7 +155,7 @@ impl<'cx> IntoPosition<'cx, IrTypeFamily> for syn::Position {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A merged comment block in the IR.
 ///
 /// Unlike AST comments which are stored line-by-line, IR comments represent
@@ -165,7 +170,7 @@ pub struct Comment<'cx> {
     pub source_comments: &'cx [&'cx syn::Comment<'cx>],
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Visit)]
 /// A resolved path reference to a definition or module item.
 pub struct ResolvedPath<'cx> {
     /// Reference to the resolved module item.
@@ -181,7 +186,7 @@ impl<'cx> PartialEq for ResolvedPath<'cx> {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A typed expression in the IR.
 ///
 /// This is the core difference from AST expressions - IR expressions carry
@@ -199,43 +204,47 @@ impl<'cx> Expr<'cx> {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A parsed string literal in the IR.
 pub struct String<'cx> {
+    #[skip_visit]
     /// The parsed string value (escape sequences processed).
     pub value: &'cx str,
     /// Reference to the original AST string.
     pub syn: &'cx syn::literal::String<'cx>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A parsed bytes literal in the IR.
 pub struct Bytes<'cx> {
+    #[skip_visit]
     /// The parsed byte array.
     pub value: &'cx [u8],
     /// Reference to the original AST bytes literal.
     pub syn: &'cx syn::literal::Bytes<'cx>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A parsed hexadecimal bytes literal in the IR.
 pub struct HexBytes<'cx> {
+    #[skip_visit]
     /// The parsed byte array from hex representation.
     pub value: &'cx [u8],
     /// Reference to the original AST hex bytes literal.
     pub syn: &'cx syn::literal::HexBytes<'cx>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A parsed datetime literal in the IR.
 pub struct DateTime<'cx> {
+    #[skip_visit]
     /// The parsed datetime value.
     pub value: chrono::DateTime<Utc>,
     /// Reference to the original AST datetime literal.
     pub syn: &'cx syn::literal::DateTime<'cx>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A parsed numeric literal in the IR.
 pub struct Numeric<'cx> {
     /// The value.
@@ -251,7 +260,7 @@ pub enum NumericKind {
     Float(f64),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A function application in the IR.
 ///
 /// This includes qualifications that were resolved from Qualif and PreQualified
@@ -266,3 +275,5 @@ pub struct Apply<'cx> {
     /// The resolved function definition.
     pub resolved_function: Option<ResolvedPath<'cx>>,
 }
+
+impl_template_visit_base_case!(IrTypeFamily, NumericKind);

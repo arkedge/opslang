@@ -258,7 +258,7 @@ pub struct Expr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 pub struct Path<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub raw: &'cx str,
-    pub segments: &'cx [Ident<'cx, F>],
+    pub segments: &'cx [F::Ident],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -411,7 +411,7 @@ pub mod literal {
 
     #[derive(Debug, PartialEq, Clone, Copy, Visit)]
     /// Suffix of numeral value. Allows any ident at this point.
-    pub struct NumericSuffix<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(pub Ident<'cx, F>);
+    pub struct NumericSuffix<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(pub F::Ident);
 
     #[derive(Debug, PartialEq, Clone, Copy)]
     pub enum IntegerPrefix {

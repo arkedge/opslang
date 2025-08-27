@@ -8,6 +8,12 @@ description = "ops file language IR"
 [dependencies]
 opslang-ast = { path = "../opslang-ast", version = "0.4.0" }
 opslang-ast-macro = { path = "../opslang-ast-macro", version = "0.4.0" }
+opslang-ir-macro = { path = "../opslang-ir-macro", version = "0.4.0" }
+opslang-visitor = { path = "../opslang-visitor", version = "0.4.0" }
+opslang-visitor-macro = { path = "../opslang-visitor-macro", version = "0.4.0" }
 opslang-ty = { path = "../opslang-ty", version = "0.4.0" }
 chrono = "0.4.41"
 typed-arena = "2.0"
+
+[dev-dependencies]
+opslang-parser = { path = "../opslang-parser", version = "0.4.0" }

@@ -67,7 +67,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn ident(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self
     where
-        F: TypeFamily<'cx, Path = Path<'cx, F>>,
+        F: TypeFamily<'cx, Path = Path<'cx, F>, Ident = Ident<'cx, F>>,
     {
         Expr::variable(ctx, Path::single(ctx, name, span))
     }
@@ -283,7 +283,7 @@ impl<'cx, F: TypeFamily<'cx>> Path<'cx, F> {
     pub fn new_unchecked(
         ctx: &'cx context::Context<'cx, F>,
         raw: &str,
-        segments: &'cx [Ident<'cx, F>],
+        segments: &'cx [F::Ident],
     ) -> Self {
         let raw_str = ctx.alloc_str(raw);
         Path {
@@ -292,7 +292,10 @@ impl<'cx, F: TypeFamily<'cx>> Path<'cx, F> {
         }
     }
 
-    pub fn single(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self {
+    pub fn single(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self
+    where
+        F: TypeFamily<'cx, Ident = Ident<'cx, F>>,
+    {
         assert!(!name.contains('.'));
         let ident = Ident::new(ctx, name, span);
         let segments = ctx.alloc_ident_slice(vec![ident]);
@@ -456,7 +459,10 @@ impl<'cx, F: TypeFamily<'cx>> Numeric<'cx, F> {
         ctx: &'cx crate::syntax::v1::context::Context<'cx, F>,
         name: &str,
         span: F::Span,
-    ) -> NumericSuffix<'cx, F> {
+    ) -> NumericSuffix<'cx, F>
+    where
+        F: TypeFamily<'cx, Ident = Ident<'cx, F>>,
+    {
         let name_str = ctx.alloc_str(name);
         NumericSuffix(Ident {
             raw: name_str,
