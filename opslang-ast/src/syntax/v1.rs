@@ -11,11 +11,13 @@ pub mod loc;
 pub mod token;
 pub mod visit;
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[skip_all_visit]
 pub struct BytePos(pub u32);
 pub type Position = BytePos;
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Visit)]
+#[skip_all_visit]
 /// Default value for each types in this crate, to allow this crate define an AST.
 ///
 /// This type does not take any lifetime parameters because [`TypeFamily`] trait has them.
@@ -27,7 +29,8 @@ impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[skip_all_visit]
 /// A location in the code.
 pub struct Span {
     pub start: Position,
@@ -403,7 +406,8 @@ pub mod literal {
         pub suffix: Option<NumericSuffix<'cx, F>>,
     }
 
-    #[derive(Debug, PartialEq, Clone, Copy)]
+    #[derive(Debug, PartialEq, Clone, Copy, Visit)]
+    #[skip_all_visit]
     pub enum NumericKind {
         Integer(IntegerPrefix),
         Float,

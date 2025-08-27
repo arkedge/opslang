@@ -39,7 +39,6 @@ use opslang_ast::{
     v1::{self as syn, TypeFamily as AstTypeFamily},
 };
 use opslang_ty::version::v1::{Ident, Ty, TypingContext};
-use opslang_visitor::impl_template_visit_base_case;
 use opslang_visitor_macro::Visit;
 use std::convert::Infallible;
 
@@ -104,7 +103,8 @@ impl<'cx> Typed<'cx> for Expr<'cx> {
 pub mod context;
 pub use context::Context;
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Visit)]
+#[skip_all_visit]
 /// IR type family that includes type information and resolved names.
 pub struct IrTypeFamily;
 
@@ -253,7 +253,8 @@ pub struct Numeric<'cx> {
     pub syn: &'cx syn::literal::Numeric<'cx>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[skip_all_visit]
 /// A parsed numeric literal in the IR.
 pub enum NumericKind {
     Int(syn::literal::IntegerPrefix, i64),
@@ -276,4 +277,3 @@ pub struct Apply<'cx> {
     pub resolved_function: Option<ResolvedPath<'cx>>,
 }
 
-impl_template_visit_base_case!(IrTypeFamily, NumericKind);

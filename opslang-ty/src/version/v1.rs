@@ -61,7 +61,8 @@ impl<'cx> std::ops::Deref for Ty<'cx> {
 ///
 /// Type variables are placeholders for unknown types that get unified
 /// during the type checking process.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
 pub struct TypeVariable(u32);
 
 impl std::fmt::Display for TypeVariable {
@@ -427,5 +428,3 @@ impl<'cx> Default for ModuleLoader<'cx> {
         Self::new()
     }
 }
-
-opslang_visitor::impl_template_visit_base_case!(TypeVariable);

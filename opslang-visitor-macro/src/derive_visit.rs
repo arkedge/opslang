@@ -1,10 +1,3 @@
-fn has_skip_visit(field: &syn::Field) -> bool {
-    field
-        .attrs
-        .iter()
-        .any(|attr| attr.path().is_ident("skip_visit"))
-}
-
 pub fn derive_visit(
     input: proc_macro::TokenStream,
 ) -> Result<proc_macro2::TokenStream, proc_macro2::TokenStream> {
@@ -13,8 +6,11 @@ pub fn derive_visit(
     let mut s =
         synstructure::Structure::try_new(&derive_input).map_err(syn::Error::into_compile_error)?;
     s.bind_with(|_| synstructure::BindStyle::Move);
+
+    let skip_all = has_skip_all_visit(&derive_input);
+
     let visit_body = s.each(|bi| {
-        if has_skip_visit(bi.ast()) {
+        if skip_all || has_skip_visit(bi.ast()) {
             quote::quote! {}
         } else {
             quote::quote! {
@@ -24,7 +20,7 @@ pub fn derive_visit(
     });
 
     let visit_mut_body = s.each(|bi| {
-        if has_skip_visit(bi.ast()) {
+        if skip_all || has_skip_visit(bi.ast()) {
             quote::quote! {}
         } else {
             quote::quote! {
@@ -34,13 +30,15 @@ pub fn derive_visit(
     });
 
     // Collect unique types of all binding fields to generate where clauses
-    // Skip fields with #[skip_visit] attribute
+    // Skip fields with #[skip_visit] attribute or if #[skip_all_visit] is present
     let mut field_types = std::collections::HashSet::new();
-    for variant in s.variants() {
-        for binding in variant.bindings() {
-            let field = binding.ast();
-            if !has_skip_visit(field) {
-                field_types.insert(&field.ty);
+    if !skip_all {
+        for variant in s.variants() {
+            for binding in variant.bindings() {
+                let field = binding.ast();
+                if !has_skip_visit(field) {
+                    field_types.insert(&field.ty);
+                }
             }
         }
     }
@@ -102,4 +100,18 @@ pub fn derive_visit(
     };
 
     Ok(result)
+}
+
+fn has_skip_visit(field: &syn::Field) -> bool {
+    field
+        .attrs
+        .iter()
+        .any(|attr| attr.path().is_ident("skip_visit"))
+}
+
+fn has_skip_all_visit(derive_input: &syn::DeriveInput) -> bool {
+    derive_input
+        .attrs
+        .iter()
+        .any(|attr| attr.path().is_ident("skip_all_visit"))
 }

@@ -1,4 +1,4 @@
-use opslang_visitor::{TemplateVisit, TemplateVisitMut, Visitor, impl_template_visit_base_case};
+use opslang_visitor::{TemplateVisit, TemplateVisitMut, Visitor};
 
 /// A comprehensive visitor trait for all V1 AST types.
 ///
@@ -41,13 +41,6 @@ use opslang_visitor::{TemplateVisit, TemplateVisitMut, Visitor, impl_template_vi
 /// methods for all AST types and provides a blanket implementation.
 #[opslang_ast_macro::v1_declare_ast_visitor_trait]
 pub trait AstVisitor<'cx> {}
-
-impl_template_visit_base_case!(
-    super::DefaultTypeFamily,
-    super::BytePos,
-    super::Span,
-    super::NumericKind,
-);
 
 /// Implement [`TemplateVisit`] for [`Expr`], ignoring sealed field.
 ///
