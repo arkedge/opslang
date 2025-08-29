@@ -164,6 +164,7 @@ impl<'cx> IntoPosition<'cx, IrTypeFamily> for syn::Position {
 /// merged blocks of adjacent comments, which is more natural for multi-line
 /// comment blocks in the source code.
 pub struct Comment<'cx> {
+    #[skip_visit]
     /// The combined content of all adjacent comments in the block.
     pub content: &'cx str,
     /// The span covering all merged comments.

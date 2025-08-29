@@ -83,6 +83,7 @@ impl TypeVariable {
 /// Identifiers are used to distinguish variables and functions across different scopes,
 /// allowing proper name resolution in nested contexts.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
 pub struct Identifier<'cx> {
     /// The string name of the identifier
     pub name: &'cx str,

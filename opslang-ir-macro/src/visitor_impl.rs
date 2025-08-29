@@ -106,7 +106,6 @@ fn generate_adhoc_visitor_impls(
         impl ::opslang_ty::version::v1::TypeVariable;
         impl ::std::convert::Infallible;
         impl chrono::DateTime<chrono::Utc>;
-        impl usize;
         impl Vec<::opslang_ty::version::v1::Ty<'__cx>>;
         impl Vec<::opslang_ir::version::Expr<'__cx>>;
         impl Vec<::opslang_ast::Qualif<'__cx, ::opslang_ir::version::IrTypeFamily>>;

@@ -163,6 +163,7 @@ impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// A comment in a program.
 pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    #[skip_visit]
     pub content: &'cx str,
     pub span: F::Span,
 }
@@ -260,12 +261,14 @@ pub struct Expr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 pub struct Path<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    #[skip_visit]
     pub raw: &'cx str,
     pub segments: &'cx [F::Ident],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 pub struct Ident<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    #[skip_visit]
     pub raw: &'cx str,
     pub span: F::Span,
 }
@@ -273,7 +276,7 @@ pub struct Ident<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Visit)]
 /// A qualification for a function application.
 ///
-/// The OpLang qualification system enables flexible function argument modification and assignment.
+/// The qualification system enables flexible function argument modification and assignment.
 /// This system abstracts argument handling at a higher level than traditional named parameter
 /// systems found in languages like OCaml.
 ///
@@ -286,7 +289,7 @@ pub struct Ident<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 ///
 /// **Default Modifiers**: Provide unnamed optional arguments that can be applied without explicit
 /// parameters, offering a simplified qualification syntax.
-/// - Syntax: `~MOBC` where `MOBC` is the default modifier name
+/// - Syntax: `~MOBC` where `MOBC` is the default modifier value
 ///
 /// ## Key Features
 ///
@@ -381,24 +384,28 @@ pub mod literal {
 
     #[derive(Debug, PartialEq, Clone, Copy, Visit)]
     pub struct String<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+        #[skip_visit]
         pub raw: &'cx str,
         pub span: F::Span,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy, Visit)]
     pub struct Bytes<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+        #[skip_visit]
         pub raw: &'cx str,
         pub span: F::Span,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy, Visit)]
     pub struct HexBytes<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+        #[skip_visit]
         pub raw: &'cx str,
         pub span: F::Span,
     }
 
     #[derive(Debug, PartialEq, Clone, Copy, Visit)]
     pub struct Numeric<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+        #[skip_visit]
         /// The raw string representation of the numeric value, without any prefix or suffix.
         pub raw: &'cx str,
 
@@ -434,6 +441,7 @@ pub mod literal {
     #[derive(Debug, PartialEq, Clone, Copy, Visit)]
     /// A date-time value.
     pub struct DateTime<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+        #[skip_visit]
         pub raw: &'cx str,
         pub span: F::Span,
     }
