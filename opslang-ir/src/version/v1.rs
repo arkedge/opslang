@@ -57,6 +57,7 @@ impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Block<'cx, F> {
 impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Scope<'cx, F> {
     type Ty = Option<Ty<'cx>>;
     fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        // FIXME: the last item type
         None
     }
 }
@@ -64,6 +65,7 @@ impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Scope<'cx, F> {
 impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::ScopeItem<'cx, F> {
     type Ty = Option<Ty<'cx>>;
     fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        // FIXME: Block can have types
         None
     }
 }
@@ -261,7 +263,7 @@ pub enum NumericKind {
     Float(f64),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[derive(Debug, PartialEq, Clone, Visit)]
 /// A function application in the IR.
 ///
 /// This includes qualifications that were resolved from Qualif and PreQualified
@@ -270,10 +272,9 @@ pub struct Apply<'cx> {
     /// The function being called.
     pub function: Expr<'cx>,
     /// The function arguments.
-    pub args: &'cx [Expr<'cx>],
+    pub args: Vec<Expr<'cx>>,
     /// Qualifications applied to this call (resolved from AST Qualif/PreQualified).
-    pub qualifications: &'cx [syn::Qualif<'cx, IrTypeFamily>],
+    pub qualifications: Vec<syn::Qualif<'cx, IrTypeFamily>>,
     /// The resolved function definition.
     pub resolved_function: Option<ResolvedPath<'cx>>,
 }
-

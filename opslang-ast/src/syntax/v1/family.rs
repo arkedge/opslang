@@ -2,10 +2,10 @@ use std::fmt::Debug;
 
 /// Shorthand for repeating trait constraints with optional documentation.
 macro_rules! declare_family {
-    ($($(#[$attr:meta])* type $ident:ident;)*) => {
+    ($($(#[$attr:meta])* type $ident:ident $(: $tr:ident)?;)*) => {
         $(
             $(#[$attr])*
-            type $ident: std::fmt::Debug + PartialEq + Clone + Copy;
+            type $ident: std::fmt::Debug + PartialEq + Clone $(+ $tr)*;
         )*
     };
 }
@@ -58,12 +58,12 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Source location span representing a range in the source code (start/end positions).
         ///
         /// It is useful to implement [`super::token::IntoSpan`] for conversion into this type.
-        type Span;
+        type Span: Copy;
 
         /// Single source position (line, column) in the source code.
         ///
         /// It is useful to implement [`super::token::IntoPosition`] for conversion into this type.
-        type Position;
+        type Position: Copy;
 
         // === Structural Types ===
         /// Comments attached to AST nodes, preserving documentation and annotations.
@@ -86,10 +86,10 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
 
         // === Names and Identifiers ===
         /// Simple identifier used for variable names, function names, etc.
-        type Ident;
+        type Ident: Copy;
 
         /// Path to an identifier, which may include module qualification or scope resolution.
-        type Path;
+        type Path: Copy;
 
         type Ty;
 

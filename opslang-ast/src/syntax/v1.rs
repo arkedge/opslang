@@ -167,7 +167,7 @@ pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub span: F::Span,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[derive(Debug, PartialEq, Clone, Visit)]
 /// A block of statements with optional comments and a default receiver component. A block can also have a delay.
 ///
 /// # Examples
@@ -184,7 +184,7 @@ pub struct Block<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub right_brace: token::CloseBrace<'cx, F>,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[derive(Debug, PartialEq, Clone, Visit)]
 /// A statement kind.
 pub enum Statement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Let(Let<'cx, F>),
@@ -270,7 +270,7 @@ pub struct Ident<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub span: F::Span,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[derive(Debug, PartialEq, Clone, Visit)]
 /// A qualification for a function application.
 ///
 /// The OpLang qualification system enables flexible function argument modification and assignment.
@@ -315,7 +315,7 @@ pub enum Qualif<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     DefaultModifier(DefaultModifier<'cx, F>),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[derive(Debug, PartialEq, Clone, Visit)]
 /// A modifier for command argument specification.
 ///
 /// See [`Qualif`] for more information.

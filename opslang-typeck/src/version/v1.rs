@@ -800,44 +800,7 @@ impl<'cx> TypeChecker<'cx> {
                     }
                 }
             }
-            ExprKind::Apply(apply) => {
-                let mut func_ir = self.typeck_expr(env, subst, &apply.function)?;
-                let mut arg_types = Vec::new();
-                let mut ir_args = Vec::new();
-
-                for arg in apply.args {
-                    let mut arg_ir = self.typeck_expr(env, subst, arg)?;
-                    subst.apply_substitution(self.typing_cx, &mut arg_ir.ty);
-                    arg_types.push(arg_ir.ty);
-                    ir_args.push(arg_ir);
-                }
-
-                let mut return_type = Ty::mk_variable(self.typing_cx, self.fresh_type_var());
-                let expected_func_type = Ty::mk_function(self.typing_cx, arg_types, return_type);
-
-                subst.apply_substitution(self.typing_cx, &mut func_ir.ty);
-                self.unify(subst, func_ir.ty, expected_func_type)?;
-                subst.apply_substitution(self.typing_cx, &mut return_type);
-
-                // Convert arguments to IR with final types
-                for arg_ir in &mut ir_args {
-                    subst.apply_substitution(self.typing_cx, &mut arg_ir.ty);
-                }
-
-                // Convert function to IR with final type
-                subst.apply_substitution(self.typing_cx, &mut func_ir.ty);
-
-                // Create IR Apply expression
-                let ir_apply = ir::Apply {
-                    function: func_ir,
-                    args: self.ir_cx.alloc_expr_slice(ir_args),
-                    qualifications: &[], // No qualifications for now (they're resolved elsewhere)
-                    resolved_function: None, // Function resolution would be done in a separate pass
-                };
-                let ir_expr_kind = ExprKind::Apply(ir_apply);
-                let ir_expr = self.ir_cx.alloc_expr_with_type(ir_expr_kind, return_type);
-                Ok(ir_expr)
-            }
+            ExprKind::Apply(apply) => self.typeck_apply(env, subst, apply, &[]),
             ExprKind::If(if_expr) => {
                 let mut cond_ir = self.typeck_expr(env, subst, &if_expr.cond)?;
                 let bool_type = Ty::mk_bool(self.typing_cx);
@@ -900,11 +863,15 @@ impl<'cx> TypeChecker<'cx> {
                     Ok(ir_expr)
                 }
             }
-            ExprKind::Qualif(_) => {
-                todo!()
-            }
-            ExprKind::PreQualified(_) => {
-                todo!()
+            ExprKind::Qualif(_) => Err(anyhow!("Qualif cannot be used as a standalone expression")),
+            ExprKind::PreQualified(prequalified) => {
+                if let ExprKind::Apply(apply) = &prequalified.expr.0 {
+                    self.typeck_apply(env, subst, apply, prequalified.qualifs)
+                } else {
+                    Err(anyhow!(
+                        "PreQualified expressions can only be applied to function calls"
+                    ))
+                }
             }
             ExprKind::Compare(compare) => {
                 // Compare expressions have a head expression and a tail of (op, expr) pairs
@@ -1172,6 +1139,94 @@ impl<'cx> TypeChecker<'cx> {
                 original_path: path,
             }),
             None => Err(anyhow!("Cannot resolve path: {}", path.raw)),
+        }
+    }
+
+    fn typeck_apply(
+        &mut self,
+        env: &Environment<'cx, '_>,
+        subst: &mut Substitution<'cx>,
+        apply: &'cx ast::Apply<'cx>,
+        qualifs: &'cx [ast::Qualif<'cx>],
+    ) -> Result<ir::Expr<'cx>> {
+        let func_ir = self.typeck_expr(env, subst, &apply.function)?;
+        let mut arg_types = Vec::new();
+        let mut args = Vec::new();
+        let mut qualifications = Vec::new();
+
+        // Process qualifications first
+        for qualif in qualifs {
+            let qualif_ir = self.typeck_qualif(env, subst, qualif)?;
+            qualifications.push(qualif_ir);
+        }
+
+        // Process arguments, collecting any Qualif expressions
+        for arg in apply.args {
+            if let ExprKind::Qualif(qualif) = arg.0 {
+                // Collect Qualif as qualification
+                let qualif_ir = self.typeck_qualif(env, subst, qualif)?;
+                qualifications.push(qualif_ir);
+            } else {
+                // Regular argument
+                let mut arg_ir = self.typeck_expr(env, subst, arg)?;
+                subst.apply_substitution(self.typing_cx, &mut arg_ir.ty);
+                arg_types.push(arg_ir.ty);
+                args.push(arg_ir);
+            }
+        }
+
+        let return_type = Ty::mk_variable(self.typing_cx, self.fresh_type_var());
+        let expected_func_type = Ty::mk_function(self.typing_cx, arg_types, return_type);
+
+        self.unify(subst, func_ir.ty, expected_func_type)?;
+
+        args.shrink_to_fit();
+        qualifications.shrink_to_fit();
+
+        // Create IR Apply expression
+        let ir_apply = ir::Apply {
+            function: func_ir,
+            args,
+            qualifications,
+            resolved_function: None, // FIXME
+        };
+        let ir_expr_kind = ExprKind::Apply(ir_apply);
+        let ir_expr = self.ir_cx.alloc_expr_with_type(ir_expr_kind, return_type);
+        Ok(ir_expr)
+    }
+
+    fn typeck_qualif(
+        &mut self,
+        env: &Environment<'cx, '_>,
+        subst: &mut Substitution<'cx>,
+        qualif: &'cx ast::Qualif<'cx>,
+    ) -> Result<ast::Qualif<'cx, IrTypeFamily>> {
+        match qualif {
+            ast::Qualif::Modifier(modifier) => {
+                let ir_path = self.resolve_path(&modifier.id)?;
+                let ir_param = if let Some(param) = &modifier.arg {
+                    let param_ir = self.typeck_expr(env, subst, &param.value)?;
+                    Some(ast::ModifierParam {
+                        colon_token: param.colon_token.into_token(),
+                        value: param_ir,
+                    })
+                } else {
+                    None
+                };
+
+                Ok(ast::Qualif::Modifier(ast::Modifier {
+                    at_token: modifier.at_token.into_token(),
+                    id: ir_path,
+                    arg: ir_param,
+                }))
+            }
+            ast::Qualif::DefaultModifier(default_modifier) => {
+                let ir_path = self.resolve_path(&default_modifier.value)?;
+                Ok(ast::Qualif::DefaultModifier(ast::DefaultModifier {
+                    tilde_token: default_modifier.tilde_token.into_token(),
+                    value: ir_path,
+                }))
+            }
         }
     }
 }
