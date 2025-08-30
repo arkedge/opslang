@@ -1,3 +1,4 @@
+mod ast_consistency_check;
 mod ast_types;
 mod declare_ast_visitor;
 mod derive_map_into_token;
@@ -108,4 +109,54 @@ pub fn v1_declare_ast_visitor_trait(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     wrap_proc_macro(input, declare_ast_visitor::declare_ast_visitor_trait)
+}
+
+/// Generates a compile-time consistency check for AST types registry.
+///
+/// This procedural macro verifies that all AST types defined in the centralized registry
+/// (`ast_types.rs`) actually exist and are accessible from the context where this macro is called.
+/// The macro is designed to be called from within a v1 child module context to ensure that
+/// all registered types can be referenced using `super::` paths.
+///
+/// # Purpose
+///
+/// The AST types registry in `ast_types.rs` maintains a list of all AST node types for use by
+/// procedural macros, but this registry is independent of the actual type definitions. This
+/// creates a potential inconsistency where the registry might reference types that don't exist
+/// or have been renamed/moved.
+///
+/// # Implementation
+///
+/// The macro generates compile-time checks in the form:
+/// ```ignore
+/// const _: () = {
+///     let _: super::Type1<'cx>;
+///     let _: super::module::Type2<'cx>;
+///     // ... for each registered type
+/// };
+/// ```
+///
+/// If any type in the registry doesn't exist or isn't accessible with the expected path,
+/// compilation will fail with a clear error message pointing to the problematic type.
+///
+/// # Usage
+///
+/// This macro should be called from within a child module of `opslang_ast::syntax::v1`
+/// to verify type accessibility:
+///
+/// ```ignore
+/// // In opslang-ast/src/syntax/v1/some_child_module.rs
+/// opslang_ast_macro::ast_consistency_check!();
+/// ```
+///
+/// # Guarantees
+///
+/// Successful compilation of this macro ensures:
+/// 1. All types in the AST registry exist
+/// 2. All types are accessible from v1 child module context using `super::` paths
+/// 3. All types accept the expected lifetime parameter `'cx`
+/// 4. The registry is consistent with actual type definitions
+#[proc_macro]
+pub fn ast_consistency_check(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    ast_consistency_check::ast_consistency_check().into()
 }

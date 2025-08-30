@@ -104,6 +104,7 @@ impl<'cx> Typed<'cx> for Expr<'cx> {
 
 pub mod context;
 pub use context::Context;
+pub mod ir_consistency_check;
 
 pub mod visit;
 pub use visit::{IrMutVisitor, IrVisitor};
