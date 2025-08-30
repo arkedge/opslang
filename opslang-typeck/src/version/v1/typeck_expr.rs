@@ -26,7 +26,7 @@ impl<'cx> TypeChecker<'cx> {
                 } else {
                     match self.module_loader.resolve_path(var_name) {
                         Some(item) => item.ty(),
-                        None => return Err(anyhow!("Unbound variable: {var_name}")),
+                        None => return Err(anyhow!("unbound variable: {var_name}")),
                     }
                 };
 
@@ -66,7 +66,7 @@ impl<'cx> TypeChecker<'cx> {
                                 Ok(ir_expr)
                             }
                             _ => Err(anyhow!(
-                                "Arithmetic operation requires numeric type, got {}",
+                                "arithmetic operation requires numeric type, got {}",
                                 lhs_ir.ty.display(self.typing_cx)
                             )),
                         }

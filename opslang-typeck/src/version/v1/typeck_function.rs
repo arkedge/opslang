@@ -11,11 +11,11 @@ impl<'cx> TypeChecker<'cx> {
         // Retrieve the already resolved function type from the environment
         let func_type = global_env
             .lookup_variable(func_name)
-            .ok_or_else(|| anyhow!("Function '{func_name}' not found in environment"))?;
+            .ok_or_else(|| anyhow!("function '{func_name}' not found in environment"))?;
 
         let (param_types, return_type) = match func_type.kind() {
             TyKind::Function { arg, ret } => (arg.clone(), *ret),
-            _ => return Err(anyhow!("Expected function type for '{func_name}'")),
+            _ => return Err(anyhow!("expected function type for '{func_name}'")),
         };
 
         let mut func_env = global_env.extend_inherit();

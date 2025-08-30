@@ -27,7 +27,7 @@ impl<'cx> TypeChecker<'cx> {
                             Ok(v) => v,
                             Err(_) => {
                                 return Err(anyhow!(
-                                    "Failed to parse integer literal: {}",
+                                    "failed to parse integer literal: {}",
                                     numeric.raw
                                 ));
                             }
@@ -40,7 +40,7 @@ impl<'cx> TypeChecker<'cx> {
                             Ok(v) => v,
                             Err(_) => {
                                 return Err(anyhow!(
-                                    "Failed to parse float literal: {}",
+                                    "failed to parse float literal: {}",
                                     numeric.raw
                                 ));
                             }
@@ -144,7 +144,7 @@ impl<'cx> TypeChecker<'cx> {
                 let parsed_datetime = match dt.raw.parse::<chrono::DateTime<Utc>>() {
                     Ok(datetime) => datetime,
                     Err(_) => {
-                        return Err(anyhow!("Failed to parse datetime literal: {}", dt.raw));
+                        return Err(anyhow!("failed to parse datetime literal: {}", dt.raw));
                     }
                 };
 
