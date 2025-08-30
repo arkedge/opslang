@@ -105,6 +105,9 @@ impl<'cx> Typed<'cx> for Expr<'cx> {
 pub mod context;
 pub use context::Context;
 
+pub mod visit;
+pub use visit::{IrMutVisitor, IrVisitor};
+
 #[derive(Debug, PartialEq, Clone, Copy, Default, Visit)]
 #[skip_all_visit]
 /// IR type family that includes type information and resolved names.

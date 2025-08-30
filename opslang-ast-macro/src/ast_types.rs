@@ -1,12 +1,3 @@
-/// Method kind for generating method names.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodKind {
-    /// Generate `visit_*` method names
-    Visit,
-    /// Generate `super_*` method names (for identifier-safe names)
-    Super,
-}
-
 /// Represents a generic type in the AST that can be instantiated with a lifetime.
 ///
 /// # Invariants
@@ -87,13 +78,16 @@ impl AstType {
 
     /// Generate appropriate method name based on the type and method kind.
     /// If module_path exists, generates `{prefix}_{module}_{name}`, otherwise `{prefix}_{name}`.
-    pub fn generate_visit_method_name(&self, kind: MethodKind) -> String {
+    pub fn generate_visit_method_name(
+        &self,
+        kind: opslang_visitor_macro_helper::MethodKind,
+    ) -> String {
         use convert_case::{Case, Casing};
 
         let snake_name = self.name.to_case(Case::Snake);
         let prefix = match kind {
-            MethodKind::Visit => "visit",
-            MethodKind::Super => "super",
+            opslang_visitor_macro_helper::MethodKind::Visit => "visit",
+            opslang_visitor_macro_helper::MethodKind::Super => "super",
         };
 
         if let Some(module) = self.module_path {

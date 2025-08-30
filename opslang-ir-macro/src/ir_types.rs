@@ -75,64 +75,86 @@ impl IrType {
         }
     }
 
-    /// AST type with module and default TypeFamily (no type substitution)
-    pub const fn with_ast_module_default(name: &'static str, module_path: &'static str) -> Self {
-        Self {
-            name,
-            module_path: Some(module_path),
-            instance: Instance::Ast(TypeSubstitution::Default), // Use default TypeFamily
-        }
-    }
-
-    /// Generate full path for this type with proper crate and module qualification.
-    fn full_path(&self) -> String {
-        let (crate_prefix, type_suffix) = match self.instance {
-            Instance::Ir => ("::opslang_ir::version::v1", "<'cx>"),
-            Instance::Ty => ("::opslang_ty::version::v1", "<'cx>"),
-            Instance::Ast(TypeSubstitution::Ir) => (
-                "::opslang_ast::syntax::v1",
-                "<'cx, ::opslang_ir::version::v1::IrTypeFamily>",
-            ),
-            Instance::Ast(TypeSubstitution::Default) => ("::opslang_ast::syntax::v1", "<'cx>"),
-        };
-
-        match self.module_path {
-            Some(module) => format!("{crate_prefix}::{module}::{}{type_suffix}", self.name),
-            None => format!("{crate_prefix}::{}{type_suffix}", self.name),
-        }
-    }
-
-    /// Generate appropriate visit method name based on the type and visitor mode.
-    /// If module_path exists, generates `visit_{crate}_{module}_{name}` or `visit_{crate}_{module}_{name}_mut`,
-    /// otherwise `visit_{crate}_{name}` or `visit_{crate}_{name}_mut`.
+    /// Generate appropriate visit method name based on the type, method kind, and visitor mode.
+    /// If module_path exists, generates `{prefix}_{module}_{name}[_mut]`, otherwise `{prefix}_{name}[_mut]`.
     pub fn generate_visit_method_name(
         &self,
+        kind: opslang_visitor_macro_helper::MethodKind,
         mode: opslang_visitor_macro_helper::VisitorMode,
     ) -> String {
         use convert_case::{Case, Casing};
 
-        let snake_name = self.name.to_case(Case::Snake);
-        // let crate_prefix = match self.instance {
-        //     Instance::Ast(_) => "ast",
-        //     Instance::Ir => "ir",
-        //     Instance::Ty => "ty",
-        // };
-        let method_suffix = match mode {
-            opslang_visitor_macro_helper::VisitorMode::Visit => "",
-            opslang_visitor_macro_helper::VisitorMode::VisitMut => "_mut",
+        let mut string;
+        let prefix = match kind {
+            opslang_visitor_macro_helper::MethodKind::Visit => "visit_",
+            opslang_visitor_macro_helper::MethodKind::Super => "super_",
         };
+        string = prefix.to_string();
+
+        if let Instance::Ast(TypeSubstitution::Default) = self.instance {
+            string.push_str("ast_");
+        }
 
         if let Some(module) = self.module_path {
-            let snake_module = module.to_case(Case::Snake);
-            format!("visit_{snake_module}_{snake_name}{method_suffix}")
-        } else {
-            format!("visit_{snake_name}{method_suffix}")
+            string.push_str(&module.to_case(Case::Snake));
+            string.push('_');
+        };
+
+        string.push_str(&self.name.to_case(Case::Snake));
+
+        if let opslang_visitor_macro_helper::VisitorMode::VisitMut = mode {
+            string.push_str("_mut");
         }
+
+        string
     }
 
     /// Returns all IR types for v1 syntax including both AST and IR specific types.
     pub const fn get_v1_ir_types() -> &'static [IrType] {
         V1_IR_NODE_TYPES
+    }
+
+    /// Generate full path for this type with proper crate and module qualification.
+    ///
+    /// When `use_super_for_ir` is true, IR crate types use "super" instead of absolute paths.
+    fn full_path(&self, use_super_for_ir: bool) -> String {
+        let crate_prefix = match self.instance {
+            Instance::Ir => {
+                if use_super_for_ir {
+                    "super"
+                } else {
+                    "::opslang_ir::version::v1"
+                }
+            }
+            Instance::Ty => "::opslang_ty::version::v1",
+            Instance::Ast(_) => "::opslang_ast::syntax::v1",
+        };
+        let type_suffix = match self.instance {
+            Instance::Ir => "<'cx>",
+            Instance::Ty => "<'cx>",
+            Instance::Ast(TypeSubstitution::Default) => "<'cx>",
+            Instance::Ast(TypeSubstitution::Ir) => {
+                if use_super_for_ir {
+                    "<'cx, super::IrTypeFamily>"
+                } else {
+                    "<'cx, ::opslang_ir::version::v1::IrTypeFamily>"
+                }
+            }
+        };
+
+        let name = self.name;
+        match self.module_path {
+            Some(module) => format!("{crate_prefix}::{module}::{name}{type_suffix}"),
+            None => format!("{crate_prefix}::{name}{type_suffix}"),
+        }
+    }
+
+    /// Convert to a super-qualified type for relative references.
+    ///
+    /// This creates a type that generates paths like `super::Type<'cx>` or `super::module::Type<'cx>`
+    /// for use in contexts where relative references within the same crate are appropriate.
+    pub const fn inside_of_v1_child_mod(&self) -> InsideV1ChildModType<'_> {
+        InsideV1ChildModType { inner: self }
     }
 
     /// Convert to a crate-qualified type for external references.
@@ -180,6 +202,29 @@ macro_rules! define_ir_node_types {
     };
 }
 
+/// A newtyped wrapper for [`IrType`] that ensures super-qualified paths.
+///
+/// This type generates paths like `super::Type<'cx>` or `super::module::Type<'cx>` and is
+/// intended for contexts where relative references within the same crate are appropriate,
+/// such as in trait declarations.
+#[derive(Clone, Debug)]
+pub struct InsideV1ChildModType<'a> {
+    inner: &'a IrType,
+}
+
+impl InsideV1ChildModType<'_> {
+    /// Generate super-qualified token stream path.
+    ///
+    /// Returns a [`proc_macro2::TokenStream`] representing paths like `super::Type<'cx>`
+    /// suitable for relative references within the same crate.
+    pub fn super_path(&self) -> proc_macro2::TokenStream {
+        let path_string = self.inner.full_path(true);
+        path_string
+            .parse()
+            .expect("Generated path should be valid Rust syntax")
+    }
+}
+
 /// A newtyped wrapper for [`IrType`] that ensures crate-qualified paths.
 ///
 /// This type generates paths like `::opslang_ir::version::v1::Type<'cx>` and is intended
@@ -196,7 +241,7 @@ impl OutsideIrCrateType<'_> {
     /// Returns a string like `::opslang_ir::version::v1::Type<'cx>` suitable for
     /// external references to IR types.
     pub fn full_crate_path(&self) -> String {
-        self.inner.full_path()
+        self.inner.full_path(false)
     }
 }
 
@@ -218,7 +263,6 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
         type Let;
         type ExprStatement;
         type ReturnStmt;
-        type Expr;
         type Qualif;
         type Modifier;
         type ModifierParam;
@@ -239,12 +283,6 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
         // Literal types
         type Literal;
         type Array;
-        type String;
-        type Bytes;
-        type HexBytes;
-        type Numeric;
-        type NumericSuffix;
-        type DateTime;
 
         // Token types
         mod token {
@@ -294,13 +332,12 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
         type Path;
         type NumericSuffix;
         type Ident;
-        mod literal {
-            type String;
-            type Bytes;
-            type HexBytes;
-            type DateTime;
-            type Numeric;
-        }
+
+        type String;
+        type Bytes;
+        type HexBytes;
+        type DateTime;
+        type Numeric;
     }
     // types that are defined in ir crate
     crate ir {

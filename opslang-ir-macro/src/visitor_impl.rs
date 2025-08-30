@@ -16,12 +16,13 @@ pub fn visitor_impl(
         let crate_qualified = ir_type.outside_of_ir_crate();
         let full_path = crate_qualified.full_crate_path();
         let path: syn::Path = syn::parse_str(&full_path)?;
+        let kind = opslang_visitor_macro_helper::MethodKind::Visit;
         // Generate Visit version
         let mode = opslang_visitor_macro_helper::VisitorMode::Visit;
         visitor_types.push(VisitorType {
             generics: syn::parse_quote!(<'cx>),
             path: path.clone(),
-            visit_method_name: ir_type.generate_visit_method_name(mode),
+            visit_method_name: ir_type.generate_visit_method_name(kind, mode),
             mode,
         });
 
@@ -30,7 +31,7 @@ pub fn visitor_impl(
         visitor_types.push(VisitorType {
             generics: syn::parse_quote!(<'cx>),
             path,
-            visit_method_name: ir_type.generate_visit_method_name(mode),
+            visit_method_name: ir_type.generate_visit_method_name(kind, mode),
             mode,
         });
     }
@@ -92,6 +93,7 @@ fn generate_adhoc_visitor_impls(
         impl ::opslang_ast::syntax::v1::BytePos;
         impl ::opslang_ast::syntax::v1::literal::NumericKind;
         impl ::opslang_ast::syntax::v1::ExprKind<'__cx, ::opslang_ir::version::v1::IrTypeFamily>;
+        impl ::opslang_ast::syntax::v1::ExprMut<'__cx, ::opslang_ir::version::v1::IrTypeFamily>;
         impl ::opslang_ir::version::v1::IrTypeFamily;
         impl ::opslang_ir::version::v1::NumericKind;
         impl ::opslang_ty::version::v1::Ident<'__cx>;

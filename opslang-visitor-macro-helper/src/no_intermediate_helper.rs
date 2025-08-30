@@ -145,6 +145,19 @@ fn generate_generic_visitor_impls_internal(
         ::opslang_visitor::impl_visitor!(#ref_t_impl_generics #t #mode_tokens &T #ref_t_where_clause);
     };
 
+    let ref_mut_t_generics = update_generics(&t_generics, |g| {
+        // For &mut T, we need T: ?Sized to handle &mut str, &mut [U], etc.
+        g.make_where_clause()
+            .predicates
+            .push(syn::parse_quote!(T: ?Sized))
+    });
+
+    let (ref_mut_t_impl_generics, _, ref_mut_t_where_clause) = ref_mut_t_generics.split_for_impl();
+
+    let ref_mut_impl = quote! {
+        ::opslang_visitor::impl_visitor!(#ref_mut_t_impl_generics #t #mode_tokens &mut T #ref_mut_t_where_clause);
+    };
+
     // Add tuple implementations
     let tuple2_generics = update_generics(updated_generics, |g| {
         // For 2-tuple (T1, T2)
@@ -170,6 +183,7 @@ fn generate_generic_visitor_impls_internal(
         #str_impl
         #generic_impls
         #ref_impl
+        #ref_mut_impl
         #tuple2_impl
     }
 }

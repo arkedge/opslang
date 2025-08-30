@@ -7,6 +7,16 @@ use syn::{
 };
 
 pub mod no_intermediate_helper;
+pub mod shared_visitor_trait;
+
+/// Method kind for generating method names.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MethodKind {
+    /// Generate `visit_*` method names
+    Visit,
+    /// Generate `super_*` method names (for identifier-safe names)
+    Super,
+}
 
 /// Validated visitor method with checked parameter and block.
 pub struct VisitorMethod {

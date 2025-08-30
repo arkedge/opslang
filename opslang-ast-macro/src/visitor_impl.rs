@@ -15,8 +15,8 @@ pub fn visitor_impl(
         .map(|ast_type| {
             let crate_qualified = ast_type.outside_of_ast_crate();
             let path = crate_qualified.full_crate_path();
-            let visit_method_name =
-                ast_type.generate_visit_method_name(crate::ast_types::MethodKind::Visit);
+            let visit_method_name = ast_type
+                .generate_visit_method_name(opslang_visitor_macro_helper::MethodKind::Visit);
 
             // Generate Visit version
             opslang_visitor_macro_helper::VisitorType {
