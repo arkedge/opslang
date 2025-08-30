@@ -1,8 +1,8 @@
 use super::{
     Apply, Array, BinOp, Binary, Bytes, Comment, Compare, CompareOp, DateTime, Debug, Definition,
-    Expr, ExprKind, HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric,
-    NumericKind, NumericSuffix, Parened, Path, PreQualified, Row, Set, String, TypeFamily, UnOp,
-    Unary, context, token,
+    Expr, ExprKind, ExprMut, HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal,
+    Numeric, NumericKind, NumericSuffix, Parened, Path, PreQualified, Row, Set, String, TypeFamily,
+    UnOp, Unary, context, token,
 };
 
 impl<'cx, F: TypeFamily<'cx>> Definition<'cx, F> {
@@ -58,28 +58,75 @@ impl<'cx, F: TypeFamily<'cx>> Clone for Expr<'cx, F> {
 
 impl<'cx, F: TypeFamily<'cx>> Copy for Expr<'cx, F> {}
 
+impl<'cx, F: TypeFamily<'cx>> std::ops::Deref for ExprMut<'cx, F> {
+    type Target = ExprKind<'cx, F>;
+
+    fn deref(&self) -> &Self::Target {
+        self.0
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> std::ops::DerefMut for ExprMut<'cx, F> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.0
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> Debug for ExprMut<'cx, F> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> PartialEq for ExprMut<'cx, F> {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
 impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
     #[inline]
     pub fn from_kind(ctx: &'cx context::Context<'cx, F>, kind: ExprKind<'cx, F>) -> Self {
         ctx.alloc_expr(kind)
     }
+}
 
+impl<'cx, F: TypeFamily<'cx>> ExprMut<'cx, F> {
+    #[inline]
+    pub fn from_kind(ctx: &'cx context::Context<'cx, F>, kind: ExprKind<'cx, F>) -> Self {
+        ctx.alloc_expr_mut(kind)
+    }
+}
+
+/// dupricates impl content into two impls.
+macro_rules! impl_expr_and_expr_mut {
+    ($($tt:tt)*) => {
+        impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
+            $($tt)*
+        }
+        impl<'cx, F: TypeFamily<'cx>> ExprMut<'cx, F> {
+            $($tt)*
+        }
+    };
+}
+
+impl_expr_and_expr_mut! {
     #[inline]
     pub fn ident(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self
     where
         F: TypeFamily<'cx, Path = Path<'cx, F>, Ident = Ident<'cx, F>>,
     {
-        Expr::variable(ctx, Path::single(ctx, name, span))
+        Self::variable(ctx, Path::single(ctx, name, span))
     }
 
     #[inline]
     pub fn variable(ctx: &'cx context::Context<'cx, F>, path: F::Path) -> Self {
-        ctx.alloc_expr(ExprKind::Variable(path))
+        Self::from_kind(ctx, ExprKind::Variable(path))
     }
 
     #[inline]
     pub fn literal(ctx: &'cx context::Context<'cx, F>, literal: F::Literal) -> Self {
-        ctx.alloc_expr(ExprKind::Literal(literal))
+        Self::from_kind(ctx, ExprKind::Literal(literal))
     }
 
     #[inline]
@@ -97,7 +144,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             expr,
             right_paren,
         };
-        ctx.alloc_expr(ExprKind::Parened(parened))
+        Self::from_kind(ctx, ExprKind::Parened(parened))
     }
 
     #[inline]
@@ -109,7 +156,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             function,
             args: ctx.alloc_expr_slice(args),
         };
-        ctx.alloc_expr(ExprKind::Apply(apply))
+        Self::from_kind(ctx, ExprKind::Apply(apply))
     }
 
     #[inline]
@@ -123,7 +170,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         F: TypeFamily<'cx, Binary = Binary<'cx, F>>,
     {
         let binary = Binary { lhs, op, rhs };
-        ctx.alloc_expr(ExprKind::Binary(binary))
+        Self::from_kind(ctx, ExprKind::Binary(binary))
     }
 
     #[inline]
@@ -132,7 +179,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         F: TypeFamily<'cx, Unary = Unary<'cx, F>>,
     {
         let unary = Unary { op, expr };
-        ctx.alloc_expr(ExprKind::Unary(unary))
+        Self::from_kind(ctx, ExprKind::Unary(unary))
     }
 
     #[inline]
@@ -148,7 +195,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             head,
             tail_with_op: ctx.alloc_compare_op_expr_tuple_slice(tail_with_op),
         };
-        ctx.alloc_expr(ExprKind::Compare(compare))
+        Self::from_kind(ctx, ExprKind::Compare(compare))
     }
 
     #[inline]
@@ -175,7 +222,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
         F: TypeFamily<'cx, Set = Set<'cx, F>>,
     {
         let set = Set { lhs, colon_eq, rhs };
-        ctx.alloc_expr(ExprKind::Set(set))
+        Self::from_kind(ctx, ExprKind::Set(set))
     }
 
     #[inline]
@@ -193,7 +240,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             question,
             path,
         };
-        ctx.alloc_expr(ExprKind::InfixImport(import))
+        Self::from_kind(ctx, ExprKind::InfixImport(import))
     }
 
     #[inline]
@@ -217,7 +264,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
                 else_clause,
             }),
         };
-        ctx.alloc_expr(ExprKind::If(if_expr))
+        Self::from_kind(ctx, ExprKind::If(if_expr))
     }
     #[inline]
     pub fn if_then(
@@ -235,7 +282,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             then_clause,
             else_opt: None,
         };
-        ctx.alloc_expr(ExprKind::If(if_expr))
+        Self::from_kind(ctx, ExprKind::If(if_expr))
     }
     #[inline]
     pub fn if_expr(
@@ -254,12 +301,12 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             then_clause,
             else_opt,
         };
-        ctx.alloc_expr(ExprKind::If(if_expr))
+        Self::from_kind(ctx, ExprKind::If(if_expr))
     }
 
     #[inline]
     pub fn qualif(ctx: &'cx context::Context<'cx, F>, qualif: F::Qualif) -> Self {
-        ctx.alloc_expr(ExprKind::Qualif(qualif))
+        Self::from_kind(ctx, ExprKind::Qualif(qualif))
     }
 
     #[inline]
@@ -275,7 +322,7 @@ impl<'cx, F: TypeFamily<'cx>> Expr<'cx, F> {
             qualifs: ctx.alloc_qualif_slice(qualifs),
             expr,
         };
-        ctx.alloc_expr(ExprKind::PreQualified(pre_qualified))
+        Self::from_kind(ctx, ExprKind::PreQualified(pre_qualified))
     }
 }
 

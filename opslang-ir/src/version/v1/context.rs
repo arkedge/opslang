@@ -143,7 +143,7 @@ impl<'cx> Context<'cx> {
         ir_expr_kind: ExprKind<'cx, IrTypeFamily>,
         expected_type: Ty<'cx>,
     ) -> Expr<'cx> {
-        let expr_ref = self.ast_context.alloc_expr(ir_expr_kind);
+        let expr_ref = self.ast_context.alloc_expr_mut(ir_expr_kind);
         Expr {
             kind: expr_ref,
             ty: expected_type,

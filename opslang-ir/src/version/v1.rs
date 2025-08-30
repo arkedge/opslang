@@ -192,20 +192,20 @@ impl<'cx> PartialEq for ResolvedPath<'cx> {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[derive(Debug, PartialEq, Visit)]
 /// A typed expression in the IR.
 ///
 /// This is the core difference from AST expressions - IR expressions carry
 /// type information from the type inference process.
 pub struct Expr<'cx> {
     /// The expression kind/content.
-    pub kind: syn::Expr<'cx, IrTypeFamily>,
+    pub kind: syn::ExprMut<'cx, IrTypeFamily>,
     /// The inferred type of this expression.
     pub ty: Ty<'cx>,
 }
 
 impl<'cx> Expr<'cx> {
-    pub fn new(kind: syn::Expr<'cx, IrTypeFamily>, ty: Ty<'cx>) -> Self {
+    pub fn new(kind: syn::ExprMut<'cx, IrTypeFamily>, ty: Ty<'cx>) -> Self {
         Self { kind, ty }
     }
 }
@@ -267,7 +267,7 @@ pub enum NumericKind {
     Float(f64),
 }
 
-#[derive(Debug, PartialEq, Clone, Visit)]
+#[derive(Debug, PartialEq, Visit)]
 /// A function application in the IR.
 ///
 /// This includes qualifications that were resolved from Qualif and PreQualified

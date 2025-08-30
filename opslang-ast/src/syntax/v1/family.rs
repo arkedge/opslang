@@ -5,7 +5,7 @@ macro_rules! declare_family {
     ($($(#[$attr:meta])* type $ident:ident $(: $tr:ident)?;)*) => {
         $(
             $(#[$attr])*
-            type $ident: std::fmt::Debug + PartialEq + Clone $(+ $tr)*;
+            type $ident: std::fmt::Debug + PartialEq $(+ $tr)*;
         )*
     };
 }

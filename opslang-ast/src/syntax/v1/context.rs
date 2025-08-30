@@ -1,6 +1,6 @@
 use super::{
-    Block, Comment, CompareOp, DefaultTypeFamily, Definition, Expr, ExprKind, Ident, Parameter,
-    Row, family::TypeFamily,
+    Block, Comment, CompareOp, DefaultTypeFamily, Definition, Expr, ExprKind, ExprMut, Ident,
+    Parameter, Row, family::TypeFamily,
 };
 use typed_arena::Arena;
 
@@ -39,6 +39,10 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
 
     pub fn alloc_expr(&'cx self, expr: ExprKind<'cx, F>) -> Expr<'cx, F> {
         Expr(self.expr_arena.alloc(expr), super::sealed::Sealed)
+    }
+
+    pub fn alloc_expr_mut(&'cx self, expr: ExprKind<'cx, F>) -> ExprMut<'cx, F> {
+        ExprMut(self.expr_arena.alloc(expr), super::sealed::Sealed)
     }
 
     pub fn alloc_row(&'cx self, row: Row<'cx, F>) -> &'cx Row<'cx, F> {

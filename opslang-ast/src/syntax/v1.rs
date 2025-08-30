@@ -168,7 +168,7 @@ pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub span: F::Span,
 }
 
-#[derive(Debug, PartialEq, Clone, Visit)]
+#[derive(Debug, PartialEq, Visit)]
 /// A block of statements with optional comments and a default receiver component. A block can also have a delay.
 ///
 /// # Examples
@@ -185,7 +185,7 @@ pub struct Block<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub right_brace: token::CloseBrace<'cx, F>,
 }
 
-#[derive(Debug, PartialEq, Clone, Visit)]
+#[derive(Debug, PartialEq, Visit)]
 /// A statement kind.
 pub enum Statement<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Let(Let<'cx, F>),
@@ -259,6 +259,9 @@ pub struct Expr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily>(
     sealed::Sealed,
 );
 
+/// Unused type in Ast, but used in Ir crate.
+pub struct ExprMut<'cx, F: TypeFamily<'cx>>(pub &'cx mut ExprKind<'cx, F>, sealed::Sealed);
+
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 pub struct Path<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     #[skip_visit]
@@ -273,7 +276,7 @@ pub struct Ident<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub span: F::Span,
 }
 
-#[derive(Debug, PartialEq, Clone, Visit)]
+#[derive(Debug, PartialEq, Visit)]
 /// A qualification for a function application.
 ///
 /// The qualification system enables flexible function argument modification and assignment.
@@ -318,7 +321,7 @@ pub enum Qualif<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     DefaultModifier(DefaultModifier<'cx, F>),
 }
 
-#[derive(Debug, PartialEq, Clone, Visit)]
+#[derive(Debug, PartialEq, Visit)]
 /// A modifier for command argument specification.
 ///
 /// See [`Qualif`] for more information.
