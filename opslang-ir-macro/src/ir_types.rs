@@ -103,8 +103,8 @@ impl IrType {
     }
 
     /// Generate appropriate visit method name based on the type and visitor mode.
-    /// If module_path exists, generates `visit_{crate}_{module}_{name}` or `visit_mut_{crate}_{module}_{name}`,
-    /// otherwise `visit_{crate}_{name}` or `visit_mut_{crate}_{name}`.
+    /// If module_path exists, generates `visit_{crate}_{module}_{name}` or `visit_{crate}_{module}_{name}_mut`,
+    /// otherwise `visit_{crate}_{name}` or `visit_{crate}_{name}_mut`.
     pub fn generate_visit_method_name(
         &self,
         mode: opslang_visitor_macro_helper::VisitorMode,
@@ -117,16 +117,16 @@ impl IrType {
         //     Instance::Ir => "ir",
         //     Instance::Ty => "ty",
         // };
-        let method_prefix = match mode {
-            opslang_visitor_macro_helper::VisitorMode::Visit => "visit",
-            opslang_visitor_macro_helper::VisitorMode::VisitMut => "visit_mut",
+        let method_suffix = match mode {
+            opslang_visitor_macro_helper::VisitorMode::Visit => "",
+            opslang_visitor_macro_helper::VisitorMode::VisitMut => "_mut",
         };
 
         if let Some(module) = self.module_path {
             let snake_module = module.to_case(Case::Snake);
-            format!("{method_prefix}_{snake_module}_{snake_name}")
+            format!("visit_{snake_module}_{snake_name}{method_suffix}")
         } else {
-            format!("{method_prefix}_{snake_name}")
+            format!("visit_{snake_name}{method_suffix}")
         }
     }
 
