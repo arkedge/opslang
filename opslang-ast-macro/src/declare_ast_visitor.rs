@@ -3,7 +3,7 @@ use syn::{Token, braced, token};
 
 use crate::ast_types::MethodKind;
 
-struct TraitDeclaration {
+pub struct TraitDeclaration {
     attrs: Vec<syn::Attribute>,
     vis: syn::Visibility,
     _trait_token: Token![trait],
@@ -28,10 +28,8 @@ impl syn::parse::Parse for TraitDeclaration {
 
 /// Generates a comprehensive visitor trait for all V1 AST types.
 pub fn declare_ast_visitor_trait(
-    input: proc_macro::TokenStream,
-) -> Result<proc_macro2::TokenStream, proc_macro2::TokenStream> {
-    let trait_decl: TraitDeclaration = syn::parse(input).map_err(|e| e.to_compile_error())?;
-
+    trait_decl: TraitDeclaration,
+) -> syn::Result<proc_macro2::TokenStream> {
     let attrs = &trait_decl.attrs;
     let vis = &trait_decl.vis;
     let name = &trait_decl.ident;

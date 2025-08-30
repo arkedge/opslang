@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, Token, Type, parse::Parse};
 
-struct TypeSubstitution {
+pub struct TypeSubstitution {
     overrides: Vec<TypeOverride>,
     #[allow(dead_code)]
     has_default: bool,
@@ -102,27 +102,23 @@ const DEFAULT_TYPES: &[(&str, &str)] = define_default_types! {
 };
 
 /// Generate type definitions for use within the opslang-ast crate itself.
-pub fn v1_default_type_subst_internal(
-    input: proc_macro::TokenStream,
-) -> Result<TokenStream, TokenStream> {
+pub fn v1_default_type_subst_internal(input: TypeSubstitution) -> Result<TokenStream, syn::Error> {
     generate_type_subst(input, "crate")
 }
 
 /// Generate type definitions for use in external crates.
-pub fn v1_default_type_subst(input: proc_macro::TokenStream) -> Result<TokenStream, TokenStream> {
+pub fn v1_default_type_subst(input: TypeSubstitution) -> Result<TokenStream, syn::Error> {
     generate_type_subst(input, "::opslang_ast")
 }
 
 fn generate_type_subst(
-    input: proc_macro::TokenStream,
+    substitution: TypeSubstitution,
     crate_prefix: &str,
-) -> Result<TokenStream, TokenStream> {
-    let substitution = syn::parse::<TypeSubstitution>(input).map_err(|e| e.to_compile_error())?;
-
+) -> Result<TokenStream, syn::Error> {
     let mut type_definitions = Vec::new();
 
     for (name, default_type_path) in DEFAULT_TYPES {
-        let name_ident = syn::parse_str::<Ident>(name).unwrap();
+        let name_ident = syn::parse_str::<Ident>(name)?;
 
         // Check if this type is overridden
         if let Some(override_type) = substitution.overrides.iter().find(|o| o.name == name_ident) {
@@ -139,9 +135,8 @@ fn generate_type_subst(
                 syn::parse_str(&full_type_path).map_err(|e| {
                     syn::Error::new_spanned(
                         &name_ident,
-                        format!("Failed to parse default type '{full_type_path}': {e}"),
+                        format!("Failed to parse default type `{full_type_path}`: {e}"),
                     )
-                    .to_compile_error()
                 })?;
             type_definitions.push(quote! {
                 type #name_ident = #default_type_tokens;

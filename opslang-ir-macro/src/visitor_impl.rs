@@ -3,11 +3,8 @@ use opslang_visitor_macro_helper::{VisitorType, no_intermediate_helper};
 
 /// Generates visitor implementation for IR types.
 pub fn visitor_impl(
-    input: proc_macro::TokenStream,
-) -> Result<proc_macro2::TokenStream, proc_macro2::TokenStream> {
-    let visitor_impl = syn::parse::<opslang_visitor_macro_helper::VisitorImpl>(input)
-        .map_err(|e| e.to_compile_error())?;
-
+    input: opslang_visitor_macro_helper::VisitorImpl,
+) -> Result<proc_macro2::TokenStream, syn::Error> {
     // Get all IR types for v1 syntax (includes both AST and IR specific types)
     let all_ir_types = IrType::get_v1_ir_types();
 
@@ -18,8 +15,7 @@ pub fn visitor_impl(
     for ir_type in all_ir_types.iter() {
         let crate_qualified = ir_type.outside_of_ir_crate();
         let full_path = crate_qualified.full_crate_path();
-        let path: syn::Path = syn::parse_str(&full_path)
-            .unwrap_or_else(|e| panic!("Failed to parse path '{full_path}': {e}"));
+        let path: syn::Path = syn::parse_str(&full_path)?;
         // Generate Visit version
         let mode = opslang_visitor_macro_helper::VisitorMode::Visit;
         visitor_types.push(VisitorType {
@@ -40,11 +36,9 @@ pub fn visitor_impl(
     }
 
     // Generate additional implementations for generic types like &[T], Option<T>, etc.
-    let additional_impls = generate_adhoc_visitor_impls(&visitor_impl);
+    let additional_impls = generate_adhoc_visitor_impls(&input);
 
-    let main_expanded =
-        opslang_visitor_macro_helper::generate_visitor_impl(visitor_impl, visitor_types)
-            .map_err(|e| e.to_compile_error())?;
+    let main_expanded = opslang_visitor_macro_helper::generate_visitor_impl(input, visitor_types)?;
 
     Ok(quote::quote! {
         #main_expanded

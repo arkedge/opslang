@@ -6,46 +6,45 @@ mod derive_span;
 mod v1_default_type_subst;
 mod visitor_impl;
 
+#[inline]
+fn wrap_proc_macro<T: syn::parse::Parse>(
+    input: proc_macro::TokenStream,
+    f: impl Fn(T) -> syn::Result<proc_macro2::TokenStream>,
+) -> proc_macro::TokenStream {
+    syn::parse(input)
+        .and_then(f)
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 #[proc_macro_derive(Span)]
 pub fn derive_span(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    derive_span::derive_span(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, derive_span::derive_span)
 }
 
 #[proc_macro_derive(OrderSpan)]
 pub fn derive_order_span(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    derive_span::derive_order_span(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, derive_span::derive_order_span)
 }
 
 #[proc_macro_derive(Position)]
 pub fn derive_position(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    derive_position::derive_position(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, derive_position::derive_position)
 }
 
 #[proc_macro_derive(MapIntoToken)]
 pub fn derive_map_into_token(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    derive_map_into_token::derive_map_into_token(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, derive_map_into_token::derive_map_into_token)
 }
 
 #[proc_macro]
 pub fn v1_default_type_subst(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    v1_default_type_subst::v1_default_type_subst(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, v1_default_type_subst::v1_default_type_subst)
 }
 
 #[proc_macro]
 pub fn v1_default_type_subst_internal(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    v1_default_type_subst::v1_default_type_subst_internal(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, v1_default_type_subst::v1_default_type_subst_internal)
 }
 
 /// Generates comprehensive AST visitor implementations for v1 syntax nodes.
@@ -100,9 +99,7 @@ pub fn v1_default_type_subst_internal(input: proc_macro::TokenStream) -> proc_ma
 /// ```
 #[proc_macro]
 pub fn v1_ast_visitor_impl(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    visitor_impl::visitor_impl(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, visitor_impl::visitor_impl)
 }
 
 #[proc_macro_attribute]
@@ -110,7 +107,5 @@ pub fn v1_declare_ast_visitor_trait(
     _attr: proc_macro::TokenStream,
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    declare_ast_visitor::declare_ast_visitor_trait(input)
-        .unwrap_or_else(std::convert::identity)
-        .into()
+    wrap_proc_macro(input, declare_ast_visitor::declare_ast_visitor_trait)
 }

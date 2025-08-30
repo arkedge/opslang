@@ -1,9 +1,6 @@
 use syn::{DeriveInput, Token, WherePredicate, punctuated::Punctuated, spanned::Spanned};
 
-pub fn derive_span(
-    input: proc_macro::TokenStream,
-) -> Result<proc_macro2::TokenStream, proc_macro2::TokenStream> {
-    let input: DeriveInput = syn::parse(input).map_err(syn::Error::into_compile_error)?;
+pub fn derive_span(input: DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
     let name = input.ident;
     let span = quote::quote! {
         impl crate::loc::Span for #name {
@@ -15,10 +12,7 @@ pub fn derive_span(
     Ok(span)
 }
 
-pub fn derive_order_span(
-    input: proc_macro::TokenStream,
-) -> Result<proc_macro2::TokenStream, proc_macro2::TokenStream> {
-    let input: DeriveInput = syn::parse(input).map_err(syn::Error::into_compile_error)?;
+pub fn derive_order_span(input: DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
     let name = input.ident.clone();
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let mut predicates = Punctuated::<WherePredicate, Token![,]>::new();
@@ -29,10 +23,10 @@ pub fn derive_order_span(
     let data = if let syn::Data::Struct(data) = input.data {
         data
     } else {
-        return Err(
-            syn::Error::new_spanned(input, "OrderSpan can only be derived for structs")
-                .into_compile_error(),
-        );
+        return Err(syn::Error::new_spanned(
+            input,
+            "OrderSpan can only be derived for structs",
+        ));
     };
     let fields = if let syn::Fields::Named(fields) = data.fields {
         fields
@@ -40,15 +34,13 @@ pub fn derive_order_span(
         return Err(syn::Error::new(
             span,
             "OrderSpan can only be derived for structs with named fields",
-        )
-        .into_compile_error());
+        ));
     };
     let Some(first_field) = fields.named.first() else {
         return Err(syn::Error::new_spanned(
             fields,
             "OrderSpan can only be derived for structs with at least one field",
-        )
-        .into_compile_error());
+        ));
     };
     let first_field_name = &first_field.ident.as_ref().unwrap();
     let first_field_ty = &first_field.ty;

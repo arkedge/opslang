@@ -3,11 +3,8 @@ use opslang_visitor_macro_helper::no_intermediate_helper;
 
 /// Generates visitor implementation for AST types.
 pub fn visitor_impl(
-    input: proc_macro::TokenStream,
-) -> Result<proc_macro2::TokenStream, proc_macro2::TokenStream> {
-    let visitor_impl = syn::parse::<opslang_visitor_macro_helper::VisitorImpl>(input)
-        .map_err(|e| e.to_compile_error())?;
-
+    input: opslang_visitor_macro_helper::VisitorImpl,
+) -> Result<proc_macro2::TokenStream, syn::Error> {
     // Get all AST types for v1 syntax
     let ast_node_types = AstType::get_v1_ast_node_types();
 
@@ -34,11 +31,9 @@ pub fn visitor_impl(
     // Note: Generic implementations are now handled separately in generate_generic_visitor_impls
 
     // Generate additional implementations for generic types like &[T], Option<T>, etc.
-    let additional_impls = generate_adhoc_visitor_impls(&visitor_impl);
+    let additional_impls = generate_adhoc_visitor_impls(&input);
 
-    let main_expanded =
-        opslang_visitor_macro_helper::generate_visitor_impl(visitor_impl, visitor_types)
-            .map_err(|e| e.to_compile_error())?;
+    let main_expanded = opslang_visitor_macro_helper::generate_visitor_impl(input, visitor_types)?;
 
     Ok(quote::quote! {
         #main_expanded

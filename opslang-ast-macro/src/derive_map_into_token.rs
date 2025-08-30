@@ -35,9 +35,7 @@ impl VisitMut for TypeParamReplacer<'_> {
     }
 }
 
-pub fn derive_map_into_token(input: proc_macro::TokenStream) -> Result<TokenStream, TokenStream> {
-    let input: DeriveInput = syn::parse(input).map_err(syn::Error::into_compile_error)?;
-
+pub fn derive_map_into_token(input: DeriveInput) -> syn::Result<TokenStream> {
     let name = &input.ident;
     let (_impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
@@ -54,8 +52,7 @@ pub fn derive_map_into_token(input: proc_macro::TokenStream) -> Result<TokenStre
             return Err(syn::Error::new_spanned(
                 input,
                 "MapIntoToken can only be derived for enums",
-            )
-            .into_compile_error());
+            ));
         }
     };
 
@@ -78,8 +75,7 @@ pub fn derive_map_into_token(input: proc_macro::TokenStream) -> Result<TokenStre
                     return Err(syn::Error::new_spanned(
                         variant_name,
                         "MapIntoToken only supports variants with exactly one field",
-                    )
-                    .into_compile_error());
+                    ));
                 }
             }
             Fields::Named(fields) => {

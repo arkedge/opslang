@@ -1,9 +1,6 @@
 use syn::DeriveInput;
 
-pub fn derive_position(
-    input: proc_macro::TokenStream,
-) -> Result<proc_macro2::TokenStream, proc_macro2::TokenStream> {
-    let input: DeriveInput = syn::parse(input).map_err(syn::Error::into_compile_error)?;
+pub fn derive_position(input: DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
     let name = input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let position = quote::quote! {
