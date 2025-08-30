@@ -49,19 +49,15 @@ fn generate_adhoc_visitor_impls(
 
     let impl_type = &visitor_impl.impl_type;
     let impl_generics = &visitor_impl.impl_generics;
-    let (_, ty_generics, _) = impl_generics.split_for_impl();
 
-    // Add '__cx lifetime to existing generics
+    // Add 'cx lifetime to existing generics
     let updated_generics = no_intermediate_helper::update_generics(impl_generics, |g| {
-        g.params.push(syn::parse_quote!('__cx));
+        g.params.push(syn::parse_quote!('cx));
     });
 
     // Generate generic implementations
-    let generic_impls = no_intermediate_helper::generate_generic_visitor_impls(
-        &ty_generics,
-        &updated_generics,
-        impl_type,
-    );
+    let generic_impls =
+        no_intermediate_helper::generate_generic_visitor_impls(&updated_generics, impl_type);
 
     let (updated_impl_generics, _, updated_where_clause) = updated_generics.split_for_impl();
 
@@ -69,7 +65,7 @@ fn generate_adhoc_visitor_impls(
     macro_rules! impl_by_default {
         ($(impl $ty:ty;)*) => {
             quote! {$(
-                ::opslang_visitor::impl_visitor!(#updated_impl_generics #impl_type #ty_generics [visit] $ty #updated_where_clause);
+                ::opslang_visitor::impl_visitor!(#updated_impl_generics #impl_type [visit] $ty #updated_where_clause);
             )*}
         };
     }
@@ -79,7 +75,7 @@ fn generate_adhoc_visitor_impls(
         impl ::opslang_ast::syntax::v1::Span;
         impl ::opslang_ast::syntax::v1::BytePos;
         impl ::opslang_ast::syntax::v1::literal::NumericKind;
-        impl ::opslang_ast::syntax::v1::ExprKind<'__cx>;
+        impl ::opslang_ast::syntax::v1::ExprKind<'cx>;
     };
 
     quote! {

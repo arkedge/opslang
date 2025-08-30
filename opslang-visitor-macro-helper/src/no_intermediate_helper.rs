@@ -49,9 +49,6 @@ impl VisitorMode {
 ///
 /// # Arguments
 ///
-/// * `ty_generics`:
-///   Type generics from the original implementation generics, used for the visitor type.
-///   This should be obtained from `split_for_impl()` on the original generics.
 /// * `updated_generics`:
 ///   The base generics that have been updated (e.g., with additional lifetimes).
 ///   Must have generic angle brackets (lt_token must be Some) as verified by the assert.
@@ -75,14 +72,13 @@ impl VisitorMode {
 /// Panics if `updated_generics.params.is_empty()`, indicating the generics don't have parameters,
 /// which disrupts `::opslang_visitor::impl_visitor!` call.
 fn generate_generic_visitor_impls_internal(
-    ty_generics: &syn::TypeGenerics,
     updated_generics: &syn::Generics,
     impl_type: &syn::Type,
     mode: VisitorMode,
 ) -> proc_macro2::TokenStream {
     use quote::quote;
 
-    let t = quote!(#impl_type #ty_generics);
+    let t = impl_type;
     let mode_tokens = mode.as_tokens();
     let trait_name = mode.trait_name();
 
@@ -190,28 +186,16 @@ fn generate_generic_visitor_impls_internal(
 
 /// Generate generic visitor implementations for immutable visiting.
 pub fn generate_generic_visitor_impls(
-    ty_generics: &syn::TypeGenerics,
     updated_generics: &syn::Generics,
     impl_type: &syn::Type,
 ) -> proc_macro2::TokenStream {
-    generate_generic_visitor_impls_internal(
-        ty_generics,
-        updated_generics,
-        impl_type,
-        VisitorMode::Visit,
-    )
+    generate_generic_visitor_impls_internal(updated_generics, impl_type, VisitorMode::Visit)
 }
 
 /// Generate generic visitor implementations for mutable visiting.
 pub fn generate_generic_visitor_mut_impls(
-    ty_generics: &syn::TypeGenerics,
     updated_generics: &syn::Generics,
     impl_type: &syn::Type,
 ) -> proc_macro2::TokenStream {
-    generate_generic_visitor_impls_internal(
-        ty_generics,
-        updated_generics,
-        impl_type,
-        VisitorMode::VisitMut,
-    )
+    generate_generic_visitor_impls_internal(updated_generics, impl_type, VisitorMode::VisitMut)
 }

@@ -55,25 +55,18 @@ fn generate_adhoc_visitor_impls(
 
     let impl_type = &visitor_impl.impl_type;
     let impl_generics = &visitor_impl.impl_generics;
-    let (_, ty_generics, _) = impl_generics.split_for_impl();
 
-    // Add '__cx lifetime to existing generics
+    // Add 'cx lifetime to existing generics
     let updated_generics = no_intermediate_helper::update_generics(impl_generics, |g| {
-        g.params.push(syn::parse_quote!('__cx));
+        g.params.push(syn::parse_quote!('cx));
     });
 
     // Generate generic implementations for both Visitor and VisitorMut
-    let visit_generic_impls = no_intermediate_helper::generate_generic_visitor_impls(
-        &ty_generics,
-        &updated_generics,
-        impl_type,
-    );
+    let visit_generic_impls =
+        no_intermediate_helper::generate_generic_visitor_impls(&updated_generics, impl_type);
 
-    let visit_mut_generic_impls = no_intermediate_helper::generate_generic_visitor_mut_impls(
-        &ty_generics,
-        &updated_generics,
-        impl_type,
-    );
+    let visit_mut_generic_impls =
+        no_intermediate_helper::generate_generic_visitor_mut_impls(&updated_generics, impl_type);
 
     let (updated_impl_generics, _, updated_where_clause) = updated_generics.split_for_impl();
 
@@ -81,8 +74,8 @@ fn generate_adhoc_visitor_impls(
     macro_rules! impl_by_default {
         ($(impl $ty:ty;)*) => {
             quote! {$(
-                ::opslang_visitor::impl_visitor!(#updated_impl_generics #impl_type #ty_generics [visit] $ty #updated_where_clause);
-                ::opslang_visitor::impl_visitor!(#updated_impl_generics #impl_type #ty_generics [visit_mut] $ty #updated_where_clause);
+                ::opslang_visitor::impl_visitor!(#updated_impl_generics #impl_type [visit] $ty #updated_where_clause);
+                ::opslang_visitor::impl_visitor!(#updated_impl_generics #impl_type [visit_mut] $ty #updated_where_clause);
             )*}
         };
     }
@@ -92,19 +85,19 @@ fn generate_adhoc_visitor_impls(
         impl ::opslang_ast::syntax::v1::Span;
         impl ::opslang_ast::syntax::v1::BytePos;
         impl ::opslang_ast::syntax::v1::literal::NumericKind;
-        impl ::opslang_ast::syntax::v1::ExprKind<'__cx, ::opslang_ir::version::v1::IrTypeFamily>;
-        impl ::opslang_ast::syntax::v1::ExprMut<'__cx, ::opslang_ir::version::v1::IrTypeFamily>;
+        impl ::opslang_ast::syntax::v1::ExprKind<'cx, ::opslang_ir::version::v1::IrTypeFamily>;
+        impl ::opslang_ast::syntax::v1::ExprMut<'cx, ::opslang_ir::version::v1::IrTypeFamily>;
         impl ::opslang_ir::version::v1::IrTypeFamily;
         impl ::opslang_ir::version::v1::NumericKind;
-        impl ::opslang_ty::version::v1::Ident<'__cx>;
-        impl ::opslang_ty::version::v1::TyKind<'__cx>;
-        impl ::opslang_ty::version::v1::Identifier<'__cx>;
+        impl ::opslang_ty::version::v1::Ident<'cx>;
+        impl ::opslang_ty::version::v1::TyKind<'cx>;
+        impl ::opslang_ty::version::v1::Identifier<'cx>;
         impl ::opslang_ty::version::v1::TypeVariable;
         impl ::std::convert::Infallible;
         impl chrono::DateTime<chrono::Utc>;
-        impl Vec<::opslang_ty::version::v1::Ty<'__cx>>;
-        impl Vec<::opslang_ir::version::Expr<'__cx>>;
-        impl Vec<::opslang_ast::Qualif<'__cx, ::opslang_ir::version::IrTypeFamily>>;
+        impl Vec<::opslang_ty::version::v1::Ty<'cx>>;
+        impl Vec<::opslang_ir::version::Expr<'cx>>;
+        impl Vec<::opslang_ast::Qualif<'cx, ::opslang_ir::version::IrTypeFamily>>;
     };
 
     quote! {
