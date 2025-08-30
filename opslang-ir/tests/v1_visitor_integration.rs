@@ -9,7 +9,7 @@ struct SimpleIrVisitor {
 }
 
 // Start with just one visitor implementation to test the basic functionality
-opslang_ir_macro::visitor_impl!(for SimpleIrVisitor {
+opslang_ir_macro::v1_ir_visitor_impl!(for SimpleIrVisitor {
     fn visit_ty(&mut self, _node: &Ty<'cx>) {
         self.ty_count += 1;
     }

@@ -17,7 +17,7 @@ fn wrap_proc_macro<T: syn::parse::Parse>(
 }
 
 #[proc_macro]
-pub fn visitor_impl(input: TokenStream) -> TokenStream {
+pub fn v1_ir_visitor_impl(input: TokenStream) -> TokenStream {
     wrap_proc_macro(input, visitor_impl::visitor_impl)
 }
 

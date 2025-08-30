@@ -70,6 +70,7 @@ const DEFAULT_TYPES: &[(&str, &str)] = define_default_types! {
     type Span = syn::Span;
     type Position = syn::Position;
     type Comment = &'cx syn::Comment<'cx, Self>;
+    type ToplevelItem = syn::ToplevelItem<'cx, Self>;
     type Row = &'cx syn::Row<'cx, Self>;
     type Statement = syn::Statement<'cx, Self>;
     type Block = &'cx syn::Block<'cx, Self>;

@@ -1,6 +1,6 @@
 use super::syn;
 use super::{
-    Apply, Bytes, Comment, DateTime, Expr, HexBytes, IrTypeFamily, Numeric, ResolvedPath, String,
+    Apply, Bytes, Comment, DateTime, Definition, Expr, HexBytes, IrTypeFamily, Numeric, ResolvedPath, String,
 };
 use opslang_ty::version::v1::Ty;
 use syn::context::Context as AstContext;
@@ -42,6 +42,12 @@ pub struct Context<'cx> {
 
     /// Arena for resolved path references
     resolved_path_arena: Arena<ResolvedPath<'cx>>,
+
+    /// Arena for IR definitions
+    definition_arena: Arena<Definition<'cx>>,
+
+    /// Arena for AST comment references (for source_comments in IR Comment)
+    ast_comment_arena: Arena<&'cx syn::Comment<'cx>>,
 }
 
 impl<'cx> std::ops::Deref for Context<'cx> {
@@ -119,6 +125,21 @@ impl<'cx> Context<'cx> {
         resolved_path: ResolvedPath<'cx>,
     ) -> &'cx ResolvedPath<'cx> {
         self.resolved_path_arena.alloc(resolved_path)
+    }
+
+    /// Allocates an IR definition in the IR context.
+    pub fn alloc_definition(&'cx self, definition: Definition<'cx>) -> &'cx Definition<'cx> {
+        self.definition_arena.alloc(definition)
+    }
+
+    /// Allocates a slice of IR definitions.
+    pub fn alloc_definition_slice(&'cx self, definitions: Vec<Definition<'cx>>) -> &'cx [Definition<'cx>] {
+        self.definition_arena.alloc_extend(definitions)
+    }
+
+    /// Allocates a slice of AST comment references for IR Comment source_comments.
+    pub fn alloc_ast_comment_slice(&'cx self, comments: &[&'cx syn::Comment<'cx>]) -> &'cx [&'cx syn::Comment<'cx>] {
+        self.ast_comment_arena.alloc_extend(comments.iter().copied())
     }
 
     /// Allocates a row using the underlying AST context.

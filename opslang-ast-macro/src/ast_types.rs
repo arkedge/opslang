@@ -179,7 +179,7 @@ impl InsideV1ChildModType<'_> {
 const V1_AST_NODE_TYPES: &[AstType] = define_ast_node_types! {
     // Main AST types
     type Program;
-    type Definition;
+    type ToplevelItem;
     type DefinitionKind;
     type FunctionDef;
     type Parameter;

@@ -69,10 +69,12 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Comments attached to AST nodes, preserving documentation and annotations.
         type Comment;
 
-        /// Items within a scope, which can be either rows (statements) or nested blocks.
+        type ToplevelItem;
+
+        /// Items within a scope, which can be either rows (statements) or nested blocks in AST.
         type ScopeItem;
 
-        /// A single row/line in the source code, containing optional content and comments.
+        /// A single row/line in the source code.
         type Row;
 
         /// Content of a row, typically containing a statement or expression.

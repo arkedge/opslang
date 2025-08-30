@@ -119,13 +119,13 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Program<'_> {
             }
         }
         syn::Program {
-            definitions: cx.alloc_definition_slice(definitions),
+            toplevel_items: cx.alloc_toplevel_item_slice(definitions),
         }
     }
 }
 
 impl<'cx> ProcessToken<'cx> for grammar_trait::Definition<'_> {
-    type Output = syn::Definition<'cx>;
+    type Output = syn::ToplevelItem<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         let kind = self
@@ -143,7 +143,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Definition<'_> {
             .definition_opt0
             .as_ref()
             .map(|c| c.comment.process_token(cx));
-        syn::Definition { kind, comment }
+        syn::ToplevelItem { kind, comment }
     }
 }
 

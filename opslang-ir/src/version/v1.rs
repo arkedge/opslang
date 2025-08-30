@@ -121,6 +121,7 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
 
         // Core structural types
         Comment = Comment<'cx>,
+        ToplevelItem = Definition<'cx>,
 
         // Resolved name types
         Ident = Ident<'cx>,
@@ -175,6 +176,21 @@ pub struct Comment<'cx> {
     pub span: syn::Span,
     /// References to the original AST comments that were merged.
     pub source_comments: &'cx [&'cx syn::Comment<'cx>],
+}
+
+/// A top-level definition in the IR.
+///
+/// Unlike AST ToplevelItem, IR definitions cannot be empty and must contain
+/// a concrete definition kind. Comments are split into leading and trailing
+/// to provide better structure for code generation and analysis.
+#[derive(Debug, PartialEq, Visit)]
+pub struct Definition<'cx> {
+    /// Comment appearing before this definition.
+    pub comment_before: Option<Comment<'cx>>,
+    /// Comment appearing after this definition on the same line.
+    pub comment_trailing: Option<Comment<'cx>>,
+    /// The actual definition content.
+    pub kind: syn::DefinitionKind<'cx, IrTypeFamily>,
 }
 
 #[derive(Debug, Clone, Copy, Visit)]

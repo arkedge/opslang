@@ -250,7 +250,7 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
     // types that are defined in ast crate and substituted with ir type family
     crate ast<ir> {
         type Program;
-        type Definition;
+        type ToplevelItem;
         type DefinitionKind;
         type FunctionDef;
         type Parameter;
@@ -342,6 +342,7 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
     // types that are defined in ir crate
     crate ir {
         type Comment;
+        type Definition;
         type ResolvedPath;
         type Expr;
         type String;

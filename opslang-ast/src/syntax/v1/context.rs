@@ -1,6 +1,6 @@
 use super::{
-    Block, Comment, CompareOp, DefaultTypeFamily, Definition, Expr, ExprKind, ExprMut, Ident,
-    Parameter, Row, family::TypeFamily,
+    Block, Comment, CompareOp, DefaultTypeFamily, Expr, ExprKind, ExprMut, Ident, Parameter, Row,
+    ToplevelItem, family::TypeFamily,
 };
 use typed_arena::Arena;
 
@@ -17,7 +17,7 @@ pub struct Context<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     comment_arena: Arena<Comment<'cx, F>>,
 
     // Slice arenas for different types
-    definition_slice_arena: Arena<Definition<'cx, F>>,
+    toplevel_slice_arena: Arena<ToplevelItem<'cx, F>>,
     parameter_slice_arena: Arena<Parameter<'cx, F>>,
     scope_item_slice_arena: Arena<F::ScopeItem>,
     expr_slice_arena: Arena<F::Expr>,
@@ -58,11 +58,11 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
     }
 
     // Slice allocation methods
-    pub fn alloc_definition_slice(
+    pub fn alloc_toplevel_item_slice(
         &'cx self,
-        definitions: impl IntoIterator<Item = Definition<'cx, F>>,
-    ) -> &'cx [Definition<'cx, F>] {
-        self.definition_slice_arena.alloc_extend(definitions)
+        items: impl IntoIterator<Item = ToplevelItem<'cx, F>>,
+    ) -> &'cx [ToplevelItem<'cx, F>] {
+        self.toplevel_slice_arena.alloc_extend(items)
     }
 
     pub fn alloc_parameter_slice(
@@ -111,7 +111,7 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
             row_arena: Arena::new(),
             block_arena: Arena::new(),
             comment_arena: Arena::new(),
-            definition_slice_arena: Arena::new(),
+            toplevel_slice_arena: Arena::new(),
             parameter_slice_arena: Arena::new(),
             scope_item_slice_arena: Arena::new(),
             expr_slice_arena: Arena::new(),

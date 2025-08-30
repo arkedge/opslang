@@ -185,13 +185,15 @@ impl<'cx> ConvertV0ToV1<'cx> for Vec<v0::Statement> {
             }),
         };
 
-        let definition = v1::Definition {
+        let definition = v1::ToplevelItem {
             kind: Some(v1::DefinitionKind::Function(main_function)),
             ..Default::default()
         };
-        let definitions = ctx.alloc_definition_slice(vec![definition]);
+        let definitions = ctx.alloc_toplevel_item_slice(vec![definition]);
 
-        Ok(v1::Program { definitions })
+        Ok(v1::Program {
+            toplevel_items: definitions,
+        })
     }
 }
 
@@ -854,8 +856,8 @@ mod tests {
         let result = statements.convert(&ctx);
         assert!(result.is_ok());
         let program = result.unwrap();
-        assert_eq!(program.definitions.len(), 1);
-        if let Some(v1::DefinitionKind::Function(func_def)) = &program.definitions[0].kind {
+        assert_eq!(program.toplevel_items.len(), 1);
+        if let Some(v1::DefinitionKind::Function(func_def)) = &program.toplevel_items[0].kind {
             assert_eq!(func_def.name.raw, "main");
             assert_eq!(func_def.parameters.len(), 0);
             assert_eq!(func_def.body.scope.items.len(), 0);

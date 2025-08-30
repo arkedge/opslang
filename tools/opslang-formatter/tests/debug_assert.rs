@@ -36,7 +36,7 @@ fn debug_assert_parentheses_behavior() {
         };
         let program: Program = Program::parse(parser_input, &ctx).expect("Failed to parse");
 
-        if let Some(DefinitionKind::Function(f)) = &program.definitions[0].kind
+        if let Some(DefinitionKind::Function(f)) = &program.toplevel_items[0].kind
             && let Some(first_item) = f.body.scope.items.get(1)
         {
             // Skip shebang

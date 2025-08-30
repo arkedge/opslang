@@ -47,6 +47,7 @@ define_trait_alias!(
     pub trait PrintableFamily<'cx> = TypeFamily<
         'cx,
         Comment = &'cx Comment<'cx, Self>,
+        ToplevelItem = ToplevelItem<'cx, Self>,
         Row = &'cx Row<'cx, Self>,
         Statement = Statement<'cx, Self>,
         Block = &'cx Block<'cx, Self>,
@@ -88,7 +89,7 @@ const _: () = {
 
 impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<Naive> for Program<'cx, F> {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<Naive>) -> fmt::Result {
-        for (i, definition) in self.definitions.iter().enumerate() {
+        for (i, definition) in self.toplevel_items.iter().enumerate() {
             if i > 0 {
                 Newline.write(writer, options)?;
             }
@@ -104,7 +105,7 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Program<'cx, 
         writer: &mut impl Write,
         options: &PrintOptions<CommentAligned>,
     ) -> fmt::Result {
-        for (i, definition) in self.definitions.iter().enumerate() {
+        for (i, definition) in self.toplevel_items.iter().enumerate() {
             if i > 0 {
                 Newline.write(writer, options)?;
             }
@@ -114,7 +115,7 @@ impl<'cx, F: PrintableFamily<'cx>> PrettyPrint<CommentAligned> for Program<'cx, 
     }
 }
 
-impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Definition<'cx, F>
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for ToplevelItem<'cx, F>
 where
     Block<'cx, F>: PrettyPrint<S>,
     ExprKind<'cx, F>: PrettyPrint<S>,

@@ -4,6 +4,7 @@ pub use family::TypeFamily;
 use opslang_ast_macro::OrderSpan;
 use opslang_visitor_macro::Visit;
 
+pub mod ast_consistency_check;
 pub mod context;
 pub mod family;
 pub mod impls;
@@ -11,10 +12,9 @@ pub mod loc;
 pub mod token;
 pub mod visit;
 
-#[derive(Debug, PartialEq, Clone, Copy, Visit)]
-#[skip_all_visit]
-pub struct BytePos(pub u32);
-pub type Position = BytePos;
+impl Versioned for Program<'_, DefaultTypeFamily> {
+    type Version = V1;
+}
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Visit)]
 #[skip_all_visit]
@@ -31,6 +31,11 @@ impl<'cx> TypeFamily<'cx> for DefaultTypeFamily {
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 #[skip_all_visit]
+pub struct BytePos(pub u32);
+pub type Position = BytePos;
+
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+#[skip_all_visit]
 /// A location in the code.
 pub struct Span {
     pub start: Position,
@@ -40,22 +45,18 @@ pub struct Span {
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// An overall program. A program is a sequence of function definitions and constant definitions.
 pub struct Program<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub definitions: &'cx [Definition<'cx, F>],
+    pub toplevel_items: &'cx [F::ToplevelItem],
 }
 
+/// A top-level item in a program.
+///
+/// This represents a single item at the top level of a program, which can be either
+/// a definition (function or constant) or just a comment. Items can be empty when
+/// they contain only whitespace or empty lines, which is valid in the AST representation.
 #[derive(Debug, PartialEq, Visit)]
-pub struct Definition<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+pub struct ToplevelItem<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub kind: Option<DefinitionKind<'cx, F>>,
     pub comment: Option<F::Comment>,
-}
-
-impl<'cx, F: TypeFamily<'cx>> Default for Definition<'cx, F> {
-    fn default() -> Self {
-        Self {
-            kind: Default::default(),
-            comment: Default::default(),
-        }
-    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -125,10 +126,6 @@ pub struct ConstantDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub semi: token::Semi<'cx, F>,
 }
 
-impl Versioned for Program<'_, DefaultTypeFamily> {
-    type Version = V1;
-}
-
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// Sequence of statements.
 pub struct Scope<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
@@ -148,16 +145,6 @@ pub struct Row<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub breaks: Option<token::Break<'cx, F>>,
     pub statement: Option<F::Statement>,
     pub comment: Option<F::Comment>,
-}
-
-impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
-    fn default() -> Self {
-        Self {
-            breaks: Default::default(),
-            statement: Default::default(),
-            comment: Default::default(),
-        }
-    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]

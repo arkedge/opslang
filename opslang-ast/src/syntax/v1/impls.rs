@@ -1,14 +1,33 @@
 use super::{
-    Apply, Array, BinOp, Binary, Bytes, Comment, Compare, CompareOp, DateTime, Debug, Definition,
-    Expr, ExprKind, ExprMut, HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal,
-    Numeric, NumericKind, NumericSuffix, Parened, Path, PreQualified, Row, Set, String, TypeFamily,
-    UnOp, Unary, context, token,
+    Apply, Array, BinOp, Binary, Bytes, Comment, Compare, CompareOp, DateTime, Debug, Expr,
+    ExprKind, ExprMut, HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric,
+    NumericKind, NumericSuffix, Parened, Path, PreQualified, Row, Set, String, ToplevelItem,
+    TypeFamily, UnOp, Unary, context, token,
 };
 
-impl<'cx, F: TypeFamily<'cx>> Definition<'cx, F> {
+impl<'cx, F: TypeFamily<'cx>> Default for ToplevelItem<'cx, F> {
+    fn default() -> Self {
+        Self {
+            kind: Default::default(),
+            comment: Default::default(),
+        }
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> ToplevelItem<'cx, F> {
     pub fn is_empty(&self) -> bool {
         let Self { kind, comment } = self;
         kind.is_none() && comment.is_none()
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> Default for Row<'cx, F> {
+    fn default() -> Self {
+        Self {
+            breaks: Default::default(),
+            statement: Default::default(),
+            comment: Default::default(),
+        }
     }
 }
 
