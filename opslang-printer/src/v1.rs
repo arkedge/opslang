@@ -379,8 +379,14 @@ where
 }
 
 impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Path<'cx, F> {
-    fn pretty_print(&self, writer: &mut impl Write, _options: &PrintOptions<S>) -> fmt::Result {
-        writer.write_str(self.raw)
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        for (i, ident) in self.segments.iter().enumerate() {
+            if i > 0 {
+                writer.write_char('.')?;
+            }
+            PrettyPrint::<S>::pretty_print(ident, writer, options)?;
+        }
+        Ok(())
     }
 }
 

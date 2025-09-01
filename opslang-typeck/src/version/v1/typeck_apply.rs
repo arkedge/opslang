@@ -61,7 +61,7 @@ impl<'cx> TypeChecker<'cx> {
     ) -> Result<ast::Qualif<'cx, IrTypeFamily>> {
         match qualif {
             ast::Qualif::Modifier(modifier) => {
-                let ir_path = self.resolve_path(&modifier.id)?;
+                let ir_path = self.resolve_path(&modifier.id)?.resolved_path;
                 let ir_param = if let Some(param) = &modifier.arg {
                     let param_ir = self.typeck_expr(env, subst, &param.value)?;
                     Some(ast::ModifierParam {
@@ -79,7 +79,7 @@ impl<'cx> TypeChecker<'cx> {
                 }))
             }
             ast::Qualif::DefaultModifier(default_modifier) => {
-                let ir_path = self.resolve_path(&default_modifier.value)?;
+                let ir_path = self.resolve_path(&default_modifier.value)?.resolved_path;
                 Ok(ast::Qualif::DefaultModifier(ast::DefaultModifier {
                     tilde_token: default_modifier.tilde_token.into_token(),
                     value: ir_path,

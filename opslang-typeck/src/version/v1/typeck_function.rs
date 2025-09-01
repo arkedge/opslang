@@ -6,7 +6,7 @@ impl<'cx> TypeChecker<'cx> {
         global_env: &Environment<'cx, '_>,
         func_def: &'cx ast::FunctionDef<'cx>,
     ) -> Result<ast::FunctionDef<'cx, IrTypeFamily>> {
-        let func_name = func_def.name.raw;
+        let func_name = func_def.name;
 
         // Retrieve the already resolved function type from the environment
         let func_type = global_env
@@ -25,17 +25,13 @@ impl<'cx> TypeChecker<'cx> {
         for (param, param_type) in func_def.parameters.iter().zip(param_types.iter()) {
             let param_name = param.name.raw;
 
-            let param_identifier = Identifier {
-                name: param_name,
-                scope_depth: func_env.scope_depth(),
-            };
-            let param_identifier_id = self.typing_cx.alloc_ident(param_identifier);
+            let param_identifier_id = self.typing_cx.alloc_identifier(param_name);
             func_env.bind(param_name, param_identifier_id, *param_type);
 
             let ir_param = ast::Parameter {
                 name: param_identifier_id,
                 colon: param.colon.into_token(),
-                ty: self.resolve_path(&param.ty)?.item.ty(),
+                ty: self.resolve_path(&param.ty)?.item.ty,
             };
             ir_parameters.push(ir_param);
         }

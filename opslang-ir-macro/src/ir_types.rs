@@ -344,6 +344,7 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
         type Comment;
         type Definition;
         type ResolvedPath;
+        type ResolvedItem;
         type Expr;
         type String;
         type Bytes;

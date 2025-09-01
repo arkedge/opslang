@@ -19,23 +19,37 @@ impl<'cx> TypeChecker<'cx> {
             ExprKind::Parened(_parened) => unreachable!("handled above"),
             ExprKind::Literal(literal) => self.typeck_literal(env, subst, literal),
             ExprKind::Variable(path) => {
-                let var_name = path.raw;
+                // First check if this is a single identifier that can be resolved in local environment
+                if let Some(ident) = path.is_ident()
+                    && let Some(type_ref) = env.lookup_variable(ident)
+                {
+                    // Found in local environment - create a resolved path with local variable
+                    let resolved_ident = self.resolve_ident(ident)?;
+                    let resolved_path = ir::ResolvedPath {
+                        item: ir::ResolvedItem::LocalVariable(resolved_ident),
+                        original_path: path,
+                    };
 
-                let inferred_type = if let Some(type_ref) = env.lookup_variable(var_name) {
-                    type_ref
-                } else {
-                    match self.module_loader.resolve_path(var_name) {
-                        Some(item) => item.ty(),
-                        None => return Err(anyhow!("unbound variable: {var_name}")),
+                    let ir_expr =
+                        ir::Expr::new(ast::ExprMut::variable(self.ir_cx, resolved_path), type_ref);
+                    return Ok(ir_expr);
+                }
+
+                // Fall back to module resolution
+                match self.module_loader.resolve_path(*path) {
+                    Some(item) => {
+                        let resolved_path = ir::ResolvedPath {
+                            item: ir::ResolvedItem::ModuleItem(item),
+                            original_path: path,
+                        };
+                        let ir_expr = ir::Expr::new(
+                            ast::ExprMut::variable(self.ir_cx, resolved_path),
+                            item.ty,
+                        );
+                        Ok(ir_expr)
                     }
-                };
-
-                let resolved_path = self.resolve_path(path)?;
-                let ir_expr = ir::Expr::new(
-                    ast::ExprMut::variable(self.ir_cx, resolved_path),
-                    inferred_type,
-                );
-                Ok(ir_expr)
+                    None => Err(anyhow!("unbound variable: {path}")),
+                }
             }
             ExprKind::Binary(binary) => {
                 let lhs_ir = self.typeck_expr(env, subst, &binary.lhs)?;
@@ -303,18 +317,10 @@ impl<'cx> TypeChecker<'cx> {
                 // Apply final substitution to file
 
                 // Convert path to resolved path
-                let ir_path = self.resolve_path(&infix_import.path)?;
+                let resolved = self.resolve_path(&infix_import.path)?;
 
                 // InfixImport result type is that of the imported item
-                let import_type = match self.module_loader.resolve_path(infix_import.path.raw) {
-                    Some(item) => item.ty(),
-                    None => {
-                        return Err(anyhow!(
-                            "Cannot resolve import path: {}",
-                            infix_import.path.raw
-                        ));
-                    }
-                };
+                let import_type = resolved.item.ty;
 
                 // Create IR InfixImport expression
                 let ir_expr = ir::Expr::new(
@@ -322,7 +328,7 @@ impl<'cx> TypeChecker<'cx> {
                         self.ir_cx,
                         file_ir,
                         infix_import.question.into_token(),
-                        ir_path,
+                        resolved.resolved_path,
                     ),
                     import_type,
                 );

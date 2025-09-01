@@ -1,3 +1,5 @@
+use std::fmt::Write;
+
 use super::{
     Apply, Array, BinOp, Binary, Bytes, Comment, Compare, CompareOp, DateTime, Debug, Expr,
     ExprKind, ExprMut, HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric,
@@ -346,16 +348,8 @@ impl_expr_and_expr_mut! {
 }
 
 impl<'cx, F: TypeFamily<'cx>> Path<'cx, F> {
-    pub fn new_unchecked(
-        ctx: &'cx context::Context<'cx, F>,
-        raw: &str,
-        segments: &'cx [F::Ident],
-    ) -> Self {
-        let raw_str = ctx.alloc_str(raw);
-        Path {
-            raw: raw_str,
-            segments,
-        }
+    pub fn new(segments: &'cx [F::Ident]) -> Self {
+        Path { segments }
     }
 
     pub fn single(ctx: &'cx context::Context<'cx, F>, name: &str, span: F::Span) -> Self
@@ -365,7 +359,27 @@ impl<'cx, F: TypeFamily<'cx>> Path<'cx, F> {
         assert!(!name.contains('.'));
         let ident = Ident::new(ctx, name, span);
         let segments = ctx.alloc_ident_slice(vec![ident]);
-        Path::new_unchecked(ctx, name, segments)
+        Path::new(segments)
+    }
+
+    pub fn is_ident(&self) -> Option<F::Ident> {
+        if self.segments.len() == 1 {
+            Some(self.segments[0])
+        } else {
+            None
+        }
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx, Ident = Ident<'cx, F>>> std::fmt::Display for Path<'cx, F> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for (i, segment) in self.segments.iter().enumerate() {
+            if i > 0 {
+                f.write_char('.')?;
+            }
+            f.write_str(segment.raw)?;
+        }
+        Ok(())
     }
 }
 
@@ -380,6 +394,12 @@ impl<'cx, F: TypeFamily<'cx>> Ident<'cx, F> {
             raw: name_str,
             span,
         }
+    }
+}
+
+impl<'cx, F: TypeFamily<'cx>> std::fmt::Display for Ident<'cx, F> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.raw)
     }
 }
 

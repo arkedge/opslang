@@ -404,11 +404,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::VariablePath {
             .map(|segment| v1::Ident::new(ctx, segment, Span))
             .collect();
 
-        Ok(v1::Path::new_unchecked(
-            ctx,
-            &self.raw,
-            ctx.alloc_ident_slice(segments),
-        ))
+        Ok(v1::Path::new(ctx.alloc_ident_slice(segments)))
     }
 }
 
@@ -435,8 +431,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
             .split('.')
             .map(|seg| v1::Ident::new(ctx, seg, Span))
             .collect::<Vec<_>>();
-        let command_path =
-            v1::Path::new_unchecked(ctx, &path_string, ctx.alloc_ident_slice(segments));
+        let command_path = v1::Path::new(ctx.alloc_ident_slice(segments));
 
         // Create the function expression (command name as a variable)
         let function_expr = v1::Expr::variable(ctx, command_path);
@@ -455,11 +450,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Command {
                 .split('.')
                 .map(|seg| v1::Ident::new(ctx, seg, Span))
                 .collect::<Vec<_>>();
-            let path = v1::Path::new_unchecked(
-                ctx,
-                &receiver_component.exec_method,
-                ctx.alloc_ident_slice(segments),
-            );
+            let path = v1::Path::new(ctx.alloc_ident_slice(segments));
             let kind_spec = v1::Modifier {
                 at_token: V1Token![@](Position),
                 id: path,
@@ -660,9 +651,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Literal {
                 v0::Literal::TlmId(tlm_id) => {
                     // TlmId literals should be converted to unary IdRef expressions
 
-                    let path = v1::Path::new_unchecked(
-                        ctx,
-                        &tlm_id,
+                    let path = v1::Path::new(
                         ctx.alloc_ident_slice(
                             tlm_id
                                 .split('.')

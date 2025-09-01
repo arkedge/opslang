@@ -7,10 +7,12 @@ use opslang_visitor_macro::Visit;
 pub mod ast_consistency_check;
 pub mod context;
 pub mod family;
-pub mod impls;
 pub mod loc;
 pub mod token;
 pub mod visit;
+
+/// All impls go to here
+pub mod impls;
 
 impl Versioned for Program<'_, DefaultTypeFamily> {
     type Version = V1;
@@ -251,8 +253,6 @@ pub struct ExprMut<'cx, F: TypeFamily<'cx>>(pub &'cx mut ExprKind<'cx, F>, seale
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 pub struct Path<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    #[skip_visit]
-    pub raw: &'cx str,
     pub segments: &'cx [F::Ident],
 }
 

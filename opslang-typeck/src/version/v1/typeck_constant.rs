@@ -6,7 +6,7 @@ impl<'cx> TypeChecker<'cx> {
         env: &Environment<'cx, '_>,
         const_def: &'cx ast::ConstantDef<'cx>,
     ) -> Result<ast::ConstantDef<'cx, IrTypeFamily>> {
-        let declared_type = self.resolve_type_from_path(const_def.ty.raw)?;
+        let declared_type = self.resolve_type_from_path(const_def.ty)?;
         let mut subst = Substitution::new();
         let mut inferred_expr = self.typeck_expr(env, &mut subst, &const_def.value)?;
 
@@ -16,7 +16,7 @@ impl<'cx> TypeChecker<'cx> {
         let mut visitor = SubstitutionVisitor::new(subst, self.typing_cx);
         visitor.visit_mut(&mut inferred_expr);
 
-        let ir_ty = self.resolve_path(&const_def.ty)?;
+        let ir_ty = self.resolve_path(&const_def.ty)?.resolved_path;
 
         Ok(ast::ConstantDef {
             const_token: const_def.const_token.into_token(),

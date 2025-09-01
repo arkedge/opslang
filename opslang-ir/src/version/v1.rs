@@ -196,16 +196,34 @@ pub struct Definition<'cx> {
 #[derive(Debug, Clone, Copy, Visit)]
 /// A resolved path reference to a definition or module item.
 pub struct ResolvedPath<'cx> {
-    /// Reference to the resolved module item.
-    pub item: &'cx opslang_ty::version::v1::ModuleItem<'cx>,
+    /// The resolved item - either a module item or local variable.
+    pub item: ResolvedItem<'cx>,
     /// The original path that was resolved.
     pub original_path: &'cx syn::Path<'cx>,
 }
 
+#[derive(Debug, Clone, Copy, Visit)]
+/// The resolved item - either a module item or local variable.
+pub enum ResolvedItem<'cx> {
+    /// Reference to a module item (types, functions, constants from modules).
+    ModuleItem(&'cx opslang_ty::version::v1::ModuleItem<'cx>),
+    /// Reference to a local variable (function parameters, local bindings).
+    LocalVariable(opslang_ty::version::v1::Ident<'cx>),
+}
+
+impl<'cx> PartialEq for ResolvedItem<'cx> {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (ResolvedItem::ModuleItem(a), ResolvedItem::ModuleItem(b)) => std::ptr::eq(*a, *b),
+            (ResolvedItem::LocalVariable(a), ResolvedItem::LocalVariable(b)) => a == b,
+            _ => false,
+        }
+    }
+}
+
 impl<'cx> PartialEq for ResolvedPath<'cx> {
     fn eq(&self, other: &Self) -> bool {
-        // Compare by pointer address since ModuleItems should be unique
-        std::ptr::eq(self.item, other.item) && self.original_path == other.original_path
+        self.item == other.item && self.original_path == other.original_path
     }
 }
 

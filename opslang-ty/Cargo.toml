@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+opslang-ast = { path = "../opslang-ast", version = "0.4.0" }
 opslang-visitor = { path = "../opslang-visitor", version = "0.4.0" }
 opslang-visitor-macro = { path = "../opslang-visitor-macro", version = "0.4.0" }
 typed-arena = "2.0.2"

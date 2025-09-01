@@ -3,9 +3,10 @@ use chrono::Utc;
 use opslang_ast::v1::token::IntoToken;
 use opslang_ast::v1::{self as ast, ExprKind, Statement};
 use opslang_ir::version::v1::{self as ir, NumericKind, ResolvedPath};
+
 use opslang_ir::version::{IrTypeFamily, Typed};
 use opslang_ty::version::v1::{
-    Ident, Identifier, Module, ModuleItem, ModuleLoader, Ty, TyKind, TypeVariable, TypingContext,
+    Ident, Module, ModuleItem, ModuleLoader, Ty, TyKind, TypeVariable, TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -31,30 +32,30 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
     let mut builtin = Module::new(cx.alloc_toplevel_ident("builtin"));
 
     // Add all builtin primitive types
-    builtin.add_item(ModuleItem::Type {
-        id: cx.alloc_toplevel_ident("i32"),
-        ty: Ty::mk_int(cx),
-    });
-    builtin.add_item(ModuleItem::Type {
-        id: cx.alloc_toplevel_ident("f64"),
-        ty: Ty::mk_float(cx),
-    });
-    builtin.add_item(ModuleItem::Type {
-        id: cx.alloc_toplevel_ident("string"),
-        ty: Ty::mk_string(cx),
-    });
-    builtin.add_item(ModuleItem::Type {
-        id: cx.alloc_toplevel_ident("bool"),
-        ty: Ty::mk_bool(cx),
-    });
-    builtin.add_item(ModuleItem::Type {
-        id: cx.alloc_toplevel_ident("duration"),
-        ty: Ty::mk_duration(cx),
-    });
-    builtin.add_item(ModuleItem::Type {
-        id: cx.alloc_toplevel_ident("time"),
-        ty: Ty::mk_time(cx),
-    });
+    builtin.add_item(ModuleItem::new_type(
+        cx.alloc_toplevel_ident("i32"),
+        Ty::mk_int(cx),
+    ));
+    builtin.add_item(ModuleItem::new_type(
+        cx.alloc_toplevel_ident("f64"),
+        Ty::mk_float(cx),
+    ));
+    builtin.add_item(ModuleItem::new_type(
+        cx.alloc_toplevel_ident("string"),
+        Ty::mk_string(cx),
+    ));
+    builtin.add_item(ModuleItem::new_type(
+        cx.alloc_toplevel_ident("bool"),
+        Ty::mk_bool(cx),
+    ));
+    builtin.add_item(ModuleItem::new_type(
+        cx.alloc_toplevel_ident("duration"),
+        Ty::mk_duration(cx),
+    ));
+    builtin.add_item(ModuleItem::new_type(
+        cx.alloc_toplevel_ident("time"),
+        Ty::mk_time(cx),
+    ));
 
     cx.alloc_module(builtin)
 }
@@ -216,7 +217,7 @@ impl<'cx> TypeChecker<'cx> {
         env: &mut Environment<'cx, '_>,
         func_def: &ast::FunctionDef<'cx>,
     ) -> Result<()> {
-        let func_name = func_def.name.raw;
+        let func_name = func_def.name;
 
         // Check if function with same name already exists
         if env.lookup_name(func_name).is_some() {
@@ -226,23 +227,21 @@ impl<'cx> TypeChecker<'cx> {
         let mut param_types = Vec::new();
 
         for param in func_def.parameters {
-            let param_type = self.resolve_type_from_path(param.ty.raw)?;
+            let param_type = self.resolve_type_from_path(param.ty)?;
             param_types.push(param_type);
         }
 
         // Handle return type from function definition
         let return_type = match &func_def.return_type.0 {
-            Some((_, return_path)) => self.resolve_type_from_path(return_path.raw)?,
+            Some((_, return_path)) => self.resolve_type_from_path(*return_path)?,
             None => Ty::mk_unit(self.typing_cx),
         };
 
         let func_type = Ty::mk_function(self.typing_cx, param_types, return_type);
 
-        let func_identifier = Identifier {
-            name: func_name,
-            scope_depth: env.scope_depth(),
-        };
-        let func_identifier_id = self.typing_cx.alloc_ident(func_identifier);
+        let func_name = func_name.raw;
+
+        let func_identifier_id = self.typing_cx.alloc_identifier(func_name);
         env.bind(func_name, func_identifier_id, func_type);
 
         Ok(())
@@ -254,23 +253,21 @@ impl<'cx> TypeChecker<'cx> {
         const_def: &ast::ConstantDef<'cx>,
     ) -> Result<()> {
         let const_name = const_def.name.raw;
-        let declared_type = self.resolve_type_from_path(const_def.ty.raw)?;
+        let declared_type = self.resolve_type_from_path(const_def.ty)?;
 
-        let const_identifier = Identifier {
-            name: const_name,
-            scope_depth: env.scope_depth(),
-        };
-        let const_identifier_id = self.typing_cx.alloc_ident(const_identifier);
+        let const_identifier_id = self.typing_cx.alloc_identifier(const_name);
         env.bind(const_name, const_identifier_id, declared_type);
 
         Ok(())
     }
 
-    fn resolve_type_from_path(&self, path: &str) -> Result<Ty<'cx>> {
+    fn resolve_type_from_path(&self, path: ast::Path<'cx>) -> Result<Ty<'cx>> {
         match self.module_loader.resolve_path(path) {
-            Some(ModuleItem::Type { ty, .. }) => Ok(*ty),
-            Some(_) => Err(anyhow!("Path '{path}' does not refer to a type")),
-            None => Err(anyhow!("Unknown type: {path}")),
+            Some(item) => match item.kind {
+                opslang_ty::version::v1::ModuleItemKind::Type => Ok(item.ty),
+                _ => Err(anyhow!("path '{path}' does not refer to a type")),
+            },
+            None => Err(anyhow!("unknown type: {path}")),
         }
     }
 }
@@ -284,7 +281,7 @@ enum RowProcessResult<'cx> {
 impl<'cx> TypeChecker<'cx> {
     fn typeck_row(
         &mut self,
-        env: &Environment<'cx, '_>,
+        env: &mut Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         row: &ast::Row<'cx>,
     ) -> Result<RowProcessResult<'cx>> {
@@ -327,14 +324,14 @@ impl<'cx> TypeChecker<'cx> {
         subst: &mut Substitution<'cx>,
         block: &ast::Block<'cx>,
     ) -> Result<&'cx ast::Block<'cx, IrTypeFamily>> {
-        let local_env = env.extend_inherit();
+        let mut local_env = env.extend_inherit();
         let mut ir_items = Vec::new();
         let mut pending_comments: Vec<&'cx ast::Comment<'cx>> = Vec::new();
 
         for item in block.scope.items {
             match item {
                 ast::ScopeItem::Row(row) => {
-                    match self.typeck_row(&local_env, subst, row)? {
+                    match self.typeck_row(&mut local_env, subst, row)? {
                         RowProcessResult::Comment(comment) => {
                             pending_comments.push(comment);
                         }
@@ -394,13 +391,18 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_statement(
         &mut self,
-        env: &Environment<'cx, '_>,
+        env: &mut Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         stmt: &Statement<'cx>,
     ) -> Result<Statement<'cx, IrTypeFamily>> {
         match stmt {
             Statement::Let(let_stmt) => {
                 let ir_rhs = self.typeck_expr(env, subst, &let_stmt.rhs)?;
+
+                // Bind the variable to the environment with the inferred type
+                let var_name = let_stmt.variable.raw;
+                let var_identifier_id = self.typing_cx.alloc_identifier(var_name);
+                env.bind(var_name, var_identifier_id, ir_rhs.ty);
 
                 Ok(Statement::Let(ast::Let {
                     let_token: let_stmt.let_token.into_token(),
@@ -423,27 +425,53 @@ impl<'cx> TypeChecker<'cx> {
     }
 
     fn resolve_ident(&self, ident: ast::Ident<'cx>) -> Result<Ident<'cx>> {
-        let identifier = Identifier {
-            name: ident.raw,
-            scope_depth: 0, // 適切なスコープ深度の計算が必要
-        };
-        Ok(self.typing_cx.alloc_ident(identifier))
+        // For now, create a new identifier with a unique definition ID
+        // TODO: This should probably lookup from environment instead
+        Ok(self.typing_cx.alloc_identifier(ident.raw))
     }
 
-    fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvedPath<'cx>> {
-        match self.module_loader.resolve_path(path.raw) {
-            Some(item) => Ok(ResolvedPath {
-                item,
-                original_path: path,
-            }),
-            None => Err(anyhow!("Cannot resolve path: {}", path.raw)),
+    fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvedPathResult<'cx>> {
+        match self.module_loader.resolve_path(*path) {
+            Some(item) => {
+                let resolved_path = ResolvedPath {
+                    item: opslang_ir::version::ResolvedItem::ModuleItem(item),
+                    original_path: path,
+                };
+                Ok(ResolvedPathResult {
+                    resolved_path,
+                    item,
+                })
+            }
+            None => Err(anyhow!("Cannot resolve path: {path}")),
         }
     }
 }
 
+/// Result of path resolution containing both the IR representation and the original item.
+#[derive(Debug, Clone, Copy)]
+struct ResolvedPathResult<'cx> {
+    /// The resolved path for IR generation
+    resolved_path: ResolvedPath<'cx>,
+    /// The original module item with type information
+    item: &'cx ModuleItem<'cx>,
+}
+
 #[cfg(test)]
 mod tests {
+    use opslang_ty::version::ModuleItemKind;
+
     use super::*;
+
+    fn parse_ident<'cx>(cx: &'cx ast::context::Context<'cx>, str: &str) -> ast::Path<'cx> {
+        ast::Path::single(
+            cx,
+            str,
+            ast::Span {
+                start: ast::BytePos(0),
+                end: ast::BytePos(0),
+            },
+        )
+    }
 
     #[test]
     fn test_typing_context() {
@@ -455,25 +483,31 @@ mod tests {
         assert_eq!(cx.display_type(int_type), "i32");
         assert_eq!(cx.display_type(array_type), "[i32]");
 
-        let identifier = Identifier {
-            name: "test",
-            scope_depth: 0,
-        };
-        let id = cx.alloc_ident(identifier);
+        let id = cx.alloc_identifier("test");
         assert_eq!(id.name, "test");
     }
 
     #[test]
     fn test_builtin_module() {
         let cx = TypingContext::new();
+        let ast_cx = ast::context::Context::new();
         let builtin = create_builtin_module(&cx);
 
         assert_eq!(builtin.name(), "builtin");
-        assert!(builtin.lookup_item("i32").is_some());
-        assert!(builtin.lookup_item("f64").is_some());
-        assert!(builtin.lookup_item("unknown").is_none());
+        assert!(builtin.lookup_item(parse_ident(&ast_cx, "i32")).is_some());
+        assert!(builtin.lookup_item(parse_ident(&ast_cx, "f64")).is_some());
+        assert!(
+            builtin
+                .lookup_item(parse_ident(&ast_cx, "unknown"))
+                .is_none()
+        );
 
-        if let Some(ModuleItem::Type { id, ty }) = builtin.lookup_item("i32") {
+        if let Some(ModuleItem {
+            kind: ModuleItemKind::Type,
+            id,
+            ty,
+        }) = builtin.lookup_item(parse_ident(&ast_cx, "i32"))
+        {
             assert_eq!(id.name, "i32");
             assert!(matches!(ty.kind(), TyKind::Int));
         }
@@ -482,6 +516,7 @@ mod tests {
     #[test]
     fn test_module_loader() {
         let cx = TypingContext::new();
+        let ast_cx = ast::context::Context::new();
         let builtin = create_builtin_module(&cx);
 
         let mut loader = ModuleLoader::new();
@@ -490,13 +525,18 @@ mod tests {
         assert!(loader.lookup_module("builtin").is_some());
         assert!(loader.lookup_module("unknown").is_none());
 
-        assert!(loader.resolve_path("i32").is_some());
-        assert!(loader.resolve_path("unknown").is_none());
+        assert!(loader.resolve_path(parse_ident(&ast_cx, "i32")).is_some());
+        assert!(
+            loader
+                .resolve_path(parse_ident(&ast_cx, "unknown"))
+                .is_none()
+        );
     }
 
     #[test]
     fn test_type_checker_with_modules() {
         let cx = TypingContext::new();
+        let ast_cx = ast::context::Context::new();
         let ir_cx = ir::Context::new();
         let builtin = create_builtin_module(&cx);
 
@@ -505,10 +545,12 @@ mod tests {
 
         let checker = TypeChecker::with_module_loader(loader, &cx, &ir_cx);
 
-        let i32_type = checker.resolve_type_from_path("i32").unwrap();
+        let i32_type = checker
+            .resolve_type_from_path(parse_ident(&ast_cx, "i32"))
+            .unwrap();
         assert!(matches!(i32_type.kind(), TyKind::Int));
 
-        let unknown_result = checker.resolve_type_from_path("unknown");
+        let unknown_result = checker.resolve_type_from_path(parse_ident(&ast_cx, "unknown"));
         assert!(unknown_result.is_err());
     }
 
@@ -560,11 +602,7 @@ mod tests {
 
         // ローカル変数 "i32" を定義（組み込み型をシャドーイング）
         let local_i32_type = Ty::mk_string(&cx);
-        let local_identifier = Identifier {
-            name: "i32",
-            scope_depth: 0,
-        };
-        let local_id = cx.alloc_ident(local_identifier);
+        let local_id = cx.alloc_identifier("i32");
         env.bind("i32", local_id, local_i32_type);
 
         // パスを作成して型を解決

@@ -2,7 +2,7 @@ use opslang_visitor_macro::Visit;
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::hash::Hash;
-use std::sync::atomic::AtomicU32;
+use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
 use typed_arena::Arena;
 
 /// Represents the different kinds of types in the type system.
@@ -87,8 +87,8 @@ impl TypeVariable {
 pub struct Identifier<'cx> {
     /// The string name of the identifier
     pub name: &'cx str,
-    /// The nesting depth where this identifier was defined
-    pub scope_depth: usize,
+    /// The unique definition ID for this identifier
+    pub definition_id: usize,
 }
 
 /// A reference to an identifier.
@@ -213,6 +213,8 @@ pub struct TypingContext<'cx> {
     module_arena: Arena<Module<'cx>>,
     /// Arena for allocating module items
     module_item_arena: Arena<ModuleItem<'cx>>,
+    /// Global counter for unique definition IDs
+    next_definition_id: AtomicUsize,
 }
 
 impl<'cx> TypingContext<'cx> {
@@ -225,6 +227,7 @@ impl<'cx> TypingContext<'cx> {
             identifier_arena: Arena::new(),
             module_arena: Arena::new(),
             module_item_arena: Arena::new(),
+            next_definition_id: AtomicUsize::new(1),
         }
     }
 
@@ -251,7 +254,19 @@ impl<'cx> TypingContext<'cx> {
     pub fn alloc_toplevel_ident(&'cx self, str: &'cx str) -> Ident<'cx> {
         Ident(self.identifier_arena.alloc(Identifier {
             name: str,
-            scope_depth: 0,
+            definition_id: 0,
+        }))
+    }
+
+    /// Allocates a new identifier with a unique definition ID.
+    ///
+    /// Each call to this method generates a globally unique identifier,
+    /// enabling proper shadowing where multiple variables can have the same name.
+    pub fn alloc_identifier(&'cx self, name: &'cx str) -> Ident<'cx> {
+        let definition_id = self.next_definition_id.fetch_add(1, Ordering::SeqCst);
+        Ident(self.identifier_arena.alloc(Identifier {
+            name,
+            definition_id,
         }))
     }
 
@@ -284,40 +299,57 @@ impl<'cx> Default for TypingContext<'cx> {
     }
 }
 
+/// The kind of a module item.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ModuleItemKind {
+    /// A constant value
+    Constant,
+    /// A type definition
+    Type,
+    /// A function definition
+    Function,
+}
+
 /// Represents different kinds of items that can exist within a module.
 ///
 /// Module items define the public interface of a module, including constants,
 /// type definitions, and function definitions that can be imported by other modules.
-#[derive(Debug, Clone, Visit)]
-pub enum ModuleItem<'cx> {
-    /// A constant value with its associated type
-    Constant { id: Ident<'cx>, ty: Ty<'cx> },
-    /// A type definition with its concrete type
-    Type { id: Ident<'cx>, ty: Ty<'cx> },
-    /// A function definition with its function type
-    Function { id: Ident<'cx>, ty: Ty<'cx> },
+#[derive(Debug, Clone, Copy, Visit)]
+pub struct ModuleItem<'cx> {
+    #[skip_visit]
+    /// The kind of this module item
+    pub kind: ModuleItemKind,
+    /// The identifier of this module item
+    pub id: Ident<'cx>,
+    /// The type associated with this module item
+    pub ty: Ty<'cx>,
 }
 
 impl<'cx> ModuleItem<'cx> {
-    /// Returns the identifier of this module item.
-    ///
-    /// This provides a uniform way to access the name regardless of the item type.
-    pub fn id(&self) -> Ident<'cx> {
-        match self {
-            ModuleItem::Constant { id, .. } => *id,
-            ModuleItem::Type { id, .. } => *id,
-            ModuleItem::Function { id, .. } => *id,
+    /// Creates a new constant module item.
+    pub fn new_constant(id: Ident<'cx>, ty: Ty<'cx>) -> Self {
+        Self {
+            kind: ModuleItemKind::Constant,
+            id,
+            ty,
         }
     }
 
-    /// Returns the type associated with this module item.
-    ///
-    /// This provides a uniform way to access the type regardless of the item type.
-    pub fn ty(&self) -> Ty<'cx> {
-        match self {
-            ModuleItem::Constant { ty, .. } => *ty,
-            ModuleItem::Type { ty, .. } => *ty,
-            ModuleItem::Function { ty, .. } => *ty,
+    /// Creates a new type module item.
+    pub fn new_type(id: Ident<'cx>, ty: Ty<'cx>) -> Self {
+        Self {
+            kind: ModuleItemKind::Type,
+            id,
+            ty,
+        }
+    }
+
+    /// Creates a new function module item.
+    pub fn new_function(id: Ident<'cx>, ty: Ty<'cx>) -> Self {
+        Self {
+            kind: ModuleItemKind::Function,
+            id,
+            ty,
         }
     }
 }
@@ -357,14 +389,14 @@ impl<'cx> Module<'cx> {
     /// The item is indexed by its name, allowing for efficient lookup.
     /// If an item with the same name already exists, it will be replaced.
     pub fn add_item(&mut self, item: ModuleItem<'cx>) {
-        self.items.insert(item.id().name.to_string(), item);
+        self.items.insert(item.id.name.to_string(), item);
     }
 
     /// Looks up an item by name within this module.
     ///
     /// Returns None if no item with the given name exists in this module.
-    pub fn lookup_item(&self, name: &str) -> Option<&ModuleItem<'cx>> {
-        self.items.get(name)
+    pub fn lookup_item(&self, name: opslang_ast::Path<'cx>) -> Option<&ModuleItem<'cx>> {
+        self.items.get(&name.to_string())
     }
 
     /// Returns an iterator over all items in this module.
@@ -413,11 +445,11 @@ impl<'cx> ModuleLoader<'cx> {
     ///
     /// Currently supports only flat paths that resolve to items in the builtin module.
     /// In the future, this will support hierarchical paths like "module::item".
-    pub fn resolve_path(&self, path: &str) -> Option<&'cx ModuleItem<'cx>> {
+    pub fn resolve_path(&self, path: opslang_ast::Path<'cx>) -> Option<&'cx ModuleItem<'cx>> {
         // Currently only supports non-hierarchical paths
         // Future enhancement: support "module::item" format
         if let Some(module) = self.modules.get("builtin") {
-            (*module).lookup_item(path)
+            module.lookup_item(path)
         } else {
             None
         }

@@ -916,17 +916,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Path<'_> {
     type Output = syn::Path<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        let mut raw = String::new();
         let mut segments = Vec::with_capacity(self.path_list.len() + 1);
-        raw.push_str(self.ident.ident.text());
         segments.push(self.ident.process_token(cx));
         for segment in &self.path_list {
-            raw.push('.');
-            raw.push_str(segment.ident.ident.text());
             segments.push(segment.ident.process_token(cx));
         }
         syn::Path {
-            raw: cx.alloc_str(&raw),
             segments: cx.alloc_ident_slice(segments),
         }
     }
