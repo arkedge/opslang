@@ -255,7 +255,6 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
         type FunctionDef;
         type Parameter;
         type ConstantDef;
-        type Scope;
         type ScopeItem;
         type Row;
         type Block;
@@ -346,6 +345,7 @@ const V1_IR_NODE_TYPES: &[IrType] = define_ir_node_types! {
         type ResolvedPath;
         type ResolvedItem;
         type Expr;
+        type Scope;
         type String;
         type Bytes;
         type HexBytes;

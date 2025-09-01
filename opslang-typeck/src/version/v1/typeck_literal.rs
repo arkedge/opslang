@@ -69,7 +69,7 @@ impl<'cx> TypeChecker<'cx> {
 
                     let ir_array = ast::literal::Array {
                         left_bracket: array.left_bracket.into_token(),
-                        exprs: &[],
+                        exprs: Vec::new(),
                         right_bracket: array.right_bracket.into_token(),
                     };
                     let ir_literal = ast::Literal::Array(ir_array);
@@ -101,7 +101,7 @@ impl<'cx> TypeChecker<'cx> {
                     let array_type = Ty::mk_array(self.typing_cx, element_type);
                     let ir_array = ast::Literal::array(
                         array.left_bracket.into_token(),
-                        self.ir_cx.alloc_expr_slice(ir_exprs),
+                        ir_exprs,
                         array.right_bracket.into_token(),
                     );
                     let ir_expr =

@@ -99,6 +99,9 @@ opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx> {
     fn visit_ty(&mut self, _ty: &Ty<'cx>) {
         eprintln!("hi, I'm a bug");
     }
+    fn visit_resolved_item_mut(&mut self, _resolved_item: &mut ir::ResolvedItem<'cx>) {
+        // `ResolvedItem` is immutable, not calling super
+    }
 });
 
 impl<'cx> TypeChecker<'cx> {
@@ -307,15 +310,13 @@ impl<'cx> TypeChecker<'cx> {
             source_comments: self.ir_cx.alloc_ast_comment_slice(&[comment]),
         });
 
-        let ir_row = ast::Row {
+        let ir_row = ast::Row::<'cx, IrTypeFamily> {
             breaks: row.breaks.map(|b| b.into_token()),
             statement: ir_content,
             comment: ir_comment,
         };
 
-        Ok(RowProcessResult::ScopeItem(ast::ScopeItem::Row(
-            self.ir_cx.alloc_row(ir_row),
-        )))
+        Ok(RowProcessResult::ScopeItem(ast::ScopeItem::Row(ir_row)))
     }
 
     fn typeck_block(
@@ -323,9 +324,9 @@ impl<'cx> TypeChecker<'cx> {
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         block: &ast::Block<'cx>,
-    ) -> Result<&'cx ast::Block<'cx, IrTypeFamily>> {
+    ) -> Result<ast::Block<'cx, IrTypeFamily>> {
         let mut local_env = env.extend_inherit();
-        let mut ir_items = Vec::new();
+        let mut ir_items: Vec<ast::ScopeItem<'cx, IrTypeFamily>> = Vec::new();
         let mut pending_comments: Vec<&'cx ast::Comment<'cx>> = Vec::new();
 
         for item in block.scope.items {
@@ -354,9 +355,7 @@ impl<'cx> TypeChecker<'cx> {
         // Flush any remaining comments at the end
         self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
 
-        let ir_scope = ast::Scope {
-            items: self.ir_cx.alloc_scope_item_slice(ir_items),
-        };
+        let ir_scope = ir::Scope { items: ir_items };
 
         let ir_block = ast::Block {
             left_brace: block.left_brace.into_token(),
@@ -364,7 +363,7 @@ impl<'cx> TypeChecker<'cx> {
             right_brace: block.right_brace.into_token(),
         };
 
-        Ok(self.ir_cx.alloc_block(ir_block))
+        Ok(ir_block)
     }
 
     fn flush_comments_to_items(
@@ -379,7 +378,7 @@ impl<'cx> TypeChecker<'cx> {
                 statement: None,
                 comment: Some(merged_comment),
             };
-            ir_items.push(ast::ScopeItem::Row(self.ir_cx.alloc_row(comment_row)));
+            ir_items.push(ast::ScopeItem::Row(comment_row));
             comments.clear();
         }
         Ok(())

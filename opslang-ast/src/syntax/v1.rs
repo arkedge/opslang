@@ -131,7 +131,7 @@ pub struct ConstantDef<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 /// Sequence of statements.
 pub struct Scope<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub items: &'cx [F::ScopeItem],
+    pub items: &'cx [ScopeItem<'cx, F>],
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -170,7 +170,7 @@ pub struct Comment<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 /// ```
 pub struct Block<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub left_brace: token::OpenBrace<'cx, F>,
-    pub scope: Scope<'cx, F>,
+    pub scope: F::Scope,
     pub right_brace: token::CloseBrace<'cx, F>,
 }
 
@@ -368,7 +368,7 @@ pub mod literal {
     #[derive(Debug, PartialEq, Clone, Copy, Visit)]
     pub struct Array<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
         pub left_bracket: token::OpenSquare<'cx, F>,
-        pub exprs: &'cx [F::Expr],
+        pub exprs: F::Exprs,
         pub right_bracket: token::CloseSquare<'cx, F>,
     }
 

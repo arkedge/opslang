@@ -96,8 +96,9 @@ fn generate_adhoc_visitor_impls(
         impl ::std::convert::Infallible;
         impl chrono::DateTime<chrono::Utc>;
         impl Vec<::opslang_ty::version::v1::Ty<'cx>>;
-        impl Vec<::opslang_ir::version::Expr<'cx>>;
-        impl Vec<::opslang_ast::Qualif<'cx, ::opslang_ir::version::IrTypeFamily>>;
+        impl Vec<::opslang_ir::version::v1::Expr<'cx>>;
+        impl Vec<::opslang_ast::syntax::v1::ScopeItem<'cx, ::opslang_ir::version::v1::IrTypeFamily>>;
+        impl Vec<::opslang_ast::syntax::v1::Qualif<'cx, ::opslang_ir::version::v1::IrTypeFamily>>;
     };
 
     quote! {

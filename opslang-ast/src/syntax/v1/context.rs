@@ -1,6 +1,6 @@
 use super::{
     Block, Comment, CompareOp, DefaultTypeFamily, Expr, ExprKind, ExprMut, Ident, Parameter, Row,
-    ToplevelItem, family::TypeFamily,
+    ScopeItem, ToplevelItem, family::TypeFamily,
 };
 use typed_arena::Arena;
 
@@ -19,7 +19,7 @@ pub struct Context<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     // Slice arenas for different types
     toplevel_slice_arena: Arena<ToplevelItem<'cx, F>>,
     parameter_slice_arena: Arena<Parameter<'cx, F>>,
-    scope_item_slice_arena: Arena<F::ScopeItem>,
+    scope_item_slice_arena: Arena<ScopeItem<'cx, F>>,
     expr_slice_arena: Arena<F::Expr>,
     ident_slice_arena: Arena<Ident<'cx, F>>,
     qualif_slice_arena: Arena<F::Qualif>,
@@ -74,8 +74,8 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
 
     pub fn alloc_scope_item_slice(
         &'cx self,
-        items: impl IntoIterator<Item = F::ScopeItem>,
-    ) -> &'cx [F::ScopeItem] {
+        items: impl IntoIterator<Item = ScopeItem<'cx, F>>,
+    ) -> &'cx [ScopeItem<'cx, F>] {
         self.scope_item_slice_arena.alloc_extend(items)
     }
 

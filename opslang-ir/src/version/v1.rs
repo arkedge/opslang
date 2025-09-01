@@ -102,6 +102,14 @@ impl<'cx> Typed<'cx> for Expr<'cx> {
     }
 }
 
+impl<'cx> Typed<'cx> for Scope<'cx> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        // FIXME: the last item type
+        None
+    }
+}
+
 pub mod context;
 pub use context::Context;
 pub mod ir_consistency_check;
@@ -122,6 +130,9 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
         // Core structural types
         Comment = Comment<'cx>,
         ToplevelItem = Definition<'cx>,
+        Row = syn::Row<'cx, Self>,
+        Block = syn::Block<'cx, Self>,
+        Scope = Scope<'cx>,
 
         // Resolved name types
         Ident = Ident<'cx>,
@@ -131,6 +142,7 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
 
         // Typed expression
         Expr = Expr<'cx>,
+        Exprs = Vec<Expr<'cx>>,
 
         // Infallible qualification types (resolved into Apply)
         Qualif = Infallible,
@@ -191,6 +203,13 @@ pub struct Definition<'cx> {
     pub comment_trailing: Option<Comment<'cx>>,
     /// The actual definition content.
     pub kind: syn::DefinitionKind<'cx, IrTypeFamily>,
+}
+
+#[derive(Debug, PartialEq, Visit)]
+/// A sequence of statements in the IR with mutable data storage.
+pub struct Scope<'cx> {
+    /// The statements in this scope, stored as a vector for mutability.
+    pub items: Vec<syn::ScopeItem<'cx, IrTypeFamily>>,
 }
 
 #[derive(Debug, Clone, Copy, Visit)]

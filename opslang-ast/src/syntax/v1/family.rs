@@ -71,8 +71,7 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
 
         type ToplevelItem;
 
-        /// Items within a scope, which can be either rows (statements) or nested blocks in AST.
-        type ScopeItem;
+        type Scope;
 
         /// A single row/line in the source code.
         type Row;
@@ -100,6 +99,8 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         // === Expression Types ===
         /// Base expression type representing the main expression enum that contains all expression variants.
         type Expr;
+
+        type Exprs;
 
         /// Literal values including numbers, strings, arrays, and other constant data.
         type Literal;

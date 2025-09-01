@@ -470,7 +470,7 @@ impl<'cx, F: TypeFamily<'cx>> Literal<'cx, F> {
 
     pub fn array(
         left_bracket: token::OpenSquare<'cx, F>,
-        exprs: &'cx [F::Expr],
+        exprs: F::Exprs,
         right_bracket: token::CloseSquare<'cx, F>,
     ) -> Self
     where
