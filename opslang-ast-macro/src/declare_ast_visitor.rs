@@ -4,9 +4,9 @@ use opslang_visitor_macro_helper::{
 };
 use quote::quote;
 
-use crate::ast_types::AstType;
+use crate::visitor_type_registry::AstNodeTy;
 
-impl VisitableType for AstType {
+impl VisitableType for AstNodeTy {
     fn generate_visit_method_name(&self, kind: MethodKind, _mode: VisitorMode) -> String {
         self.generate_visit_method_name(kind)
     }
@@ -22,6 +22,6 @@ impl VisitableType for AstType {
 pub fn declare_ast_visitor_trait(
     trait_decl: TraitDeclaration,
 ) -> syn::Result<proc_macro2::TokenStream> {
-    let all_ast_types = crate::ast_types::AstType::get_v1_ast_node_types();
-    declare_visitor_trait(trait_decl, all_ast_types, VisitorMode::Visit)
+    let all_ast_types = crate::visitor_type_registry::AstNodeTy::get_v1_ast_node_types();
+    declare_visitor_trait::<AstNodeTy>(trait_decl, all_ast_types, VisitorMode::Visit)
 }

@@ -13,9 +13,9 @@ use quote::quote;
 ///
 /// See the call site for more information.
 pub fn ast_consistency_check() -> TokenStream {
-    let ast_types = crate::ast_types::AstType::get_v1_ast_node_types();
+    let ast_types = crate::visitor_type_registry::AstNodeTy::get_v1_ast_node_types();
 
-    let type_checks = ast_types.iter().map(|ast_type| {
+    let type_checks = ast_types.map(|ast_type| {
         let type_path = ast_type.inside_of_v1_child_mod().super_path();
         quote! {
             let _: #type_path;

@@ -6,7 +6,7 @@
 //!
 //! # Purpose
 //!
-//! The IR types registry in `opslang-ir-macro/src/ir_types.rs` maintains a comprehensive
+//! The IR types registry in `opslang-ir-macro/src/visitor_type_registry.rs` maintains a comprehensive
 //! list of all IR-related node types from multiple crates (opslang-ast, opslang-ir, opslang-ty)
 //! for use by procedural macros. However, this registry is independent of the actual type
 //! definitions across these crates, creating a potential source of inconsistency.
@@ -43,7 +43,7 @@
 //!
 //! When adding, removing, or renaming IR-related types across any crate:
 //! 1. Update the actual type definitions in the respective crates (opslang-ast, opslang-ir, opslang-ty)
-//! 2. Update the registry in `opslang-ir-macro/src/ir_types.rs`
+//! 2. Update the registry in `opslang-ir-macro/src/visitor_type_registry.rs`
 //! 3. Ensure this compilation check continues to pass
 //!
 //! If this check fails, it indicates a mismatch between the registry and actual definitions

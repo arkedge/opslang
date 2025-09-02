@@ -9,7 +9,7 @@
 //! Empty visitor definitions are particularly valuable for testing because they
 //! exercise the complete visitor generation machinery without any custom logic:
 //!
-//! 1. **Type Registry Validation**: All types in `ast_types.rs` must exist and be
+//! 1. **Type Registry Validation**: All types in `visitor_type_registry.rs` must exist and be
 //!    accessible for the macro to generate visitor methods.
 //!
 //! 2. **Method Generation Logic**: The visitor implementation macro must correctly
@@ -22,7 +22,7 @@
 //!
 //! If any test in this file fails to compile, it indicates one of these issues:
 //!
-//! - **Registry Inconsistency**: A type listed in `ast_types.rs` doesn't exist
+//! - **Registry Inconsistency**: A type listed in `visitor_type_registry.rs` doesn't exist
 //!   or has been renamed/moved without updating the registry.
 //!
 //! - **Visitor Implementation Bug**: The `visitor_impl.rs` macro has a bug in

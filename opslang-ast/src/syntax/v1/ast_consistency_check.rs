@@ -1,12 +1,12 @@
 //! Compile-time consistency check for AST types registry.
 //!
 //! This module performs a compile-time verification that all AST types defined in the
-//! centralized registry (`opslang_ast_macro::ast_types`) actually exist and are accessible
+//! centralized registry (`opslang_ast_macro::visitor_type_registry`) actually exist and are accessible
 //! from this v1 child module context using `super::` paths.
 //!
 //! # Purpose
 //!
-//! The AST types registry in `opslang-ast-macro/src/ast_types.rs` maintains a comprehensive
+//! The AST types registry in `opslang-ast-macro/src/visitor_type_registry.rs` maintains a comprehensive
 //! list of all AST node types for use by procedural macros. However, this registry is
 //! independent of the actual type definitions in `opslang-ast/src/syntax/v1.rs`, creating
 //! a potential source of inconsistency.
@@ -39,7 +39,7 @@
 //!
 //! When adding, removing, or renaming AST types:
 //! 1. Update the actual type definitions in `v1.rs` and related files
-//! 2. Update the registry in `opslang-ast-macro/src/ast_types.rs`
+//! 2. Update the registry in `opslang-ast-macro/src/visitor_type_registry.rs`
 //! 3. Ensure this compilation check continues to pass
 //!
 //! If this check fails, it indicates a mismatch between the registry and actual definitions

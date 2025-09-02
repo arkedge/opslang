@@ -10,7 +10,7 @@
 //! Empty visitor definitions are particularly valuable for testing because they
 //! exercise the complete visitor generation machinery without any custom logic:
 //!
-//! 1. **Cross-crate Type Registry Validation**: All types in `ir_types.rs` from
+//! 1. **Cross-crate Type Registry Validation**: All types in `visitor_type_registry.rs` from
 //!    multiple crates must exist and be accessible for the macro to generate
 //!    visitor methods.
 //!
@@ -26,7 +26,7 @@
 //!
 //! If any test in this file fails to compile, it indicates one of these issues:
 //!
-//! - **Registry Inconsistency**: A type listed in `ir_types.rs` doesn't exist
+//! - **Registry Inconsistency**: A type listed in `visitor_type_registry.rs` doesn't exist
 //!   or has been renamed/moved without updating the registry across any of the
 //!   referenced crates (opslang-ast, opslang-ir, opslang-ty).
 //!

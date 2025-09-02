@@ -41,17 +41,20 @@ pub trait VisitableType {
 /// Generate visitor trait implementation.
 pub fn declare_visitor_trait<T: VisitableType>(
     trait_decl: TraitDeclaration,
-    types: &[T],
+    types: impl Iterator<Item = T>,
     mode: crate::VisitorMode,
 ) -> syn::Result<proc_macro2::TokenStream> {
-    let attrs = &trait_decl.attrs;
-    let vis = &trait_decl.vis;
-    let name = &trait_decl.ident;
-    let ty_generics = &trait_decl.generics;
+    let TraitDeclaration {
+        attrs,
+        vis,
+        ident,
+        generics,
+        ..
+    } = &trait_decl;
+    let types: Vec<_> = types.into_iter().collect();
 
     // Generate visit_* and super_* method signatures
-    let (visit_signatures, visit_methods): (Vec<_>, Vec<_>) = types
-        .iter()
+    let (visit_signatures, visit_methods): (Vec<_>, Vec<_>) = types.iter()
         .map(|visitor_type| {
             let visit_name =
                 visitor_type.generate_visit_method_name(crate::MethodKind::Visit, mode);
@@ -136,10 +139,10 @@ pub fn declare_visitor_trait<T: VisitableType>(
 
     Ok(quote! {
         #(#attrs)*
-        #vis trait #name #ty_generics {
+        #vis trait #ident #generics {
             #(#visit_signatures)*
         }
-        impl<'cx, V> #name #ty_generics for V
+        impl<'cx, V> #ident #generics for V
         where
             V: ?Sized #(+ #visitor_bounds)*,
             #(#node_type_bounds),*

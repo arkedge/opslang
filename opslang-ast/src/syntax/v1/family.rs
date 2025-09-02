@@ -28,7 +28,7 @@ macro_rules! declare_family {
 ///
 /// 1. **Core implementation in `opslang-ast`**:
 ///    - Add the type to this trait definition
-///    - Add corresponding parameter to [`v1_default_type_subst!`] macro
+///    - Add corresponding parameter to [`opslang_ast_macro::v1_default_type_subst!`] macro
 ///    - Add implementation in the macro body to map to concrete type
 ///    - Update any enums/structs to use `F::YourType` instead of `YourType<'cx, F>`
 ///
@@ -51,7 +51,7 @@ macro_rules! declare_family {
 /// - **Expressions**: `Expr` and all expression-related types
 /// - **Definitions**: Top-level constructs like function and constant definitions
 ///
-/// [`v1_default_type_subst!`]: crate::v1_default_type_subst
+/// [`v1_default_type_subst!`]: opslang_ast_macro::v1_default_type_subst
 pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static {
     declare_family! {
         // === Foundational Types ===

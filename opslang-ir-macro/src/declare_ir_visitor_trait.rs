@@ -1,10 +1,10 @@
-use crate::ir_types::IrType;
+use crate::visitor_type_registry::IrNodeTy;
 use opslang_visitor_macro_helper::{
     MethodKind, VisitorMode,
     shared_visitor_trait::{TraitDeclaration, VisitableType, declare_visitor_trait},
 };
 
-impl VisitableType for IrType {
+impl VisitableType for IrNodeTy {
     fn generate_visit_method_name(&self, kind: MethodKind, mode: VisitorMode) -> String {
         self.generate_visit_method_name(kind, mode)
     }
@@ -19,7 +19,7 @@ impl VisitableType for IrType {
 pub fn declare_ir_visitor_trait(
     trait_decl: TraitDeclaration,
 ) -> syn::Result<proc_macro2::TokenStream> {
-    let all_ir_types = IrType::get_v1_ir_types();
+    let all_ir_types = IrNodeTy::get_v1_ir_node_types();
     declare_visitor_trait(trait_decl, all_ir_types, VisitorMode::Visit)
 }
 
@@ -27,6 +27,6 @@ pub fn declare_ir_visitor_trait(
 pub fn declare_ir_visitor_mut_trait(
     trait_decl: TraitDeclaration,
 ) -> syn::Result<proc_macro2::TokenStream> {
-    let all_ir_types = IrType::get_v1_ir_types();
+    let all_ir_types = IrNodeTy::get_v1_ir_node_types();
     declare_visitor_trait(trait_decl, all_ir_types, VisitorMode::VisitMut)
 }

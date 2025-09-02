@@ -1,9 +1,9 @@
 //! Token and keyword definitions
 //!
 //! This module has three responsibilities:
-//! - token definitions via [`declare_token`],
-//! - keyword definitions via [`declare_kw`],
-//! - public type macro [`V1Token`] from embedded token to type.
+//! - token definitions via `declare_token!` macro,
+//! - keyword definitions via `declare_kw!` macro,
+//! - public type macro `V1Token!` for converting embedded tokens to types.
 use super::{Position, Span};
 
 pub trait Token {

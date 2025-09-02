@@ -1,11 +1,11 @@
 mod ast_consistency_check;
-mod ast_types;
 mod declare_ast_visitor;
 mod derive_map_into_token;
 mod derive_position;
 mod derive_span;
 mod v1_default_type_subst;
 mod visitor_impl;
+mod visitor_type_registry;
 
 #[inline]
 fn wrap_proc_macro<T: syn::parse::Parse>(
@@ -114,13 +114,13 @@ pub fn v1_declare_ast_visitor_trait(
 /// Generates a compile-time consistency check for AST types registry.
 ///
 /// This procedural macro verifies that all AST types defined in the centralized registry
-/// (`ast_types.rs`) actually exist and are accessible from the context where this macro is called.
+/// (`visitor_type_registry.rs`) actually exist and are accessible from the context where this macro is called.
 /// The macro is designed to be called from within a v1 child module context to ensure that
 /// all registered types can be referenced using `super::` paths.
 ///
 /// # Purpose
 ///
-/// The AST types registry in `ast_types.rs` maintains a list of all AST node types for use by
+/// The AST types registry in `visitor_type_registry.rs` maintains a list of all AST node types for use by
 /// procedural macros, but this registry is independent of the actual type definitions. This
 /// creates a potential inconsistency where the registry might reference types that don't exist
 /// or have been renamed/moved.

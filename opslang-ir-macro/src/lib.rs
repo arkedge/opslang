@@ -1,7 +1,7 @@
 mod declare_ir_visitor_trait;
 mod ir_consistency_check;
-mod ir_types;
 mod visitor_impl;
+mod visitor_type_registry;
 
 use proc_macro::TokenStream;
 
@@ -81,13 +81,13 @@ pub fn v1_declare_ir_visitor_mut_trait(_attr: TokenStream, input: TokenStream) -
 /// Generates a compile-time consistency check for IR types registry.
 ///
 /// This procedural macro verifies that all IR types defined in the centralized registry
-/// (`ir_types.rs`) actually exist and are accessible from the context where this macro is called.
+/// (`visitor_type_registry.rs`) actually exist and are accessible from the context where this macro is called.
 /// The macro is designed to be called from within a v1 child module context to ensure that
 /// all registered types can be referenced using `super::` paths.
 ///
 /// # Purpose
 ///
-/// The IR types registry in `ir_types.rs` maintains a comprehensive list of all IR-related
+/// The IR types registry in `visitor_type_registry.rs` maintains a comprehensive list of all IR-related
 /// node types from multiple crates (opslang-ast, opslang-ir, opslang-ty) for use by
 /// procedural macros, but this registry is independent of the actual type definitions. This
 /// creates a potential inconsistency where the registry might reference types that don't exist
