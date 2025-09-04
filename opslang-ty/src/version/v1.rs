@@ -1,3 +1,15 @@
+/*!
+Type system for opslang v1.
+
+This module defines the type system structures including type kinds, identifiers, and
+module management for the opslang v1 implementation.
+
+**IMPORTANT**: When modifying type structures in this module, update the visitor type
+registry in `opslang-ir-macro/src/visitor_type_registry.rs` to ensure proper visitor
+macro generation. Choose whether to make types hookable (add to node types) or not 
+hookable (add to inter types).
+*/
+
 use opslang_visitor_macro::Visit;
 use std::borrow::Borrow;
 use std::collections::HashMap;

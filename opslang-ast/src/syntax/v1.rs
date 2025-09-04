@@ -1,3 +1,17 @@
+/*!
+AST for opslang v1.
+
+This module defines the AST structures for opslang v1 syntax. The AST is designed to be
+generic over a type family to support different contexts (parsing vs analysis).
+
+**IMPORTANT**: When modifying type structures in this module, update visitor type
+registries to ensure proper visitor macro generation:
+- `opslang-ast-macro/src/visitor_type_registry.rs` for AST visitors
+- `opslang-ir-macro/src/visitor_type_registry.rs` for IR visitors
+
+Choose whether to make types hookable (add to node types) or not hookable (add to inter types).
+*/
+
 use std::fmt::Debug;
 
 pub use family::TypeFamily;

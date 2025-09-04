@@ -24,7 +24,7 @@
 //!
 //! **When AST structures change in `opslang-ast`, you will almost certainly need to update these registries.**
 //!
-//! This visitor system requires **complete type coverage**: every type appearing in AST definitions 
+//! This visitor system requires **complete type coverage**: every type appearing in AST definitions
 //! must be handled by one of three mechanisms:
 //! 1. **Node types** (defined in this registry)
 //! 2. **Intermediate types** (defined in this registry)
@@ -32,7 +32,7 @@
 //!
 //! Types marked with `skip_visit` attributes are automatically excluded from visitor generation.
 //!
-//! This macro-driven design makes maintenance **significantly easier** than manually editing 
+//! This macro-driven design makes maintenance **significantly easier** than manually editing
 //! visitor implementations for every structural change.
 //!
 //! # Consistency Verification

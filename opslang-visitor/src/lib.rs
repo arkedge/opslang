@@ -1,7 +1,5 @@
 #[diagnostic::on_unimplemented(
-    message = "`{V}` do not know how `{Self}` is constructed",
-    label = "lacking `{Self}: TemplateVisit<{V}>`",
-    note = "add impl `for<V> TemplateVisit<V> for `{Self}` using macro"
+    message = "add `#[derive(Visit)]` to `{Self}` or implement `TemplateVisit` manually"
 )]
 pub trait TemplateVisit<V: ?Sized> {
     #[inline]
@@ -10,9 +8,7 @@ pub trait TemplateVisit<V: ?Sized> {
 }
 
 #[diagnostic::on_unimplemented(
-    message = "`{V}` do not know how `{Self}` is constructed",
-    label = "lacking `{Self}: TemplateVisitMut<{V}>`",
-    note = "add impl `for<V> TemplateVisitMut<V> for `{Self}` using macro"
+    message = "add `#[derive(Visit)]` to `{Self}` or implement `TemplateVisitMut` manually"
 )]
 pub trait TemplateVisitMut<V: ?Sized> {
     #[inline]
@@ -21,18 +17,14 @@ pub trait TemplateVisitMut<V: ?Sized> {
 }
 
 #[diagnostic::on_unimplemented(
-    message = "`{Self}` does not visit `{T}`",
-    label = "lacking `{Self}: Visitor<{T}>`",
-    note = "add impl `Visitor<{T}> for `{Self}` using macro"
+    message = "add `{T}` to visitor_type_registry.rs: node types (allow hooking) or inter types (disallow hooking)"
 )]
 pub trait Visitor<T: ?Sized> {
     fn visit(&mut self, node: &T);
 }
 
 #[diagnostic::on_unimplemented(
-    message = "`{Self}` does not visit `{T}` mutably",
-    label = "lacking `{Self}: VisitorMut<{T}>`",
-    note = "add impl `VisitorMut<{T}> for `{Self}` using macro"
+    message = "add `{T}` to visitor_type_registry.rs: node types (allow hooking) or inter types (disallow hooking)"
 )]
 pub trait VisitorMut<T: ?Sized> {
     fn visit_mut(&mut self, node: &mut T);

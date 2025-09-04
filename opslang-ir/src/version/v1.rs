@@ -4,6 +4,11 @@ Intermediate Representation (IR) for opslang v1.
 The IR serves as a bridge between the Abstract Syntax Tree (AST) and the type-checked representation.
 This module defines the responsibility and structure of the IR layer.
 
+**IMPORTANT**: When modifying type structures in this module, update the visitor type
+registry in `opslang-ir-macro/src/visitor_type_registry.rs` to ensure proper visitor
+macro generation. Choose whether to make types hookable (add to node types) or not 
+hookable (add to inter types).
+
 ## IR Responsibilities
 
 The IR has several key responsibilities that distinguish it from the AST:

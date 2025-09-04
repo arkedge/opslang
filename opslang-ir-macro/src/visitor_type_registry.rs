@@ -25,10 +25,10 @@
 //!
 //! # Design Principle
 //!
-//! **When structures change in `opslang-ast`, `opslang-ir`, or `opslang-ty`, you will almost 
+//! **When structures change in `opslang-ast`, `opslang-ir`, or `opslang-ty`, you will almost
 //! certainly need to update these registries.**
 //!
-//! This visitor system requires **complete type coverage** across all three crates: every type 
+//! This visitor system requires **complete type coverage** across all three crates: every type
 //! appearing in IR-context definitions must be handled by one of three mechanisms:
 //! 1. **Node types** (defined in this registry with proper crate mapping)
 //! 2. **Intermediate types** (defined in this registry with wrapper support)
@@ -321,6 +321,7 @@ macro_rules! define_ir_inter_types {
 const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
     // types that are defined in ast crate, substituted with 'cx and ir type family
     crate ast<'cx, ir> {
+        // actual type is `Program<'cx, IrTypeFamily>`
         type Program;
         type ToplevelItem;
         type DefinitionKind;
@@ -357,6 +358,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
 
         // Token types
         mod token {
+            // actual type is `Semi<'cx, IrTypeFamily>`
             type Semi;
             type Break;
             type Atmark;
@@ -399,6 +401,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
     }
     // types that are defined in ast crate, substituted with 'cx and default type family
     crate ast<'cx, default> {
+        // actual type is `Comment<'cx>`
         type Comment;
         type Path;
         type NumericSuffix;
@@ -412,6 +415,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
     }
     // types that are defined in ir crate, substituted with 'cx
     crate ir<'cx> {
+        // actual type is `Comment<'cx>`
         type Comment;
         type Definition;
         type ResolvedPath;
@@ -427,6 +431,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
     }
     // types that are defined in ty crate, substituted with 'cx
     crate ty<'cx> {
+        // actual type is `Ty<'cx>`
         type Ty;
         type ModuleItem;
     }
@@ -455,6 +460,7 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
         type NumericKind;
         type ExprKind<'cx, ir>;
         type ExprMut<'cx, ir>;
+        // actual type is Vec<ScopeItem<'cx, IrTypeFamily>>
         type ScopeItem<'cx, ir>: ::std::vec::Vec;
         type Qualif<'cx, ir>: ::std::vec::Vec;
     }
@@ -468,6 +474,7 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
         type TyKind<'cx>;
         type Identifier<'cx>;
         type TypeVariable;
+        // actual type is Vec<Ty<'cx>>
         type Ty<'cx>: ::std::vec::Vec;
     }
     extern {
