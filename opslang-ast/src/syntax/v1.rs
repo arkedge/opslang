@@ -11,7 +11,7 @@ pub mod loc;
 pub mod token;
 pub mod visit;
 
-/// All impls go to here
+pub mod constructors;
 pub mod impls;
 
 impl Versioned for Program<'_, DefaultTypeFamily> {
