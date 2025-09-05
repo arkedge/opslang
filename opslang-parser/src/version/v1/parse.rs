@@ -805,27 +805,30 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
     type Output = syn::Numeric<'cx>;
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        macro_rules! extract_suffix {
-            ($token:ident, $delimiter:expr) => {{
-                let input = $token.text();
-                if let Some((start, end)) = input.split_once($delimiter) {
-                    (
-                        start,
-                        Some(syn::NumericSuffix(syn::Ident {
-                            raw: cx.alloc_str(end),
-                            span: $token.wrap().0,
-                        })),
-                    )
-                } else {
-                    (input, None)
-                }
-            }};
+        fn extract_suffix<'cx, 'input>(
+            token: &'input Token,
+            predicate: impl Fn(char) -> bool,
+            cx: &'cx Context<'cx>,
+        ) -> (&'input str, Option<syn::NumericSuffix<'cx>>) {
+            let input = token.text();
+            if let Some(split_pos) = input.find(predicate) {
+                let (raw, suffix_str) = input.split_at(split_pos);
+                (
+                    raw,
+                    Some(syn::NumericSuffix(syn::Ident {
+                        raw: cx.alloc_str(suffix_str),
+                        span: token.wrap().0,
+                    })),
+                )
+            } else {
+                (input, None)
+            }
         }
 
         let (raw, suffix, kind) = match self {
             grammar_trait::Numeric::BinaryInteger(binary_integer) => {
                 let token = &binary_integer.binary_integer.binary_integer;
-                let (raw, suffix) = extract_suffix!(token, |c: char| c.is_alphabetic());
+                let (raw, suffix) = extract_suffix(token, |c: char| c.is_alphabetic(), cx);
                 (
                     raw.trim_start_matches("0b"),
                     suffix,
@@ -834,7 +837,7 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
             }
             grammar_trait::Numeric::OctalInteger(octal_integer) => {
                 let token = &octal_integer.octal_integer.octal_integer;
-                let (raw, suffix) = extract_suffix!(token, |c: char| c.is_alphabetic());
+                let (raw, suffix) = extract_suffix(token, |c: char| c.is_alphabetic(), cx);
                 (
                     raw.trim_start_matches("0o"),
                     suffix,
@@ -843,8 +846,11 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
             }
             grammar_trait::Numeric::HexadecimalInteger(hexadecimal_integer) => {
                 let token = &hexadecimal_integer.hexadecimal_integer.hexadecimal_integer;
-                let (raw, suffix) =
-                    extract_suffix!(token, |c: char| c.is_alphabetic() && !c.is_ascii_hexdigit());
+                let (raw, suffix) = extract_suffix(
+                    token,
+                    |c: char| c.is_alphabetic() && !c.is_ascii_hexdigit(),
+                    cx,
+                );
                 (
                     raw.trim_start_matches("0x"),
                     suffix,
@@ -853,9 +859,11 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Numeric<'_> {
             }
             grammar_trait::Numeric::Ieee754Float(ieee754_float) => {
                 let token = &ieee754_float.ieee754_float.ieee754_float;
-                let (raw, suffix) = extract_suffix!(token, |c: char| {
-                    c.is_alphabetic() && !matches!(c, 'e' | 'E')
-                });
+                let (raw, suffix) = extract_suffix(
+                    token,
+                    |c: char| c.is_alphabetic() && !matches!(c, 'e' | 'E'),
+                    cx,
+                );
                 (
                     raw,
                     suffix,
