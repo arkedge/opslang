@@ -6,7 +6,7 @@ module management for the opslang v1 implementation.
 
 **IMPORTANT**: When modifying type structures in this module, update the visitor type
 registry in `opslang-ir-macro/src/visitor_type_registry.rs` to ensure proper visitor
-macro generation. Choose whether to make types hookable (add to node types) or not 
+macro generation. Choose whether to make types hookable (add to node types) or not
 hookable (add to inter types).
 */
 
@@ -17,16 +17,46 @@ use std::hash::Hash;
 use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
 use typed_arena::Arena;
 
+/// Signed integer types, following Rust's naming convention.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
+pub enum IntTy {
+    I8,
+    I16,
+    I32,
+    I64,
+}
+
+/// Unsigned integer types, following Rust's naming convention.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
+pub enum UintTy {
+    U8,
+    U16,
+    U32,
+    U64,
+}
+
+/// Floating point types, following Rust's naming convention.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
+pub enum FloatTy {
+    F32,
+    F64,
+}
+
 /// Represents the different kinds of types in the type system.
 ///
 /// This enum defines all possible type variants that can exist in the language,
 /// including primitive types, compound types, and type variables for inference.
 #[derive(Debug, Clone, PartialEq, Visit)]
 pub enum TyKind<'cx> {
-    /// 32-bit signed integer type
-    Int,
-    /// 64-bit floating point number type
-    Float,
+    /// Signed integer types
+    Int(IntTy),
+    /// Unsigned integer types
+    Uint(UintTy),
+    /// Floating point types
+    Float(FloatTy),
     /// String type for text data
     String,
     /// Boolean type for true/false values
@@ -39,8 +69,8 @@ pub enum TyKind<'cx> {
     Array { inner: Ty<'cx> },
     /// Function type with argument types and return type
     Function { arg: Vec<Ty<'cx>>, ret: Ty<'cx> },
-    /// Type variable used during type inference
-    Variable(TypeVariable),
+    /// Inference variable used during type inference
+    Infer(InferTy),
     /// Unit type representing no meaningful value
     Unit,
 }
@@ -69,25 +99,72 @@ impl<'cx> std::ops::Deref for Ty<'cx> {
     }
 }
 
-/// Represents a type variable used during type inference.
-///
-/// Type variables are placeholders for unknown types that get unified
-/// during the type checking process.
+/// Integer type variable for type inference.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
 #[skip_all_visit]
-pub struct TypeVariable(u32);
+pub struct IntVid(u32);
 
-impl std::fmt::Display for TypeVariable {
+impl IntVid {
+    pub fn fresh() -> Self {
+        static COUNTER: AtomicU32 = AtomicU32::new(0);
+        Self(COUNTER.fetch_add(1, std::sync::atomic::Ordering::AcqRel))
+    }
+}
+
+impl std::fmt::Display for IntVid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "$int{}", self.0)
+    }
+}
+
+/// Float type variable for type inference.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
+pub struct FloatVid(u32);
+
+impl FloatVid {
+    pub fn fresh() -> Self {
+        static COUNTER: AtomicU32 = AtomicU32::new(0);
+        Self(COUNTER.fetch_add(1, std::sync::atomic::Ordering::AcqRel))
+    }
+}
+
+impl std::fmt::Display for FloatVid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "$float{}", self.0)
+    }
+}
+
+/// General type variable for type inference.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
+pub struct TyVid(u32);
+
+impl TyVid {
+    pub fn fresh() -> Self {
+        static COUNTER: AtomicU32 = AtomicU32::new(0);
+        Self(COUNTER.fetch_add(1, std::sync::atomic::Ordering::AcqRel))
+    }
+}
+
+impl std::fmt::Display for TyVid {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "$t{}", self.0)
     }
 }
 
-impl TypeVariable {
-    pub fn fresh() -> Self {
-        static COUNTER: AtomicU32 = AtomicU32::new(0);
-        Self(COUNTER.fetch_add(1, std::sync::atomic::Ordering::AcqRel))
-    }
+/// Represents inference variables used during type inference.
+///
+/// Different kinds of inference variables allow for more precise type inference,
+/// particularly for numeric types that can have default fallbacks.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+pub enum InferTy {
+    /// General type inference variable
+    TyVar(TyVid),
+    /// Integer inference variable that can fallback to default integer type
+    IntVar(IntVid),
+    /// Float inference variable that can fallback to default float type  
+    FloatVar(FloatVid),
 }
 
 /// Represents an identifier with scope information.
@@ -129,10 +206,12 @@ impl<'cx> TyKind<'cx> {
     ///
     /// This check prevents infinite types by ensuring a type variable doesn't
     /// occur within its own definition during unification.
-    pub fn occurs(&self, var: TypeVariable) -> bool {
+    pub fn occurs(&self, var: TyVid) -> bool {
         match self {
             // Direct variable occurrence
-            TyKind::Variable(v) => *v == var,
+            TyKind::Infer(InferTy::TyVar(v)) => *v == var,
+            // IntVar and FloatVar cannot occur in general type variables
+            TyKind::Infer(InferTy::IntVar(_) | InferTy::FloatVar(_)) => false,
             // Recursively check array element type
             TyKind::Array { inner } => inner.occurs(var),
             // Check all argument types and return type
@@ -148,67 +227,144 @@ impl<'cx> TyKind<'cx> {
     ///
     /// This method formats types in a user-friendly way for error messages
     /// and debugging output.
-    pub fn display(&self, _cx: &TypingContext<'cx>) -> String {
+    pub fn display(&self) -> String {
         match self {
-            TyKind::Int => "i32".to_string(),
-            TyKind::Float => "f64".to_string(),
+            TyKind::Int(int_ty) => match int_ty {
+                IntTy::I8 => "i8",
+                IntTy::I16 => "i16",
+                IntTy::I32 => "i32",
+                IntTy::I64 => "i64",
+            }
+            .to_string(),
+            TyKind::Uint(uint_ty) => match uint_ty {
+                UintTy::U8 => "u8",
+                UintTy::U16 => "u16",
+                UintTy::U32 => "u32",
+                UintTy::U64 => "u64",
+            }
+            .to_string(),
+            TyKind::Float(float_ty) => match float_ty {
+                FloatTy::F32 => "f32",
+                FloatTy::F64 => "f64",
+            }
+            .to_string(),
             TyKind::String => "string".to_string(),
             TyKind::Bool => "bool".to_string(),
             TyKind::Duration => "duration".to_string(),
             TyKind::Time => "time".to_string(),
             // Format array types as [element_type]
-            TyKind::Array { inner } => format!("[{}]", inner.display(_cx)),
+            TyKind::Array { inner } => format!("[{}]", inner.display()),
             // Format function types as (arg1, arg2, ...) -> return_type
             TyKind::Function { arg: args, ret } => {
-                let arg_strs: Vec<String> = args.iter().map(|arg| arg.display(_cx)).collect();
-                format!("({}) -> {}", arg_strs.join(", "), ret.display(_cx))
+                let arg_strs: Vec<String> = args.iter().map(|arg| arg.display()).collect();
+                format!("({}) -> {}", arg_strs.join(", "), ret.display())
             }
-            // Display type variables with a distinctive prefix
-            TyKind::Variable(var) => format!("{var}"),
+            // Display inference variables with distinctive prefixes
+            TyKind::Infer(infer_ty) => match infer_ty {
+                InferTy::TyVar(var) => format!("{var}"),
+                InferTy::IntVar(var) => format!("{var}"),
+                InferTy::FloatVar(var) => format!("{var}"),
+            },
             TyKind::Unit => "()".to_string(),
         }
     }
 }
 
 impl<'cx> Ty<'cx> {
-    pub fn mk_int(cx: &'cx TypingContext<'cx>) -> Self {
-        cx.alloc_type(TyKind::Int)
+    pub fn from_kind(cx: &'cx TypingContext<'cx>, kind: TyKind<'cx>) -> Self {
+        cx.alloc_type(kind)
     }
 
-    pub fn mk_float(cx: &'cx TypingContext<'cx>) -> Self {
-        cx.alloc_type(TyKind::Float)
+    pub fn mk_int(cx: &'cx TypingContext<'cx>, int_ty: IntTy) -> Self {
+        Self::from_kind(cx, TyKind::Int(int_ty))
+    }
+
+    pub fn mk_uint(cx: &'cx TypingContext<'cx>, uint_ty: UintTy) -> Self {
+        Self::from_kind(cx, TyKind::Uint(uint_ty))
+    }
+
+    pub fn mk_float(cx: &'cx TypingContext<'cx>, float_ty: FloatTy) -> Self {
+        Self::from_kind(cx, TyKind::Float(float_ty))
+    }
+
+    pub fn mk_i8(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_int(cx, IntTy::I8)
+    }
+
+    pub fn mk_i16(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_int(cx, IntTy::I16)
+    }
+
+    pub fn mk_i32(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_int(cx, IntTy::I32)
+    }
+
+    pub fn mk_i64(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_int(cx, IntTy::I64)
+    }
+
+    pub fn mk_u8(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_uint(cx, UintTy::U8)
+    }
+
+    pub fn mk_u16(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_uint(cx, UintTy::U16)
+    }
+
+    pub fn mk_u32(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_uint(cx, UintTy::U32)
+    }
+
+    pub fn mk_u64(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_uint(cx, UintTy::U64)
+    }
+
+    pub fn mk_f32(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_float(cx, FloatTy::F32)
+    }
+
+    pub fn mk_f64(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_float(cx, FloatTy::F64)
     }
 
     pub fn mk_string(cx: &'cx TypingContext<'cx>) -> Self {
-        cx.alloc_type(TyKind::String)
+        Self::from_kind(cx, TyKind::String)
     }
 
     pub fn mk_bool(cx: &'cx TypingContext<'cx>) -> Self {
-        cx.alloc_type(TyKind::Bool)
+        Self::from_kind(cx, TyKind::Bool)
     }
 
     pub fn mk_duration(cx: &'cx TypingContext<'cx>) -> Self {
-        cx.alloc_type(TyKind::Duration)
+        Self::from_kind(cx, TyKind::Duration)
     }
 
     pub fn mk_time(cx: &'cx TypingContext<'cx>) -> Self {
-        cx.alloc_type(TyKind::Time)
+        Self::from_kind(cx, TyKind::Time)
     }
 
     pub fn mk_array(cx: &'cx TypingContext<'cx>, inner: Ty<'cx>) -> Self {
-        cx.alloc_type(TyKind::Array { inner })
+        Self::from_kind(cx, TyKind::Array { inner })
     }
 
     pub fn mk_function(cx: &'cx TypingContext<'cx>, arg: Vec<Ty<'cx>>, ret: Ty<'cx>) -> Self {
-        cx.alloc_type(TyKind::Function { arg, ret })
+        Self::from_kind(cx, TyKind::Function { arg, ret })
     }
 
-    pub fn mk_variable(cx: &'cx TypingContext<'cx>, var: TypeVariable) -> Self {
-        cx.alloc_type(TyKind::Variable(var))
+    pub fn mk_variable(cx: &'cx TypingContext<'cx>, var: TyVid) -> Self {
+        Self::from_kind(cx, TyKind::Infer(InferTy::TyVar(var)))
+    }
+
+    pub fn mk_int_var(cx: &'cx TypingContext<'cx>, var: IntVid) -> Self {
+        Self::from_kind(cx, TyKind::Infer(InferTy::IntVar(var)))
+    }
+
+    pub fn mk_float_var(cx: &'cx TypingContext<'cx>, var: FloatVid) -> Self {
+        Self::from_kind(cx, TyKind::Infer(InferTy::FloatVar(var)))
     }
 
     pub fn mk_unit(cx: &'cx TypingContext<'cx>) -> Self {
-        cx.alloc_type(TyKind::Unit)
+        Self::from_kind(cx, TyKind::Unit)
     }
 }
 
@@ -301,7 +457,7 @@ impl<'cx> TypingContext<'cx> {
     ///
     /// This is a convenience method that delegates to the type's display method.
     pub fn display_type(&self, ty: Ty<'cx>) -> String {
-        ty.display(self)
+        ty.display()
     }
 }
 
@@ -311,59 +467,34 @@ impl<'cx> Default for TypingContext<'cx> {
     }
 }
 
-/// The kind of a module item.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ModuleItemKind {
-    /// A constant value
-    Constant,
-    /// A type definition
-    Type,
-    /// A function definition
-    Function,
-}
-
 /// Represents different kinds of items that can exist within a module.
 ///
 /// Module items define the public interface of a module, including constants,
 /// type definitions, and function definitions that can be imported by other modules.
 #[derive(Debug, Clone, Copy, Visit)]
-pub struct ModuleItem<'cx> {
-    #[skip_visit]
-    /// The kind of this module item
-    pub kind: ModuleItemKind,
-    /// The identifier of this module item
-    pub id: Ident<'cx>,
-    /// The type associated with this module item
-    pub ty: Ty<'cx>,
-}
-
-impl<'cx> ModuleItem<'cx> {
-    /// Creates a new constant module item.
-    pub fn new_constant(id: Ident<'cx>, ty: Ty<'cx>) -> Self {
-        Self {
-            kind: ModuleItemKind::Constant,
-            id,
-            ty,
-        }
-    }
-
-    /// Creates a new type module item.
-    pub fn new_type(id: Ident<'cx>, ty: Ty<'cx>) -> Self {
-        Self {
-            kind: ModuleItemKind::Type,
-            id,
-            ty,
-        }
-    }
-
-    /// Creates a new function module item.
-    pub fn new_function(id: Ident<'cx>, ty: Ty<'cx>) -> Self {
-        Self {
-            kind: ModuleItemKind::Function,
-            id,
-            ty,
-        }
-    }
+#[skip_all_visit]
+pub enum ModuleItem<'cx> {
+    /// A constant value.
+    Constant {
+        /// The identifier of this module item
+        id: Ident<'cx>,
+        /// The type associated with this module item
+        ty: Ty<'cx>,
+    },
+    /// A type definition.
+    Type {
+        /// The identifier of this module item
+        id: Ident<'cx>,
+        /// The type associated with this module item
+        ty: Ty<'cx>,
+    },
+    /// A procedure definition.
+    Prc {
+        /// The identifier of this module item
+        id: Ident<'cx>,
+        /// The type associated with this module item
+        ty: Ty<'cx>,
+    },
 }
 
 /// Represents a module containing named items.
@@ -400,8 +531,28 @@ impl<'cx> Module<'cx> {
     ///
     /// The item is indexed by its name, allowing for efficient lookup.
     /// If an item with the same name already exists, it will be replaced.
-    pub fn add_item(&mut self, item: ModuleItem<'cx>) {
-        self.items.insert(item.id.name.to_string(), item);
+    fn add_item(&mut self, item: ModuleItem<'cx>) {
+        let id = match &item {
+            ModuleItem::Constant { id, .. } => id,
+            ModuleItem::Type { id, .. } => id,
+            ModuleItem::Prc { id, .. } => id,
+        };
+        self.items.insert(id.name.to_string(), item);
+    }
+
+    /// Creates a new constant module item.
+    pub fn add_constant(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
+        self.add_item(ModuleItem::Constant { id, ty })
+    }
+
+    /// Creates a new type module item.
+    pub fn add_type(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
+        self.add_item(ModuleItem::Type { id, ty })
+    }
+
+    /// Creates a new function module item.
+    pub fn add_function(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
+        self.add_item(ModuleItem::Prc { id, ty })
     }
 
     /// Looks up an item by name within this module.

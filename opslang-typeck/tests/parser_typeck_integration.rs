@@ -340,3 +340,123 @@ prc func2() {
     // Different function scopes should allow same variable names
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
 }
+
+#[test]
+fn test_integer_literals_with_suffixes() {
+    let source = r#"#! lang=v1
+prc main() {
+    let i8_val = 42i8;
+    let i16_val = 1000i16;
+    let i32_val = 50000i32;
+    let i64_val = 1234567890i64;
+    
+    let u8_val = 255u8;
+    let u16_val = 65535u16;
+    let u32_val = 4294967295u32;
+    let u64_val = 18446744073709551615u64;
+    return;
+}
+"#;
+
+    let ast_context = AstContext::new();
+    let typing_context = TypingContext::new();
+    let ir_context = IrContext::new();
+
+    let program = parse_source(source, &ast_context).expect("Failed to parse source");
+    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let result = checker.typeck(&program);
+
+    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+}
+
+#[test]
+fn test_float_literals_with_suffixes() {
+    let source = r#"#! lang=v1
+prc main() {
+    let f32_val = 3.14f32;
+    let f64_val = 2.71828f64;
+    let float_var = 1.0f;
+    return;
+}
+"#;
+
+    let ast_context = AstContext::new();
+    let typing_context = TypingContext::new();
+    let ir_context = IrContext::new();
+
+    let program = parse_source(source, &ast_context).expect("Failed to parse source");
+    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let result = checker.typeck(&program);
+
+    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+}
+
+#[test]
+fn test_duration_literals() {
+    let source = r#"#! lang=v1
+prc main() {
+    let seconds = 30s;
+    let milliseconds = 500ms;
+    let microseconds = 1000us;
+    let nanoseconds = 123456ns;
+    return;
+}
+"#;
+
+    let ast_context = AstContext::new();
+    let typing_context = TypingContext::new();
+    let ir_context = IrContext::new();
+
+    let program = parse_source(source, &ast_context).expect("Failed to parse source");
+    dbg!(&program);
+    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let result = checker.typeck(&program);
+
+    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+}
+
+#[test]
+fn test_numeric_literals_in_expressions() {
+    let source = r#"#! lang=v1
+prc main() {
+    let sum = 10i32 + 20i32;
+    let float_calc = 3.14f64 * 2.0f64;
+    let time_sum = 1s + 500ms;
+    let mixed = 42;
+    return;
+}
+"#;
+
+    let ast_context = AstContext::new();
+    let typing_context = TypingContext::new();
+    let ir_context = IrContext::new();
+
+    let program = parse_source(source, &ast_context).expect("Failed to parse source");
+    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let result = checker.typeck(&program);
+
+    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+}
+
+#[test]
+fn test_numeric_literals_type_inference() {
+    let source = r#"#! lang=v1
+prc main() {
+    let inferred_int = 42;
+    let inferred_float = 3.14;
+    let explicit_int = 100i32;
+    let explicit_float = 2.71f64;
+    return;
+}
+"#;
+
+    let ast_context = AstContext::new();
+    let typing_context = TypingContext::new();
+    let ir_context = IrContext::new();
+
+    let program = parse_source(source, &ast_context).expect("Failed to parse source");
+    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let result = checker.typeck(&program);
+
+    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+}

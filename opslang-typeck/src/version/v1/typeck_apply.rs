@@ -21,7 +21,7 @@ impl<'cx> TypeChecker<'cx> {
 
         // Process arguments, collecting any Qualif expressions
         for arg in apply.args {
-            if let ExprKind::Qualif(qualif) = arg.0 {
+            if let ast::ExprKind::Qualif(qualif) = arg.0 {
                 // Collect Qualif as qualification
                 let qualif_ir = self.typeck_qualif(env, subst, qualif)?;
                 qualifications.push(qualif_ir);
@@ -33,7 +33,7 @@ impl<'cx> TypeChecker<'cx> {
             }
         }
 
-        let return_type = Ty::mk_variable(self.typing_cx, TypeVariable::fresh());
+        let return_type = Ty::mk_variable(self.typing_cx, TyVid::fresh());
         let expected_func_type = Ty::mk_function(self.typing_cx, arg_types, return_type);
 
         self.unify(subst, func_ir.ty, expected_func_type)?;
@@ -48,7 +48,7 @@ impl<'cx> TypeChecker<'cx> {
             qualifications,
             resolved_function: None, // FIXME
         };
-        let ir_expr_kind = ExprKind::Apply(ir_apply);
+        let ir_expr_kind = ast::ExprKind::Apply(ir_apply);
         let ir_expr = self.ir_cx.alloc_expr_with_type(ir_expr_kind, return_type);
         Ok(ir_expr)
     }

@@ -466,16 +466,22 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
     }
     crate ir {
         type IrTypeFamily;
-        type NumericKind;
+        type NumericKind<'cx>;
         type Expr<'cx>: ::std::vec::Vec;
     }
     crate ty {
         type Ident<'cx>;
         type TyKind<'cx>;
         type Identifier<'cx>;
-        type TypeVariable;
         // actual type is Vec<Ty<'cx>>
         type Ty<'cx>: ::std::vec::Vec;
+        type IntTy;
+        type UintTy;
+        type FloatTy;
+        type InferTy;
+        type IntVid;
+        type FloatVid;
+        type TyVid;
     }
     extern {
         type ::std::convert::Infallible;

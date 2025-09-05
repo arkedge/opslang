@@ -1,4 +1,7 @@
 use super::*;
+use chrono::Duration;
+use opslang_ir::version::v1::NumericKind;
+use opslang_ty::version::v1::{FloatVid, IntVid};
 
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_literal(
@@ -20,51 +23,30 @@ impl<'cx> TypeChecker<'cx> {
                 Ok(ir_expr)
             }
             ast::Literal::Numeric(numeric) => {
-                let numeric_kind = match &numeric.kind {
-                    ast::literal::NumericKind::Integer(prefix) => {
-                        // rawフィールドから実際の値を計算
-                        let value = match numeric.raw.parse::<i64>() {
-                            Ok(v) => v,
-                            Err(_) => {
-                                return Err(anyhow!(
-                                    "failed to parse integer literal: {}",
-                                    numeric.raw
-                                ));
-                            }
-                        };
-                        NumericKind::Int(*prefix, value)
-                    }
-                    ast::literal::NumericKind::Float => {
-                        // フロートリテラルの値を計算
-                        let value = match numeric.raw.parse::<f64>() {
-                            Ok(v) => v,
-                            Err(_) => {
-                                return Err(anyhow!(
-                                    "failed to parse float literal: {}",
-                                    numeric.raw
-                                ));
-                            }
-                        };
-                        NumericKind::Float(value)
+                let mut kind = NumericKind::Repr(numeric.raw);
+                // Check if there's a suffix and resolve it
+                let ty = if let Some(suffix) = &numeric.suffix {
+                    self.resolve_numeric_suffix(suffix, &mut kind, numeric.raw)?
+                } else {
+                    match &numeric.kind {
+                        ast::literal::NumericKind::Integer(_prefix) => {
+                            Ty::mk_int_var(self.typing_cx, IntVid::fresh())
+                        }
+                        ast::literal::NumericKind::Float => {
+                            Ty::mk_float_var(self.typing_cx, FloatVid::fresh())
+                        }
                     }
                 };
-                let ir_numeric = ir::Numeric {
-                    kind: numeric_kind,
-                    syn: numeric,
-                };
+
+                let ir_numeric = ir::Numeric { kind, syn: numeric };
                 let ir_literal = ast::Literal::Numeric(ir_numeric);
-                let numeric_type = match numeric.kind {
-                    ast::literal::NumericKind::Integer(_) => Ty::mk_int(self.typing_cx),
-                    ast::literal::NumericKind::Float => Ty::mk_float(self.typing_cx),
-                };
-                let ir_expr =
-                    ir::Expr::new(ast::ExprMut::literal(self.ir_cx, ir_literal), numeric_type);
+                let ir_expr = ir::Expr::new(ast::ExprMut::literal(self.ir_cx, ir_literal), ty);
                 Ok(ir_expr)
             }
             ast::Literal::Array(array) => {
                 if array.exprs.is_empty() {
                     // Empty array - use a type variable for the element type
-                    let element_type = Ty::mk_variable(self.typing_cx, TypeVariable::fresh());
+                    let element_type = Ty::mk_variable(self.typing_cx, TyVid::fresh());
                     let array_type = Ty::mk_array(self.typing_cx, element_type);
 
                     let ir_array = ast::literal::Array {
@@ -85,7 +67,7 @@ impl<'cx> TypeChecker<'cx> {
 
                     let ty = first_ir.ty;
                     ir_exprs.push(first_ir);
-                    let mut element_type = ty;
+                    let element_type = ty;
 
                     // Type check remaining elements and unify with element type
                     for expr in &array.exprs[1..] {
@@ -93,9 +75,7 @@ impl<'cx> TypeChecker<'cx> {
 
                         self.unify(subst, element_type, expr_ir.ty)?;
 
-                        let ty = expr_ir.ty;
                         ir_exprs.push(expr_ir);
-                        element_type = ty;
                     }
 
                     let array_type = Ty::mk_array(self.typing_cx, element_type);
@@ -159,5 +139,89 @@ impl<'cx> TypeChecker<'cx> {
                 Ok(ir_expr)
             }
         }
+    }
+
+    /// Resolves a numeric suffix to the corresponding type and numeric kind.
+    ///
+    /// This function takes a numeric suffix (like "i32", "u64", "f32") and returns
+    /// the corresponding type and numeric representation for IR generation.
+    fn resolve_numeric_suffix(
+        &mut self,
+        suffix: &ast::literal::NumericSuffix<'cx>,
+        kind: &mut NumericKind<'cx>,
+        repr: &'cx str,
+    ) -> Result<Ty<'cx>> {
+        let suffix = suffix.0.raw;
+        Ok(match suffix {
+            "i8" => Ty::mk_i8(self.typing_cx),
+            "i16" => Ty::mk_i16(self.typing_cx),
+            "i32" => Ty::mk_i32(self.typing_cx),
+            "i64" => Ty::mk_i64(self.typing_cx),
+
+            "u8" => Ty::mk_u8(self.typing_cx),
+            "u16" => Ty::mk_u16(self.typing_cx),
+            "u32" => Ty::mk_u32(self.typing_cx),
+            "u64" => Ty::mk_u64(self.typing_cx),
+
+            "f32" => Ty::mk_f32(self.typing_cx),
+            "f64" => Ty::mk_f64(self.typing_cx),
+
+            "f" => Ty::mk_float_var(self.typing_cx, FloatVid::fresh()),
+
+            "s" => {
+                dbg!(suffix);
+                *kind = NumericKind::Duration(Duration::seconds(repr.parse()?));
+                Ty::mk_duration(self.typing_cx)
+            }
+            "ms" => {
+                *kind = NumericKind::Duration(Duration::milliseconds(repr.parse()?));
+                Ty::mk_duration(self.typing_cx)
+            }
+            "us" => {
+                *kind = NumericKind::Duration(Duration::microseconds(repr.parse()?));
+                Ty::mk_duration(self.typing_cx)
+            }
+            "ns" => {
+                *kind = NumericKind::Duration(Duration::nanoseconds(repr.parse()?));
+                Ty::mk_duration(self.typing_cx)
+            }
+
+            suffix => Err(anyhow!("unknown suffix: {suffix}"))?,
+        })
+    }
+}
+
+pub(super) fn parse_literal<'cx>(unparsed: &'cx str, ty: Ty<'cx>) -> Result<ir::NumericKind<'cx>> {
+    use opslang_ty::version::{FloatTy, IntTy, UintTy};
+    match ty.kind() {
+        TyKind::Int(int_ty) => {
+            let int = match int_ty {
+                IntTy::I8 => unparsed.parse::<i8>()? as i64,
+                IntTy::I16 => unparsed.parse::<i16>()? as i64,
+                IntTy::I32 => unparsed.parse::<i32>()? as i64,
+                IntTy::I64 => unparsed.parse::<i64>()?,
+            };
+            Ok(ir::NumericKind::Int(int))
+        }
+        TyKind::Uint(uint_ty) => {
+            let uint = match uint_ty {
+                UintTy::U8 => unparsed.parse::<u8>()? as u64,
+                UintTy::U16 => unparsed.parse::<u16>()? as u64,
+                UintTy::U32 => unparsed.parse::<u32>()? as u64,
+                UintTy::U64 => unparsed.parse::<u64>()?,
+            };
+            Ok(ir::NumericKind::Uint(uint))
+        }
+        TyKind::Float(float_ty) => {
+            let float = match float_ty {
+                FloatTy::F32 => unparsed.parse::<f32>()?.to_bits() as u64,
+                FloatTy::F64 => unparsed.parse::<f64>()?.to_bits(),
+            };
+            Ok(ir::NumericKind::Float(float))
+        }
+        ty => Err(anyhow!(
+            "unexpected literal type `{}` to be parsed",
+            ty.display()
+        )),
     }
 }

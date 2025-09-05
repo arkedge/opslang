@@ -12,13 +12,13 @@ impl<'cx> TypeChecker<'cx> {
         mut expr: &'cx ast::ExprKind<'cx>,
     ) -> Result<ir::Expr<'cx>> {
         // Peel parentheses
-        while let ExprKind::Parened(parened) = expr {
+        while let ast::ExprKind::Parened(parened) = expr {
             expr = &parened.expr;
         }
         match expr {
-            ExprKind::Parened(_parened) => unreachable!("handled above"),
-            ExprKind::Literal(literal) => self.typeck_literal(env, subst, literal),
-            ExprKind::Variable(path) => {
+            ast::ExprKind::Parened(_parened) => unreachable!("handled above"),
+            ast::ExprKind::Literal(literal) => self.typeck_literal(env, subst, literal),
+            ast::ExprKind::Variable(path) => {
                 // First check if this is a single identifier that can be resolved in local environment
                 if let Some(ident) = path.is_ident()
                     && let Some(type_ref) = env.lookup_variable(ident)
@@ -36,22 +36,20 @@ impl<'cx> TypeChecker<'cx> {
                 }
 
                 // Fall back to module resolution
-                match self.module_loader.resolve_path(*path) {
-                    Some(item) => {
-                        let resolved_path = ir::ResolvedPath {
-                            item: ir::ResolvedItem::ModuleItem(item),
-                            original_path: path,
-                        };
-                        let ir_expr = ir::Expr::new(
-                            ast::ExprMut::variable(self.ir_cx, resolved_path),
-                            item.ty,
-                        );
-                        Ok(ir_expr)
-                    }
-                    None => Err(anyhow!("unbound variable: {path}")),
+                if let Ok(ResolvePathResult {
+                    resolved_path,
+                    item,
+                }) = self.resolve_path(path)
+                    && let ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. } = item
+                {
+                    let ir_expr =
+                        ir::Expr::new(ast::ExprMut::variable(self.ir_cx, resolved_path), *ty);
+                    Ok(ir_expr)
+                } else {
+                    Err(anyhow!("unbound variable: {path}"))
                 }
             }
-            ExprKind::Binary(binary) => {
+            ast::ExprKind::Binary(binary) => {
                 let lhs_ir = self.typeck_expr(env, subst, &binary.lhs)?;
                 let rhs_ir = self.typeck_expr(env, subst, &binary.rhs)?;
 
@@ -59,11 +57,10 @@ impl<'cx> TypeChecker<'cx> {
                     ast::BinOp::Add(_)
                     | ast::BinOp::Sub(_)
                     | ast::BinOp::Mul(_)
-                    | ast::BinOp::Div(_)
-                    | ast::BinOp::Mod(_) => {
-                        self.unify(subst, lhs_ir.ty, lhs_ir.ty)?;
+                    | ast::BinOp::Div(_) => {
+                        self.unify(subst, lhs_ir.ty, rhs_ir.ty)?;
                         match lhs_ir.ty.kind() {
-                            TyKind::Int | TyKind::Float => {
+                            TyKind::Int(_) | TyKind::Uint(_) | TyKind::Float(_) => {
                                 // Apply final substitution to operands
 
                                 // Create IR binary expression
@@ -81,7 +78,30 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => Err(anyhow!(
                                 "arithmetic operation requires numeric type, got {}",
-                                lhs_ir.ty.display(self.typing_cx)
+                                lhs_ir.ty.display()
+                            )),
+                        }
+                    }
+                    ast::BinOp::Mod(_) => {
+                        self.unify(subst, lhs_ir.ty, rhs_ir.ty)?;
+                        match lhs_ir.ty.kind() {
+                            TyKind::Int(_) | TyKind::Uint(_) => {
+                                // Create IR binary expression
+                                let ty = lhs_ir.ty;
+                                let ir_expr = ir::Expr::new(
+                                    ast::ExprMut::binary(
+                                        self.ir_cx,
+                                        lhs_ir,
+                                        binary.op.into_token(),
+                                        rhs_ir,
+                                    ),
+                                    ty,
+                                );
+                                Ok(ir_expr)
+                            }
+                            _ => Err(anyhow!(
+                                "modulo operation requires integer type, got {}",
+                                lhs_ir.ty.display()
                             )),
                         }
                     }
@@ -130,24 +150,24 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => Err(anyhow!(
                                 "'in' operator requires array on right side, got {}",
-                                lhs_ir.ty.display(self.typing_cx)
+                                lhs_ir.ty.display()
                             )),
                         }
                     }
                 }
             }
-            ExprKind::Unary(unary) => {
+            ast::ExprKind::Unary(unary) => {
                 let expr_ir = self.typeck_expr(env, subst, &unary.expr)?;
 
                 match unary.op {
                     ast::UnOp::Neg(_) => {
                         match expr_ir.ty.kind() {
-                            TyKind::Int | TyKind::Float => {
+                            TyKind::Int(_) | TyKind::Uint(_) | TyKind::Float(_) => {
                                 // Ok, do nothing
                             }
                             _ => {
-                                // resolve to int
-                                self.unify(subst, expr_ir.ty, Ty::mk_int(self.typing_cx))?
+                                // resolve to default int
+                                self.unify(subst, expr_ir.ty, Ty::mk_i32(self.typing_cx))?
                             }
                         }
                         // Create IR operand with unified type
@@ -187,8 +207,8 @@ impl<'cx> TypeChecker<'cx> {
                     }
                 }
             }
-            ExprKind::Apply(apply) => self.typeck_apply(env, subst, apply, &[]),
-            ExprKind::If(if_expr) => {
+            ast::ExprKind::Apply(apply) => self.typeck_apply(env, subst, apply, &[]),
+            ast::ExprKind::If(if_expr) => {
                 let cond_ir = self.typeck_expr(env, subst, &if_expr.cond)?;
                 let bool_type = Ty::mk_bool(self.typing_cx);
                 self.unify(subst, cond_ir.ty, bool_type)?;
@@ -248,9 +268,11 @@ impl<'cx> TypeChecker<'cx> {
                     Ok(ir_expr)
                 }
             }
-            ExprKind::Qualif(_) => Err(anyhow!("Qualif cannot be used as a standalone expression")),
-            ExprKind::PreQualified(prequalified) => {
-                if let ExprKind::Apply(apply) = &prequalified.expr.0 {
+            ast::ExprKind::Qualif(_) => {
+                Err(anyhow!("Qualif cannot be used as a standalone expression"))
+            }
+            ast::ExprKind::PreQualified(prequalified) => {
+                if let ast::ExprKind::Apply(apply) = &prequalified.expr.0 {
                     self.typeck_apply(env, subst, apply, prequalified.qualifs)
                 } else {
                     Err(anyhow!(
@@ -258,7 +280,7 @@ impl<'cx> TypeChecker<'cx> {
                     ))
                 }
             }
-            ExprKind::Compare(compare) => {
+            ast::ExprKind::Compare(compare) => {
                 // Compare expressions have a head expression and a tail of (op, expr) pairs
                 let head_ir = self.typeck_expr(env, subst, &compare.head)?;
                 let mut ir_tail = Vec::new();
@@ -289,7 +311,7 @@ impl<'cx> TypeChecker<'cx> {
                 );
                 Ok(ir_expr)
             }
-            ExprKind::Set(set) => {
+            ast::ExprKind::Set(set) => {
                 // Set expressions are assignment-like operations (lhs := rhs)
                 let lhs_ir = self.typeck_expr(env, subst, &set.lhs)?;
                 let rhs_ir = self.typeck_expr(env, subst, &set.rhs)?;
@@ -306,31 +328,37 @@ impl<'cx> TypeChecker<'cx> {
                 );
                 Ok(ir_expr)
             }
-            ExprKind::InfixImport(infix_import) => {
+            ast::ExprKind::InfixImport(infix_import) => {
+                let ast::InfixImport {
+                    file,
+                    question,
+                    path,
+                } = infix_import;
                 // InfixImport expressions are like "file ? path" operations
-                let file_ir = self.typeck_expr(env, subst, &infix_import.file)?;
+                let file_ir = self.typeck_expr(env, subst, file)?;
 
                 // File should be a string type
                 let string_type = Ty::mk_string(self.typing_cx);
                 self.unify(subst, file_ir.ty, string_type)?;
 
-                // Apply final substitution to file
+                // FIXME: Resolve path in loaded file
+                let resolved = self.resolve_path(path)?;
 
-                // Convert path to resolved path
-                let resolved = self.resolve_path(&infix_import.path)?;
-
-                // InfixImport result type is that of the imported item
-                let import_type = resolved.item.ty;
+                let (ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. }) = resolved.item
+                else {
+                    // FIXME: display Expr
+                    return Err(anyhow!("`{path}` is not a member of given file"));
+                };
 
                 // Create IR InfixImport expression
                 let ir_expr = ir::Expr::new(
                     ast::ExprMut::import(
                         self.ir_cx,
                         file_ir,
-                        infix_import.question.into_token(),
+                        question.into_token(),
                         resolved.resolved_path,
                     ),
-                    import_type,
+                    *ty,
                 );
                 Ok(ir_expr)
             }

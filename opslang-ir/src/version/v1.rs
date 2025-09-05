@@ -6,7 +6,7 @@ This module defines the responsibility and structure of the IR layer.
 
 **IMPORTANT**: When modifying type structures in this module, update the visitor type
 registry in `opslang-ir-macro/src/visitor_type_registry.rs` to ensure proper visitor
-macro generation. Choose whether to make types hookable (add to node types) or not 
+macro generation. Choose whether to make types hookable (add to node types) or not
 hookable (add to inter types).
 
 ## IR Responsibilities
@@ -313,7 +313,7 @@ pub struct DateTime<'cx> {
 /// A parsed numeric literal in the IR.
 pub struct Numeric<'cx> {
     /// The value.
-    pub kind: NumericKind,
+    pub kind: NumericKind<'cx>,
     /// Reference to the original AST numeric literal.
     pub syn: &'cx syn::literal::Numeric<'cx>,
 }
@@ -321,9 +321,19 @@ pub struct Numeric<'cx> {
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 #[skip_all_visit]
 /// A parsed numeric literal in the IR.
-pub enum NumericKind {
-    Int(syn::literal::IntegerPrefix, i64),
-    Float(f64),
+pub enum NumericKind<'cx> {
+    /// Signed integer with unified i64 representation.
+    Int(i64),
+
+    /// Unsigned integer with unified u64 representation.
+    Uint(u64),
+
+    /// Floating point with unified u64 bits representation.
+    Float(u64),
+
+    Duration(chrono::Duration),
+
+    Repr(&'cx str),
 }
 
 #[derive(Debug, PartialEq, Visit)]

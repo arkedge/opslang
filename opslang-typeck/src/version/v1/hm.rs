@@ -1,6 +1,7 @@
 use anyhow::anyhow;
 
-use super::{HashMap, Ty, TyKind, TypeVariable, TypingContext};
+use super::{HashMap, Ty, TyKind, TyVid, TypingContext};
+use opslang_ty::version::v1::{FloatTy, FloatVid, InferTy, IntTy, IntVid, UintTy};
 
 /// Represents a type substitution mapping type variables to concrete types.
 ///
@@ -9,7 +10,17 @@ use super::{HashMap, Ty, TyKind, TypeVariable, TypingContext};
 #[derive(Debug, Clone, Default)]
 pub struct Substitution<'cx> {
     /// Maps type variables to their substituted types
-    map: HashMap<TypeVariable, Ty<'cx>>,
+    ty_map: HashMap<TyVid, Ty<'cx>>,
+    /// Maps integer variables to their substituted types
+    int_map: HashMap<IntVid, IntVarValue>,
+    /// Maps float variables to their substituted types
+    float_map: HashMap<FloatVid, FloatTy>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum IntVarValue {
+    IntType(IntTy),
+    UintType(UintTy),
 }
 
 impl<'cx> Substitution<'cx> {
@@ -18,29 +29,61 @@ impl<'cx> Substitution<'cx> {
     /// An empty substitution represents the identity mapping where no variables are substituted.
     pub fn new() -> Self {
         Self {
-            map: HashMap::new(),
+            ty_map: HashMap::new(),
+            int_map: HashMap::new(),
+            float_map: HashMap::new(),
         }
     }
 
     /// Inserts a mapping from a type variable to a concrete type.
     ///
     /// This adds or replaces the substitution for the given type variable.
-    pub fn insert(&mut self, var: TypeVariable, ty: Ty<'cx>) {
-        self.map.insert(var, ty);
+    pub fn insert(&mut self, var: TyVid, ty: Ty<'cx>) {
+        self.ty_map.insert(var, ty);
+    }
+
+    /// Inserts a mapping from an integer variable to a concrete integer type.
+    pub fn resolve_int_var(&mut self, var: IntVid, ty: IntVarValue) {
+        self.int_map.insert(var, ty);
+    }
+
+    /// Inserts a mapping from an integer variable to a concrete integer type.
+    pub fn resolve_int(&mut self, var: IntVid, ty: IntTy) {
+        self.int_map.insert(var, IntVarValue::IntType(ty));
+    }
+
+    /// Inserts a mapping from an integer variable to a concrete unsigned integer type.
+    pub fn resolve_uint(&mut self, var: IntVid, ty: UintTy) {
+        self.int_map.insert(var, IntVarValue::UintType(ty));
+    }
+
+    /// Inserts a mapping from a float variable to a concrete float type.
+    pub fn resolve_float(&mut self, var: FloatVid, ty: FloatTy) {
+        self.float_map.insert(var, ty);
     }
 
     /// Gets the substituted type for a given type variable.
     ///
     /// Returns None if no substitution exists for the variable.
-    pub fn get(&self, var: &TypeVariable) -> Option<Ty<'cx>> {
-        self.map.get(var).copied()
+    pub fn get(&self, var: &TyVid) -> Option<Ty<'cx>> {
+        self.ty_map.get(var).copied()
+    }
+
+    /// Gets the substituted integer type for a given integer variable.
+    pub fn get_int(&self, var: &IntVid) -> Option<IntVarValue> {
+        self.int_map.get(var).copied()
+    }
+
+    /// Gets the substituted float type for a given float variable.
+    pub fn get_float(&self, var: &FloatVid) -> Option<FloatTy> {
+        self.float_map.get(var).copied()
     }
 
     /// Checks if this substitution is empty (contains no mappings).
     ///
     /// An empty substitution is equivalent to the identity substitution.
     pub fn is_empty(&self) -> bool {
-        self.map.is_empty()
+        self.ty_map.is_empty() && self.int_map.is_empty() && self.float_map.is_empty()
     }
 
     /// Applies this substitution to a type, replacing type variables with their substituted types.
@@ -53,10 +96,27 @@ impl<'cx> Substitution<'cx> {
 
     pub fn apply_substitution_pure(&self, cx: &'cx TypingContext<'cx>, ty: Ty<'cx>) -> Ty<'cx> {
         match ty.kind() {
-            TyKind::Variable(var) => {
+            TyKind::Infer(InferTy::TyVar(var)) => {
                 // Recursively apply substitutions to handle chains of substitutions
-                if let Some(substituted) = self.map.get(var) {
+                if let Some(substituted) = self.ty_map.get(var) {
                     self.apply_substitution_pure(cx, *substituted)
+                } else {
+                    ty
+                }
+            }
+            TyKind::Infer(InferTy::IntVar(var)) => {
+                if let Some(substituted_ty) = self.int_map.get(var) {
+                    match substituted_ty {
+                        IntVarValue::IntType(int_ty) => Ty::mk_int(cx, *int_ty),
+                        IntVarValue::UintType(uint_ty) => Ty::mk_uint(cx, *uint_ty),
+                    }
+                } else {
+                    ty
+                }
+            }
+            TyKind::Infer(InferTy::FloatVar(var)) => {
+                if let Some(substituted_ty) = self.float_map.get(var) {
+                    Ty::mk_float(cx, *substituted_ty)
                 } else {
                     ty
                 }
@@ -101,8 +161,9 @@ impl<'cx> Substitution<'cx> {
                     ty
                 }
             }
-            TyKind::Int
-            | TyKind::Float
+            TyKind::Int(_)
+            | TyKind::Uint(_)
+            | TyKind::Float(_)
             | TyKind::String
             | TyKind::Bool
             | TyKind::Duration
@@ -118,12 +179,17 @@ impl<'cx> Substitution<'cx> {
     pub fn compose(&mut self, other: &Substitution<'cx>, cx: &'cx TypingContext<'cx>) {
         if self.is_empty() {
             self.clone_from(other);
+            return;
         }
         // Apply this substitution to all types in the other substitution
-        for (var, &ty) in &other.map {
+        for (var, &ty) in &other.ty_map {
             let substituted_ty = self.apply_substitution_pure(cx, ty);
             self.insert(*var, substituted_ty);
         }
+
+        // Directly extend integer and float substitutions
+        self.int_map.extend(other.int_map.iter());
+        self.float_map.extend(other.float_map.iter());
     }
 }
 
@@ -140,25 +206,86 @@ impl<'cx> super::TypeChecker<'cx> {
         t2: Ty<'cx>,
     ) -> super::Result<()> {
         match (t1.kind(), t2.kind()) {
-            // Two identical type variables unify trivially
-            (TyKind::Variable(var1), TyKind::Variable(var2)) if var1 == var2 => Ok(()),
-            // Unify type variable with concrete type (occurs check prevents infinite types)
-            (TyKind::Variable(var), ty) | (ty, TyKind::Variable(var)) => {
+            // Inference variables
+            (TyKind::Infer(InferTy::TyVar(var1)), TyKind::Infer(InferTy::TyVar(var2)))
+                if var1 == var2 =>
+            {
+                Ok(())
+            }
+            (TyKind::Infer(InferTy::IntVar(var1)), TyKind::Infer(InferTy::IntVar(var2)))
+                if var1 == var2 =>
+            {
+                Ok(())
+            }
+            (TyKind::Infer(InferTy::FloatVar(var1)), TyKind::Infer(InferTy::FloatVar(var2)))
+                if var1 == var2 =>
+            {
+                Ok(())
+            }
+
+            // General type variable unification
+            (TyKind::Infer(InferTy::TyVar(var)), ty) | (ty, TyKind::Infer(InferTy::TyVar(var))) => {
                 if ty.occurs(*var) {
                     Err(anyhow!(
-                        "Occurs check failed: {} occurs in {}",
-                        var,
-                        ty.display(self.typing_cx)
+                        "occurs check failed: {var} occurs in {}",
+                        ty.display()
                     ))
                 } else {
                     subst.insert(*var, Ty(ty));
                     Ok(())
                 }
             }
+
+            // Integer variable unification - can unify with any integer or unsigned type
+            (TyKind::Infer(InferTy::IntVar(var)), TyKind::Int(int_ty))
+            | (TyKind::Int(int_ty), TyKind::Infer(InferTy::IntVar(var))) => {
+                subst.resolve_int(*var, *int_ty);
+                Ok(())
+            }
+            (TyKind::Infer(InferTy::IntVar(var)), TyKind::Uint(uint_ty))
+            | (TyKind::Uint(uint_ty), TyKind::Infer(InferTy::IntVar(var))) => {
+                subst.resolve_uint(*var, *uint_ty);
+                Ok(())
+            }
+
+            // Integer variable unification - can unify with any integer or unsigned type
+            (TyKind::Infer(InferTy::IntVar(var1)), TyKind::Infer(InferTy::IntVar(var2))) => {
+                let val1 = subst.get_int(var1);
+                let val2 = subst.get_int(var2);
+                match (val1, val2) {
+                    (None, None) => {
+                        // ok, do nothing
+                        Ok(())
+                    }
+                    (None, Some(concrete)) => {
+                        subst.resolve_int_var(*var1, concrete);
+                        Ok(())
+                    }
+                    (Some(concrete), None) => {
+                        subst.resolve_int_var(*var2, concrete);
+                        Ok(())
+                    }
+                    (Some(concrete1), Some(concrete2)) => {
+                        if concrete1 != concrete2 {
+                            Err(anyhow!("failed to unify {concrete1:?} and {concrete2:?}",))
+                        } else {
+                            Ok(())
+                        }
+                    }
+                }
+            }
+
+            // Float variable unification - can unify with any float type
+            (TyKind::Infer(InferTy::FloatVar(var)), TyKind::Float(float_ty))
+            | (TyKind::Float(float_ty), TyKind::Infer(InferTy::FloatVar(var))) => {
+                subst.resolve_float(*var, *float_ty);
+                Ok(())
+            }
             // Primitive types unify only with themselves
-            (TyKind::Int, TyKind::Int)
-            | (TyKind::Float, TyKind::Float)
-            | (TyKind::String, TyKind::String)
+            (TyKind::Int(int1), TyKind::Int(int2)) if int1 == int2 => Ok(()),
+            (TyKind::Uint(uint1), TyKind::Uint(uint2)) if uint1 == uint2 => Ok(()),
+            (TyKind::Float(float1), TyKind::Float(float2)) if float1 == float2 => Ok(()),
+            (TyKind::String, TyKind::String)
             | (TyKind::Bool, TyKind::Bool)
             | (TyKind::Duration, TyKind::Duration)
             | (TyKind::Time, TyKind::Time)
@@ -180,7 +307,7 @@ impl<'cx> super::TypeChecker<'cx> {
             ) => {
                 if args1.len() != args2.len() {
                     return Err(anyhow!(
-                        "Function arity mismatch: {} vs {}",
+                        "function arity mismatch: {} vs {}",
                         args1.len(),
                         args2.len()
                     ));
@@ -199,9 +326,9 @@ impl<'cx> super::TypeChecker<'cx> {
             }
             // All other combinations are incompatible
             _ => Err(anyhow!(
-                "Cannot unify {} and {}",
-                t1.display(self.typing_cx),
-                t2.display(self.typing_cx)
+                "cannot unify {} and {}",
+                t1.display(),
+                t2.display()
             )),
         }
     }

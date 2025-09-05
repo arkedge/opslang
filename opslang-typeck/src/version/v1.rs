@@ -1,12 +1,13 @@
 use anyhow::anyhow;
 use chrono::Utc;
 use opslang_ast::v1::token::IntoToken;
-use opslang_ast::v1::{self as ast, ExprKind, Statement};
-use opslang_ir::version::v1::{self as ir, NumericKind, ResolvedPath};
+use opslang_ast::v1::{self as ast};
+use opslang_ir::version::v1::{self as ir};
 
-use opslang_ir::version::{IrTypeFamily, Typed};
+use ir::{IrTypeFamily, Typed};
 use opslang_ty::version::v1::{
-    Ident, Module, ModuleItem, ModuleLoader, Ty, TyKind, TypeVariable, TypingContext,
+    FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, Ty, TyKind, TyVid,
+    TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -32,30 +33,23 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
     let mut builtin = Module::new(cx.alloc_toplevel_ident("builtin"));
 
     // Add all builtin primitive types
-    builtin.add_item(ModuleItem::new_type(
-        cx.alloc_toplevel_ident("i32"),
-        Ty::mk_int(cx),
-    ));
-    builtin.add_item(ModuleItem::new_type(
-        cx.alloc_toplevel_ident("f64"),
-        Ty::mk_float(cx),
-    ));
-    builtin.add_item(ModuleItem::new_type(
-        cx.alloc_toplevel_ident("string"),
-        Ty::mk_string(cx),
-    ));
-    builtin.add_item(ModuleItem::new_type(
-        cx.alloc_toplevel_ident("bool"),
-        Ty::mk_bool(cx),
-    ));
-    builtin.add_item(ModuleItem::new_type(
-        cx.alloc_toplevel_ident("duration"),
-        Ty::mk_duration(cx),
-    ));
-    builtin.add_item(ModuleItem::new_type(
-        cx.alloc_toplevel_ident("time"),
-        Ty::mk_time(cx),
-    ));
+    builtin.add_type(cx.alloc_toplevel_ident("i8"), Ty::mk_i8(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("i16"), Ty::mk_i16(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("i32"), Ty::mk_i32(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("i64"), Ty::mk_i64(cx));
+
+    builtin.add_type(cx.alloc_toplevel_ident("u8"), Ty::mk_u8(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("u16"), Ty::mk_u16(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("u32"), Ty::mk_u32(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("u64"), Ty::mk_u64(cx));
+
+    builtin.add_type(cx.alloc_toplevel_ident("f32"), Ty::mk_f32(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("f64"), Ty::mk_f64(cx));
+
+    builtin.add_type(cx.alloc_toplevel_ident("string"), Ty::mk_string(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("bool"), Ty::mk_bool(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("duration"), Ty::mk_duration(cx));
+    builtin.add_type(cx.alloc_toplevel_ident("time"), Ty::mk_time(cx));
 
     cx.alloc_module(builtin)
 }
@@ -82,22 +76,51 @@ impl core::fmt::Debug for TypeChecker<'_> {
 
 /// Visitor for applying substitutions to all types in the IR
 struct SubstitutionVisitor<'cx> {
+    ty_last_seen: Option<Ty<'cx>>,
     subst: Substitution<'cx>,
     typing_cx: &'cx TypingContext<'cx>,
 }
 
 impl<'cx> SubstitutionVisitor<'cx> {
     fn new(subst: Substitution<'cx>, typing_cx: &'cx TypingContext<'cx>) -> Self {
-        Self { subst, typing_cx }
+        Self {
+            subst,
+            typing_cx,
+            ty_last_seen: None,
+        }
     }
 }
 
 opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx> {
+    fn visit_expr_mut(&mut self, expr: &mut ir::Expr<'cx>) {
+        use ir::IrMutVisitor;
+        // visit ty first
+        self.visit_ty_mut(&mut expr.ty);
+        self.visit_mut(&mut expr.kind);
+    }
     fn visit_ty_mut(&mut self, ty: &mut Ty<'cx>) {
         self.subst.apply_substitution(self.typing_cx, ty);
+        let kind = ty.kind();
+        match kind {
+            TyKind::Infer(InferTy::IntVar(int_vid)) => {
+                self.subst.resolve_int(*int_vid, IntTy::I32);
+            }
+            TyKind::Infer(InferTy::FloatVar(float_vid)) => {
+                self.subst.resolve_float(*float_vid, FloatTy::F64);
+            }
+            _ => {}
+        }
+        self.subst.apply_substitution(self.typing_cx, ty);
+        self.ty_last_seen = Some(*ty);
     }
     fn visit_ty(&mut self, _ty: &Ty<'cx>) {
-        eprintln!("hi, I'm a bug");
+        panic!("found `Ty` immutability. this prevents type variable resolution. review changes to IR structure and eliminate possession of immutable `Ty`pes.");
+    }
+    fn visit_numeric_mut(&mut self, numeric: &mut ir::Numeric<'cx>) {
+        if let ir::NumericKind::Repr(unparsed) = numeric.kind {
+            let literal = typeck_literal::parse_literal(unparsed, self.ty_last_seen.unwrap()).unwrap();
+            numeric.kind = literal;
+        }
     }
     fn visit_resolved_item_mut(&mut self, _resolved_item: &mut ir::ResolvedItem<'cx>) {
         // `ResolvedItem` is immutable, not calling super
@@ -266,9 +289,9 @@ impl<'cx> TypeChecker<'cx> {
 
     fn resolve_type_from_path(&self, path: ast::Path<'cx>) -> Result<Ty<'cx>> {
         match self.module_loader.resolve_path(path) {
-            Some(item) => match item.kind {
-                opslang_ty::version::v1::ModuleItemKind::Type => Ok(item.ty),
-                _ => Err(anyhow!("path '{path}' does not refer to a type")),
+            Some(item) => match item {
+                opslang_ty::version::v1::ModuleItem::Type { ty, .. } => Ok(*ty),
+                _ => Err(anyhow!("path `{path}` does not refer to a type")),
             },
             None => Err(anyhow!("unknown type: {path}")),
         }
@@ -310,7 +333,7 @@ impl<'cx> TypeChecker<'cx> {
             source_comments: self.ir_cx.alloc_ast_comment_slice(&[comment]),
         });
 
-        let ir_row = ast::Row::<'cx, IrTypeFamily> {
+        let ir_row = ast::Row {
             breaks: row.breaks.map(|b| b.into_token()),
             statement: ir_content,
             comment: ir_comment,
@@ -392,10 +415,10 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         env: &mut Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
-        stmt: &Statement<'cx>,
-    ) -> Result<Statement<'cx, IrTypeFamily>> {
+        stmt: &ast::Statement<'cx>,
+    ) -> Result<ast::Statement<'cx, IrTypeFamily>> {
         match stmt {
-            Statement::Let(let_stmt) => {
+            ast::Statement::Let(let_stmt) => {
                 let ir_rhs = self.typeck_expr(env, subst, &let_stmt.rhs)?;
 
                 // Bind the variable to the environment with the inferred type
@@ -403,7 +426,7 @@ impl<'cx> TypeChecker<'cx> {
                 let var_identifier_id = self.typing_cx.alloc_identifier(var_name);
                 env.bind(var_name, var_identifier_id, ir_rhs.ty);
 
-                Ok(Statement::Let(ast::Let {
+                Ok(ast::Statement::Let(ast::Let {
                     let_token: let_stmt.let_token.into_token(),
                     variable: self.resolve_ident(let_stmt.variable)?,
                     eq: let_stmt.eq.into_token(),
@@ -411,15 +434,15 @@ impl<'cx> TypeChecker<'cx> {
                     semi: let_stmt.semi.into_token(),
                 }))
             }
-            Statement::Expr(expr_stmt) => {
+            ast::Statement::Expr(expr_stmt) => {
                 let ir_expr = self.typeck_expr(env, subst, &expr_stmt.expr)?;
 
-                Ok(Statement::Expr(ast::ExprStatement {
+                Ok(ast::Statement::Expr(ast::ExprStatement {
                     expr: ir_expr,
                     semi: expr_stmt.semi.into_token(),
                 }))
             }
-            Statement::Return(ret_stmt) => Ok(Statement::Return(ret_stmt.into_token())),
+            ast::Statement::Return(ret_stmt) => Ok(ast::Statement::Return(ret_stmt.into_token())),
         }
     }
 
@@ -429,35 +452,35 @@ impl<'cx> TypeChecker<'cx> {
         Ok(self.typing_cx.alloc_identifier(ident.raw))
     }
 
-    fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvedPathResult<'cx>> {
+    fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvePathResult<'cx>> {
         match self.module_loader.resolve_path(*path) {
             Some(item) => {
-                let resolved_path = ResolvedPath {
+                let resolved_path = ir::ResolvedPath {
                     item: opslang_ir::version::ResolvedItem::ModuleItem(item),
                     original_path: path,
                 };
-                Ok(ResolvedPathResult {
+                Ok(ResolvePathResult {
                     resolved_path,
                     item,
                 })
             }
-            None => Err(anyhow!("Cannot resolve path: {path}")),
+            None => Err(anyhow!("cannot resolve path: {path}")),
         }
     }
 }
 
 /// Result of path resolution containing both the IR representation and the original item.
 #[derive(Debug, Clone, Copy)]
-struct ResolvedPathResult<'cx> {
+struct ResolvePathResult<'cx> {
     /// The resolved path for IR generation
-    resolved_path: ResolvedPath<'cx>,
+    resolved_path: ir::ResolvedPath<'cx>,
     /// The original module item with type information
     item: &'cx ModuleItem<'cx>,
 }
 
 #[cfg(test)]
 mod tests {
-    use opslang_ty::version::ModuleItemKind;
+    use opslang_ty::version::{IntTy, ModuleItem};
 
     use super::*;
 
@@ -476,7 +499,7 @@ mod tests {
     fn test_typing_context() {
         let cx = TypingContext::new();
 
-        let int_type = Ty::mk_int(&cx);
+        let int_type = Ty::mk_i32(&cx);
         let array_type = Ty::mk_array(&cx, int_type);
 
         assert_eq!(cx.display_type(int_type), "i32");
@@ -501,14 +524,10 @@ mod tests {
                 .is_none()
         );
 
-        if let Some(ModuleItem {
-            kind: ModuleItemKind::Type,
-            id,
-            ty,
-        }) = builtin.lookup_item(parse_ident(&ast_cx, "i32"))
+        if let Some(ModuleItem::Type { id, ty }) = builtin.lookup_item(parse_ident(&ast_cx, "i32"))
         {
             assert_eq!(id.name, "i32");
-            assert!(matches!(ty.kind(), TyKind::Int));
+            assert!(matches!(ty.kind(), TyKind::Int(IntTy::I32)));
         }
     }
 
@@ -547,7 +566,7 @@ mod tests {
         let i32_type = checker
             .resolve_type_from_path(parse_ident(&ast_cx, "i32"))
             .unwrap();
-        assert!(matches!(i32_type.kind(), TyKind::Int));
+        assert!(matches!(i32_type.kind(), TyKind::Int(IntTy::I32)));
 
         let unknown_result = checker.resolve_type_from_path(parse_ident(&ast_cx, "unknown"));
         assert!(unknown_result.is_err());
@@ -556,8 +575,8 @@ mod tests {
     #[test]
     fn test_substitution() {
         let cx = TypingContext::new();
-        let var = TypeVariable::fresh();
-        let int_type = Ty::mk_int(&cx);
+        let var = TyVid::fresh();
+        let int_type = Ty::mk_i32(&cx);
 
         let mut subst = Substitution::new();
         subst.insert(var, int_type);
@@ -565,7 +584,7 @@ mod tests {
         let var_type = Ty::mk_variable(&cx, var);
         let result = subst.apply_substitution_pure(&cx, var_type);
 
-        assert!(matches!(result.kind(), TyKind::Int));
+        assert!(matches!(result.kind(), TyKind::Int(IntTy::I32)));
     }
 
     #[test]
@@ -573,9 +592,9 @@ mod tests {
         let cx = TypingContext::new();
         let ir_cx = ir::Context::new();
 
-        let int_type1 = Ty::mk_int(&cx);
-        let int_type2 = Ty::mk_int(&cx);
-        let float_type = Ty::mk_float(&cx);
+        let int_type1 = Ty::mk_i32(&cx);
+        let int_type2 = Ty::mk_i32(&cx);
+        let float_type = Ty::mk_f64(&cx);
 
         let chk = TypeChecker::new(&cx, &ir_cx);
 

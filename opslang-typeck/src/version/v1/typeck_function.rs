@@ -14,7 +14,7 @@ impl<'cx> TypeChecker<'cx> {
             .ok_or_else(|| anyhow!("function '{func_name}' not found in environment"))?;
 
         let (param_types, return_type) = match func_type.kind() {
-            TyKind::Function { arg, ret } => (arg.clone(), *ret),
+            TyKind::Function { arg, ret } => (arg, *ret),
             _ => return Err(anyhow!("expected function type for '{func_name}'")),
         };
 
@@ -31,7 +31,7 @@ impl<'cx> TypeChecker<'cx> {
             let ir_param = ast::Parameter {
                 name: param_identifier_id,
                 colon: param.colon.into_token(),
-                ty: self.resolve_path(&param.ty)?.item.ty,
+                ty: self.resolve_type_from_path(param.ty)?,
             };
             ir_parameters.push(ir_param);
         }
