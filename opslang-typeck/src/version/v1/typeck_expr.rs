@@ -78,7 +78,7 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => Err(anyhow!(
                                 "arithmetic operation requires numeric type, got {}",
-                                lhs_ir.ty.display()
+                                lhs_ir.ty
                             )),
                         }
                     }
@@ -101,7 +101,7 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => Err(anyhow!(
                                 "modulo operation requires integer type, got {}",
-                                lhs_ir.ty.display()
+                                lhs_ir.ty
                             )),
                         }
                     }
@@ -245,8 +245,7 @@ impl<'cx> TypeChecker<'cx> {
                     let is_awaitable = ty.is_bool() || ty.is_duration();
                     if !is_awaitable {
                         return Err(anyhow!(
-                            "select expression requires awaitable type (bool or duration), got {}",
-                            ty.display()
+                            "select expression requires awaitable type (bool or duration), got {ty}",
                         ));
                     }
 

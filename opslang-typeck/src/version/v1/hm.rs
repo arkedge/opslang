@@ -226,10 +226,7 @@ impl<'cx> super::TypeChecker<'cx> {
             // General type variable unification
             (TyKind::Infer(InferTy::TyVar(var)), ty) | (ty, TyKind::Infer(InferTy::TyVar(var))) => {
                 if ty.occurs(*var) {
-                    Err(anyhow!(
-                        "occurs check failed: {var} occurs in {}",
-                        ty.display()
-                    ))
+                    Err(anyhow!("occurs check failed: {var} occurs in {ty}",))
                 } else {
                     subst.insert(*var, Ty(ty));
                     Ok(())
@@ -325,11 +322,7 @@ impl<'cx> super::TypeChecker<'cx> {
                 Ok(())
             }
             // All other combinations are incompatible
-            _ => Err(anyhow!(
-                "cannot unify {} and {}",
-                t1.display(),
-                t2.display()
-            )),
+            _ => Err(anyhow!("cannot unify {t1} and {t2}",)),
         }
     }
 

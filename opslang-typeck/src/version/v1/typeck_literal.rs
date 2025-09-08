@@ -217,9 +217,6 @@ pub(super) fn parse_literal<'cx>(unparsed: &'cx str, ty: Ty<'cx>) -> Result<ir::
             };
             Ok(ir::NumericKind::Float(float))
         }
-        ty => Err(anyhow!(
-            "unexpected literal type `{}` to be parsed",
-            ty.display()
-        )),
+        ty => Err(anyhow!("unexpected literal type `{ty}` to be parsed",)),
     }
 }

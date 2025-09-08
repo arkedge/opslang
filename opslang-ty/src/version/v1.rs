@@ -13,6 +13,7 @@ hookable (add to inter types).
 use opslang_visitor_macro::Visit;
 use std::borrow::Borrow;
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::hash::Hash;
 use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
 use typed_arena::Arena;
@@ -96,6 +97,12 @@ impl<'cx> std::ops::Deref for Ty<'cx> {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl Display for Ty<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
     }
 }
 
@@ -220,52 +227,6 @@ impl<'cx> TyKind<'cx> {
             }
             // Primitive types cannot contain variables
             _ => false,
-        }
-    }
-
-    /// Returns a human-readable string representation of the type.
-    ///
-    /// This method formats types in a user-friendly way for error messages
-    /// and debugging output.
-    pub fn display(&self) -> String {
-        match self {
-            TyKind::Int(int_ty) => match int_ty {
-                IntTy::I8 => "i8",
-                IntTy::I16 => "i16",
-                IntTy::I32 => "i32",
-                IntTy::I64 => "i64",
-            }
-            .to_string(),
-            TyKind::Uint(uint_ty) => match uint_ty {
-                UintTy::U8 => "u8",
-                UintTy::U16 => "u16",
-                UintTy::U32 => "u32",
-                UintTy::U64 => "u64",
-            }
-            .to_string(),
-            TyKind::Float(float_ty) => match float_ty {
-                FloatTy::F32 => "f32",
-                FloatTy::F64 => "f64",
-            }
-            .to_string(),
-            TyKind::String => "string".to_string(),
-            TyKind::Bool => "bool".to_string(),
-            TyKind::Duration => "duration".to_string(),
-            TyKind::Time => "time".to_string(),
-            // Format array types as [element_type]
-            TyKind::Array { inner } => format!("[{}]", inner.display()),
-            // Format function types as (arg1, arg2, ...) -> return_type
-            TyKind::Function { arg: args, ret } => {
-                let arg_strs: Vec<String> = args.iter().map(|arg| arg.display()).collect();
-                format!("({}) -> {}", arg_strs.join(", "), ret.display())
-            }
-            // Display inference variables with distinctive prefixes
-            TyKind::Infer(infer_ty) => match infer_ty {
-                InferTy::TyVar(var) => format!("{var}"),
-                InferTy::IntVar(var) => format!("{var}"),
-                InferTy::FloatVar(var) => format!("{var}"),
-            },
-            TyKind::Unit => "()".to_string(),
         }
     }
 
@@ -400,6 +361,54 @@ impl<'cx> Ty<'cx> {
     }
 }
 
+impl Display for TyKind<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let e = {
+            let this = &self;
+            match this {
+                TyKind::Int(int_ty) => match int_ty {
+                    IntTy::I8 => "i8",
+                    IntTy::I16 => "i16",
+                    IntTy::I32 => "i32",
+                    IntTy::I64 => "i64",
+                }
+                .to_string(),
+                TyKind::Uint(uint_ty) => match uint_ty {
+                    UintTy::U8 => "u8",
+                    UintTy::U16 => "u16",
+                    UintTy::U32 => "u32",
+                    UintTy::U64 => "u64",
+                }
+                .to_string(),
+                TyKind::Float(float_ty) => match float_ty {
+                    FloatTy::F32 => "f32",
+                    FloatTy::F64 => "f64",
+                }
+                .to_string(),
+                TyKind::String => "string".to_string(),
+                TyKind::Bool => "bool".to_string(),
+                TyKind::Duration => "duration".to_string(),
+                TyKind::Time => "time".to_string(),
+                // Format array types as [element_type]
+                TyKind::Array { inner } => format!("[{inner}]"),
+                // Format function types as (arg1, arg2, ...) -> return_type
+                TyKind::Function { arg: args, ret } => {
+                    let arg_strs: Vec<String> = args.iter().map(|arg| arg.to_string()).collect();
+                    format!("({}) -> {ret}", arg_strs.join(", "),)
+                }
+                // Display inference variables with distinctive prefixes
+                TyKind::Infer(infer_ty) => match infer_ty {
+                    InferTy::TyVar(var) => format!("{var}"),
+                    InferTy::IntVar(var) => format!("{var}"),
+                    InferTy::FloatVar(var) => format!("{var}"),
+                },
+                TyKind::Unit => "()".to_string(),
+            }
+        };
+        write!(f, "{e}")
+    }
+}
+
 /// The main context for type checking operations.
 ///
 /// This structure manages memory allocation for types, identifiers, and modules
@@ -483,13 +492,6 @@ impl<'cx> TypingContext<'cx> {
     /// This allows module items to be stored with the same lifetime as the typing context.
     pub fn alloc_module_item(&'cx self, item: ModuleItem<'cx>) -> &'cx ModuleItem<'cx> {
         self.module_item_arena.alloc(item)
-    }
-
-    /// Returns a displayable string representation of a type.
-    ///
-    /// This is a convenience method that delegates to the type's display method.
-    pub fn display_type(&self, ty: Ty<'cx>) -> String {
-        ty.display()
     }
 }
 

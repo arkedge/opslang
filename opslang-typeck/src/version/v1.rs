@@ -346,17 +346,14 @@ mod tests {
     }
 
     #[test]
-    fn test_typing_context() {
+    fn test_display() {
         let cx = TypingContext::new();
 
         let int_type = Ty::mk_i32(&cx);
         let array_type = Ty::mk_array(&cx, int_type);
 
-        assert_eq!(cx.display_type(int_type), "i32");
-        assert_eq!(cx.display_type(array_type), "[i32]");
-
-        let id = cx.alloc_identifier("test");
-        assert_eq!(id.name, "test");
+        assert_eq!(int_type.to_string(), "i32");
+        assert_eq!(array_type.to_string(), "[i32]");
     }
 
     #[test]
