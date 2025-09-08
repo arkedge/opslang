@@ -24,7 +24,7 @@ impl<'cx> TypeChecker<'cx> {
                     && let Some(type_ref) = env.lookup_variable(ident)
                 {
                     // Found in local environment - create a resolved path with local variable
-                    let resolved_ident = self.resolve_ident(ident)?;
+                    let resolved_ident = self.tcx.alloc_identifier(ident.raw);
                     let resolved_path = ir::ResolvedPath {
                         item: ir::ResolvedItem::LocalVariable(resolved_ident),
                         original_path: path,

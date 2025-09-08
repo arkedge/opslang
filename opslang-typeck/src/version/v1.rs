@@ -332,12 +332,6 @@ impl<'cx> TypeChecker<'cx> {
         }
     }
 
-    fn resolve_ident(&self, ident: ast::Ident<'cx>) -> Result<Ident<'cx>> {
-        // For now, create a new identifier with a unique definition ID
-        // TODO: This should probably lookup from environment instead
-        Ok(self.tcx.alloc_identifier(ident.raw))
-    }
-
     fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvePathResult<'cx>> {
         match self.module_loader.resolve_path(*path) {
             Some(item) => {

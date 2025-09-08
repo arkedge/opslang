@@ -46,7 +46,7 @@ impl<'cx> TypeChecker<'cx> {
 
         Ok(ir::FunctionDef {
             prc_token: func_def.prc_token.into_token(),
-            name: self.resolve_ident(func_def.name)?,
+            name: self.tcx.alloc_identifier(func_def.name.raw),
             left_paren: func_def.left_paren.into_token(),
             parameters: self.ir_cx.alloc_parameter_slice(ir_parameters),
             right_paren: func_def.right_paren.into_token(),

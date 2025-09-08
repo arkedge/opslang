@@ -18,7 +18,7 @@ impl<'cx> TypeChecker<'cx> {
 
                 Ok(ir::Statement::Let(ir::Let {
                     let_token: let_stmt.let_token.into_token(),
-                    variable: self.resolve_ident(let_stmt.variable)?,
+                    variable: self.tcx.alloc_identifier(let_stmt.variable.raw),
                     eq: let_stmt.eq.into_token(),
                     rhs: ir_rhs,
                     semi: let_stmt.semi.into_token(),
