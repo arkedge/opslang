@@ -167,7 +167,6 @@ impl<'cx> TypeChecker<'cx> {
             "f" => Ty::mk_float_var(self.tcx, FloatVid::fresh()),
 
             "s" => {
-                dbg!(suffix);
                 *kind = NumericKind::Duration(Duration::seconds(repr.parse()?));
                 Ty::mk_duration(self.tcx)
             }

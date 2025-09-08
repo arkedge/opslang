@@ -408,7 +408,6 @@ prc main() {
     let ir_context = IrContext::new();
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    dbg!(&program);
     let mut checker = create_type_checker(&typing_context, &ir_context);
     let result = checker.typeck(&program);
 
