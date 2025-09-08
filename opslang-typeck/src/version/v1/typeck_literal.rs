@@ -17,7 +17,7 @@ impl<'cx> TypeChecker<'cx> {
                     ast: s,
                 };
                 let ir_literal = ir::Literal::String(ir_string);
-                let string_type = Ty::mk_string(self.typing_cx);
+                let string_type = Ty::mk_string(self.tcx);
                 let ir_expr =
                     ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), string_type);
                 Ok(ir_expr)
@@ -30,10 +30,10 @@ impl<'cx> TypeChecker<'cx> {
                 } else {
                     match &numeric.kind {
                         ast::literal::NumericKind::Integer(_prefix) => {
-                            Ty::mk_int_var(self.typing_cx, IntVid::fresh())
+                            Ty::mk_int_var(self.tcx, IntVid::fresh())
                         }
                         ast::literal::NumericKind::Float => {
-                            Ty::mk_float_var(self.typing_cx, FloatVid::fresh())
+                            Ty::mk_float_var(self.tcx, FloatVid::fresh())
                         }
                     }
                 };
@@ -46,8 +46,8 @@ impl<'cx> TypeChecker<'cx> {
             ast::Literal::Array(array) => {
                 if array.exprs.is_empty() {
                     // Empty array - use a type variable for the element type
-                    let element_type = Ty::mk_variable(self.typing_cx, TyVid::fresh());
-                    let array_type = Ty::mk_array(self.typing_cx, element_type);
+                    let element_type = Ty::mk_variable(self.tcx, TyVid::fresh());
+                    let array_type = Ty::mk_array(self.tcx, element_type);
 
                     let ir_array = ir::Array {
                         left_bracket: array.left_bracket.into_token(),
@@ -78,7 +78,7 @@ impl<'cx> TypeChecker<'cx> {
                         ir_exprs.push(expr_ir);
                     }
 
-                    let array_type = Ty::mk_array(self.typing_cx, element_type);
+                    let array_type = Ty::mk_array(self.tcx, element_type);
                     let ir_array = ast::Literal::array(
                         array.left_bracket.into_token(),
                         ir_exprs,
@@ -96,7 +96,7 @@ impl<'cx> TypeChecker<'cx> {
                     ast: bytes,
                 };
                 let ir_literal = ast::Literal::Bytes(ir_bytes);
-                let bytes_type = Ty::mk_string(self.typing_cx);
+                let bytes_type = Ty::mk_string(self.tcx);
                 let ir_expr =
                     ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), bytes_type);
                 Ok(ir_expr)
@@ -112,7 +112,7 @@ impl<'cx> TypeChecker<'cx> {
                     ast: hex_bytes,
                 };
                 let ir_literal = ast::Literal::HexBytes(ir_hex_bytes);
-                let hex_bytes_type = Ty::mk_string(self.typing_cx);
+                let hex_bytes_type = Ty::mk_string(self.tcx);
                 let ir_expr =
                     ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), hex_bytes_type);
                 Ok(ir_expr)
@@ -131,7 +131,7 @@ impl<'cx> TypeChecker<'cx> {
                     ast: dt,
                 };
                 let ir_literal = ast::Literal::DateTime(ir_datetime);
-                let time_type = Ty::mk_time(self.typing_cx);
+                let time_type = Ty::mk_time(self.tcx);
                 let ir_expr =
                     ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), time_type);
                 Ok(ir_expr)
@@ -151,37 +151,37 @@ impl<'cx> TypeChecker<'cx> {
     ) -> Result<Ty<'cx>> {
         let suffix = suffix.0.raw;
         Ok(match suffix {
-            "i8" => Ty::mk_i8(self.typing_cx),
-            "i16" => Ty::mk_i16(self.typing_cx),
-            "i32" => Ty::mk_i32(self.typing_cx),
-            "i64" => Ty::mk_i64(self.typing_cx),
+            "i8" => Ty::mk_i8(self.tcx),
+            "i16" => Ty::mk_i16(self.tcx),
+            "i32" => Ty::mk_i32(self.tcx),
+            "i64" => Ty::mk_i64(self.tcx),
 
-            "u8" => Ty::mk_u8(self.typing_cx),
-            "u16" => Ty::mk_u16(self.typing_cx),
-            "u32" => Ty::mk_u32(self.typing_cx),
-            "u64" => Ty::mk_u64(self.typing_cx),
+            "u8" => Ty::mk_u8(self.tcx),
+            "u16" => Ty::mk_u16(self.tcx),
+            "u32" => Ty::mk_u32(self.tcx),
+            "u64" => Ty::mk_u64(self.tcx),
 
-            "f32" => Ty::mk_f32(self.typing_cx),
-            "f64" => Ty::mk_f64(self.typing_cx),
+            "f32" => Ty::mk_f32(self.tcx),
+            "f64" => Ty::mk_f64(self.tcx),
 
-            "f" => Ty::mk_float_var(self.typing_cx, FloatVid::fresh()),
+            "f" => Ty::mk_float_var(self.tcx, FloatVid::fresh()),
 
             "s" => {
                 dbg!(suffix);
                 *kind = NumericKind::Duration(Duration::seconds(repr.parse()?));
-                Ty::mk_duration(self.typing_cx)
+                Ty::mk_duration(self.tcx)
             }
             "ms" => {
                 *kind = NumericKind::Duration(Duration::milliseconds(repr.parse()?));
-                Ty::mk_duration(self.typing_cx)
+                Ty::mk_duration(self.tcx)
             }
             "us" => {
                 *kind = NumericKind::Duration(Duration::microseconds(repr.parse()?));
-                Ty::mk_duration(self.typing_cx)
+                Ty::mk_duration(self.tcx)
             }
             "ns" => {
                 *kind = NumericKind::Duration(Duration::nanoseconds(repr.parse()?));
-                Ty::mk_duration(self.typing_cx)
+                Ty::mk_duration(self.tcx)
             }
 
             suffix => Err(anyhow!("unknown suffix: {suffix}"))?,

@@ -13,7 +13,7 @@ impl<'cx> TypeChecker<'cx> {
 
                 // Bind the variable to the environment with the inferred type
                 let var_name = let_stmt.variable.raw;
-                let var_identifier_id = self.typing_cx.alloc_identifier(var_name);
+                let var_identifier_id = self.tcx.alloc_identifier(var_name);
                 env.bind(var_name, var_identifier_id, ir_rhs.ty);
 
                 Ok(ir::Statement::Let(ir::Let {

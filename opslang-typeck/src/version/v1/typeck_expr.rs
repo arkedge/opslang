@@ -106,7 +106,7 @@ impl<'cx> TypeChecker<'cx> {
                         }
                     }
                     ast::BinOp::And(_) | ast::BinOp::Or(_) => {
-                        let bool_type = Ty::mk_bool(self.typing_cx);
+                        let bool_type = Ty::mk_bool(self.tcx);
                         self.unify(subst, lhs_ir.ty, bool_type)?;
                         self.unify(subst, lhs_ir.ty, bool_type)?;
 
@@ -122,7 +122,7 @@ impl<'cx> TypeChecker<'cx> {
                     ast::BinOp::In(_) => {
                         // For 'in' operator, lhs is an element and rhs should be a collection
                         // The result type is always bool
-                        let bool_type = Ty::mk_bool(self.typing_cx);
+                        let bool_type = Ty::mk_bool(self.tcx);
 
                         // Check that rhs is an array type
                         match lhs_ir.ty.kind() {
@@ -162,7 +162,7 @@ impl<'cx> TypeChecker<'cx> {
                             }
                             _ => {
                                 // resolve to default int
-                                self.unify(subst, expr_ir.ty, Ty::mk_i32(self.typing_cx))?
+                                self.unify(subst, expr_ir.ty, Ty::mk_i32(self.tcx))?
                             }
                         }
                         // Create IR operand with unified type
@@ -205,26 +205,22 @@ impl<'cx> TypeChecker<'cx> {
             ast::ExprKind::Apply(apply) => self.typeck_apply(env, subst, apply, &[]),
             ast::ExprKind::If(if_expr) => {
                 let cond_ir = self.typeck_expr(env, subst, &if_expr.cond)?;
-                let bool_type = Ty::mk_bool(self.typing_cx);
+                let bool_type = Ty::mk_bool(self.tcx);
                 self.unify(subst, cond_ir.ty, bool_type)?;
                 let ir_then_block = self.typeck_block(env, subst, if_expr.then_clause)?;
 
                 if let Some(else_clause) = &if_expr.else_opt {
                     let ir_else_block = self.typeck_block(env, subst, else_clause.else_clause)?;
                     let unified_then = subst.apply_substitution_pure(
-                        self.typing_cx,
-                        ir_then_block
-                            .ty(self.typing_cx)
-                            .unwrap_or(Ty::mk_unit(self.typing_cx)),
+                        self.tcx,
+                        ir_then_block.ty(self.tcx).unwrap_or(Ty::mk_unit(self.tcx)),
                     );
                     let unified_else = subst.apply_substitution_pure(
-                        self.typing_cx,
-                        ir_else_block
-                            .ty(self.typing_cx)
-                            .unwrap_or(Ty::mk_unit(self.typing_cx)),
+                        self.tcx,
+                        ir_else_block.ty(self.tcx).unwrap_or(Ty::mk_unit(self.tcx)),
                     );
                     self.unify(subst, unified_then, unified_else)?;
-                    let result_type = subst.apply_substitution_pure(self.typing_cx, unified_then);
+                    let result_type = subst.apply_substitution_pure(self.tcx, unified_then);
 
                     // Convert condition to IR
 
@@ -243,8 +239,8 @@ impl<'cx> TypeChecker<'cx> {
                     Ok(ir_expr)
                 } else {
                     // no else
-                    let unit_type = Ty::mk_unit(self.typing_cx);
-                    if let Some(ty) = ir_then_block.ty(self.typing_cx) {
+                    let unit_type = Ty::mk_unit(self.tcx);
+                    if let Some(ty) = ir_then_block.ty(self.tcx) {
                         self.unify(subst, ty, unit_type)?;
                     }
 
@@ -299,7 +295,7 @@ impl<'cx> TypeChecker<'cx> {
                 // Apply final substitution to head
 
                 // Create IR Compare expression - result is always bool
-                let bool_type = Ty::mk_bool(self.typing_cx);
+                let bool_type = Ty::mk_bool(self.tcx);
                 let ir_expr = ir::Expr::new(
                     ir::ExprMut::compare(self.ir_cx, head_ir, ir_tail),
                     bool_type,
@@ -316,7 +312,7 @@ impl<'cx> TypeChecker<'cx> {
                 // Apply final substitution to operands
 
                 // Create IR Set expression - result is unit type
-                let unit_type = Ty::mk_unit(self.typing_cx);
+                let unit_type = Ty::mk_unit(self.tcx);
                 let ir_expr = ir::Expr::new(
                     ir::ExprMut::set(self.ir_cx, lhs_ir, set.colon_eq.into_token(), rhs_ir),
                     unit_type,
@@ -333,7 +329,7 @@ impl<'cx> TypeChecker<'cx> {
                 let file_ir = self.typeck_expr(env, subst, file)?;
 
                 // File should be a string type
-                let string_type = Ty::mk_string(self.typing_cx);
+                let string_type = Ty::mk_string(self.tcx);
                 self.unify(subst, file_ir.ty, string_type)?;
 
                 // FIXME: Resolve path in loaded file

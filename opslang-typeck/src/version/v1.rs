@@ -63,7 +63,7 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
 pub struct TypeChecker<'cx> {
     /// Module loader for resolving external symbols
     module_loader: ModuleLoader<'cx>,
-    typing_cx: &'cx TypingContext<'cx>,
+    tcx: &'cx TypingContext<'cx>,
     ir_cx: &'cx ir::Context<'cx>,
 }
 
@@ -80,14 +80,14 @@ impl core::fmt::Debug for TypeChecker<'_> {
 struct SubstitutionVisitor<'cx> {
     ty_last_seen: Option<Ty<'cx>>,
     subst: Substitution<'cx>,
-    typing_cx: &'cx TypingContext<'cx>,
+    tcx: &'cx TypingContext<'cx>,
 }
 
 impl<'cx> SubstitutionVisitor<'cx> {
-    fn new(subst: Substitution<'cx>, typing_cx: &'cx TypingContext<'cx>) -> Self {
+    fn new(subst: Substitution<'cx>, tcx: &'cx TypingContext<'cx>) -> Self {
         Self {
             subst,
-            typing_cx,
+            tcx,
             ty_last_seen: None,
         }
     }
@@ -101,7 +101,7 @@ opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx> {
         self.visit_mut(&mut expr.kind);
     }
     fn visit_ty_mut(&mut self, ty: &mut Ty<'cx>) {
-        self.subst.apply_substitution(self.typing_cx, ty);
+        self.subst.apply_substitution(self.tcx, ty);
         let kind = ty.kind();
         match kind {
             TyKind::Infer(InferTy::IntVar(int_vid)) => {
@@ -112,7 +112,7 @@ opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx> {
             }
             _ => {}
         }
-        self.subst.apply_substitution(self.typing_cx, ty);
+        self.subst.apply_substitution(self.tcx, ty);
         self.ty_last_seen = Some(*ty);
     }
     fn visit_ty(&mut self, _ty: &Ty<'cx>) {
@@ -133,10 +133,10 @@ impl<'cx> TypeChecker<'cx> {
     /// Creates a new type checker with empty module loader.
     ///
     /// The type checker starts with no modules loaded.
-    pub fn new(typing_cx: &'cx TypingContext<'cx>, ir_cx: &'cx ir::Context<'cx>) -> Self {
+    pub fn new(tcx: &'cx TypingContext<'cx>, ir_cx: &'cx ir::Context<'cx>) -> Self {
         Self {
             module_loader: ModuleLoader::new(),
-            typing_cx,
+            tcx,
             ir_cx,
         }
     }
@@ -146,12 +146,12 @@ impl<'cx> TypeChecker<'cx> {
     /// This allows pre-loading modules before starting type checking operations.
     pub fn with_module_loader(
         module_loader: ModuleLoader<'cx>,
-        typing_cx: &'cx TypingContext<'cx>,
+        tcx: &'cx TypingContext<'cx>,
         ir_cx: &'cx ir::Context<'cx>,
     ) -> Self {
         Self {
             module_loader,
-            typing_cx,
+            tcx,
             ir_cx,
         }
     }
@@ -259,14 +259,14 @@ impl<'cx> TypeChecker<'cx> {
         // Handle return type from function definition
         let return_type = match &func_def.return_type.0 {
             Some((_, return_path)) => self.resolve_type_from_path(*return_path)?,
-            None => Ty::mk_unit(self.typing_cx),
+            None => Ty::mk_unit(self.tcx),
         };
 
-        let func_type = Ty::mk_function(self.typing_cx, param_types, return_type);
+        let func_type = Ty::mk_function(self.tcx, param_types, return_type);
 
         let func_name = func_name.raw;
 
-        let func_identifier_id = self.typing_cx.alloc_identifier(func_name);
+        let func_identifier_id = self.tcx.alloc_identifier(func_name);
         env.bind(func_name, func_identifier_id, func_type);
 
         Ok(())
@@ -280,7 +280,7 @@ impl<'cx> TypeChecker<'cx> {
         let const_name = const_def.name.raw;
         let declared_type = self.resolve_type_from_path(const_def.ty)?;
 
-        let const_identifier_id = self.typing_cx.alloc_identifier(const_name);
+        let const_identifier_id = self.tcx.alloc_identifier(const_name);
         env.bind(const_name, const_identifier_id, declared_type);
 
         Ok(())
@@ -299,7 +299,7 @@ impl<'cx> TypeChecker<'cx> {
     fn resolve_ident(&self, ident: ast::Ident<'cx>) -> Result<Ident<'cx>> {
         // For now, create a new identifier with a unique definition ID
         // TODO: This should probably lookup from environment instead
-        Ok(self.typing_cx.alloc_identifier(ident.raw))
+        Ok(self.tcx.alloc_identifier(ident.raw))
     }
 
     fn resolve_path(&self, path: &'cx ast::Path<'cx>) -> Result<ResolvePathResult<'cx>> {

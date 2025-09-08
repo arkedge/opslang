@@ -23,11 +23,11 @@ fn parse_source<'cx>(
 
 /// Helper function to create type checker with builtin types.
 fn create_type_checker<'cx>(
-    typing_cx: &'cx TypingContext<'cx>,
+    tcx: &'cx TypingContext<'cx>,
     ir_cx: &'cx IrContext<'cx>,
 ) -> TypeChecker<'cx> {
-    let mut checker = TypeChecker::new(typing_cx, ir_cx);
-    checker.add_module(create_builtin_module(typing_cx));
+    let mut checker = TypeChecker::new(tcx, ir_cx);
+    checker.add_module(create_builtin_module(tcx));
     checker
 }
 

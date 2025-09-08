@@ -319,8 +319,8 @@ impl<'cx> super::TypeChecker<'cx> {
                 }
 
                 // Apply accumulated substitutions to return types before unifying
-                let substituted_ret1 = subst.apply_substitution_pure(self.typing_cx, *ret1);
-                let substituted_ret2 = subst.apply_substitution_pure(self.typing_cx, *ret2);
+                let substituted_ret1 = subst.apply_substitution_pure(self.tcx, *ret1);
+                let substituted_ret2 = subst.apply_substitution_pure(self.tcx, *ret2);
                 self.unify(subst, substituted_ret1, substituted_ret2)?;
                 Ok(())
             }

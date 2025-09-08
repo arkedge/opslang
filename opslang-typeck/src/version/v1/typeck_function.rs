@@ -25,7 +25,7 @@ impl<'cx> TypeChecker<'cx> {
         for (param, param_type) in func_def.parameters.iter().zip(param_types.iter()) {
             let param_name = param.name.raw;
 
-            let param_identifier_id = self.typing_cx.alloc_identifier(param_name);
+            let param_identifier_id = self.tcx.alloc_identifier(param_name);
             func_env.bind(param_name, param_identifier_id, *param_type);
 
             let ir_param = ir::Parameter {
@@ -41,7 +41,7 @@ impl<'cx> TypeChecker<'cx> {
         let mut ir_body = self.typeck_block(&func_env, &mut subst, func_def.body)?;
 
         // Apply final substitution using visitor
-        let mut visitor = SubstitutionVisitor::new(subst, self.typing_cx);
+        let mut visitor = SubstitutionVisitor::new(subst, self.tcx);
         visitor.visit_mut(&mut ir_body);
 
         Ok(ir::FunctionDef {

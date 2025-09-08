@@ -33,8 +33,8 @@ impl<'cx> TypeChecker<'cx> {
             }
         }
 
-        let return_type = Ty::mk_variable(self.typing_cx, TyVid::fresh());
-        let expected_func_type = Ty::mk_function(self.typing_cx, arg_types, return_type);
+        let return_type = Ty::mk_variable(self.tcx, TyVid::fresh());
+        let expected_func_type = Ty::mk_function(self.tcx, arg_types, return_type);
 
         self.unify(subst, func_ir.ty, expected_func_type)?;
 
