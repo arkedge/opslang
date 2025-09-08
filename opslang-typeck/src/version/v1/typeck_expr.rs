@@ -240,7 +240,7 @@ impl<'cx> TypeChecker<'cx> {
                     let body_ir = self.typeck_block(env, subst, item.body)?;
 
                     // Check that the expression is awaitable
-                    subst.apply_substitution(self.tcx, &mut expr_ir.ty);
+                    self.eagerly_resolve(subst, &mut expr_ir.ty);
                     let ty = expr_ir.ty;
                     let is_awaitable = ty.is_bool() || ty.is_duration();
                     if !is_awaitable {

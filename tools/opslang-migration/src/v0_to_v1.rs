@@ -1,6 +1,9 @@
+use std::collections::VecDeque;
+
 use opslang_ast::V1Token;
 use opslang_ast::token::IntoPosition;
 use opslang_ast::token::IntoSpan;
+use opslang_ast::v0::BinOpKind;
 use opslang_ast::v1::context::Context;
 use opslang_printer::{Naive, PrettyPrint, PrintOptions};
 
@@ -749,11 +752,38 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Wait {
         self,
         ctx: &'cx Context<'cx, ConvertedFamily>,
     ) -> Result<Self::Converted, ConversionError> {
-        let condition_expr = self.condition.convert(ctx)?;
-        Ok(create_apply_with_string_function(
+        if let v0::Expr::BinOp(BinOpKind::And, ..) = self.condition {
+            return Err(ConversionError::UnsupportedFeature {
+                feature: "wait with `and` condition".to_string(),
+            });
+        }
+        let mut conds = vec![];
+        let mut queue = VecDeque::new();
+        queue.push_back(self.condition);
+        while let Some(cond) = queue.pop_front() {
+            if let v0::Expr::BinOp(BinOpKind::Or, lhs, rhs) = cond {
+                queue.push_back(*lhs);
+                queue.push_back(*rhs);
+            } else {
+                let condition_expr = cond.convert(ctx)?;
+                conds.push(v1::SelectItem {
+                    expr: condition_expr,
+                    arrow: V1Token![=>](Span),
+                    body: ctx.alloc_block(v1::Block {
+                        left_brace: v1::token::OpenBrace(Position),
+                        scope: v1::Scope { items: &[] },
+                        right_brace: v1::token::CloseBrace(Position),
+                    }),
+                });
+            }
+        }
+
+        Ok(v1::Expr::select(
             ctx,
-            "wait",
-            vec![condition_expr],
+            V1Token![select](Span),
+            v1::token::OpenBrace(Position),
+            ctx.alloc_select_item_slice(conds),
+            v1::token::CloseBrace(Position),
         ))
     }
 }

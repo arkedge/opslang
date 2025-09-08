@@ -11,6 +11,7 @@ use opslang_ty::version::v1::{
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
+use std::ops::{Deref, DerefMut};
 
 type Result<T, E = anyhow::Error> = std::result::Result<T, E>;
 
@@ -76,24 +77,57 @@ impl core::fmt::Debug for TypeChecker<'_> {
     }
 }
 
+/// Mutable `Cow`, do not copy on write.
+enum CowMut<'a, T> {
+    Borrowed(&'a mut T),
+    Owned(T),
+}
+
+impl<'a, T> Deref for CowMut<'a, T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            CowMut::Borrowed(r) => r,
+            CowMut::Owned(v) => v,
+        }
+    }
+}
+
+impl<'a, T> DerefMut for CowMut<'a, T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        match self {
+            CowMut::Borrowed(r) => r,
+            CowMut::Owned(v) => v,
+        }
+    }
+}
+
 /// Visitor for applying substitutions to all types in the IR
-struct SubstitutionVisitor<'cx> {
+struct SubstitutionVisitor<'cx, 'a> {
     ty_last_seen: Option<Ty<'cx>>,
-    subst: Substitution<'cx>,
+    subst: CowMut<'a, Substitution<'cx>>,
     tcx: &'cx TypingContext<'cx>,
 }
 
-impl<'cx> SubstitutionVisitor<'cx> {
+impl<'cx, 'a> SubstitutionVisitor<'cx, 'a> {
     fn new(subst: Substitution<'cx>, tcx: &'cx TypingContext<'cx>) -> Self {
         Self {
-            subst,
+            subst: CowMut::Owned(subst),
+            tcx,
+            ty_last_seen: None,
+        }
+    }
+    fn new_borrowed(subst: &'a mut Substitution<'cx>, tcx: &'cx TypingContext<'cx>) -> Self {
+        Self {
+            subst: CowMut::Borrowed(subst),
             tcx,
             ty_last_seen: None,
         }
     }
 }
 
-opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx> {
+opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx, '_> {
     fn visit_expr_mut(&mut self, expr: &mut ir::Expr<'cx>) {
         use ir::IrMutVisitor;
         // visit ty first
@@ -105,9 +139,11 @@ opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx> {
         let kind = ty.kind();
         match kind {
             TyKind::Infer(InferTy::IntVar(int_vid)) => {
+                // Resolve integer type variables to i32 by default in Rust
                 self.subst.resolve_int(*int_vid, IntTy::I32);
             }
             TyKind::Infer(InferTy::FloatVar(float_vid)) => {
+                // Resolve float type variables to f64 by default in Rust
                 self.subst.resolve_float(*float_vid, FloatTy::F64);
             }
             _ => {}
@@ -316,6 +352,12 @@ impl<'cx> TypeChecker<'cx> {
             }
             None => Err(anyhow!("cannot resolve path: {path}")),
         }
+    }
+
+    /// Eagerly resolves type variables in the given type using the provided substitution.
+    fn eagerly_resolve(&self, subst: &mut Substitution<'cx>, ty: &mut Ty<'cx>) {
+        // call `visit_ty_mut` to resolve type variables eagerly
+        SubstitutionVisitor::new_borrowed(subst, self.tcx).visit_mut(ty);
     }
 }
 
