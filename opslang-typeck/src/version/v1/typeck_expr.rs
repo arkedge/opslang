@@ -119,36 +119,6 @@ impl<'cx> TypeChecker<'cx> {
                         );
                         Ok(ir_expr)
                     }
-                    ast::BinOp::In(_) => {
-                        // For 'in' operator, lhs is an element and rhs should be a collection
-                        // The result type is always bool
-                        let bool_type = Ty::mk_bool(self.tcx);
-
-                        // Check that rhs is an array type
-                        match lhs_ir.ty.kind() {
-                            TyKind::Array { inner } => {
-                                // Unify lhs type with array element type
-                                self.unify(subst, lhs_ir.ty, *inner)?;
-                                // Apply final substitution to operands
-
-                                // Create IR binary expression
-                                let ir_expr = ir::Expr::new(
-                                    ir::ExprMut::binary(
-                                        self.ir_cx,
-                                        lhs_ir,
-                                        binary.op.into_token(),
-                                        rhs_ir,
-                                    ),
-                                    bool_type,
-                                );
-                                Ok(ir_expr)
-                            }
-                            _ => Err(anyhow!(
-                                "'in' operator requires array on right side, got {}",
-                                lhs_ir.ty.display()
-                            )),
-                        }
-                    }
                 }
             }
             ast::ExprKind::Unary(unary) => {

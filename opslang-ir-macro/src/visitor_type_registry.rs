@@ -396,7 +396,6 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
             type Else;
             type Prc;
             type Const;
-            type In;
         }
     }
     // types that are defined in ast crate, substituted with 'cx and default type family

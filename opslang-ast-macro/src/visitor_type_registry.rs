@@ -290,7 +290,6 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
             type Else;
             type Prc;
             type Const;
-            type In;
         }
     }
 };

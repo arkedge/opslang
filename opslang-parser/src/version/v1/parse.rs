@@ -388,40 +388,18 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::LogicalAndExpr<'_> {
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.logical_and_expr_list.is_empty() {
-            self.infix_in_expr.process_token(cx)
+            self.compare_expr.process_token(cx)
         } else {
             self.logical_and_expr_list.iter().rfold(
-                self.infix_in_expr.process_token(cx),
+                self.compare_expr.process_token(cx),
                 |acc, expr| {
                     cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
-                        lhs: expr.infix_in_expr.process_token(cx),
+                        lhs: expr.compare_expr.process_token(cx),
                         op: syn::BinOp::And(Token![&&](expr.amp_amp.wrap())),
                         rhs: acc,
                     }))
                 },
             )
-        }
-    }
-}
-
-impl<'cx> ProcessToken<'cx> for grammar_trait::InfixInExpr<'_> {
-    type Output = syn::Expr<'cx>;
-
-    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
-        if let Some(grammar_trait::InfixInExprOpt {
-            r#in: _,
-            compare_expr,
-        }) = &self.infix_in_expr_opt
-        {
-            cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
-                lhs: self.compare_expr.process_token(cx),
-                op: syn::BinOp::In(Token![in](
-                    self.infix_in_expr_opt.as_ref().unwrap().r#in.wrap(),
-                )),
-                rhs: compare_expr.process_token(cx),
-            }))
-        } else {
-            self.compare_expr.process_token(cx)
         }
     }
 }

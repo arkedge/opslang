@@ -520,8 +520,6 @@ pub enum BinOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     And(token::AndAnd<'cx, F>),
     /// `||`
     Or(token::OrOr<'cx, F>),
-    /// `in`
-    In(token::In<'cx, F>),
     /// `*`
     Mul(token::Star<'cx, F>),
     /// `/`

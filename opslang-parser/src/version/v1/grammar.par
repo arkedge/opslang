@@ -99,14 +99,9 @@ LogicalOrExpr
     : { LogicalAndExpr '||' } LogicalAndExpr
     ;
 
-// `&&` : lower then compare infix `in`
+// `&&` : lower then compare
 LogicalAndExpr
-    : { InfixInExpr '&&' } InfixInExpr
-    ;
-
-// infix `in` : non-associative, lower then compare operators
-InfixInExpr
-    : CompareExpr [ 'in' CompareExpr ]
+    : { CompareExpr '&&' } CompareExpr
     ;
 
 // `>=`, `<=`, `>`, `<`, `!=` (`/=`), `==`

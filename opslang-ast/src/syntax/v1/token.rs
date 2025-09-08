@@ -192,7 +192,6 @@ declare_kw! {
     pub struct Else "else"
     pub struct Prc "prc"
     pub struct Const "const"
-    pub struct In "in"
 }
 
 #[macro_export]
@@ -219,9 +218,6 @@ macro_rules! V1Token {
     };
     (const) => {
         $crate::syntax::v1::token::Const
-    };
-    (in) => {
-        $crate::syntax::v1::token::In
     };
 
     // Single character tokens

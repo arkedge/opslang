@@ -16,7 +16,6 @@ impl Precedence {
     pub const SET: Self = Self(0); // :=
     const LOGICAL_OR: Self = Self(2); // ||
     const LOGICAL_AND: Self = Self(3); // &&
-    const INFIX_IN: Self = Self(4); // infix in
     pub const COMPARE: Self = Self(5); // >=, <=, >, <, !=, /=, ==
     const ARITHMETIC: Self = Self(6); // +, -
     const FACTOR: Self = Self(7); // *, /, %
@@ -56,7 +55,6 @@ impl<'cx, F: PrintableFamily<'cx>> HasPrecedence for BinOp<'cx, F> {
         match self {
             BinOp::Or(_) => Precedence::LOGICAL_OR,
             BinOp::And(_) => Precedence::LOGICAL_AND,
-            BinOp::In(_) => Precedence::INFIX_IN,
             BinOp::Add(_) | BinOp::Sub(_) => Precedence::ARITHMETIC,
             BinOp::Mul(_) | BinOp::Div(_) | BinOp::Mod(_) => Precedence::FACTOR,
         }

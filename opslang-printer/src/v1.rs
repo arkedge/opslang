@@ -592,7 +592,6 @@ where
         match self.op {
             BinOp::And(_) => writer.write_str("&&")?,
             BinOp::Or(_) => writer.write_str("||")?,
-            BinOp::In(_) => writer.write_str("in")?,
             BinOp::Mul(_) => writer.write_str("*")?,
             BinOp::Div(_) => writer.write_str("/")?,
             BinOp::Mod(_) => writer.write_str("%")?,
