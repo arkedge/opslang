@@ -168,6 +168,7 @@ declare_token! {
     pub struct AndAnd/2 "&&"
     pub struct OrOr/2 "||"
     pub struct Arrow/2 "->"
+    pub struct DoubleArrow/2 "=>"
 }
 
 /// Declare all keywords for v1 grammar.
@@ -190,6 +191,7 @@ declare_kw! {
     pub struct Let "let"
     pub struct If "if"
     pub struct Else "else"
+    pub struct Select "select"
     pub struct Prc "prc"
     pub struct Const "const"
 }
@@ -212,6 +214,9 @@ macro_rules! V1Token {
     };
     (else) => {
         $crate::syntax::v1::token::Else
+    };
+    (select) => {
+        $crate::syntax::v1::token::Select
     };
     (prc) => {
         $crate::syntax::v1::token::Prc
@@ -298,5 +303,8 @@ macro_rules! V1Token {
     };
     (->) => {
         $crate::syntax::v1::token::Arrow
+    };
+    (=>) => {
+        $crate::syntax::v1::token::DoubleArrow
     };
 }

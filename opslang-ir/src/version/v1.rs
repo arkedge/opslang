@@ -70,6 +70,7 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
         Row = ast::Row<'cx, Self>,
         Block = ast::Block<'cx, Self>,
         Scope = Scope<'cx>,
+        SelectItems = Vec<SelectItem<'cx>>,
 
         // Resolved name types
         Ident = Ident<'cx>,
@@ -142,6 +143,8 @@ re_export! {
     pub type Set<'cx>;
     pub type InfixImport<'cx>;
     pub type If<'cx>;
+    pub type Select<'cx>;
+    pub type SelectItem<'cx>;
 }
 
 impl<'cx> IntoSpan<'cx, IrTypeFamily> for ast::Span {

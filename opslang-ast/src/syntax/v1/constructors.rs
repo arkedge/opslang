@@ -1,8 +1,8 @@
 use super::{
     Apply, Array, BinOp, Binary, Bytes, Compare, CompareOp, DateTime, Expr, ExprKind, ExprMut,
     HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric, NumericKind,
-    NumericSuffix, Parened, Path, PreQualified, Row, Set, String, ToplevelItem, TypeFamily, UnOp,
-    Unary, context, token,
+    NumericSuffix, Parened, Path, PreQualified, Row, Select, Set, String, ToplevelItem, TypeFamily,
+    UnOp, Unary, context, token,
 };
 
 impl<'cx, F: TypeFamily<'cx>> Default for ToplevelItem<'cx, F> {
@@ -242,6 +242,26 @@ impl_expr_and_expr_mut! {
             else_opt,
         };
         Self::from_kind(ctx, ExprKind::If(if_expr))
+    }
+
+    #[inline]
+    pub fn select(
+        ctx: &'cx context::Context<'cx, F>,
+        select_kw: token::Select<'cx, F>,
+        left_brace: token::OpenBrace<'cx, F>,
+        items: F::SelectItems,
+        right_brace: token::CloseBrace<'cx, F>,
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Select = Select<'cx, F>>,
+    {
+        let select = Select {
+            select_kw,
+            left_brace,
+            items,
+            right_brace,
+        };
+        Self::from_kind(ctx, ExprKind::Select(select))
     }
 
     #[inline]

@@ -1,3 +1,5 @@
+use crate::SelectItem;
+
 use super::{
     Block, Comment, CompareOp, DefaultTypeFamily, Expr, ExprKind, ExprMut, Ident, Parameter, Row,
     ScopeItem, ToplevelItem, family::TypeFamily,
@@ -22,6 +24,7 @@ pub struct Context<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     scope_item_slice_arena: Arena<ScopeItem<'cx, F>>,
     expr_slice_arena: Arena<F::Expr>,
     ident_slice_arena: Arena<Ident<'cx, F>>,
+    select_item_slice_arena: Arena<SelectItem<'cx, F>>,
     qualif_slice_arena: Arena<F::Qualif>,
     compare_op_expr_tuple_slice_arena: Arena<(CompareOp<'cx, F>, F::Expr)>,
 }
@@ -90,6 +93,13 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
         self.ident_slice_arena.alloc_extend(idents)
     }
 
+    pub fn alloc_select_item_slice(
+        &'cx self,
+        items: impl IntoIterator<Item = SelectItem<'cx, F>>,
+    ) -> &'cx [SelectItem<'cx, F>] {
+        self.select_item_slice_arena.alloc_extend(items)
+    }
+
     pub fn alloc_qualif_slice(
         &'cx self,
         qualifs: impl IntoIterator<Item = F::Qualif>,
@@ -116,6 +126,7 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
             scope_item_slice_arena: Arena::new(),
             expr_slice_arena: Arena::new(),
             ident_slice_arena: Arena::new(),
+            select_item_slice_arena: Arena::new(),
             qualif_slice_arena: Arena::new(),
             compare_op_expr_tuple_slice_arena: Arena::new(),
         }

@@ -351,6 +351,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
         type InfixImport;
         type If;
         type IfElse;
+        type Select;
 
         // Literal types
         type Literal;
@@ -390,10 +391,12 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
             type AndAnd;
             type OrOr;
             type Arrow;
+            type DoubleArrow;
             type Return;
             type Let;
             type If;
             type Else;
+            type Select;
             type Prc;
             type Const;
         }
@@ -462,6 +465,8 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
         // actual type is Vec<ScopeItem<'cx, IrTypeFamily>>
         type ScopeItem<'cx, ir>: ::std::vec::Vec;
         type Qualif<'cx, ir>: ::std::vec::Vec;
+        type SelectItem<'cx, ir>;
+        type SelectItem<'cx, ir>: ::std::vec::Vec;
     }
     crate ir {
         type IrTypeFamily;

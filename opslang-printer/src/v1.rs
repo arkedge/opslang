@@ -75,6 +75,8 @@ define_trait_alias!(
         Set = Set<'cx, Self>,
         InfixImport = InfixImport<'cx, Self>,
         If = If<'cx, Self>,
+        Select = Select<'cx, Self>,
+        SelectItems = &'cx [SelectItem<'cx, Self>],
         FunctionDef = FunctionDef<'cx, Self>,
         ConstantDef = ConstantDef<'cx, Self>,
     >
@@ -375,6 +377,9 @@ where
                 PrettyPrint::<S>::pretty_print(import, writer, options)
             }
             ExprKind::If(if_expr) => PrettyPrint::<S>::pretty_print(if_expr, writer, options),
+            ExprKind::Select(select_expr) => {
+                PrettyPrint::<S>::pretty_print(select_expr, writer, options)
+            }
         }
     }
 }
@@ -656,5 +661,43 @@ where
         } else {
             Ok(())
         }
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Select<'cx, F>
+where
+    Block<'cx, F>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        Token.write(self.select_kw, writer)?;
+        writer.write_str(" ")?;
+        Token.write(self.left_brace, writer)?;
+        Newline.write(writer, options)?;
+
+        let nested_options = options.with_increased_indent();
+        for (i, item) in self.items.iter().enumerate() {
+            if i > 0 {
+                Newline.write(writer, &nested_options)?;
+            }
+            PrettyPrint::<S>::pretty_print(item, writer, &nested_options)?;
+        }
+
+        Indent.write(writer, options)?;
+        Token.write(self.right_brace, writer)
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for SelectItem<'cx, F>
+where
+    Block<'cx, F>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        PrettyPrint::<S>::pretty_print(&self.expr, writer, options)?;
+        writer.write_str(" ")?;
+        Token.write(self.arrow, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(self.body, writer, options)
     }
 }

@@ -192,8 +192,6 @@ impl<'cx> TypeChecker<'cx> {
                     self.unify(subst, unified_then, unified_else)?;
                     let result_type = subst.apply_substitution_pure(self.tcx, unified_then);
 
-                    // Convert condition to IR
-
                     // Create IR if-else expression
                     let ir_expr = ir::Expr::new(
                         ir::ExprMut::if_then_else(
@@ -214,8 +212,6 @@ impl<'cx> TypeChecker<'cx> {
                         self.unify(subst, ty, unit_type)?;
                     }
 
-                    // Convert condition to IR
-
                     // Create IR if expression (without else)
                     let ir_expr = ir::Expr::new(
                         ir::ExprMut::if_then(
@@ -228,6 +224,62 @@ impl<'cx> TypeChecker<'cx> {
                     );
                     Ok(ir_expr)
                 }
+            }
+            ast::ExprKind::Select(select) => {
+                let ast::Select {
+                    select_kw,
+                    left_brace,
+                    items,
+                    right_brace,
+                } = select;
+                let mut ir_items = Vec::new();
+                let mut result_type = None;
+
+                for item in *items {
+                    let mut expr_ir = self.typeck_expr(env, subst, &item.expr)?;
+                    let body_ir = self.typeck_block(env, subst, item.body)?;
+
+                    // Check that the expression is awaitable
+                    subst.apply_substitution(self.tcx, &mut expr_ir.ty);
+                    let ty = expr_ir.ty;
+                    let is_awaitable = ty.is_bool() || ty.is_duration();
+                    if !is_awaitable {
+                        return Err(anyhow!(
+                            "select expression requires awaitable type (bool or duration), got {}",
+                            ty.display()
+                        ));
+                    }
+
+                    // Ensure all bodies have the same type
+                    if let Some(existing_type) = result_type {
+                        let body_type = body_ir.ty(self.tcx).unwrap_or(Ty::mk_unit(self.tcx));
+                        self.unify(subst, existing_type, body_type)?;
+                        result_type = Some(subst.apply_substitution_pure(self.tcx, existing_type));
+                    } else {
+                        result_type = Some(body_ir.ty(self.tcx).unwrap_or(Ty::mk_unit(self.tcx)));
+                    }
+
+                    ir_items.push(ir::SelectItem {
+                        expr: expr_ir,
+                        arrow: item.arrow.into_token(),
+                        body: body_ir,
+                    });
+                }
+
+                let final_type = result_type.unwrap_or(Ty::mk_unit(self.tcx));
+
+                // Create IR select expression
+                let ir_expr = ir::Expr::new(
+                    ir::ExprMut::select(
+                        self.ir_cx,
+                        select_kw.into_token(),
+                        left_brace.into_token(),
+                        ir_items,
+                        right_brace.into_token(),
+                    ),
+                    final_type,
+                );
+                Ok(ir_expr)
             }
             ast::ExprKind::Qualif(_) => {
                 Err(anyhow!("Qualif cannot be used as a standalone expression"))

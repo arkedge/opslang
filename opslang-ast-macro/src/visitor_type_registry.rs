@@ -240,6 +240,7 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
         type InfixImport;
         type If;
         type IfElse;
+        type Select;
 
         // Literal types
         type Literal;
@@ -284,10 +285,12 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
             type AndAnd;
             type OrOr;
             type Arrow;
+            type DoubleArrow;
             type Return;
             type Let;
             type If;
             type Else;
+            type Select;
             type Prc;
             type Const;
         }
@@ -310,6 +313,7 @@ const V1_AST_INTER_TYPES: &[AstInterTy<Const>] = define_ast_inter_types! {
         type BytePos;
         type NumericKind;
         type ExprKind<'cx>;
+        type SelectItem<'cx>;
     }
 };
 

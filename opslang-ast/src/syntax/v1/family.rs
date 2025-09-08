@@ -153,6 +153,11 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Conditional expressions with if/then/else branching logic.
         type If;
 
+        /// Async select expression from multiple awaitable expressions.
+        type Select;
+
+        type SelectItems;
+
         // === Definition Types ===
         /// Function definition declared with `prc` keyword, including parameters and body.
         type FunctionDef;

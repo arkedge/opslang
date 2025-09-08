@@ -249,6 +249,7 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Set(F::Set),
     InfixImport(F::InfixImport),
     If(F::If),
+    Select(F::Select),
 }
 
 mod sealed {
@@ -564,4 +565,19 @@ pub struct If<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 pub struct IfElse<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub else_kw: token::Else<'cx, F>,
     pub else_clause: F::Block,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]
+pub struct Select<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub select_kw: token::Select<'cx, F>,
+    pub left_brace: token::OpenBrace<'cx, F>,
+    pub items: F::SelectItems,
+    pub right_brace: token::CloseBrace<'cx, F>,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]
+pub struct SelectItem<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub expr: F::Expr,
+    pub arrow: token::DoubleArrow<'cx, F>,
+    pub body: F::Block,
 }

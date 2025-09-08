@@ -94,6 +94,7 @@ impl<'cx, T: ProcessToken<'cx>> ProcessToken<'cx> for Option<T> {
 
 impl<'cx, T: ProcessToken<'cx>> ProcessToken<'cx> for Box<T> {
     type Output = <T as ProcessToken<'cx>>::Output;
+    #[track_caller]
     #[inline(always)]
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         <T as ProcessToken<'cx>>::process_token(&**self, cx)
@@ -690,6 +691,40 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
                     }),
                 )
             }
+            grammar_trait::AtomicExpr::SelectExpr(atomic_expr_select_expr) => {
+                let e = &*atomic_expr_select_expr.select_expr;
+                let mut items = Vec::new();
+                let mut scope = &e.select_scope;
+                items.push(scope.select_scope_content.process_token(cx));
+                while let Some(content) = &scope.select_scope_opt {
+                    scope = &content.select_scope;
+                    items.push(scope.select_scope_content.process_token(cx));
+                }
+                syn::Expr::select(
+                    cx,
+                    Token![select](e.select.wrap()),
+                    syn::token::OpenBrace(e.l_brace.wrap()),
+                    cx.alloc_select_item_slice(items),
+                    syn::token::CloseBrace(e.r_brace.wrap()),
+                )
+            }
+        }
+    }
+}
+
+impl<'cx> ProcessToken<'cx> for grammar_trait::SelectScopeContent<'_> {
+    type Output = syn::SelectItem<'cx>;
+
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
+        let Self {
+            expr,
+            equ_g_t,
+            block,
+        } = self;
+        syn::SelectItem {
+            expr: expr.process_token(cx),
+            arrow: Token![=>](equ_g_t.wrap()),
+            body: cx.alloc_block(block.process_token(cx)),
         }
     }
 }

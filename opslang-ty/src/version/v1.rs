@@ -268,6 +268,38 @@ impl<'cx> TyKind<'cx> {
             TyKind::Unit => "()".to_string(),
         }
     }
+
+    /// Returns `true` if the ty kind is [`Bool`].
+    ///
+    /// [`Bool`]: TyKind::Bool
+    #[must_use]
+    pub fn is_bool(&self) -> bool {
+        matches!(self, Self::Bool)
+    }
+
+    /// Returns `true` if the ty kind is [`Duration`].
+    ///
+    /// [`Duration`]: TyKind::Duration
+    #[must_use]
+    pub fn is_duration(&self) -> bool {
+        matches!(self, Self::Duration)
+    }
+
+    /// Returns `true` if the ty kind is [`Time`].
+    ///
+    /// [`Time`]: TyKind::Time
+    #[must_use]
+    pub fn is_time(&self) -> bool {
+        matches!(self, Self::Time)
+    }
+
+    /// Returns `true` if the ty kind is [`Unit`].
+    ///
+    /// [`Unit`]: TyKind::Unit
+    #[must_use]
+    pub fn is_unit(&self) -> bool {
+        matches!(self, Self::Unit)
+    }
 }
 
 impl<'cx> Ty<'cx> {
