@@ -96,7 +96,7 @@ impl<'cx> TypeChecker<'cx> {
                     ast: bytes,
                 };
                 let ir_literal = ast::Literal::Bytes(ir_bytes);
-                let bytes_type = Ty::mk_string(self.tcx);
+                let bytes_type = Ty::mk_bytes(self.tcx);
                 let ir_expr =
                     ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), bytes_type);
                 Ok(ir_expr)
@@ -112,7 +112,7 @@ impl<'cx> TypeChecker<'cx> {
                     ast: hex_bytes,
                 };
                 let ir_literal = ast::Literal::HexBytes(ir_hex_bytes);
-                let hex_bytes_type = Ty::mk_string(self.tcx);
+                let hex_bytes_type = Ty::mk_bytes(self.tcx);
                 let ir_expr =
                     ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), hex_bytes_type);
                 Ok(ir_expr)

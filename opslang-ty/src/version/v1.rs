@@ -60,6 +60,8 @@ pub enum TyKind<'cx> {
     Float(FloatTy),
     /// String type for text data
     String,
+    /// Byte array type for binary data
+    Bytes,
     /// Boolean type for true/false values
     Bool,
     /// Duration type for time intervals
@@ -324,6 +326,10 @@ impl<'cx> Ty<'cx> {
         Self::from_kind(cx, TyKind::String)
     }
 
+    pub fn mk_bytes(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::from_kind(cx, TyKind::Bytes)
+    }
+
     pub fn mk_bool(cx: &'cx TypingContext<'cx>) -> Self {
         Self::from_kind(cx, TyKind::Bool)
     }
@@ -363,47 +369,42 @@ impl<'cx> Ty<'cx> {
 
 impl Display for TyKind<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let e = {
-            let this = &self;
-            match this {
-                TyKind::Int(int_ty) => match int_ty {
-                    IntTy::I8 => "i8",
-                    IntTy::I16 => "i16",
-                    IntTy::I32 => "i32",
-                    IntTy::I64 => "i64",
-                }
-                .to_string(),
-                TyKind::Uint(uint_ty) => match uint_ty {
-                    UintTy::U8 => "u8",
-                    UintTy::U16 => "u16",
-                    UintTy::U32 => "u32",
-                    UintTy::U64 => "u64",
-                }
-                .to_string(),
-                TyKind::Float(float_ty) => match float_ty {
-                    FloatTy::F32 => "f32",
-                    FloatTy::F64 => "f64",
-                }
-                .to_string(),
-                TyKind::String => "string".to_string(),
-                TyKind::Bool => "bool".to_string(),
-                TyKind::Duration => "duration".to_string(),
-                TyKind::Time => "time".to_string(),
-                // Format array types as [element_type]
-                TyKind::Array { inner } => format!("[{inner}]"),
-                // Format function types as (arg1, arg2, ...) -> return_type
-                TyKind::Function { arg: args, ret } => {
-                    let arg_strs: Vec<String> = args.iter().map(|arg| arg.to_string()).collect();
-                    format!("({}) -> {ret}", arg_strs.join(", "),)
-                }
-                // Display inference variables with distinctive prefixes
-                TyKind::Infer(infer_ty) => match infer_ty {
-                    InferTy::TyVar(var) => format!("{var}"),
-                    InferTy::IntVar(var) => format!("{var}"),
-                    InferTy::FloatVar(var) => format!("{var}"),
-                },
-                TyKind::Unit => "()".to_string(),
+        let e = match self {
+            TyKind::Int(int_ty) => match int_ty {
+                IntTy::I8 => "i8",
+                IntTy::I16 => "i16",
+                IntTy::I32 => "i32",
+                IntTy::I64 => "i64",
+            },
+            TyKind::Uint(uint_ty) => match uint_ty {
+                UintTy::U8 => "u8",
+                UintTy::U16 => "u16",
+                UintTy::U32 => "u32",
+                UintTy::U64 => "u64",
+            },
+            TyKind::Float(float_ty) => match float_ty {
+                FloatTy::F32 => "f32",
+                FloatTy::F64 => "f64",
+            },
+            TyKind::String => "string",
+            TyKind::Bytes => "bytes",
+            TyKind::Bool => "bool",
+            TyKind::Duration => "duration",
+            TyKind::Time => "time",
+            TyKind::Unit => "()",
+            // Format array types as [element_type]
+            TyKind::Array { inner } => return write!(f, "[{inner}]"),
+            // Format function types as (arg1, arg2, ...) -> return_type
+            TyKind::Function { arg: args, ret } => {
+                let arg_strs: Vec<String> = args.iter().map(|arg| arg.to_string()).collect();
+                return write!(f, "({}) -> {ret}", arg_strs.join(", "),);
             }
+            // Display inference variables with distinctive prefixes
+            TyKind::Infer(infer_ty) => match infer_ty {
+                InferTy::TyVar(var) => return write!(f, "{var}"),
+                InferTy::IntVar(var) => return write!(f, "{var}"),
+                InferTy::FloatVar(var) => return write!(f, "{var}"),
+            },
         };
         write!(f, "{e}")
     }

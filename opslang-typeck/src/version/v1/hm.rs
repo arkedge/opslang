@@ -165,6 +165,7 @@ impl<'cx> Substitution<'cx> {
             | TyKind::Uint(_)
             | TyKind::Float(_)
             | TyKind::String
+            | TyKind::Bytes
             | TyKind::Bool
             | TyKind::Duration
             | TyKind::Time
