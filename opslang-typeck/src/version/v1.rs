@@ -20,10 +20,12 @@ mod environment;
 use environment::Environment;
 mod lower;
 mod typeck_apply;
+mod typeck_block;
 mod typeck_constant;
 mod typeck_expr;
 mod typeck_function;
 mod typeck_literal;
+mod typeck_statement;
 
 /// Creates the builtin module containing all primitive types.
 ///
@@ -114,7 +116,7 @@ opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx> {
         self.ty_last_seen = Some(*ty);
     }
     fn visit_ty(&mut self, _ty: &Ty<'cx>) {
-        panic!("found `Ty` immutability. this prevents type variable resolution. review changes to IR structure and eliminate possession of immutable `Ty`pes.");
+        panic!("Found `Ty` immutability. this prevents type variable resolution. review changes to IR structure and eliminate possession of immutable `Ty`pes.");
     }
     fn visit_numeric_mut(&mut self, numeric: &mut ir::Numeric<'cx>) {
         if let ir::NumericKind::Repr(unparsed) = numeric.kind {
@@ -205,7 +207,7 @@ impl<'cx> TypeChecker<'cx> {
                 let leading_comment = if pending_comments.is_empty() {
                     None
                 } else {
-                    Some(self.merge_comments(&pending_comments)?)
+                    Some(lower::merge_comments(self.ir_cx, &pending_comments)?)
                 };
 
                 let ir_kind = match kind {
@@ -244,7 +246,7 @@ impl<'cx> TypeChecker<'cx> {
 
         // Check if function with same name already exists
         if env.lookup_name(func_name).is_some() {
-            return Err(anyhow!("Function '{func_name}' is already defined"));
+            return Err(anyhow!("function '{func_name}' is already defined"));
         }
 
         let mut param_types = Vec::new();
@@ -291,155 +293,6 @@ impl<'cx> TypeChecker<'cx> {
                 _ => Err(anyhow!("path `{path}` does not refer to a type")),
             },
             None => Err(anyhow!("unknown type: {path}")),
-        }
-    }
-}
-
-/// Result of [`TypeChecker::typeck_row`] - either a comment to be merged or a regular scope item
-enum RowProcessResult<'cx> {
-    Comment(&'cx ast::Comment<'cx>),
-    ScopeItem(ir::ScopeItem<'cx>),
-}
-
-impl<'cx> TypeChecker<'cx> {
-    fn typeck_row(
-        &mut self,
-        env: &mut Environment<'cx, '_>,
-        subst: &mut Substitution<'cx>,
-        row: &ast::Row<'cx>,
-    ) -> Result<RowProcessResult<'cx>> {
-        // Check if this row is only a comment (no content, no breaks)
-        if row.breaks.is_none()
-            && row.statement.is_none()
-            && let Some(comment) = &row.comment
-        {
-            return Ok(RowProcessResult::Comment(comment));
-        }
-
-        // Process as a regular row
-        let ir_content = if let Some(content) = &row.statement {
-            let stmt = self.typeck_statement(env, subst, content)?;
-            Some(stmt)
-        } else {
-            None
-        };
-
-        let ir_comment = row.comment.as_ref().map(|comment| ir::Comment {
-            content: comment.content,
-            span: comment.span,
-            source_comments: self.ir_cx.alloc_ast_comment_slice(&[comment]),
-        });
-
-        let ir_row = ir::Row {
-            breaks: row.breaks.map(|b| b.into_token()),
-            statement: ir_content,
-            comment: ir_comment,
-        };
-
-        Ok(RowProcessResult::ScopeItem(ir::ScopeItem::Row(ir_row)))
-    }
-
-    fn typeck_block(
-        &mut self,
-        env: &Environment<'cx, '_>,
-        subst: &mut Substitution<'cx>,
-        block: &ast::Block<'cx>,
-    ) -> Result<ir::Block<'cx>> {
-        let mut local_env = env.extend_inherit();
-        let mut ir_items: Vec<ir::ScopeItem<'cx>> = Vec::new();
-        let mut pending_comments: Vec<&'cx ast::Comment<'cx>> = Vec::new();
-
-        for item in block.scope.items {
-            match item {
-                ast::ScopeItem::Row(row) => {
-                    match self.typeck_row(&mut local_env, subst, row)? {
-                        RowProcessResult::Comment(comment) => {
-                            pending_comments.push(comment);
-                        }
-                        RowProcessResult::ScopeItem(scope_item) => {
-                            // Flush any pending comments before adding the regular item
-                            self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
-                            ir_items.push(scope_item);
-                        }
-                    }
-                }
-                ast::ScopeItem::Block(nested_block) => {
-                    // Flush any pending comments before adding the block
-                    self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
-                    let ir_block = self.typeck_block(&local_env, subst, nested_block)?;
-                    ir_items.push(ir::ScopeItem::Block(ir_block));
-                }
-            }
-        }
-
-        // Flush any remaining comments at the end
-        self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
-
-        let ir_scope = ir::Scope { items: ir_items };
-
-        let ir_block = ir::Block {
-            left_brace: block.left_brace.into_token(),
-            scope: ir_scope,
-            right_brace: block.right_brace.into_token(),
-        };
-
-        Ok(ir_block)
-    }
-
-    fn flush_comments_to_items(
-        &self,
-        comments: &mut Vec<&'cx ast::Comment<'cx>>,
-        ir_items: &mut Vec<ir::ScopeItem<'cx>>,
-    ) -> Result<()> {
-        if !comments.is_empty() {
-            let merged_comment = self.merge_comments(comments)?;
-            let comment_row = ir::Row {
-                breaks: None,
-                statement: None,
-                comment: Some(merged_comment),
-            };
-            ir_items.push(ir::ScopeItem::Row(comment_row));
-            comments.clear();
-        }
-        Ok(())
-    }
-
-    fn merge_comments(&self, comments: &[&'cx ast::Comment<'cx>]) -> Result<ir::Comment<'cx>> {
-        lower::merge_comments(self.ir_cx, comments)
-    }
-
-    fn typeck_statement(
-        &mut self,
-        env: &mut Environment<'cx, '_>,
-        subst: &mut Substitution<'cx>,
-        stmt: &ast::Statement<'cx>,
-    ) -> Result<ir::Statement<'cx>> {
-        match stmt {
-            ast::Statement::Let(let_stmt) => {
-                let ir_rhs = self.typeck_expr(env, subst, &let_stmt.rhs)?;
-
-                // Bind the variable to the environment with the inferred type
-                let var_name = let_stmt.variable.raw;
-                let var_identifier_id = self.typing_cx.alloc_identifier(var_name);
-                env.bind(var_name, var_identifier_id, ir_rhs.ty);
-
-                Ok(ir::Statement::Let(ir::Let {
-                    let_token: let_stmt.let_token.into_token(),
-                    variable: self.resolve_ident(let_stmt.variable)?,
-                    eq: let_stmt.eq.into_token(),
-                    rhs: ir_rhs,
-                    semi: let_stmt.semi.into_token(),
-                }))
-            }
-            ast::Statement::Expr(expr_stmt) => {
-                let ir_expr = self.typeck_expr(env, subst, &expr_stmt.expr)?;
-
-                Ok(ir::Statement::Expr(ir::ExprStatement {
-                    expr: ir_expr,
-                    semi: expr_stmt.semi.into_token(),
-                }))
-            }
-            ast::Statement::Return(ret_stmt) => Ok(ir::Statement::Return(ret_stmt.into_token())),
         }
     }
 
