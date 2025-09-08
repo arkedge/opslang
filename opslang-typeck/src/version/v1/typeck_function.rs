@@ -5,7 +5,7 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         global_env: &Environment<'cx, '_>,
         func_def: &'cx ast::FunctionDef<'cx>,
-    ) -> Result<ast::FunctionDef<'cx, IrTypeFamily>> {
+    ) -> Result<ir::FunctionDef<'cx>> {
         let func_name = func_def.name;
 
         // Retrieve the already resolved function type from the environment
@@ -28,7 +28,7 @@ impl<'cx> TypeChecker<'cx> {
             let param_identifier_id = self.typing_cx.alloc_identifier(param_name);
             func_env.bind(param_name, param_identifier_id, *param_type);
 
-            let ir_param = ast::Parameter {
+            let ir_param = ir::Parameter {
                 name: param_identifier_id,
                 colon: param.colon.into_token(),
                 ty: self.resolve_type_from_path(param.ty)?,
@@ -44,7 +44,7 @@ impl<'cx> TypeChecker<'cx> {
         let mut visitor = SubstitutionVisitor::new(subst, self.typing_cx);
         visitor.visit_mut(&mut ir_body);
 
-        Ok(ast::FunctionDef {
+        Ok(ir::FunctionDef {
             prc_token: func_def.prc_token.into_token(),
             name: self.resolve_ident(func_def.name)?,
             left_paren: func_def.left_paren.into_token(),

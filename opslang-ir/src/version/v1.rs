@@ -41,79 +41,11 @@ location information and tooling support.
 use chrono::Utc;
 use opslang_ast::{
     token::{IntoPosition, IntoSpan},
-    v1::{self as syn, TypeFamily as AstTypeFamily},
+    v1::{self as ast, TypeFamily as AstTypeFamily},
 };
 use opslang_ty::version::v1::{Ident, Ty, TypingContext};
 use opslang_visitor_macro::Visit;
 use std::convert::Infallible;
-
-pub trait Typed<'cx> {
-    type Ty;
-    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty;
-}
-
-impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Block<'cx, F> {
-    type Ty = Option<Ty<'cx>>;
-    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        None
-    }
-}
-
-impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Scope<'cx, F> {
-    type Ty = Option<Ty<'cx>>;
-    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        // FIXME: the last item type
-        None
-    }
-}
-
-impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::ScopeItem<'cx, F> {
-    type Ty = Option<Ty<'cx>>;
-    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        // FIXME: Block can have types
-        None
-    }
-}
-
-impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Statement<'cx, F> {
-    type Ty = Ty<'cx>;
-    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        match self {
-            syn::Statement::Let(let_stmt) => let_stmt.ty(cx),
-            syn::Statement::Expr(expr_stmt) => expr_stmt.ty(cx),
-            syn::Statement::Return(_) => Ty::mk_unit(cx),
-        }
-    }
-}
-
-impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::Let<'cx, F> {
-    type Ty = Ty<'cx>;
-    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        Ty::mk_unit(cx)
-    }
-}
-
-impl<'cx, F: syn::TypeFamily<'cx>> Typed<'cx> for syn::ExprStatement<'cx, F> {
-    type Ty = Ty<'cx>;
-    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        Ty::mk_unit(cx)
-    }
-}
-
-impl<'cx> Typed<'cx> for Expr<'cx> {
-    type Ty = Ty<'cx>;
-    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        self.ty
-    }
-}
-
-impl<'cx> Typed<'cx> for Scope<'cx> {
-    type Ty = Option<Ty<'cx>>;
-    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
-        // FIXME: the last item type
-        None
-    }
-}
 
 pub mod context;
 pub use context::Context;
@@ -129,14 +61,14 @@ pub struct IrTypeFamily;
 
 impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
     opslang_ast_macro::v1_default_type_subst! {
-        Span = Option<syn::Span>,
-        Position = Option<syn::Position>,
+        Span = Option<ast::Span>,
+        Position = Option<ast::Position>,
 
         // Core structural types
         Comment = Comment<'cx>,
         ToplevelItem = Definition<'cx>,
-        Row = syn::Row<'cx, Self>,
-        Block = syn::Block<'cx, Self>,
+        Row = ast::Row<'cx, Self>,
+        Block = ast::Block<'cx, Self>,
         Scope = Scope<'cx>,
 
         // Resolved name types
@@ -167,13 +99,58 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
     }
 }
 
-impl<'cx> IntoSpan<'cx, IrTypeFamily> for syn::Span {
+macro_rules! re_export {
+    ($(pub type $ty:ident<'cx>;)*) => {
+        $(
+            pub type $ty<'cx> = ast::$ty<'cx, IrTypeFamily>;
+        )*
+    };
+}
+
+re_export! {
+    pub type Program<'cx>;
+
+    pub type ToplevelItem<'cx>;
+    pub type DefinitionKind<'cx>;
+
+    pub type FunctionDef<'cx>;
+    pub type Parameter<'cx>;
+    pub type ConstantDef<'cx>;
+
+    pub type ScopeItem<'cx>;
+
+    pub type Row<'cx>;
+    pub type Statement<'cx>;
+    pub type Block<'cx>;
+    pub type ReturnStmt<'cx>;
+
+    pub type ExprKind<'cx>;
+    pub type ExprMut<'cx>;
+    pub type Qualif<'cx>;
+    pub type ModifierParam<'cx>;
+    pub type Modifier<'cx>;
+    pub type DefaultModifier<'cx>;
+    pub type Let<'cx>;
+    pub type ExprStatement<'cx>;
+
+    pub type Literal<'cx>;
+    pub type Array<'cx>;
+
+    pub type Unary<'cx>;
+    pub type Binary<'cx>;
+    pub type Compare<'cx>;
+    pub type Set<'cx>;
+    pub type InfixImport<'cx>;
+    pub type If<'cx>;
+}
+
+impl<'cx> IntoSpan<'cx, IrTypeFamily> for ast::Span {
     fn into_span(self) -> <IrTypeFamily as AstTypeFamily<'cx>>::Span {
         Some(self)
     }
 }
 
-impl<'cx> IntoPosition<'cx, IrTypeFamily> for syn::Position {
+impl<'cx> IntoPosition<'cx, IrTypeFamily> for ast::Position {
     fn into_position(self) -> <IrTypeFamily as AstTypeFamily<'cx>>::Position {
         Some(self)
     }
@@ -190,9 +167,9 @@ pub struct Comment<'cx> {
     /// The combined content of all adjacent comments in the block.
     pub content: &'cx str,
     /// The span covering all merged comments.
-    pub span: syn::Span,
+    pub span: ast::Span,
     /// References to the original AST comments that were merged.
-    pub source_comments: &'cx [&'cx syn::Comment<'cx>],
+    pub source_comments: &'cx [&'cx ast::Comment<'cx>],
 }
 
 /// A top-level definition in the IR.
@@ -207,14 +184,14 @@ pub struct Definition<'cx> {
     /// Comment appearing after this definition on the same line.
     pub comment_trailing: Option<Comment<'cx>>,
     /// The actual definition content.
-    pub kind: syn::DefinitionKind<'cx, IrTypeFamily>,
+    pub kind: ast::DefinitionKind<'cx, IrTypeFamily>,
 }
 
 #[derive(Debug, PartialEq, Visit)]
 /// A sequence of statements in the IR with mutable data storage.
 pub struct Scope<'cx> {
     /// The statements in this scope, stored as a vector for mutability.
-    pub items: Vec<syn::ScopeItem<'cx, IrTypeFamily>>,
+    pub items: Vec<ast::ScopeItem<'cx, IrTypeFamily>>,
 }
 
 #[derive(Debug, Clone, Copy, Visit)]
@@ -223,7 +200,7 @@ pub struct ResolvedPath<'cx> {
     /// The resolved item - either a module item or local variable.
     pub item: ResolvedItem<'cx>,
     /// The original path that was resolved.
-    pub original_path: &'cx syn::Path<'cx>,
+    pub original_path: &'cx ast::Path<'cx>,
 }
 
 #[derive(Debug, Clone, Copy, Visit)]
@@ -258,13 +235,13 @@ impl<'cx> PartialEq for ResolvedPath<'cx> {
 /// type information from the type inference process.
 pub struct Expr<'cx> {
     /// The expression kind/content.
-    pub kind: syn::ExprMut<'cx, IrTypeFamily>,
+    pub kind: ast::ExprMut<'cx, IrTypeFamily>,
     /// The inferred type of this expression.
     pub ty: Ty<'cx>,
 }
 
 impl<'cx> Expr<'cx> {
-    pub fn new(kind: syn::ExprMut<'cx, IrTypeFamily>, ty: Ty<'cx>) -> Self {
+    pub fn new(kind: ast::ExprMut<'cx, IrTypeFamily>, ty: Ty<'cx>) -> Self {
         Self { kind, ty }
     }
 }
@@ -276,7 +253,7 @@ pub struct String<'cx> {
     /// The parsed string value (escape sequences processed).
     pub value: &'cx str,
     /// Reference to the original AST string.
-    pub syn: &'cx syn::literal::String<'cx>,
+    pub ast: &'cx ast::literal::String<'cx>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -286,7 +263,7 @@ pub struct Bytes<'cx> {
     /// The parsed byte array.
     pub value: &'cx [u8],
     /// Reference to the original AST bytes literal.
-    pub syn: &'cx syn::literal::Bytes<'cx>,
+    pub ast: &'cx ast::literal::Bytes<'cx>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -296,7 +273,7 @@ pub struct HexBytes<'cx> {
     /// The parsed byte array from hex representation.
     pub value: &'cx [u8],
     /// Reference to the original AST hex bytes literal.
-    pub syn: &'cx syn::literal::HexBytes<'cx>,
+    pub ast: &'cx ast::literal::HexBytes<'cx>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -306,7 +283,7 @@ pub struct DateTime<'cx> {
     /// The parsed datetime value.
     pub value: chrono::DateTime<Utc>,
     /// Reference to the original AST datetime literal.
-    pub syn: &'cx syn::literal::DateTime<'cx>,
+    pub ast: &'cx ast::literal::DateTime<'cx>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -315,7 +292,7 @@ pub struct Numeric<'cx> {
     /// The value.
     pub kind: NumericKind<'cx>,
     /// Reference to the original AST numeric literal.
-    pub syn: &'cx syn::literal::Numeric<'cx>,
+    pub ast: &'cx ast::literal::Numeric<'cx>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
@@ -347,7 +324,75 @@ pub struct Apply<'cx> {
     /// The function arguments.
     pub args: Vec<Expr<'cx>>,
     /// Qualifications applied to this call (resolved from AST Qualif/PreQualified).
-    pub qualifications: Vec<syn::Qualif<'cx, IrTypeFamily>>,
+    pub qualifications: Vec<ast::Qualif<'cx, IrTypeFamily>>,
     /// The resolved function definition.
     pub resolved_function: Option<ResolvedPath<'cx>>,
+}
+
+pub trait Typed<'cx> {
+    type Ty;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty;
+}
+
+impl<'cx, F: ast::TypeFamily<'cx>> Typed<'cx> for ast::Block<'cx, F> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        None
+    }
+}
+
+impl<'cx, F: ast::TypeFamily<'cx>> Typed<'cx> for ast::Scope<'cx, F> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        // FIXME: the last item type
+        None
+    }
+}
+
+impl<'cx, F: ast::TypeFamily<'cx>> Typed<'cx> for ast::ScopeItem<'cx, F> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        // FIXME: Block can have types
+        None
+    }
+}
+
+impl<'cx, F: ast::TypeFamily<'cx>> Typed<'cx> for ast::Statement<'cx, F> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        match self {
+            ast::Statement::Let(let_stmt) => let_stmt.ty(cx),
+            ast::Statement::Expr(expr_stmt) => expr_stmt.ty(cx),
+            ast::Statement::Return(_) => Ty::mk_unit(cx),
+        }
+    }
+}
+
+impl<'cx, F: ast::TypeFamily<'cx>> Typed<'cx> for ast::Let<'cx, F> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        Ty::mk_unit(cx)
+    }
+}
+
+impl<'cx, F: ast::TypeFamily<'cx>> Typed<'cx> for ast::ExprStatement<'cx, F> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        Ty::mk_unit(cx)
+    }
+}
+
+impl<'cx> Typed<'cx> for Expr<'cx> {
+    type Ty = Ty<'cx>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        self.ty
+    }
+}
+
+impl<'cx> Typed<'cx> for Scope<'cx> {
+    type Ty = Option<Ty<'cx>>;
+    fn ty(&self, _cx: &'cx TypingContext<'cx>) -> Self::Ty {
+        // FIXME: the last item type
+        None
+    }
 }

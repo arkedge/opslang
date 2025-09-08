@@ -31,7 +31,7 @@ impl<'cx> TypeChecker<'cx> {
                     };
 
                     let ir_expr =
-                        ir::Expr::new(ast::ExprMut::variable(self.ir_cx, resolved_path), type_ref);
+                        ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), type_ref);
                     return Ok(ir_expr);
                 }
 
@@ -43,7 +43,7 @@ impl<'cx> TypeChecker<'cx> {
                     && let ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. } = item
                 {
                     let ir_expr =
-                        ir::Expr::new(ast::ExprMut::variable(self.ir_cx, resolved_path), *ty);
+                        ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), *ty);
                     Ok(ir_expr)
                 } else {
                     Err(anyhow!("unbound variable: {path}"))
@@ -66,7 +66,7 @@ impl<'cx> TypeChecker<'cx> {
                                 // Create IR binary expression
                                 let ty = lhs_ir.ty;
                                 let ir_expr = ir::Expr::new(
-                                    ast::ExprMut::binary(
+                                    ir::ExprMut::binary(
                                         self.ir_cx,
                                         lhs_ir,
                                         binary.op.into_token(),
@@ -89,7 +89,7 @@ impl<'cx> TypeChecker<'cx> {
                                 // Create IR binary expression
                                 let ty = lhs_ir.ty;
                                 let ir_expr = ir::Expr::new(
-                                    ast::ExprMut::binary(
+                                    ir::ExprMut::binary(
                                         self.ir_cx,
                                         lhs_ir,
                                         binary.op.into_token(),
@@ -114,12 +114,7 @@ impl<'cx> TypeChecker<'cx> {
 
                         // Create IR binary expression
                         let ir_expr = ir::Expr::new(
-                            ast::ExprMut::binary(
-                                self.ir_cx,
-                                lhs_ir,
-                                binary.op.into_token(),
-                                rhs_ir,
-                            ),
+                            ir::ExprMut::binary(self.ir_cx, lhs_ir, binary.op.into_token(), rhs_ir),
                             bool_type,
                         );
                         Ok(ir_expr)
@@ -138,7 +133,7 @@ impl<'cx> TypeChecker<'cx> {
 
                                 // Create IR binary expression
                                 let ir_expr = ir::Expr::new(
-                                    ast::ExprMut::binary(
+                                    ir::ExprMut::binary(
                                         self.ir_cx,
                                         lhs_ir,
                                         binary.op.into_token(),
@@ -175,7 +170,7 @@ impl<'cx> TypeChecker<'cx> {
                         // Create IR unary expression
                         let ty = expr_ir.ty;
                         let ir_result = ir::Expr::new(
-                            ast::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
+                            ir::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             ty,
                         );
                         Ok(ir_result)
@@ -188,7 +183,7 @@ impl<'cx> TypeChecker<'cx> {
                         // Create IR unary expression - result type is the same for now
                         let ty = expr_ir.ty;
                         let ir_result = ir::Expr::new(
-                            ast::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
+                            ir::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             ty,
                         );
                         Ok(ir_result)
@@ -200,7 +195,7 @@ impl<'cx> TypeChecker<'cx> {
                         // Create IR unary expression - result type is the same for now
                         let ty = expr_ir.ty;
                         let ir_result = ir::Expr::new(
-                            ast::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
+                            ir::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             ty,
                         );
                         Ok(ir_result)
@@ -235,7 +230,7 @@ impl<'cx> TypeChecker<'cx> {
 
                     // Create IR if-else expression
                     let ir_expr = ir::Expr::new(
-                        ast::ExprMut::if_then_else(
+                        ir::ExprMut::if_then_else(
                             self.ir_cx,
                             if_expr.if_kw.into_token(),
                             cond_ir,
@@ -257,7 +252,7 @@ impl<'cx> TypeChecker<'cx> {
 
                     // Create IR if expression (without else)
                     let ir_expr = ir::Expr::new(
-                        ast::ExprMut::if_then(
+                        ir::ExprMut::if_then(
                             self.ir_cx,
                             if_expr.if_kw.into_token(),
                             cond_ir,
@@ -306,7 +301,7 @@ impl<'cx> TypeChecker<'cx> {
                 // Create IR Compare expression - result is always bool
                 let bool_type = Ty::mk_bool(self.typing_cx);
                 let ir_expr = ir::Expr::new(
-                    ast::ExprMut::compare(self.ir_cx, head_ir, ir_tail),
+                    ir::ExprMut::compare(self.ir_cx, head_ir, ir_tail),
                     bool_type,
                 );
                 Ok(ir_expr)
@@ -323,7 +318,7 @@ impl<'cx> TypeChecker<'cx> {
                 // Create IR Set expression - result is unit type
                 let unit_type = Ty::mk_unit(self.typing_cx);
                 let ir_expr = ir::Expr::new(
-                    ast::ExprMut::set(self.ir_cx, lhs_ir, set.colon_eq.into_token(), rhs_ir),
+                    ir::ExprMut::set(self.ir_cx, lhs_ir, set.colon_eq.into_token(), rhs_ir),
                     unit_type,
                 );
                 Ok(ir_expr)
@@ -352,7 +347,7 @@ impl<'cx> TypeChecker<'cx> {
 
                 // Create IR InfixImport expression
                 let ir_expr = ir::Expr::new(
-                    ast::ExprMut::import(
+                    ir::ExprMut::import(
                         self.ir_cx,
                         file_ir,
                         question.into_token(),

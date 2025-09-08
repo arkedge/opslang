@@ -48,7 +48,7 @@ impl<'cx> TypeChecker<'cx> {
             qualifications,
             resolved_function: None, // FIXME
         };
-        let ir_expr_kind = ast::ExprKind::Apply(ir_apply);
+        let ir_expr_kind = ir::ExprKind::Apply(ir_apply);
         let ir_expr = self.ir_cx.alloc_expr_with_type(ir_expr_kind, return_type);
         Ok(ir_expr)
     }
@@ -58,13 +58,13 @@ impl<'cx> TypeChecker<'cx> {
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         qualif: &'cx ast::Qualif<'cx>,
-    ) -> Result<ast::Qualif<'cx, IrTypeFamily>> {
+    ) -> Result<ir::Qualif<'cx>> {
         match qualif {
             ast::Qualif::Modifier(modifier) => {
                 let ir_path = self.resolve_path(&modifier.id)?.resolved_path;
                 let ir_param = if let Some(param) = &modifier.arg {
                     let param_ir = self.typeck_expr(env, subst, &param.value)?;
-                    Some(ast::ModifierParam {
+                    Some(ir::ModifierParam {
                         colon_token: param.colon_token.into_token(),
                         value: param_ir,
                     })
@@ -72,7 +72,7 @@ impl<'cx> TypeChecker<'cx> {
                     None
                 };
 
-                Ok(ast::Qualif::Modifier(ast::Modifier {
+                Ok(ir::Qualif::Modifier(ir::Modifier {
                     at_token: modifier.at_token.into_token(),
                     id: ir_path,
                     arg: ir_param,
@@ -80,7 +80,7 @@ impl<'cx> TypeChecker<'cx> {
             }
             ast::Qualif::DefaultModifier(default_modifier) => {
                 let ir_path = self.resolve_path(&default_modifier.value)?.resolved_path;
-                Ok(ast::Qualif::DefaultModifier(ast::DefaultModifier {
+                Ok(ir::Qualif::DefaultModifier(ir::DefaultModifier {
                     tilde_token: default_modifier.tilde_token.into_token(),
                     value: ir_path,
                 }))

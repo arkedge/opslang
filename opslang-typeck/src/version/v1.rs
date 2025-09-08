@@ -4,7 +4,7 @@ use opslang_ast::v1::token::IntoToken;
 use opslang_ast::v1::{self as ast};
 use opslang_ir::version::v1::{self as ir};
 
-use ir::{IrTypeFamily, Typed};
+use ir::Typed;
 use opslang_ty::version::v1::{
     FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, Ty, TyKind, TyVid,
     TypingContext,
@@ -166,10 +166,7 @@ impl<'cx> TypeChecker<'cx> {
     /// This is the main entry point for type checking and IR generation.
     /// It processes all top-level definitions, performs type inference,
     /// and converts the AST to a typed IR representation.
-    pub fn typeck(
-        &mut self,
-        program: &ast::Program<'cx>,
-    ) -> Result<ast::Program<'cx, IrTypeFamily>> {
+    pub fn typeck(&mut self, program: &ast::Program<'cx>) -> Result<ir::Program<'cx>> {
         // Create global environment for top-level definitions
         let mut global_env = Environment::<'cx, '_>::new();
 
@@ -214,11 +211,11 @@ impl<'cx> TypeChecker<'cx> {
                 let ir_kind = match kind {
                     ast::DefinitionKind::Function(func_def) => {
                         let ir_func = self.typeck_function(&global_env, func_def)?;
-                        ast::DefinitionKind::Function(ir_func)
+                        ir::DefinitionKind::Function(ir_func)
                     }
                     ast::DefinitionKind::Constant(const_def) => {
                         let ir_const = self.typeck_constant(&global_env, const_def)?;
-                        ast::DefinitionKind::Constant(ir_const)
+                        ir::DefinitionKind::Constant(ir_const)
                     }
                 };
 
@@ -233,7 +230,7 @@ impl<'cx> TypeChecker<'cx> {
             }
         }
 
-        Ok(ast::Program {
+        Ok(ir::Program {
             toplevel_items: self.ir_cx.alloc_definition_slice(ir_definitions),
         })
     }
@@ -301,7 +298,7 @@ impl<'cx> TypeChecker<'cx> {
 /// Result of [`TypeChecker::typeck_row`] - either a comment to be merged or a regular scope item
 enum RowProcessResult<'cx> {
     Comment(&'cx ast::Comment<'cx>),
-    ScopeItem(ast::ScopeItem<'cx, IrTypeFamily>),
+    ScopeItem(ir::ScopeItem<'cx>),
 }
 
 impl<'cx> TypeChecker<'cx> {
@@ -333,13 +330,13 @@ impl<'cx> TypeChecker<'cx> {
             source_comments: self.ir_cx.alloc_ast_comment_slice(&[comment]),
         });
 
-        let ir_row = ast::Row {
+        let ir_row = ir::Row {
             breaks: row.breaks.map(|b| b.into_token()),
             statement: ir_content,
             comment: ir_comment,
         };
 
-        Ok(RowProcessResult::ScopeItem(ast::ScopeItem::Row(ir_row)))
+        Ok(RowProcessResult::ScopeItem(ir::ScopeItem::Row(ir_row)))
     }
 
     fn typeck_block(
@@ -347,9 +344,9 @@ impl<'cx> TypeChecker<'cx> {
         env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         block: &ast::Block<'cx>,
-    ) -> Result<ast::Block<'cx, IrTypeFamily>> {
+    ) -> Result<ir::Block<'cx>> {
         let mut local_env = env.extend_inherit();
-        let mut ir_items: Vec<ast::ScopeItem<'cx, IrTypeFamily>> = Vec::new();
+        let mut ir_items: Vec<ir::ScopeItem<'cx>> = Vec::new();
         let mut pending_comments: Vec<&'cx ast::Comment<'cx>> = Vec::new();
 
         for item in block.scope.items {
@@ -370,7 +367,7 @@ impl<'cx> TypeChecker<'cx> {
                     // Flush any pending comments before adding the block
                     self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
                     let ir_block = self.typeck_block(&local_env, subst, nested_block)?;
-                    ir_items.push(ast::ScopeItem::Block(ir_block));
+                    ir_items.push(ir::ScopeItem::Block(ir_block));
                 }
             }
         }
@@ -380,7 +377,7 @@ impl<'cx> TypeChecker<'cx> {
 
         let ir_scope = ir::Scope { items: ir_items };
 
-        let ir_block = ast::Block {
+        let ir_block = ir::Block {
             left_brace: block.left_brace.into_token(),
             scope: ir_scope,
             right_brace: block.right_brace.into_token(),
@@ -392,16 +389,16 @@ impl<'cx> TypeChecker<'cx> {
     fn flush_comments_to_items(
         &self,
         comments: &mut Vec<&'cx ast::Comment<'cx>>,
-        ir_items: &mut Vec<ast::ScopeItem<'cx, IrTypeFamily>>,
+        ir_items: &mut Vec<ir::ScopeItem<'cx>>,
     ) -> Result<()> {
         if !comments.is_empty() {
             let merged_comment = self.merge_comments(comments)?;
-            let comment_row = ast::Row {
+            let comment_row = ir::Row {
                 breaks: None,
                 statement: None,
                 comment: Some(merged_comment),
             };
-            ir_items.push(ast::ScopeItem::Row(comment_row));
+            ir_items.push(ir::ScopeItem::Row(comment_row));
             comments.clear();
         }
         Ok(())
@@ -416,7 +413,7 @@ impl<'cx> TypeChecker<'cx> {
         env: &mut Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         stmt: &ast::Statement<'cx>,
-    ) -> Result<ast::Statement<'cx, IrTypeFamily>> {
+    ) -> Result<ir::Statement<'cx>> {
         match stmt {
             ast::Statement::Let(let_stmt) => {
                 let ir_rhs = self.typeck_expr(env, subst, &let_stmt.rhs)?;
@@ -426,7 +423,7 @@ impl<'cx> TypeChecker<'cx> {
                 let var_identifier_id = self.typing_cx.alloc_identifier(var_name);
                 env.bind(var_name, var_identifier_id, ir_rhs.ty);
 
-                Ok(ast::Statement::Let(ast::Let {
+                Ok(ir::Statement::Let(ir::Let {
                     let_token: let_stmt.let_token.into_token(),
                     variable: self.resolve_ident(let_stmt.variable)?,
                     eq: let_stmt.eq.into_token(),
@@ -437,12 +434,12 @@ impl<'cx> TypeChecker<'cx> {
             ast::Statement::Expr(expr_stmt) => {
                 let ir_expr = self.typeck_expr(env, subst, &expr_stmt.expr)?;
 
-                Ok(ast::Statement::Expr(ast::ExprStatement {
+                Ok(ir::Statement::Expr(ir::ExprStatement {
                     expr: ir_expr,
                     semi: expr_stmt.semi.into_token(),
                 }))
             }
-            ast::Statement::Return(ret_stmt) => Ok(ast::Statement::Return(ret_stmt.into_token())),
+            ast::Statement::Return(ret_stmt) => Ok(ir::Statement::Return(ret_stmt.into_token())),
         }
     }
 
