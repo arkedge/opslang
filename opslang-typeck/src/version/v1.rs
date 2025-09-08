@@ -139,8 +139,8 @@ opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx, '_> {
         let kind = ty.kind();
         match kind {
             TyKind::Infer(InferTy::IntVar(int_vid)) => {
-                // Resolve integer type variables to i32 by default in Rust
-                self.subst.resolve_int(*int_vid, IntTy::I32);
+                // Resolve integer type variables to i32 by default
+                self.subst.resolve_int(*int_vid, IntTy::I64);
             }
             TyKind::Infer(InferTy::FloatVar(float_vid)) => {
                 // Resolve float type variables to f64 by default in Rust
