@@ -459,3 +459,26 @@ prc main() {
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
 }
+
+#[test]
+fn test_as_cast() {
+    let source = r#"#! lang=v1
+prc main() {
+    let int_64 = 42;
+    let int_32 = int_64 as i32;
+    let float_64 = int_32 as f64;
+    let bool_val = 1 as bool;
+    return;
+}
+"#;
+
+    let ast_context = AstContext::new();
+    let typing_context = TypingContext::new();
+    let ir_context = IrContext::new();
+
+    let program = parse_source(source, &ast_context).expect("Failed to parse source");
+    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let result = checker.typeck(&program);
+
+    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+}

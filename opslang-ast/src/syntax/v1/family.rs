@@ -150,6 +150,8 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Assignment/set operations using the `:=` operator.
         type Set;
 
+        type Cast;
+
         /// Infix import operations that import from a file using the `file?path` syntax.
         type InfixImport;
 

@@ -98,6 +98,7 @@ const DEFAULT_TYPES: &[(&str, &str)] = define_default_types! {
     type BinOp = syn::BinOp<'cx, Self>;
     type Compare = syn::Compare<'cx, Self>;
     type Set = syn::Set<'cx, Self>;
+    type Cast = syn::Cast<'cx, Self>;
     type InfixImport = syn::InfixImport<'cx, Self>;
     type If = syn::If<'cx, Self>;
     type Select = syn::Select<'cx, Self>;

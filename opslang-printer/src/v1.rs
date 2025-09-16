@@ -74,6 +74,7 @@ define_trait_alias!(
         BinOp = BinOp<'cx, Self>,
         Compare = Compare<'cx, Self>,
         Set = Set<'cx, Self>,
+        Cast = Cast<'cx, Self>,
         InfixImport = InfixImport<'cx, Self>,
         If = If<'cx, Self>,
         Select = Select<'cx, Self>,
@@ -374,6 +375,7 @@ where
             ExprKind::Binary(binary) => PrettyPrint::<S>::pretty_print(binary, writer, options),
             ExprKind::Apply(apply) => PrettyPrint::<S>::pretty_print(apply, writer, options),
             ExprKind::Set(set) => PrettyPrint::<S>::pretty_print(set, writer, options),
+            ExprKind::Cast(cast) => PrettyPrint::<S>::pretty_print(cast, writer, options),
             ExprKind::InfixImport(import) => {
                 PrettyPrint::<S>::pretty_print(import, writer, options)
             }
@@ -634,6 +636,19 @@ where
         Token.write(self.colon_eq, writer)?;
         writer.write_str(" ")?;
         Precedence::SET.write_with_parens(self.rhs.0, writer, options)
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Cast<'cx, F>
+where
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        Precedence::CAST.write_with_parens(self.expr.0, writer, options)?;
+        writer.write_str(" ")?;
+        Token.write(self.as_kw, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(&self.ty, writer, options)
     }
 }
 

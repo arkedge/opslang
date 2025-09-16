@@ -498,13 +498,13 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FactorExpr<'_> {
 
     fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
         if self.factor_expr_list.is_empty() {
-            self.prefix_expr.process_token(cx)
+            self.cast_expr.process_token(cx)
         } else {
             self.factor_expr_list
                 .iter()
-                .rfold(self.prefix_expr.process_token(cx), |acc, expr| {
+                .rfold(self.cast_expr.process_token(cx), |acc, expr| {
                     cx.alloc_expr(syn::ExprKind::Binary(syn::Binary {
-                        lhs: expr.prefix_expr.process_token(cx),
+                        lhs: expr.cast_expr.process_token(cx),
                         op: expr.factor_op.process_token(cx),
                         rhs: acc,
                     }))
@@ -523,6 +523,22 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::FactorOp<'_> {
             grammar_trait::FactorOp::Percent(token) => {
                 syn::BinOp::Mod(Token![%](token.percent.wrap()))
             }
+        }
+    }
+}
+
+impl<'cx> ProcessToken<'cx> for grammar_trait::CastExpr<'_> {
+    type Output = syn::Expr<'cx>;
+
+    fn process_token(&self, cx: &'cx Context<'cx>) -> Self::Output {
+        if let Some(grammar_trait::CastExprOpt { r#as, path }) = &self.cast_expr_opt {
+            cx.alloc_expr(syn::ExprKind::Cast(syn::Cast {
+                expr: self.prefix_expr.process_token(cx),
+                as_kw: Token![as](r#as.wrap()),
+                ty: path.process_token(cx),
+            }))
+        } else {
+            self.prefix_expr.process_token(cx)
         }
     }
 }

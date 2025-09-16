@@ -16,9 +16,10 @@ impl Precedence {
     pub const SET: Self = Self(0); // :=
     const LOGICAL_OR: Self = Self(2); // ||
     const LOGICAL_AND: Self = Self(3); // &&
-    pub const COMPARE: Self = Self(5); // >=, <=, >, <, !=, /=, ==
-    const ARITHMETIC: Self = Self(6); // +, -
-    const FACTOR: Self = Self(7); // *, /, %
+    pub const COMPARE: Self = Self(4); // >=, <=, >, <, !=, /=, ==
+    const ARITHMETIC: Self = Self(5); // +, -
+    const FACTOR: Self = Self(6); // *, /, %
+    pub const CAST: Self = Self(7); // as
     const PREFIX: Self = Self(8); // unary -
     pub const APPLY: Self = Self(9); // function application
     const LOWER_PREFIX: Self = Self(10); // &, $
@@ -38,6 +39,7 @@ impl<'cx, F: PrintableFamily<'cx>> HasPrecedence for ExprKind<'cx, F> {
             ExprKind::Binary(binary) => binary.op.precedence(),
             ExprKind::Compare(_) => Precedence::COMPARE,
             ExprKind::Unary(unary) => unary.op.precedence(),
+            ExprKind::Cast(_) => Precedence::CAST,
             ExprKind::Apply(_) => Precedence::APPLY,
             ExprKind::Variable(_)
             | ExprKind::Literal(_)

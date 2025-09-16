@@ -369,9 +369,18 @@ impl<'cx> TypeChecker<'cx> {
     }
 
     /// Eagerly resolves type variables in the given type using the provided substitution.
-    fn eagerly_resolve(&self, subst: &mut Substitution<'cx>, ty: &mut Ty<'cx>) {
+    fn eagerly_resolve(&self, subst: &mut Substitution<'cx>, ty: &mut Ty<'cx>) -> Result<()> {
         // call `visit_ty_mut` to resolve type variables eagerly
         SubstitutionVisitor::new_borrowed(subst, self.tcx).visit_mut(ty);
+        self.require_resolved(*ty)
+    }
+
+    fn require_resolved(&self, ty: Ty<'cx>) -> Result<()> {
+        if ty.is_infer() {
+            Err(anyhow!("type `{ty}` must be resolved at this point"))
+        } else {
+            Ok(())
+        }
     }
 
     fn try_external_resolve(&self, path: ast::Path<'cx>) -> Option<Ty<'cx>> {

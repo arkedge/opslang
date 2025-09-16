@@ -1,8 +1,8 @@
 use super::{
-    Apply, Array, Binary, Bytes, Compare, CompareOp, DateTime, Expr, ExprKind, ExprMut, HexBytes,
-    Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric, NumericKind, NumericSuffix,
-    Parened, Path, PreQualified, Row, Select, Set, String, ToplevelItem, TypeFamily, UnOp, Unary,
-    context, token,
+    Apply, Array, Binary, Bytes, Cast, Compare, CompareOp, DateTime, Expr, ExprKind, ExprMut,
+    HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric, NumericKind,
+    NumericSuffix, Parened, Path, PreQualified, Row, Select, Set, String, ToplevelItem, TypeFamily,
+    UnOp, Unary, context, token,
 };
 
 impl<'cx, F: TypeFamily<'cx>> Default for ToplevelItem<'cx, F> {
@@ -163,6 +163,20 @@ impl_expr_and_expr_mut! {
     {
         let set = Set { lhs, colon_eq, rhs };
         Self::from_kind(ctx, ExprKind::Set(set))
+    }
+
+    #[inline]
+    pub fn cast(
+        ctx: &'cx context::Context<'cx, F>,
+        expr: F::Expr,
+        as_kw: token::As<'cx, F>,
+        ty: F::Ty,
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Cast = Cast<'cx, F>>,
+    {
+        let cast = Cast { expr, as_kw, ty };
+        Self::from_kind(ctx, ExprKind::Cast(cast))
     }
 
     #[inline]

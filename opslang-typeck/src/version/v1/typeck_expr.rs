@@ -123,6 +123,32 @@ impl<'cx> TypeChecker<'cx> {
                     }
                 }
             }
+            ast::ExprKind::Cast(cast) => {
+                let mut expr_ir = self.typeck_expr(env, subst, &cast.expr)?;
+                self.eagerly_resolve(subst, &mut expr_ir.ty)?;
+                let target_ty = self.resolve_type_from_path(cast.ty)?;
+
+                // Ensure the cast is valid (basic check)
+                let lhs_kind = expr_ir.ty.kind();
+                let rhs_kind = target_ty.kind();
+                if lhs_kind.is_bool() && rhs_kind.is_bool()
+                    || lhs_kind.is_numeric() && rhs_kind.is_numeric()
+                    || lhs_kind.is_integer() && rhs_kind.is_bool()
+                    || lhs_kind.is_bool() && rhs_kind.is_integer()
+                {
+                    // Ok
+                } else {
+                    // For other types, ensure they are compatible numeric types
+                    return Err(anyhow!("invalid cast from {} to {target_ty}", expr_ir.ty));
+                }
+
+                // Create IR cast expression
+                let ir_expr = ir::Expr::new(
+                    ir::ExprMut::cast(self.ir_cx, expr_ir, cast.as_kw.into_token(), target_ty),
+                    target_ty,
+                );
+                Ok(ir_expr)
+            }
             ast::ExprKind::Apply(apply) => self.typeck_apply(env, subst, apply, &[]),
             ast::ExprKind::If(if_expr) => {
                 let cond_ir = self.typeck_expr(env, subst, &if_expr.cond)?;
@@ -191,7 +217,7 @@ impl<'cx> TypeChecker<'cx> {
                     let body_ir = self.typeck_block(env, subst, item.body)?;
 
                     // Check that the expression is awaitable
-                    self.eagerly_resolve(subst, &mut expr_ir.ty);
+                    self.eagerly_resolve(subst, &mut expr_ir.ty)?;
                     let ty = expr_ir.ty;
                     let is_awaitable = ty.is_bool() || ty.is_duration();
                     if !is_awaitable {

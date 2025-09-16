@@ -190,6 +190,7 @@ declare_kw! {
     pub struct Return "return"
     pub struct Let "let"
     pub struct If "if"
+    pub struct As "as"
     pub struct Else "else"
     pub struct Select "select"
     pub struct Prc "prc"
@@ -211,6 +212,9 @@ macro_rules! V1Token {
     };
     (if) => {
         $crate::syntax::v1::token::If
+    };
+    (as) => {
+        $crate::syntax::v1::token::As
     };
     (else) => {
         $crate::syntax::v1::token::Else

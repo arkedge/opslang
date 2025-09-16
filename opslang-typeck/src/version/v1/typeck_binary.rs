@@ -17,32 +17,32 @@ impl<'cx> TypeChecker<'cx> {
 
         match binary.op {
             ast::BinOp::Add(span) => {
-                self.eagerly_resolve(subst, &mut lhs_ir.ty);
-                self.eagerly_resolve(subst, &mut rhs_ir.ty);
+                self.eagerly_resolve(subst, &mut lhs_ir.ty)?;
+                self.eagerly_resolve(subst, &mut rhs_ir.ty)?;
                 self.typeck_add_sub(lhs_ir, rhs_ir, |operand| ir::BinOp::Add {
                     kind: ir::BuiltinAdd::Basic(operand),
                     span: span.into_token(),
                 })
             }
             ast::BinOp::Sub(span) => {
-                self.eagerly_resolve(subst, &mut lhs_ir.ty);
-                self.eagerly_resolve(subst, &mut rhs_ir.ty);
+                self.eagerly_resolve(subst, &mut lhs_ir.ty)?;
+                self.eagerly_resolve(subst, &mut rhs_ir.ty)?;
                 self.typeck_add_sub(lhs_ir, rhs_ir, |operand| ir::BinOp::Sub {
                     kind: ir::BuiltinSub::Basic(operand),
                     span: span.into_token(),
                 })
             }
             ast::BinOp::Mul(span) => {
-                self.eagerly_resolve(subst, &mut lhs_ir.ty);
-                self.eagerly_resolve(subst, &mut rhs_ir.ty);
+                self.eagerly_resolve(subst, &mut lhs_ir.ty)?;
+                self.eagerly_resolve(subst, &mut rhs_ir.ty)?;
                 self.typeck_mul_div(lhs_ir, rhs_ir, |operand| ir::BinOp::Mul {
                     kind: ir::BuiltinMul::Basic(operand),
                     span: span.into_token(),
                 })
             }
             ast::BinOp::Div(span) => {
-                self.eagerly_resolve(subst, &mut lhs_ir.ty);
-                self.eagerly_resolve(subst, &mut rhs_ir.ty);
+                self.eagerly_resolve(subst, &mut lhs_ir.ty)?;
+                self.eagerly_resolve(subst, &mut rhs_ir.ty)?;
                 self.typeck_mul_div(lhs_ir, rhs_ir, |operand| ir::BinOp::Div {
                     kind: ir::BuiltinDiv::Basic(operand),
                     span: span.into_token(),

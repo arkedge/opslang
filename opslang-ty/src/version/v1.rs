@@ -321,6 +321,14 @@ impl<'cx> TyKind<'cx> {
     pub fn is_integer(&self) -> bool {
         matches!(self, TyKind::Int(_) | TyKind::Uint(_))
     }
+
+    /// Returns `true` if the ty kind is [`Infer`].
+    ///
+    /// [`Infer`]: TyKind::Infer
+    #[must_use]
+    pub fn is_infer(&self) -> bool {
+        matches!(self, Self::Infer(..))
+    }
 }
 
 impl<'cx> Ty<'cx> {

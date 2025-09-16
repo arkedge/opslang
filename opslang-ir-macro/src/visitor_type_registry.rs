@@ -348,6 +348,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
         type Binary;
         type BinOp;
         type Set;
+        type Cast;
         type InfixImport;
         type If;
         type IfElse;
@@ -394,6 +395,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
             type DoubleArrow;
             type Return;
             type Let;
+            type As;
             type If;
             type Else;
             type Select;

@@ -247,6 +247,7 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Binary(F::Binary),
     Apply(F::Apply),
     Set(F::Set),
+    Cast(F::Cast),
     InfixImport(F::InfixImport),
     If(F::If),
     Select(F::Select),
@@ -544,6 +545,13 @@ pub struct Set<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: F::Expr,
     pub colon_eq: token::ColonEq<'cx, F>,
     pub rhs: F::Expr,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]
+pub struct Cast<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub expr: F::Expr,
+    pub as_kw: token::As<'cx, F>,
+    pub ty: F::Ty,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]

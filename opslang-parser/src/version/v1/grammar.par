@@ -134,13 +134,18 @@ ArithmeticOp
 // `*`, `/`
 //     : lower then prefix
 FactorExpr
-    : { PrefixExpr FactorOp } PrefixExpr
+    : { CastExpr FactorOp } CastExpr
     ;
 
 FactorOp
     : '*'
     | '/'
     | '%'
+    ;
+
+// `-`: lower than application
+CastExpr
+    : PrefixExpr [ 'as' Path ]
     ;
 
 // `-`: lower than application
