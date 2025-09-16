@@ -4,6 +4,9 @@ use super::*;
 ///
 /// Unlike AST BinOp which only has token information, IR BinOp contains
 /// resolved type information for builtin operations.
+///
+/// FIXME: consider adding these variants into TypeFamily directly to avoid copying
+/// structure.
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 #[skip_all_visit]
 pub enum BinOp<'cx> {

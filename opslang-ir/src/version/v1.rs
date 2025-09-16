@@ -105,6 +105,9 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
     }
 }
 
+/// Re-export AST types with IrTypeFamily applied for convenience.
+///
+/// Use this types instead of `ast::{type}<'cx, IrTypeFamily>` for brevity and clarity.
 macro_rules! re_export {
     ($(pub type $ty:ident<'cx>;)*) => {
         $(
@@ -112,6 +115,8 @@ macro_rules! re_export {
         )*
     };
 }
+
+pub type AstContext<'cx> = ast::context::Context<'cx, IrTypeFamily>;
 
 re_export! {
     pub type Program<'cx>;
@@ -192,14 +197,14 @@ pub struct Definition<'cx> {
     /// Comment appearing after this definition on the same line.
     pub comment_trailing: Option<Comment<'cx>>,
     /// The actual definition content.
-    pub kind: ast::DefinitionKind<'cx, IrTypeFamily>,
+    pub kind: DefinitionKind<'cx>,
 }
 
 #[derive(Debug, PartialEq, Visit)]
 /// A sequence of statements in the IR with mutable data storage.
 pub struct Scope<'cx> {
     /// The statements in this scope, stored as a vector for mutability.
-    pub items: Vec<ast::ScopeItem<'cx, IrTypeFamily>>,
+    pub items: Vec<ScopeItem<'cx>>,
 }
 
 #[derive(Debug, Clone, Copy, Visit)]
@@ -246,13 +251,13 @@ impl<'cx> PartialEq for ResolvedPath<'cx> {
 /// type information from the type inference process.
 pub struct Expr<'cx> {
     /// The expression kind/content.
-    pub kind: ast::ExprMut<'cx, IrTypeFamily>,
+    pub kind: ExprMut<'cx>,
     /// The inferred type of this expression.
     pub ty: Ty<'cx>,
 }
 
 impl<'cx> Expr<'cx> {
-    pub fn new(kind: ast::ExprMut<'cx, IrTypeFamily>, ty: Ty<'cx>) -> Self {
+    pub fn new(kind: ExprMut<'cx>, ty: Ty<'cx>) -> Self {
         Self { kind, ty }
     }
 }
@@ -335,7 +340,7 @@ pub struct Apply<'cx> {
     /// The function arguments.
     pub args: Vec<Expr<'cx>>,
     /// Qualifications applied to this call (resolved from AST Qualif/PreQualified).
-    pub qualifications: Vec<ast::Qualif<'cx, IrTypeFamily>>,
+    pub qualifications: Vec<Qualif<'cx>>,
     /// The resolved function definition.
     pub resolved_function: Option<ResolvedPath<'cx>>,
 }

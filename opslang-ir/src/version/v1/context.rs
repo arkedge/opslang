@@ -1,10 +1,8 @@
 use super::ast;
 use super::{
-    Apply, Bytes, Comment, DateTime, Definition, Expr, HexBytes, IrTypeFamily, Numeric,
-    ResolvedPath, String,
+    Apply, AstContext, Block, Bytes, Comment, DateTime, Definition, Expr, ExprKind, HexBytes,
+    Numeric, ResolvedPath, Row, String,
 };
-use ast::context::Context as AstContext;
-use ast::{Block, ExprKind, Row};
 use opslang_ty::version::v1::Ty;
 use typed_arena::Arena;
 
@@ -15,7 +13,7 @@ use typed_arena::Arena;
 #[derive(Default)]
 pub struct Context<'cx> {
     /// Underlying AST context for basic allocations
-    ast_context: AstContext<'cx, IrTypeFamily>,
+    ast_context: AstContext<'cx>,
 
     /// Arena for IR-specific comment blocks
     comment_arena: Arena<Comment<'cx>>,
@@ -52,7 +50,7 @@ pub struct Context<'cx> {
 }
 
 impl<'cx> std::ops::Deref for Context<'cx> {
-    type Target = AstContext<'cx, IrTypeFamily>;
+    type Target = AstContext<'cx>;
 
     fn deref(&self) -> &Self::Target {
         &self.ast_context
@@ -69,7 +67,7 @@ impl<'cx> Context<'cx> {
     ///
     /// Note: the result of this method is not a pure ast context. To create an ast node
     /// for example, use `ast::context::Context::new()` instead.
-    pub fn ast_context(&self) -> &AstContext<'cx, IrTypeFamily> {
+    pub fn ast_context(&self) -> &AstContext<'cx> {
         &self.ast_context
     }
 
@@ -154,15 +152,12 @@ impl<'cx> Context<'cx> {
     }
 
     /// Allocates a row using the underlying AST context.
-    pub fn alloc_row(&'cx self, row: Row<'cx, IrTypeFamily>) -> &'cx Row<'cx, IrTypeFamily> {
+    pub fn alloc_row(&'cx self, row: Row<'cx>) -> &'cx Row<'cx> {
         self.ast_context.alloc_row(row)
     }
 
     /// Allocates a block using the underlying AST context.
-    pub fn alloc_block(
-        &'cx self,
-        block: Block<'cx, IrTypeFamily>,
-    ) -> &'cx Block<'cx, IrTypeFamily> {
+    pub fn alloc_block(&'cx self, block: Block<'cx>) -> &'cx Block<'cx> {
         self.ast_context.alloc_block(block)
     }
 
@@ -172,7 +167,7 @@ impl<'cx> Context<'cx> {
     /// then creates an IR expression with the provided type information.
     pub fn alloc_expr_with_type(
         &'cx self,
-        ir_expr_kind: ExprKind<'cx, IrTypeFamily>,
+        ir_expr_kind: ExprKind<'cx>,
         expected_type: Ty<'cx>,
     ) -> Expr<'cx> {
         let expr_ref = self.ast_context.alloc_expr_mut(ir_expr_kind);
