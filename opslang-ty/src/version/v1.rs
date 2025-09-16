@@ -19,7 +19,7 @@ use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
 use typed_arena::Arena;
 
 /// Signed integer types, following Rust's naming convention.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Visit)]
 #[skip_all_visit]
 pub enum IntTy {
     I8,
@@ -29,7 +29,7 @@ pub enum IntTy {
 }
 
 /// Unsigned integer types, following Rust's naming convention.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Visit)]
 #[skip_all_visit]
 pub enum UintTy {
     U8,
@@ -39,7 +39,7 @@ pub enum UintTy {
 }
 
 /// Floating point types, following Rust's naming convention.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Visit)]
 #[skip_all_visit]
 pub enum FloatTy {
     F32,
@@ -176,6 +176,19 @@ pub enum InferTy {
     FloatVar(FloatVid),
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum Integer {
+    Int(IntTy),
+    Uint(UintTy),
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum Numeric {
+    Int(IntTy),
+    Uint(UintTy),
+    Float(FloatTy),
+}
+
 /// Represents an identifier with scope information.
 ///
 /// Identifiers are used to distinguish variables and functions across different scopes,
@@ -262,6 +275,35 @@ impl<'cx> TyKind<'cx> {
     #[must_use]
     pub fn is_unit(&self) -> bool {
         matches!(self, Self::Unit)
+    }
+
+    #[must_use]
+    pub fn as_numeric(&self) -> Option<Numeric> {
+        match self {
+            TyKind::Int(int_ty) => Some(Numeric::Int(*int_ty)),
+            TyKind::Uint(uint_ty) => Some(Numeric::Uint(*uint_ty)),
+            TyKind::Float(float_ty) => Some(Numeric::Float(*float_ty)),
+            _ => None,
+        }
+    }
+
+    #[must_use]
+    pub fn is_numeric(&self) -> bool {
+        matches!(self, TyKind::Int(_) | TyKind::Uint(_) | TyKind::Float(_))
+    }
+
+    #[must_use]
+    pub fn as_integer(&self) -> Option<Integer> {
+        match self {
+            TyKind::Int(int_ty) => Some(Integer::Int(*int_ty)),
+            TyKind::Uint(uint_ty) => Some(Integer::Uint(*uint_ty)),
+            _ => None,
+        }
+    }
+
+    #[must_use]
+    pub fn is_integer(&self) -> bool {
+        matches!(self, TyKind::Int(_) | TyKind::Uint(_))
     }
 }
 

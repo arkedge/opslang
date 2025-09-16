@@ -49,78 +49,7 @@ impl<'cx> TypeChecker<'cx> {
                     Err(anyhow!("unbound variable: {path}"))
                 }
             }
-            ast::ExprKind::Binary(binary) => {
-                let lhs_ir = self.typeck_expr(env, subst, &binary.lhs)?;
-                let rhs_ir = self.typeck_expr(env, subst, &binary.rhs)?;
-
-                match binary.op {
-                    ast::BinOp::Add(_)
-                    | ast::BinOp::Sub(_)
-                    | ast::BinOp::Mul(_)
-                    | ast::BinOp::Div(_) => {
-                        self.unify(subst, lhs_ir.ty, rhs_ir.ty)?;
-                        match lhs_ir.ty.kind() {
-                            TyKind::Int(_) | TyKind::Uint(_) | TyKind::Float(_) => {
-                                // Apply final substitution to operands
-
-                                // Create IR binary expression
-                                let ty = lhs_ir.ty;
-                                let ir_expr = ir::Expr::new(
-                                    ir::ExprMut::binary(
-                                        self.ir_cx,
-                                        lhs_ir,
-                                        binary.op.into_token(),
-                                        rhs_ir,
-                                    ),
-                                    ty,
-                                );
-                                Ok(ir_expr)
-                            }
-                            _ => Err(anyhow!(
-                                "arithmetic operation requires numeric type, got {}",
-                                lhs_ir.ty
-                            )),
-                        }
-                    }
-                    ast::BinOp::Mod(_) => {
-                        self.unify(subst, lhs_ir.ty, rhs_ir.ty)?;
-                        match lhs_ir.ty.kind() {
-                            TyKind::Int(_) | TyKind::Uint(_) => {
-                                // Create IR binary expression
-                                let ty = lhs_ir.ty;
-                                let ir_expr = ir::Expr::new(
-                                    ir::ExprMut::binary(
-                                        self.ir_cx,
-                                        lhs_ir,
-                                        binary.op.into_token(),
-                                        rhs_ir,
-                                    ),
-                                    ty,
-                                );
-                                Ok(ir_expr)
-                            }
-                            _ => Err(anyhow!(
-                                "modulo operation requires integer type, got {}",
-                                lhs_ir.ty
-                            )),
-                        }
-                    }
-                    ast::BinOp::And(_) | ast::BinOp::Or(_) => {
-                        let bool_type = Ty::mk_bool(self.tcx);
-                        self.unify(subst, lhs_ir.ty, bool_type)?;
-                        self.unify(subst, lhs_ir.ty, bool_type)?;
-
-                        // Apply final substitution to operands
-
-                        // Create IR binary expression
-                        let ir_expr = ir::Expr::new(
-                            ir::ExprMut::binary(self.ir_cx, lhs_ir, binary.op.into_token(), rhs_ir),
-                            bool_type,
-                        );
-                        Ok(ir_expr)
-                    }
-                }
-            }
+            ast::ExprKind::Binary(binary) => self.typeck_binary(env, subst, binary),
             ast::ExprKind::Unary(unary) => {
                 let expr_ir = self.typeck_expr(env, subst, &unary.expr)?;
 
@@ -298,7 +227,7 @@ impl<'cx> TypeChecker<'cx> {
                 let mut ir_tail = Vec::new();
 
                 // Type check all comparison operands - they should all have the same type
-                let mut expected_type = head_ir.ty;
+                let expected_type = head_ir.ty;
 
                 for (op, expr) in compare.tail_with_op {
                     let expr_ir = self.typeck_expr(env, subst, expr)?;
@@ -306,14 +235,8 @@ impl<'cx> TypeChecker<'cx> {
                     // Unify with expected type
                     self.unify(subst, expected_type, expr_ir.ty)?;
 
-                    // Apply final substitution to the expression
-
-                    let ty = expr_ir.ty;
                     ir_tail.push((op.into_token(), expr_ir));
-                    expected_type = ty;
                 }
-
-                // Apply final substitution to head
 
                 // Create IR Compare expression - result is always bool
                 let bool_type = Ty::mk_bool(self.tcx);
@@ -330,7 +253,6 @@ impl<'cx> TypeChecker<'cx> {
 
                 // Unify lhs and rhs types - they should be the same
                 self.unify(subst, lhs_ir.ty, rhs_ir.ty)?;
-                // Apply final substitution to operands
 
                 // Create IR Set expression - result is unit type
                 let unit_type = Ty::mk_unit(self.tcx);

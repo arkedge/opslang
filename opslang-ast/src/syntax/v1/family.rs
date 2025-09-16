@@ -135,11 +135,14 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Function application/call expressions that invoke functions with arguments.
         type Apply;
 
-        /// Unary operations including negation (-), reference (&), dereference ($), etc.
+        /// Unary operation expression.
         type Unary;
 
-        /// Binary operations including arithmetic (+, -, *, /, %), logical (&&, ||), etc.
+        /// Binary operation expression.
         type Binary;
+
+        /// Binary operations including arithmetic (+, -, *, /, %), logical (&&, ||), etc.
+        type BinOp;
 
         /// Comparison operations including equality (==, !=) and relational (<, >, <=, >=).
         type Compare;

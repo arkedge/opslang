@@ -6,8 +6,8 @@ use opslang_ir::version::v1::{self as ir};
 
 use ir::Typed;
 use opslang_ty::version::v1::{
-    FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, Ty, TyKind, TyVid,
-    TypingContext,
+    self as ty, FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, Ty, TyKind,
+    TyVid, TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -21,6 +21,7 @@ mod environment;
 use environment::Environment;
 mod lower;
 mod typeck_apply;
+mod typeck_binary;
 mod typeck_block;
 mod typeck_constant;
 mod typeck_expr;

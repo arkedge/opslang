@@ -511,7 +511,7 @@ pub enum NotEqualToken<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 pub struct Binary<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub lhs: F::Expr,
-    pub op: BinOp<'cx, F>,
+    pub op: F::BinOp,
     pub rhs: F::Expr,
 }
 

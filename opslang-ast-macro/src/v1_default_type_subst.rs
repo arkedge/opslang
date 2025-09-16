@@ -95,6 +95,7 @@ const DEFAULT_TYPES: &[(&str, &str)] = define_default_types! {
     type Apply = syn::Apply<'cx, Self>;
     type Unary = syn::Unary<'cx, Self>;
     type Binary = syn::Binary<'cx, Self>;
+    type BinOp = syn::BinOp<'cx, Self>;
     type Compare = syn::Compare<'cx, Self>;
     type Set = syn::Set<'cx, Self>;
     type InfixImport = syn::InfixImport<'cx, Self>;

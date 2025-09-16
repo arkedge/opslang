@@ -71,6 +71,7 @@ define_trait_alias!(
         Apply = Apply<'cx, Self>,
         Unary = Unary<'cx, Self>,
         Binary = Binary<'cx, Self>,
+        BinOp = BinOp<'cx, Self>,
         Compare = Compare<'cx, Self>,
         Set = Set<'cx, Self>,
         InfixImport = InfixImport<'cx, Self>,

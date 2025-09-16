@@ -1,8 +1,8 @@
 use super::{
-    Apply, Array, BinOp, Binary, Bytes, Compare, CompareOp, DateTime, Expr, ExprKind, ExprMut,
-    HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric, NumericKind,
-    NumericSuffix, Parened, Path, PreQualified, Row, Select, Set, String, ToplevelItem, TypeFamily,
-    UnOp, Unary, context, token,
+    Apply, Array, Binary, Bytes, Compare, CompareOp, DateTime, Expr, ExprKind, ExprMut, HexBytes,
+    Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric, NumericKind, NumericSuffix,
+    Parened, Path, PreQualified, Row, Select, Set, String, ToplevelItem, TypeFamily, UnOp, Unary,
+    context, token,
 };
 
 impl<'cx, F: TypeFamily<'cx>> Default for ToplevelItem<'cx, F> {
@@ -103,7 +103,7 @@ impl_expr_and_expr_mut! {
     pub fn binary(
         ctx: &'cx context::Context<'cx, F>,
         lhs: F::Expr,
-        op: BinOp<'cx, F>,
+        op: F::BinOp,
         rhs: F::Expr,
     ) -> Self
     where

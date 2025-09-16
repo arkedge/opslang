@@ -41,9 +41,9 @@ location information and tooling support.
 use chrono::Utc;
 use opslang_ast::{
     token::{IntoPosition, IntoSpan},
-    v1::{self as ast, TypeFamily as AstTypeFamily},
+    v1::{self as ast, TypeFamily as AstTypeFamily, token},
 };
-use opslang_ty::version::v1::{Ident, Ty, TypingContext};
+use opslang_ty::version::v1::{self as ty, Ident, Ty, TypingContext};
 use opslang_visitor_macro::Visit;
 use std::convert::Infallible;
 
@@ -53,6 +53,9 @@ pub mod ir_consistency_check;
 
 pub mod visit;
 pub use visit::{IrMutVisitor, IrVisitor};
+
+pub mod binop;
+pub use binop::*;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Visit)]
 #[skip_all_visit]
@@ -93,6 +96,8 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
         DateTime = DateTime<'cx>,
         Numeric = Numeric<'cx>,
         Apply = Apply<'cx>,
+
+        BinOp = BinOp<'cx>,
 
         // Parentheses are removed
         Parened = Infallible,
@@ -332,8 +337,12 @@ pub struct Apply<'cx> {
     pub resolved_function: Option<ResolvedPath<'cx>>,
 }
 
+/// Obtain the representative type of this node.
 pub trait Typed<'cx> {
+    /// The type of this node, can be optional if the node may not have a type.
     type Ty;
+
+    /// Get the type of this node.
     fn ty(&self, cx: &'cx TypingContext<'cx>) -> Self::Ty;
 }
 

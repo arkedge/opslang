@@ -470,6 +470,7 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
     }
     crate ir {
         type IrTypeFamily;
+        type BinOp<'cx>;
         type NumericKind<'cx>;
         type Expr<'cx>: ::std::vec::Vec;
     }
