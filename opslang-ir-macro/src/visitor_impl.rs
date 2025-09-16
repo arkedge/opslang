@@ -1,5 +1,5 @@
 use crate::visitor_type_registry::{IrInterTy, IrNodeTy};
-use opslang_visitor_macro_helper::{VisitorType, no_intermediate_helper};
+use opslang_visitor_macro_helper::{CallsiteTraitName, VisitorType, no_intermediate_helper};
 
 /// Generates visitor implementation for IR types.
 ///
@@ -44,7 +44,12 @@ pub fn visitor_impl(
     // Generate intermediate implementations for generic types like &[T], Option<T>, etc.
     let additional_impls = generate_intermediate_visitor_impls(&input);
 
-    let main_expanded = opslang_visitor_macro_helper::generate_visitor_impl(input, visitor_types)?;
+    let callsite_trait = CallsiteTraitName::both(
+        syn::parse_quote!(::opslang_ir::version::v1::visit::IrVisitor),
+        syn::parse_quote!(::opslang_ir::version::v1::visit::IrMutVisitor),
+    );
+    let main_expanded =
+        opslang_visitor_macro_helper::generate_visitor_impl(input, callsite_trait, visitor_types)?;
 
     Ok(quote::quote! {
         #main_expanded

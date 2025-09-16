@@ -6,6 +6,8 @@ use syn::{
     parse::{Parse, ParseStream},
 };
 
+pub mod generate_visitor_impl;
+pub use generate_visitor_impl::{CallsiteTraitName, generate_visitor_impl};
 pub mod no_intermediate_helper;
 pub mod shared_visitor_trait;
 
@@ -234,115 +236,6 @@ fn concatenate_generics<'a>(left: &'a Generics, right: &'a Generics) -> Cow<'a, 
     }
 
     Cow::Owned(combined)
-}
-
-/// Generates visitor implementation for AST types.
-pub fn generate_visitor_impl(
-    visitor_impl: VisitorImpl,
-    types: Vec<VisitorType>,
-) -> syn::Result<proc_macro2::TokenStream> {
-    let impl_type = &visitor_impl.impl_type;
-    let impl_generics = &visitor_impl.impl_generics;
-    let user_methods = &visitor_impl.methods;
-
-    // Collect user-defined methods
-    let mut user_method_map: std::collections::HashMap<String, &VisitorMethod> =
-        user_methods.iter().map(|m| (m.name.clone(), m)).collect();
-
-    // Generate Visitor implementations for each AST type
-    let mut visitor_impls = Vec::new();
-    for visitor_type in &types {
-        visitor_impls.push(generate_single_visitor_impl(
-            visitor_type,
-            impl_generics,
-            impl_type,
-            &mut user_method_map,
-        )?);
-    }
-
-    // Check for unused user methods and report errors
-    if !user_method_map.is_empty() {
-        let mut errors: VecDeque<syn::Error> = user_method_map
-            .into_iter()
-            .map(|(unused_name, unused_method)| {
-                syn::Error::new(
-                    unused_method.name_span,
-                    format!(
-                        "invalid visitor method `{unused_name}`\nfound no matching type for hook"
-                    ),
-                )
-            })
-            .collect();
-
-        // Combine all errors into a single error
-        let mut combined_error = errors.pop_front().unwrap();
-        for error in errors {
-            combined_error.combine(error);
-        }
-        return Err(combined_error);
-    }
-
-    Ok(quote! {
-        #(#visitor_impls)*
-    })
-}
-
-/// Generate a single visitor implementation for a specific AST type.
-fn generate_single_visitor_impl(
-    visitor_type: &VisitorType,
-    impl_generics: &Generics,
-    impl_type: &Type,
-    user_method_map: &mut std::collections::HashMap<String, &VisitorMethod>,
-) -> syn::Result<proc_macro2::TokenStream> {
-    let VisitorType {
-        generics,
-        path,
-        visit_method_name,
-        mode,
-    } = visitor_type;
-
-    let trait_name = mode.trait_name();
-    let method_name_str = mode.method_name();
-    let method_name_ident = syn::Ident::new(method_name_str, proc_macro2::Span::call_site());
-
-    let visit_fn = if let Some(user_method) = user_method_map.remove(visit_method_name) {
-        let attrs = &user_method.attrs;
-        let PatType { pat, ty, .. } = &user_method.param;
-        let block = &user_method.block;
-
-        // Use user-defined method with their exact parameter and type
-        quote! {
-            #(#attrs)*
-            fn #method_name_ident(&mut self, #pat: #ty) {
-                #block
-            }
-        }
-    } else {
-        match mode {
-            VisitorMode::Visit => quote! {
-                #[inline]
-                fn #method_name_ident(&mut self, node: &#path) {
-                    <#path as ::opslang_visitor::TemplateVisit<Self>>::super_visit(node, self);
-                }
-            },
-            VisitorMode::VisitMut => quote! {
-                #[inline]
-                fn #method_name_ident(&mut self, node: &mut #path) {
-                    <#path as ::opslang_visitor::TemplateVisitMut<Self>>::super_visit_mut(node, self);
-                }
-            },
-        }
-    };
-
-    // Concatenate generics properly
-    let combined_generics = concatenate_generics(impl_generics, generics);
-    let (combined_impl_generics, _, combined_where_clause) = combined_generics.split_for_impl();
-
-    Ok(quote! {
-        impl #combined_impl_generics #trait_name<#path> for #impl_type #combined_where_clause {
-            #visit_fn
-        }
-    })
 }
 
 #[cfg(test)]

@@ -1,5 +1,5 @@
 use crate::visitor_type_registry::{AstInterTy, AstNodeTy};
-use opslang_visitor_macro_helper::no_intermediate_helper;
+use opslang_visitor_macro_helper::{CallsiteTraitName, no_intermediate_helper};
 
 /// Generates visitor implementation for AST types.
 ///
@@ -36,7 +36,11 @@ pub fn visitor_impl(
     // Generate intermediate implementations for generic types like &[T], Option<T>, etc.
     let additional_impls = generate_intermediate_visitor_impls(&input);
 
-    let main_expanded = opslang_visitor_macro_helper::generate_visitor_impl(input, visitor_types)?;
+    let callsite_trait = CallsiteTraitName::visitor_only(syn::parse_quote!(
+        ::opslang_ast::syntax::v1::visit::AstVisitor
+    ));
+    let main_expanded =
+        opslang_visitor_macro_helper::generate_visitor_impl(input, callsite_trait, visitor_types)?;
 
     Ok(quote::quote! {
         #main_expanded
