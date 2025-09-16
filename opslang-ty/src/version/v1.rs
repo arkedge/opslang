@@ -18,6 +18,8 @@ use std::hash::Hash;
 use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
 use typed_arena::Arena;
 
+use opslang_ast::syntax::v1 as ast;
+
 /// Signed integer types, following Rust's naming convention.
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Visit)]
 #[skip_all_visit]
@@ -52,30 +54,44 @@ pub enum FloatTy {
 /// including primitive types, compound types, and type variables for inference.
 #[derive(Debug, Clone, PartialEq, Visit)]
 pub enum TyKind<'cx> {
-    /// Signed integer types
+    /// Signed integer types.
     Int(IntTy),
-    /// Unsigned integer types
+
+    /// Unsigned integer types.
     Uint(UintTy),
-    /// Floating point types
+
+    /// Floating point types.
     Float(FloatTy),
-    /// String type for text data
+
+    /// String type for text data.
     String,
-    /// Byte array type for binary data
+
+    /// Byte array type for binary data.
     Bytes,
-    /// Boolean type for true/false values
+
+    /// Boolean type for true/false values.
     Bool,
-    /// Duration type for time intervals
+
+    /// Duration type for time intervals.
     Duration,
-    /// Time type for specific points in time
+
+    /// Time type for specific points in time.
     Time,
-    /// Array type containing elements of a specific inner type
+
+    /// Array type containing elements of a specific inner type.
     Array { inner: Ty<'cx> },
-    /// Function type with argument types and return type
+
+    /// Function type with argument types and return type.
     Function { arg: Vec<Ty<'cx>>, ret: Ty<'cx> },
-    /// Inference variable used during type inference
+
+    /// Inference variable used during type inference.
     Infer(InferTy),
-    /// Unit type representing no meaningful value
+
+    /// Unit type representing no meaningful value.
     Unit,
+
+    /// External type identified by a string name.
+    External { path: ast::Path<'cx>, ty: Ty<'cx> },
 }
 
 /// A type reference that points to a type kind.
@@ -407,6 +423,10 @@ impl<'cx> Ty<'cx> {
     pub fn mk_unit(cx: &'cx TypingContext<'cx>) -> Self {
         Self::from_kind(cx, TyKind::Unit)
     }
+
+    pub fn mk_external(cx: &'cx TypingContext<'cx>, path: ast::Path<'cx>, ty: Ty<'cx>) -> Self {
+        Self::from_kind(cx, TyKind::External { path, ty })
+    }
 }
 
 impl Display for TyKind<'_> {
@@ -447,6 +467,7 @@ impl Display for TyKind<'_> {
                 InferTy::IntVar(var) => return write!(f, "{var}"),
                 InferTy::FloatVar(var) => return write!(f, "{var}"),
             },
+            TyKind::External { path, ty } => return write!(f, "(extern<`{path}`>: {ty})"),
         };
         write!(f, "{e}")
     }

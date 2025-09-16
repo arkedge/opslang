@@ -59,12 +59,13 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
 }
 
 /// The main type checker that performs type inference and checking.
-///
-/// The type checker maintains state for generating fresh type variables
-/// and manages module loading for resolving external types and functions.
 pub struct TypeChecker<'cx> {
-    /// Module loader for resolving external symbols
+    /// Module loader for resolving external symbols.
     module_loader: ModuleLoader<'cx>,
+
+    /// Optional external resolver for custom type resolution.
+    external_resolver: Option<Box<dyn ExternalResolver<'cx>>>,
+
     tcx: &'cx TypingContext<'cx>,
     ir_cx: &'cx ir::Context<'cx>,
 }
@@ -76,6 +77,14 @@ impl core::fmt::Debug for TypeChecker<'_> {
             .field("module_loader", &module_loader)
             .finish()
     }
+}
+
+/// Trait for resolving external types by path.
+///
+/// Resolved item belongs to no module.
+pub trait ExternalResolver<'cx> {
+    /// Resolves a path to a type, returning `None` if not found.
+    fn resolve(&self, path: ast::Path<'cx>, cx: &'cx TypingContext<'cx>) -> Option<Ty<'cx>>;
 }
 
 /// Mutable `Cow`, do not copy on write.
@@ -172,6 +181,7 @@ impl<'cx> TypeChecker<'cx> {
     /// The type checker starts with no modules loaded.
     pub fn new(tcx: &'cx TypingContext<'cx>, ir_cx: &'cx ir::Context<'cx>) -> Self {
         Self {
+            external_resolver: None,
             module_loader: ModuleLoader::new(),
             tcx,
             ir_cx,
@@ -187,10 +197,19 @@ impl<'cx> TypeChecker<'cx> {
         ir_cx: &'cx ir::Context<'cx>,
     ) -> Self {
         Self {
+            external_resolver: None,
             module_loader,
             tcx,
             ir_cx,
         }
+    }
+
+    pub fn add_external_resolver(
+        &mut self,
+        resolver: impl ExternalResolver<'cx> + 'static,
+    ) -> &mut Self {
+        self.external_resolver = Some(Box::new(resolver));
+        self
     }
 
     /// Adds a module to the type checker's module loader.
@@ -353,6 +372,10 @@ impl<'cx> TypeChecker<'cx> {
     fn eagerly_resolve(&self, subst: &mut Substitution<'cx>, ty: &mut Ty<'cx>) {
         // call `visit_ty_mut` to resolve type variables eagerly
         SubstitutionVisitor::new_borrowed(subst, self.tcx).visit_mut(ty);
+    }
+
+    fn try_external_resolve(&self, path: ast::Path<'cx>) -> Option<Ty<'cx>> {
+        self.external_resolver.as_ref()?.resolve(path, self.tcx)
     }
 }
 

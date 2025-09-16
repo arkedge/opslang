@@ -169,7 +169,8 @@ impl<'cx> Substitution<'cx> {
             | TyKind::Bool
             | TyKind::Duration
             | TyKind::Time
-            | TyKind::Unit => ty,
+            | TyKind::Unit
+            | TyKind::External { .. } => ty,
         }
     }
 
@@ -322,8 +323,24 @@ impl<'cx> super::TypeChecker<'cx> {
                 self.unify(subst, substituted_ret1, substituted_ret2)?;
                 Ok(())
             }
+
             // All other combinations are incompatible
-            _ => Err(anyhow!("cannot unify {t1} and {t2}",)),
+
+            // Below we list all the possible TyKind variants to ensure exhaustiveness.
+            // If you add a new TyKind, you must handle it *above* and here.
+            (TyKind::Int(_), _)
+            | (TyKind::Uint(_), _)
+            | (TyKind::Float(_), _)
+            | (TyKind::String, _)
+            | (TyKind::Bytes, _)
+            | (TyKind::Bool, _)
+            | (TyKind::Duration, _)
+            | (TyKind::Time, _)
+            | (TyKind::Array { .. }, _)
+            | (TyKind::Function { .. }, _)
+            | (TyKind::Infer(_), _)
+            | (TyKind::Unit, _)
+            | (TyKind::External { .. }, _) => Err(anyhow!("cannot unify {t1} and {t2}",)),
         }
     }
 

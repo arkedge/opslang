@@ -1,7 +1,7 @@
 use crate::SelectItem;
 
 use super::{
-    Block, Comment, CompareOp, DefaultTypeFamily, Expr, ExprKind, ExprMut, Ident, Parameter, Row,
+    Block, Comment, CompareOp, DefaultTypeFamily, Expr, ExprKind, ExprMut, Parameter, Row,
     ScopeItem, ToplevelItem, family::TypeFamily,
 };
 use typed_arena::Arena;
@@ -23,7 +23,7 @@ pub struct Context<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     parameter_slice_arena: Arena<Parameter<'cx, F>>,
     scope_item_slice_arena: Arena<ScopeItem<'cx, F>>,
     expr_slice_arena: Arena<F::Expr>,
-    ident_slice_arena: Arena<Ident<'cx, F>>,
+    ident_slice_arena: Arena<F::Ident>,
     select_item_slice_arena: Arena<SelectItem<'cx, F>>,
     qualif_slice_arena: Arena<F::Qualif>,
     compare_op_expr_tuple_slice_arena: Arena<(CompareOp<'cx, F>, F::Expr)>,
@@ -88,8 +88,8 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
 
     pub fn alloc_ident_slice(
         &'cx self,
-        idents: impl IntoIterator<Item = Ident<'cx, F>>,
-    ) -> &'cx [Ident<'cx, F>] {
+        idents: impl IntoIterator<Item = F::Ident>,
+    ) -> &'cx [F::Ident] {
         self.ident_slice_arena.alloc_extend(idents)
     }
 

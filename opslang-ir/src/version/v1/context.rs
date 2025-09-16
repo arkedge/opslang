@@ -66,6 +66,9 @@ impl<'cx> Context<'cx> {
     }
 
     /// Gets a reference to the underlying AST context.
+    ///
+    /// Note: the result of this method is not a pure ast context. To create an ast node
+    /// for example, use `ast::context::Context::new()` instead.
     pub fn ast_context(&self) -> &AstContext<'cx, IrTypeFamily> {
         &self.ast_context
     }

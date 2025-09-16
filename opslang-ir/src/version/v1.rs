@@ -218,6 +218,8 @@ pub enum ResolvedItem<'cx> {
     ModuleItem(&'cx opslang_ty::version::v1::ModuleItem<'cx>),
     /// Reference to a local variable (function parameters, local bindings).
     LocalVariable(opslang_ty::version::v1::Ident<'cx>),
+    /// Reference to an external path resolved via an external resolver.
+    External,
 }
 
 impl<'cx> PartialEq for ResolvedItem<'cx> {
@@ -225,6 +227,7 @@ impl<'cx> PartialEq for ResolvedItem<'cx> {
         match (self, other) {
             (ResolvedItem::ModuleItem(a), ResolvedItem::ModuleItem(b)) => std::ptr::eq(*a, *b),
             (ResolvedItem::LocalVariable(a), ResolvedItem::LocalVariable(b)) => a == b,
+            (ResolvedItem::External, ResolvedItem::External) => true,
             _ => false,
         }
     }

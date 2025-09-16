@@ -44,10 +44,23 @@ impl<'cx> TypeChecker<'cx> {
                 {
                     let ir_expr =
                         ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), *ty);
-                    Ok(ir_expr)
-                } else {
-                    Err(anyhow!("unbound variable: {path}"))
+                    return Ok(ir_expr);
                 }
+
+                // Try external resolver if available
+                if let Some(ty) = self.try_external_resolve(*path) {
+                    let resolved_path = ir::ResolvedPath {
+                        item: ir::ResolvedItem::External,
+                        original_path: path,
+                    };
+                    let wrapped_ty = Ty::mk_external(self.tcx, *path, ty);
+                    let ir_expr =
+                        ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), wrapped_ty);
+                    return Ok(ir_expr);
+                }
+
+                // Not found
+                Err(anyhow!("unbound variable: {path}"))
             }
             ast::ExprKind::Binary(binary) => self.typeck_binary(env, subst, binary),
             ast::ExprKind::Unary(unary) => {
@@ -297,5 +310,47 @@ impl<'cx> TypeChecker<'cx> {
                 Ok(ir_expr)
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_external_resolve() {
+        struct Resolver;
+        impl<'cx> ExternalResolver<'cx> for Resolver {
+            // A simple resolver that maps all variable to i32 type for testing
+            fn resolve(
+                &self,
+                _path: ast::Path<'cx>,
+                cx: &'cx TypingContext<'cx>,
+            ) -> Option<Ty<'cx>> {
+                Some(Ty::mk_i32(cx))
+            }
+        }
+
+        let tcx = TypingContext::new();
+        let ast_cx = ast::context::Context::new();
+        let ir_cx = ir::Context::new();
+        let mut type_checker = TypeChecker::new(&tcx, &ir_cx);
+        type_checker.add_external_resolver(Resolver);
+        let path = ast::Path::single(
+            &ast_cx,
+            "ExternalVar",
+            ast::Span {
+                start: ast::BytePos(0),
+                end: ast::BytePos(11),
+            },
+        );
+        let resolved_ty = type_checker.try_external_resolve(path);
+        assert_eq!(resolved_ty, Some(Ty::mk_i32(&tcx)));
+
+        let expr = ast_cx.alloc_expr(ast::ExprKind::Variable(path));
+        let mut subst = Substitution::new();
+        let env = Environment::new();
+        let ir_expr = type_checker.typeck_expr(&env, &mut subst, &expr).unwrap();
+        assert_eq!(ir_expr.ty, Ty::mk_external(&tcx, path, Ty::mk_i32(&tcx)));
     }
 }
