@@ -88,12 +88,16 @@ impl<'cx> TypeChecker<'cx> {
                         Ok(ir_result)
                     }
                     ast::UnOp::IdRef(_) => {
-                        // IdRef (&expr) - creates a reference to the expression
-                        // For now, we'll implement this as a simple unary operation
-                        // The type system may need extension for proper reference types
-
-                        // Create IR unary expression - result type is the same for now
+                        // IdRef (&expr) - obtain an identifier of an external variable as i64
                         let ty = expr_ir.ty;
+                        let ty = match ty.kind() {
+                            TyKind::External { .. } => Ty::mk_i64(self.tcx),
+                            _ => {
+                                return Err(anyhow!(
+                                    "idref operator requires an external variable, got {ty}"
+                                ));
+                            }
+                        };
                         let ir_result = ir::Expr::new(
                             ir::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             ty,
@@ -101,11 +105,16 @@ impl<'cx> TypeChecker<'cx> {
                         Ok(ir_result)
                     }
                     ast::UnOp::Deref(_) => {
-                        // Deref ($expr) - dereferences a reference
-                        // For now, we'll implement this as a simple unary operation
-                        // The type system may need extension for proper reference types
-                        // Create IR unary expression - result type is the same for now
+                        // Deref ($expr) - dereferences an external variable to its underlying type
                         let ty = expr_ir.ty;
+                        let ty = match ty.kind() {
+                            TyKind::External { ty, .. } => *ty,
+                            _ => {
+                                return Err(anyhow!(
+                                    "deref operator requires an external variable, got {ty}"
+                                ));
+                            }
+                        };
                         let ir_result = ir::Expr::new(
                             ir::ExprMut::unary(self.ir_cx, unary.op.into_token(), expr_ir),
                             ty,
