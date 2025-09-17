@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::fmt::Debug;
 
 use opslang_ast::V1Token;
 use opslang_ast::token::IntoPosition;
@@ -58,8 +59,44 @@ impl Migrate<opslang_ast::V0, opslang_ast::V1> for V0ToV1 {
             &options,
         );
 
+        {
+            let ast_context = Context::new();
+            let _program = parse_source(&output, &ast_context).unwrap_or_else(|e| {
+                if let parol_runtime::ParolError::ParserError(
+                    parol_runtime::ParserError::SyntaxErrors { entries },
+                ) = &e
+                {
+                    for entry in entries {
+                        eprintln!(
+                            "Syntax error at {}: {}\n  source:\n{}",
+                            entry.error_location,
+                            entry.cause,
+                            entry.input.as_ref().unwrap().input
+                        );
+                    }
+                } else {
+                    eprintln!("Parse error: {e}");
+                }
+                panic!("Failed to parse migrated code: {e}")
+            });
+        }
+
         Ok(output)
     }
+}
+
+/// Helper function to parse source code into AST.
+fn parse_source<'cx>(
+    source: &'cx str,
+    context: &'cx Context<'cx>,
+) -> Result<opslang_ast::v1::Program<'cx>, parol_runtime::ParolError> {
+    let input = opslang_parser::ParserInput {
+        content: source,
+        file_name: "after_migration.ops".into(),
+    }
+    .assume_inferred();
+    use opslang_parser::ParseOps;
+    opslang_ast::v1::Program::parse(input, context)
 }
 
 // Helper functions for common Apply expression patterns
@@ -850,25 +887,6 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Set {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_migrate_trait_exists() {
-        let migrator = V0ToV1;
-        // This test just ensures the trait is implemented and the basic structure works
-        let result = migrator.migrate("NOP");
-        // Now that we have some implementations, this might succeed or fail
-        // Let's just check that we get some result
-        match result {
-            Ok(output) => {
-                // Migration succeeded, check that we got some output
-                assert!(!output.is_empty());
-            }
-            Err(_) => {
-                // Migration failed, which is also acceptable for this test
-                // since not all features are implemented yet
-            }
-        }
-    }
 
     #[test]
     fn test_convert_empty_statements() {

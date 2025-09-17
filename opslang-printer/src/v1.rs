@@ -692,11 +692,10 @@ where
         Newline.write(writer, options)?;
 
         let nested_options = options.with_increased_indent();
-        for (i, item) in self.items.iter().enumerate() {
-            if i > 0 {
-                Newline.write(writer, &nested_options)?;
-            }
+        for item in self.items {
+            Indent.write(writer, &nested_options)?;
             PrettyPrint::<S>::pretty_print(item, writer, &nested_options)?;
+            Newline.write(writer, &nested_options)?;
         }
 
         Indent.write(writer, options)?;

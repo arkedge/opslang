@@ -684,6 +684,30 @@ pub struct CallableLParenExprRParen<'t> {
 ///
 /// Type derived for production 98
 ///
+/// `Callable: IfExpr;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CallableIfExpr<'t> {
+    pub if_expr: Box<IfExpr<'t>>,
+}
+
+///
+/// Type derived for production 99
+///
+/// `Callable: SelectExpr;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CallableSelectExpr<'t> {
+    pub select_expr: Box<SelectExpr<'t>>,
+}
+
+///
+/// Type derived for production 100
+///
 /// `AtomicExpr: Qualif;`
 ///
 #[allow(dead_code)]
@@ -694,7 +718,7 @@ pub struct AtomicExprQualif<'t> {
 }
 
 ///
-/// Type derived for production 99
+/// Type derived for production 101
 ///
 /// `AtomicExpr: ImportExpr;`
 ///
@@ -706,31 +730,7 @@ pub struct AtomicExprImportExpr<'t> {
 }
 
 ///
-/// Type derived for production 100
-///
-/// `AtomicExpr: IfExpr;`
-///
-#[allow(dead_code)]
-#[derive(Builder, Debug, Clone)]
-#[builder(crate = "parol_runtime::derive_builder")]
-pub struct AtomicExprIfExpr<'t> {
-    pub if_expr: Box<IfExpr<'t>>,
-}
-
-///
-/// Type derived for production 101
-///
-/// `AtomicExpr: SelectExpr;`
-///
-#[allow(dead_code)]
-#[derive(Builder, Debug, Clone)]
-#[builder(crate = "parol_runtime::derive_builder")]
-pub struct AtomicExprSelectExpr<'t> {
-    pub select_expr: Box<SelectExpr<'t>>,
-}
-
-///
-/// Type derived for production 113
+/// Type derived for production 115
 ///
 /// `Qualif: Modifier;`
 ///
@@ -742,7 +742,7 @@ pub struct QualifModifier<'t> {
 }
 
 ///
-/// Type derived for production 114
+/// Type derived for production 116
 ///
 /// `Qualif: DefaultModifier;`
 ///
@@ -754,7 +754,7 @@ pub struct QualifDefaultModifier<'t> {
 }
 
 ///
-/// Type derived for production 124
+/// Type derived for production 126
 ///
 /// `Literal: Array;`
 ///
@@ -766,7 +766,7 @@ pub struct LiteralArray<'t> {
 }
 
 ///
-/// Type derived for production 125
+/// Type derived for production 127
 ///
 /// `Literal: String;`
 ///
@@ -778,7 +778,7 @@ pub struct LiteralString<'t> {
 }
 
 ///
-/// Type derived for production 126
+/// Type derived for production 128
 ///
 /// `Literal: ByteLiteral;`
 ///
@@ -790,7 +790,7 @@ pub struct LiteralByteLiteral<'t> {
 }
 
 ///
-/// Type derived for production 127
+/// Type derived for production 129
 ///
 /// `Literal: HexByteLiteral;`
 ///
@@ -802,7 +802,7 @@ pub struct LiteralHexByteLiteral<'t> {
 }
 
 ///
-/// Type derived for production 128
+/// Type derived for production 130
 ///
 /// `Literal: Numeric;`
 ///
@@ -814,7 +814,7 @@ pub struct LiteralNumeric<'t> {
 }
 
 ///
-/// Type derived for production 129
+/// Type derived for production 131
 ///
 /// `Literal: Rfc3339DateTime;`
 ///
@@ -826,7 +826,7 @@ pub struct LiteralRfc3339DateTime<'t> {
 }
 
 ///
-/// Type derived for production 142
+/// Type derived for production 144
 ///
 /// `Numeric: BinaryInteger;`
 ///
@@ -838,7 +838,7 @@ pub struct NumericBinaryInteger<'t> {
 }
 
 ///
-/// Type derived for production 143
+/// Type derived for production 145
 ///
 /// `Numeric: OctalInteger;`
 ///
@@ -850,7 +850,7 @@ pub struct NumericOctalInteger<'t> {
 }
 
 ///
-/// Type derived for production 144
+/// Type derived for production 146
 ///
 /// `Numeric: HexadecimalInteger;`
 ///
@@ -862,7 +862,7 @@ pub struct NumericHexadecimalInteger<'t> {
 }
 
 ///
-/// Type derived for production 145
+/// Type derived for production 147
 ///
 /// `Numeric: Ieee754Float;`
 ///
@@ -961,8 +961,6 @@ pub struct ArrayOpt<'t> {
 pub enum AtomicExpr<'t> {
     Qualif(AtomicExprQualif<'t>),
     ImportExpr(AtomicExprImportExpr<'t>),
-    IfExpr(AtomicExprIfExpr<'t>),
-    SelectExpr(AtomicExprSelectExpr<'t>),
 }
 
 ///
@@ -1016,6 +1014,8 @@ pub enum Callable<'t> {
     Path(CallablePath<'t>),
     Literal(CallableLiteral<'t>),
     LParenExprRParen(CallableLParenExprRParen<'t>),
+    IfExpr(CallableIfExpr<'t>),
+    SelectExpr(CallableSelectExpr<'t>),
 }
 
 ///
@@ -1801,8 +1801,8 @@ pub struct SelectExpr<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct SelectScope<'t> {
-    pub select_scope_content: Box<SelectScopeContent<'t>>,
     pub select_scope_opt: Option<SelectScopeOpt<'t>>,
+    pub select_scope_opt0: Option<SelectScopeOpt0<'t>>,
 }
 
 ///
@@ -1824,6 +1824,16 @@ pub struct SelectScopeContent<'t> {
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
 pub struct SelectScopeOpt<'t> {
+    pub select_scope_content: Box<SelectScopeContent<'t>>,
+}
+
+///
+/// Type derived for non-terminal SelectScopeOpt0
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct SelectScopeOpt0<'t> {
     pub end_of_line: Box<EndOfLine<'t>>,
     pub select_scope: Box<SelectScope<'t>>,
 }
@@ -1987,6 +1997,7 @@ pub enum ASTType<'t> {
     SelectScope(SelectScope<'t>),
     SelectScopeContent(SelectScopeContent<'t>),
     SelectScopeOpt(Option<SelectScopeOpt<'t>>),
+    SelectScopeOpt0(Option<SelectScopeOpt0<'t>>),
     Semi(Semi<'t>),
     SetExpr(SetExpr<'t>),
     SetExprOpt(Option<SetExprOpt<'t>>),
@@ -3998,6 +4009,44 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 98:
     ///
+    /// `Callable: IfExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn callable_3(&mut self, _if_expr: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let if_expr = pop_item!(self, if_expr, IfExpr, context);
+        let callable_3_built = CallableIfExpr {
+            if_expr: Box::new(if_expr),
+        };
+        let callable_3_built = Callable::IfExpr(callable_3_built);
+        // Calling user action here
+        self.user_grammar.callable(&callable_3_built)?;
+        self.push(ASTType::Callable(callable_3_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 99:
+    ///
+    /// `Callable: SelectExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn callable_4(&mut self, _select_expr: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let select_expr = pop_item!(self, select_expr, SelectExpr, context);
+        let callable_4_built = CallableSelectExpr {
+            select_expr: Box::new(select_expr),
+        };
+        let callable_4_built = Callable::SelectExpr(callable_4_built);
+        // Calling user action here
+        self.user_grammar.callable(&callable_4_built)?;
+        self.push(ASTType::Callable(callable_4_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 100:
+    ///
     /// `AtomicExpr: Qualif;`
     ///
     #[parol_runtime::function_name::named]
@@ -4015,7 +4064,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 99:
+    /// Semantic action for production 101:
     ///
     /// `AtomicExpr: ImportExpr;`
     ///
@@ -4031,44 +4080,6 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         // Calling user action here
         self.user_grammar.atomic_expr(&atomic_expr_1_built)?;
         self.push(ASTType::AtomicExpr(atomic_expr_1_built), context);
-        Ok(())
-    }
-
-    /// Semantic action for production 100:
-    ///
-    /// `AtomicExpr: IfExpr;`
-    ///
-    #[parol_runtime::function_name::named]
-    fn atomic_expr_2(&mut self, _if_expr: &ParseTreeType<'t>) -> Result<()> {
-        let context = function_name!();
-        trace!("{}", self.trace_item_stack(context));
-        let if_expr = pop_item!(self, if_expr, IfExpr, context);
-        let atomic_expr_2_built = AtomicExprIfExpr {
-            if_expr: Box::new(if_expr),
-        };
-        let atomic_expr_2_built = AtomicExpr::IfExpr(atomic_expr_2_built);
-        // Calling user action here
-        self.user_grammar.atomic_expr(&atomic_expr_2_built)?;
-        self.push(ASTType::AtomicExpr(atomic_expr_2_built), context);
-        Ok(())
-    }
-
-    /// Semantic action for production 101:
-    ///
-    /// `AtomicExpr: SelectExpr;`
-    ///
-    #[parol_runtime::function_name::named]
-    fn atomic_expr_3(&mut self, _select_expr: &ParseTreeType<'t>) -> Result<()> {
-        let context = function_name!();
-        trace!("{}", self.trace_item_stack(context));
-        let select_expr = pop_item!(self, select_expr, SelectExpr, context);
-        let atomic_expr_3_built = AtomicExprSelectExpr {
-            select_expr: Box::new(select_expr),
-        };
-        let atomic_expr_3_built = AtomicExpr::SelectExpr(atomic_expr_3_built);
-        // Calling user action here
-        self.user_grammar.atomic_expr(&atomic_expr_3_built)?;
-        self.push(ASTType::AtomicExpr(atomic_expr_3_built), context);
         Ok(())
     }
 
@@ -4229,22 +4240,21 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 109:
     ///
-    /// `SelectScope: SelectScopeContent SelectScopeOpt /* Option */;`
+    /// `SelectScope: SelectScopeOpt /* Option */ SelectScopeOpt0 /* Option */;`
     ///
     #[parol_runtime::function_name::named]
     fn select_scope(
         &mut self,
-        _select_scope_content: &ParseTreeType<'t>,
         _select_scope_opt: &ParseTreeType<'t>,
+        _select_scope_opt0: &ParseTreeType<'t>,
     ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
+        let select_scope_opt0 = pop_item!(self, select_scope_opt0, SelectScopeOpt0, context);
         let select_scope_opt = pop_item!(self, select_scope_opt, SelectScopeOpt, context);
-        let select_scope_content =
-            pop_item!(self, select_scope_content, SelectScopeContent, context);
         let select_scope_built = SelectScope {
-            select_scope_content: Box::new(select_scope_content),
             select_scope_opt,
+            select_scope_opt0,
         };
         // Calling user action here
         self.user_grammar.select_scope(&select_scope_built)?;
@@ -4254,10 +4264,10 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 110:
     ///
-    /// `SelectScopeOpt /* Option<T>::Some */: EndOfLine SelectScope;`
+    /// `SelectScopeOpt0 /* Option<T>::Some */: EndOfLine SelectScope;`
     ///
     #[parol_runtime::function_name::named]
-    fn select_scope_opt_0(
+    fn select_scope_opt0_0(
         &mut self,
         _end_of_line: &ParseTreeType<'t>,
         _select_scope: &ParseTreeType<'t>,
@@ -4266,9 +4276,41 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         trace!("{}", self.trace_item_stack(context));
         let select_scope = pop_item!(self, select_scope, SelectScope, context);
         let end_of_line = pop_item!(self, end_of_line, EndOfLine, context);
-        let select_scope_opt_0_built = SelectScopeOpt {
+        let select_scope_opt0_0_built = SelectScopeOpt0 {
             end_of_line: Box::new(end_of_line),
             select_scope: Box::new(select_scope),
+        };
+        self.push(
+            ASTType::SelectScopeOpt0(Some(select_scope_opt0_0_built)),
+            context,
+        );
+        Ok(())
+    }
+
+    /// Semantic action for production 111:
+    ///
+    /// `SelectScopeOpt0 /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn select_scope_opt0_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::SelectScopeOpt0(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 112:
+    ///
+    /// `SelectScopeOpt /* Option<T>::Some */: SelectScopeContent;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn select_scope_opt_0(&mut self, _select_scope_content: &ParseTreeType<'t>) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let select_scope_content =
+            pop_item!(self, select_scope_content, SelectScopeContent, context);
+        let select_scope_opt_0_built = SelectScopeOpt {
+            select_scope_content: Box::new(select_scope_content),
         };
         self.push(
             ASTType::SelectScopeOpt(Some(select_scope_opt_0_built)),
@@ -4277,7 +4319,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 111:
+    /// Semantic action for production 113:
     ///
     /// `SelectScopeOpt /* Option<T>::None */: ;`
     ///
@@ -4289,7 +4331,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 112:
+    /// Semantic action for production 114:
     ///
     /// `SelectScopeContent: Expr '=>' Block;`
     ///
@@ -4320,7 +4362,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 113:
+    /// Semantic action for production 115:
     ///
     /// `Qualif: Modifier;`
     ///
@@ -4339,7 +4381,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 114:
+    /// Semantic action for production 116:
     ///
     /// `Qualif: DefaultModifier;`
     ///
@@ -4358,7 +4400,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 115:
+    /// Semantic action for production 117:
     ///
     /// `DefaultModifier: '~' Path;`
     ///
@@ -4383,7 +4425,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 116:
+    /// Semantic action for production 118:
     ///
     /// `Modifier: '@' Path ModifierOpt /* Option */;`
     ///
@@ -4410,7 +4452,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 117:
+    /// Semantic action for production 119:
     ///
     /// `ModifierOpt /* Option<T>::Some */: KindArg;`
     ///
@@ -4426,7 +4468,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 118:
+    /// Semantic action for production 120:
     ///
     /// `ModifierOpt /* Option<T>::None */: ;`
     ///
@@ -4438,7 +4480,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 119:
+    /// Semantic action for production 121:
     ///
     /// `KindArg: ':' Callable;`
     ///
@@ -4458,7 +4500,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 120:
+    /// Semantic action for production 122:
     ///
     /// `Path: Ident PathList /* Vec */;`
     ///
@@ -4478,7 +4520,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 121:
+    /// Semantic action for production 123:
     ///
     /// `PathList /* Vec<T>::Push */: PathList '.' Ident;`
     ///
@@ -4504,7 +4546,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 122:
+    /// Semantic action for production 124:
     ///
     /// `PathList /* Vec<T>::New */: ;`
     ///
@@ -4517,7 +4559,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 123:
+    /// Semantic action for production 125:
     ///
     /// `Ident: /[_a-zA-Z](\w|[\/-])*/;`
     ///
@@ -4533,7 +4575,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 124:
+    /// Semantic action for production 126:
     ///
     /// `Literal: Array;`
     ///
@@ -4552,7 +4594,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 125:
+    /// Semantic action for production 127:
     ///
     /// `Literal: String;`
     ///
@@ -4571,7 +4613,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 126:
+    /// Semantic action for production 128:
     ///
     /// `Literal: ByteLiteral;`
     ///
@@ -4590,7 +4632,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 127:
+    /// Semantic action for production 129:
     ///
     /// `Literal: HexByteLiteral;`
     ///
@@ -4609,7 +4651,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 128:
+    /// Semantic action for production 130:
     ///
     /// `Literal: Numeric;`
     ///
@@ -4628,7 +4670,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 129:
+    /// Semantic action for production 131:
     ///
     /// `Literal: Rfc3339DateTime;`
     ///
@@ -4647,7 +4689,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 130:
+    /// Semantic action for production 132:
     ///
     /// `Array: '[' ArrayOpt /* Option */ ']';`
     ///
@@ -4674,7 +4716,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 131:
+    /// Semantic action for production 133:
     ///
     /// `ArrayOpt /* Option<T>::Some */: CommaSepElements;`
     ///
@@ -4690,7 +4732,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 132:
+    /// Semantic action for production 134:
     ///
     /// `ArrayOpt /* Option<T>::None */: ;`
     ///
@@ -4702,7 +4744,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 133:
+    /// Semantic action for production 135:
     ///
     /// `CommaSepElements: Expr CommaSepElementsOpt /* Option */;`
     ///
@@ -4728,7 +4770,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 134:
+    /// Semantic action for production 136:
     ///
     /// `CommaSepElementsOpt /* Option<T>::Some */: CommaExprList;`
     ///
@@ -4747,7 +4789,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 135:
+    /// Semantic action for production 137:
     ///
     /// `CommaSepElementsOpt /* Option<T>::None */: ;`
     ///
@@ -4759,7 +4801,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 136:
+    /// Semantic action for production 138:
     ///
     /// `CommaExprList: ',' CommaExprListOpt /* Option */;`
     ///
@@ -4783,7 +4825,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 137:
+    /// Semantic action for production 139:
     ///
     /// `CommaExprListOpt /* Option<T>::Some */: CommaSepElements;`
     ///
@@ -4802,7 +4844,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 138:
+    /// Semantic action for production 140:
     ///
     /// `CommaExprListOpt /* Option<T>::None */: ;`
     ///
@@ -4814,7 +4856,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 139:
+    /// Semantic action for production 141:
     ///
     /// `String: /"(\\.|[^"])*"/;`
     ///
@@ -4830,7 +4872,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 140:
+    /// Semantic action for production 142:
     ///
     /// `ByteLiteral: /b"(\\.|[^"])*"/;`
     ///
@@ -4846,7 +4888,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 141:
+    /// Semantic action for production 143:
     ///
     /// `HexByteLiteral: /bx"[0-9a-fA-F_]*"/;`
     ///
@@ -4863,7 +4905,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 142:
+    /// Semantic action for production 144:
     ///
     /// `Numeric: BinaryInteger;`
     ///
@@ -4882,7 +4924,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 143:
+    /// Semantic action for production 145:
     ///
     /// `Numeric: OctalInteger;`
     ///
@@ -4901,7 +4943,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 144:
+    /// Semantic action for production 146:
     ///
     /// `Numeric: HexadecimalInteger;`
     ///
@@ -4920,7 +4962,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 145:
+    /// Semantic action for production 147:
     ///
     /// `Numeric: Ieee754Float;`
     ///
@@ -4939,7 +4981,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 146:
+    /// Semantic action for production 148:
     ///
     /// `BinaryInteger: /0b[01_]+([a-zA-Z](\w|[\/-])*)?/;`
     ///
@@ -4955,7 +4997,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 147:
+    /// Semantic action for production 149:
     ///
     /// `OctalInteger: /0o[0-7_]+([a-zA-Z](\w|[\/-])*)?/;`
     ///
@@ -4971,7 +5013,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 148:
+    /// Semantic action for production 150:
     ///
     /// `HexadecimalInteger: /0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?/;`
     ///
@@ -4993,7 +5035,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 149:
+    /// Semantic action for production 151:
     ///
     /// `Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?/;`
     ///
@@ -5009,7 +5051,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 150:
+    /// Semantic action for production 152:
     ///
     /// `Rfc3339DateTime: /\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;`
     ///
@@ -5026,7 +5068,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 151:
+    /// Semantic action for production 153:
     ///
     /// `Block: '{' Scope '}';`
     ///
@@ -5178,10 +5220,10 @@ impl<'t> UserActionsTrait<'t> for ActionAuto<'t, '_> {
             95 => self.callable_0(&children[0]),
             96 => self.callable_1(&children[0]),
             97 => self.callable_2(&children[0], &children[1], &children[2]),
-            98 => self.atomic_expr_0(&children[0]),
-            99 => self.atomic_expr_1(&children[0]),
-            100 => self.atomic_expr_2(&children[0]),
-            101 => self.atomic_expr_3(&children[0]),
+            98 => self.callable_3(&children[0]),
+            99 => self.callable_4(&children[0]),
+            100 => self.atomic_expr_0(&children[0]),
+            101 => self.atomic_expr_1(&children[0]),
             102 => self.import_expr(&children[0], &children[1]),
             103 => self.import_expr_opt_0(&children[0], &children[1]),
             104 => self.import_expr_opt_1(),
@@ -5190,48 +5232,50 @@ impl<'t> UserActionsTrait<'t> for ActionAuto<'t, '_> {
             107 => self.if_expr_opt_1(),
             108 => self.select_expr(&children[0], &children[1], &children[2], &children[3]),
             109 => self.select_scope(&children[0], &children[1]),
-            110 => self.select_scope_opt_0(&children[0], &children[1]),
-            111 => self.select_scope_opt_1(),
-            112 => self.select_scope_content(&children[0], &children[1], &children[2]),
-            113 => self.qualif_0(&children[0]),
-            114 => self.qualif_1(&children[0]),
-            115 => self.default_modifier(&children[0], &children[1]),
-            116 => self.modifier(&children[0], &children[1], &children[2]),
-            117 => self.modifier_opt_0(&children[0]),
-            118 => self.modifier_opt_1(),
-            119 => self.kind_arg(&children[0], &children[1]),
-            120 => self.path(&children[0], &children[1]),
-            121 => self.path_list_0(&children[0], &children[1], &children[2]),
-            122 => self.path_list_1(),
-            123 => self.ident(&children[0]),
-            124 => self.literal_0(&children[0]),
-            125 => self.literal_1(&children[0]),
-            126 => self.literal_2(&children[0]),
-            127 => self.literal_3(&children[0]),
-            128 => self.literal_4(&children[0]),
-            129 => self.literal_5(&children[0]),
-            130 => self.array(&children[0], &children[1], &children[2]),
-            131 => self.array_opt_0(&children[0]),
-            132 => self.array_opt_1(),
-            133 => self.comma_sep_elements(&children[0], &children[1]),
-            134 => self.comma_sep_elements_opt_0(&children[0]),
-            135 => self.comma_sep_elements_opt_1(),
-            136 => self.comma_expr_list(&children[0], &children[1]),
-            137 => self.comma_expr_list_opt_0(&children[0]),
-            138 => self.comma_expr_list_opt_1(),
-            139 => self.string(&children[0]),
-            140 => self.byte_literal(&children[0]),
-            141 => self.hex_byte_literal(&children[0]),
-            142 => self.numeric_0(&children[0]),
-            143 => self.numeric_1(&children[0]),
-            144 => self.numeric_2(&children[0]),
-            145 => self.numeric_3(&children[0]),
-            146 => self.binary_integer(&children[0]),
-            147 => self.octal_integer(&children[0]),
-            148 => self.hexadecimal_integer(&children[0]),
-            149 => self.ieee754_float(&children[0]),
-            150 => self.rfc3339_date_time(&children[0]),
-            151 => self.block(&children[0], &children[1], &children[2]),
+            110 => self.select_scope_opt0_0(&children[0], &children[1]),
+            111 => self.select_scope_opt0_1(),
+            112 => self.select_scope_opt_0(&children[0]),
+            113 => self.select_scope_opt_1(),
+            114 => self.select_scope_content(&children[0], &children[1], &children[2]),
+            115 => self.qualif_0(&children[0]),
+            116 => self.qualif_1(&children[0]),
+            117 => self.default_modifier(&children[0], &children[1]),
+            118 => self.modifier(&children[0], &children[1], &children[2]),
+            119 => self.modifier_opt_0(&children[0]),
+            120 => self.modifier_opt_1(),
+            121 => self.kind_arg(&children[0], &children[1]),
+            122 => self.path(&children[0], &children[1]),
+            123 => self.path_list_0(&children[0], &children[1], &children[2]),
+            124 => self.path_list_1(),
+            125 => self.ident(&children[0]),
+            126 => self.literal_0(&children[0]),
+            127 => self.literal_1(&children[0]),
+            128 => self.literal_2(&children[0]),
+            129 => self.literal_3(&children[0]),
+            130 => self.literal_4(&children[0]),
+            131 => self.literal_5(&children[0]),
+            132 => self.array(&children[0], &children[1], &children[2]),
+            133 => self.array_opt_0(&children[0]),
+            134 => self.array_opt_1(),
+            135 => self.comma_sep_elements(&children[0], &children[1]),
+            136 => self.comma_sep_elements_opt_0(&children[0]),
+            137 => self.comma_sep_elements_opt_1(),
+            138 => self.comma_expr_list(&children[0], &children[1]),
+            139 => self.comma_expr_list_opt_0(&children[0]),
+            140 => self.comma_expr_list_opt_1(),
+            141 => self.string(&children[0]),
+            142 => self.byte_literal(&children[0]),
+            143 => self.hex_byte_literal(&children[0]),
+            144 => self.numeric_0(&children[0]),
+            145 => self.numeric_1(&children[0]),
+            146 => self.numeric_2(&children[0]),
+            147 => self.numeric_3(&children[0]),
+            148 => self.binary_integer(&children[0]),
+            149 => self.octal_integer(&children[0]),
+            150 => self.hexadecimal_integer(&children[0]),
+            151 => self.ieee754_float(&children[0]),
+            152 => self.rfc3339_date_time(&children[0]),
+            153 => self.block(&children[0], &children[1], &children[2]),
             _ => Err(ParserError::InternalError(format!(
                 "Unhandled production number: {}",
                 prod_num

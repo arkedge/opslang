@@ -206,24 +206,23 @@ prc main() {
 // IF expressions currently fail due to grammar issues
 // TODO: Fix grammar definition to support if expressions properly
 #[test]
-fn test_if_expression_grammar_issue() {
+fn test_if_expression() {
     let source = r#"#! lang=v1
 prc main() {
     let x = 10;
     if x > 5 {
         let y = 20;
-    }
+    };
     return;
 }
 "#;
 
     let ast_context = AstContext::new();
 
-    // For now, we expect parsing to fail until grammar is fixed
     let parse_result = parse_source(source, &ast_context);
     assert!(
-        parse_result.is_err(),
-        "Expected parsing to fail due to unsupported if syntax"
+        parse_result.is_ok(),
+        "Failed to parse if expression: {parse_result:?}"
     );
 }
 
@@ -290,7 +289,6 @@ prc main() {
     let mut checker = create_type_checker(&typing_context, &ir_context);
     let result = checker.typeck(&program);
 
-    // This should succeed for now (will be updated when block scopes are added)
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
 }
 

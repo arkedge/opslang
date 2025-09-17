@@ -12,7 +12,11 @@ path = "src/main.rs"
 opslang-ast = { path = "../../opslang-ast", version = "0.4.0" }
 opslang-ast-macro = { path = "../../opslang-ast-macro", version = "0.4.0" }
 opslang-parser = { path = "../../opslang-parser", version = "0.4.0" }
+opslang-ty = { path = "../../opslang-ty", version = "0.4.0" }
+opslang-ir = { path = "../../opslang-ir", version = "0.4.0" }
+opslang-typeck = { path = "../../opslang-typeck", version = "0.4.0" }
 opslang-printer = { path = "../../opslang-printer", version = "0.4.0" }
+parol_runtime = "3.0.0"
 thiserror = "1.0"
 clap = { version = "4.0", features = ["derive"] }
 walkdir = "2.0"

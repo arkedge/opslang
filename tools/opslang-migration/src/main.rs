@@ -74,7 +74,7 @@ impl std::fmt::Display for MigrationError {
             ),
             MigrationError::DirectoryInput => write!(
                 f,
-                "Input is a directory. Use recursive processing by disabling --no-recursive or provide files directly."
+                "Input is a directory. Use --no-recursive to disable recursive processing of directories."
             ),
             MigrationError::MigrationFailed(msg) => write!(f, "{msg}"),
             MigrationError::NoInputs => write!(

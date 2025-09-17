@@ -666,6 +666,41 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Callable<'_> {
                     expr: callable_lparen_expr_rparen.expr.process_token(cx),
                     right_paren: syn::token::CloseParen(callable_lparen_expr_rparen.r_paren.wrap()),
                 })),
+
+            grammar_trait::Callable::IfExpr(atomic_expr_if_expr) => {
+                let e = &atomic_expr_if_expr.if_expr;
+                syn::Expr::if_expr(
+                    cx,
+                    Token![if](e.r#if.wrap()),
+                    e.expr.process_token(cx),
+                    cx.alloc_block(e.block.process_token(cx)),
+                    e.if_expr_opt.as_ref().map(|el| syn::IfElse {
+                        else_kw: Token![else](el.r#else.wrap()),
+                        else_clause: cx.alloc_block(el.block.process_token(cx)),
+                    }),
+                )
+            }
+            grammar_trait::Callable::SelectExpr(atomic_expr_select_expr) => {
+                let e = &*atomic_expr_select_expr.select_expr;
+                let mut items = Vec::new();
+                let mut scope = &e.select_scope;
+                if let Some(c) = scope.select_scope_opt.as_ref() {
+                    items.push(c.select_scope_content.process_token(cx));
+                }
+                while let Some(content) = &scope.select_scope_opt0 {
+                    scope = &content.select_scope;
+                    if let Some(c) = scope.select_scope_opt.as_ref() {
+                        items.push(c.select_scope_content.process_token(cx));
+                    }
+                }
+                syn::Expr::select(
+                    cx,
+                    Token![select](e.select.wrap()),
+                    syn::token::OpenBrace(e.l_brace.wrap()),
+                    cx.alloc_select_item_slice(items),
+                    syn::token::CloseBrace(e.r_brace.wrap()),
+                )
+            }
         }
     }
 }
@@ -693,36 +728,6 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
                 } else {
                     expr
                 }
-            }
-            grammar_trait::AtomicExpr::IfExpr(atomic_expr_if_expr) => {
-                let e = &atomic_expr_if_expr.if_expr;
-                syn::Expr::if_expr(
-                    cx,
-                    Token![if](e.r#if.wrap()),
-                    e.expr.process_token(cx),
-                    cx.alloc_block(e.block.process_token(cx)),
-                    e.if_expr_opt.as_ref().map(|el| syn::IfElse {
-                        else_kw: Token![else](el.r#else.wrap()),
-                        else_clause: cx.alloc_block(el.block.process_token(cx)),
-                    }),
-                )
-            }
-            grammar_trait::AtomicExpr::SelectExpr(atomic_expr_select_expr) => {
-                let e = &*atomic_expr_select_expr.select_expr;
-                let mut items = Vec::new();
-                let mut scope = &e.select_scope;
-                items.push(scope.select_scope_content.process_token(cx));
-                while let Some(content) = &scope.select_scope_opt {
-                    scope = &content.select_scope;
-                    items.push(scope.select_scope_content.process_token(cx));
-                }
-                syn::Expr::select(
-                    cx,
-                    Token![select](e.select.wrap()),
-                    syn::token::OpenBrace(e.l_brace.wrap()),
-                    cx.alloc_select_item_slice(items),
-                    syn::token::CloseBrace(e.r_brace.wrap()),
-                )
             }
         }
     }

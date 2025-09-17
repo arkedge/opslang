@@ -172,14 +172,14 @@ Callable
     : Path
     | Literal
     | '(' Expr ')'
+    | IfExpr
+    | SelectExpr
     ;
 
 // expressions with clear space delimitation
 AtomicExpr
     : Qualif
     | ImportExpr
-    | IfExpr
-    | SelectExpr
     ;
 
 // ad-hoc import expression
@@ -196,7 +196,7 @@ SelectExpr
     ;
 
 SelectScope
-    : SelectScopeContent [ EndOfLine SelectScope ]
+    : [ SelectScopeContent ] [ EndOfLine SelectScope ]
     ;
 
 SelectScopeContent
