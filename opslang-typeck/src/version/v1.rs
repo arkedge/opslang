@@ -55,6 +55,14 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
     builtin.add_type(cx.alloc_toplevel_ident("duration"), Ty::mk_duration(cx));
     builtin.add_type(cx.alloc_toplevel_ident("time"), Ty::mk_time(cx));
 
+    builtin.add_function(
+        cx.alloc_toplevel_ident("assert"),
+        Ty::mk_function(cx, vec![Ty::mk_bool(cx)], Ty::mk_unit(cx)),
+    );
+
+    builtin.add_constant(cx.alloc_toplevel_ident("true"), Ty::mk_bool(cx));
+    builtin.add_constant(cx.alloc_toplevel_ident("false"), Ty::mk_bool(cx));
+
     cx.alloc_module(builtin)
 }
 

@@ -382,3 +382,16 @@ prc main() {
 
     parse_typeck_success(source);
 }
+
+#[test]
+fn test_assert() {
+    let source = r#"#! lang=v1
+prc main() {
+    assert true;
+    assert (1 + 1 == 2);
+    return;
+}
+"#;
+
+    parse_typeck_success(source);
+}
