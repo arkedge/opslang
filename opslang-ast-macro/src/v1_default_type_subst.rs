@@ -101,6 +101,7 @@ const DEFAULT_TYPES: &[(&str, &str)] = define_default_types! {
     type Cast = syn::Cast<'cx, Self>;
     type InfixImport = syn::InfixImport<'cx, Self>;
     type If = syn::If<'cx, Self>;
+    type Wait = syn::Wait<'cx, Self>;
     type Select = syn::Select<'cx, Self>;
     type SelectItems = &'cx [syn::SelectItem<'cx, Self>];
     type FunctionDef = syn::FunctionDef<'cx, Self>;

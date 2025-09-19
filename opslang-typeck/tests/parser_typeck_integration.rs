@@ -31,6 +31,18 @@ fn create_type_checker<'cx>(
     checker
 }
 
+fn parse_typeck_success(source: &'static str) {
+    let ast_context = AstContext::new();
+    let typing_context = TypingContext::new();
+    let ir_context = IrContext::new();
+
+    let program = parse_source(source, &ast_context).expect("Failed to parse source");
+    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let result = checker.typeck(&program);
+
+    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+}
+
 #[test]
 fn test_simple_function_typeck() {
     let source = r#"#! lang=v1
@@ -40,19 +52,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    // Parse the source code
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-
-    // Create type checker and run type checking
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    // The test should succeed
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -86,15 +86,7 @@ fn test_constant_definition() {
 const VALUE: i32 = 100;
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -125,9 +117,6 @@ prc helper(value: i32) -> i32 {
         assert_eq!(ir_program.toplevel_items.len(), 2);
     }
 }
-
-// Type annotation syntax is not currently supported
-// TODO: Implement type annotation support and re-enable this test
 
 #[test]
 fn test_builtin_types() {
@@ -167,15 +156,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -192,19 +173,9 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
-// IF expressions currently fail due to grammar issues
-// TODO: Fix grammar definition to support if expressions properly
 #[test]
 fn test_if_expression() {
     let source = r#"#! lang=v1
@@ -217,13 +188,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-
-    let parse_result = parse_source(source, &ast_context);
-    assert!(
-        parse_result.is_ok(),
-        "Failed to parse if expression: {parse_result:?}"
-    );
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -260,16 +225,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    // Same-scope shadowing should work in our language
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -281,15 +237,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -301,16 +249,7 @@ prc test_func(x: i32) {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    // Parameter shadowing should work in our language
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -327,16 +266,7 @@ prc func2() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    // Different function scopes should allow same variable names
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -356,15 +286,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -378,15 +300,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -401,15 +315,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -424,15 +330,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -447,15 +345,7 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
-
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
-
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }
 
 #[test]
@@ -470,13 +360,25 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
+    parse_typeck_success(source);
+}
 
-    let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
-    let result = checker.typeck(&program);
+#[test]
+fn test_wait_select() {
+    let source = r#"#! lang=v1
+prc main() {
+    wait 1s;
+    select {
+        1s => {
+            let x = 42;
+        }
+        500ms => {
+            let y = 100;
+        }
+    };
+    return;
+}
+"#;
 
-    assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
+    parse_typeck_success(source);
 }

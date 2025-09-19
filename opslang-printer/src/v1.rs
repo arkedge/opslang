@@ -77,6 +77,7 @@ define_trait_alias!(
         Cast = Cast<'cx, Self>,
         InfixImport = InfixImport<'cx, Self>,
         If = If<'cx, Self>,
+        Wait = Wait<'cx, Self>,
         Select = Select<'cx, Self>,
         SelectItems = &'cx [SelectItem<'cx, Self>],
         FunctionDef = FunctionDef<'cx, Self>,
@@ -380,6 +381,7 @@ where
                 PrettyPrint::<S>::pretty_print(import, writer, options)
             }
             ExprKind::If(if_expr) => PrettyPrint::<S>::pretty_print(if_expr, writer, options),
+            ExprKind::Wait(wait_expr) => PrettyPrint::<S>::pretty_print(wait_expr, writer, options),
             ExprKind::Select(select_expr) => {
                 PrettyPrint::<S>::pretty_print(select_expr, writer, options)
             }
@@ -570,7 +572,7 @@ where
 {
     fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
         Precedence::COMPARE.write_with_parens(self.head.0, writer, options)?;
-        for (op, expr) in self.tail_with_op {
+        for CompareOpExpr { op, val: expr } in self.tail_with_op {
             writer.write_str(" ")?;
             match op {
                 CompareOp::GreaterEq(t) => Token.write(t, writer),
@@ -677,6 +679,18 @@ where
         } else {
             Ok(())
         }
+    }
+}
+
+impl<'cx, S: Strategy, F: PrintableFamily<'cx>> PrettyPrint<S> for Wait<'cx, F>
+where
+    Block<'cx, F>: PrettyPrint<S>,
+    ExprKind<'cx, F>: PrettyPrint<S>,
+{
+    fn pretty_print(&self, writer: &mut impl Write, options: &PrintOptions<S>) -> fmt::Result {
+        Token.write(self.wait_kw, writer)?;
+        writer.write_str(" ")?;
+        PrettyPrint::<S>::pretty_print(&self.expr, writer, options)
     }
 }
 

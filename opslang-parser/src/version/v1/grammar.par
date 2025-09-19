@@ -152,6 +152,7 @@ CastExpr
 PrefixExpr
     : '-' ApplyExpr
     | { Qualif } ApplyExpr
+    | 'wait' ApplyExpr
     ;
 
 // application: lower than `&`, `$`

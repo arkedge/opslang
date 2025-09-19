@@ -250,6 +250,7 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Cast(F::Cast),
     InfixImport(F::InfixImport),
     If(F::If),
+    Wait(F::Wait),
     Select(F::Select),
 }
 
@@ -488,7 +489,13 @@ pub enum UnOp<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 #[derive(Debug, PartialEq, Clone, Copy, Visit)]
 pub struct Compare<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub head: F::Expr,
-    pub tail_with_op: &'cx [(CompareOp<'cx, F>, F::Expr)],
+    pub tail_with_op: &'cx [CompareOpExpr<'cx, F>],
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Visit)]
+pub struct CompareOpExpr<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub op: CompareOp<'cx, F>,
+    pub val: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit, opslang_ast_macro::MapIntoToken)]
@@ -573,6 +580,12 @@ pub struct If<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 pub struct IfElse<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub else_kw: token::Else<'cx, F>,
     pub else_clause: F::Block,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]
+pub struct Wait<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub wait_kw: token::Wait<'cx, F>,
+    pub expr: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]

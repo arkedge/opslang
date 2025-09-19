@@ -1,8 +1,8 @@
 use super::{
-    Apply, Array, Binary, Bytes, Cast, Compare, CompareOp, DateTime, Expr, ExprKind, ExprMut,
-    HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric, NumericKind,
-    NumericSuffix, Parened, Path, PreQualified, Row, Select, Set, String, ToplevelItem, TypeFamily,
-    UnOp, Unary, context, token,
+    Apply, Array, Binary, Bytes, Cast, Compare, CompareOp, CompareOpExpr, DateTime, Expr, ExprKind,
+    ExprMut, HexBytes, Ident, If, IfElse, InfixImport, IntegerPrefix, Literal, Numeric,
+    NumericKind, NumericSuffix, Parened, Path, PreQualified, Row, Select, Set, String,
+    ToplevelItem, TypeFamily, UnOp, Unary, Wait, context, token,
 };
 
 impl<'cx, F: TypeFamily<'cx>> Default for ToplevelItem<'cx, F> {
@@ -126,7 +126,7 @@ impl_expr_and_expr_mut! {
     pub fn compare(
         ctx: &'cx context::Context<'cx, F>,
         head: F::Expr,
-        tail_with_op: Vec<(CompareOp<'cx, F>, F::Expr)>,
+        tail_with_op: Vec<CompareOpExpr<'cx, F>>,
     ) -> Self
     where
         F: TypeFamily<'cx, Compare = Compare<'cx, F>>,
@@ -148,7 +148,7 @@ impl_expr_and_expr_mut! {
     where
         F: TypeFamily<'cx, Compare = Compare<'cx, F>>,
     {
-        Self::compare(ctx, lhs, vec![(op, rhs)])
+        Self::compare(ctx, lhs, vec![CompareOpExpr { op, val: rhs }])
     }
 
     #[inline]
@@ -256,6 +256,19 @@ impl_expr_and_expr_mut! {
             else_opt,
         };
         Self::from_kind(ctx, ExprKind::If(if_expr))
+    }
+
+    #[inline]
+    pub fn wait(
+        ctx: &'cx context::Context<'cx, F>,
+        wait_kw: token::Wait<'cx, F>,
+        expr: F::Expr,
+    ) -> Self
+    where
+        F: TypeFamily<'cx, Wait = Wait<'cx, F>>,
+    {
+        let wait = Wait { wait_kw, expr };
+        Self::from_kind(ctx, ExprKind::Wait(wait))
     }
 
     #[inline]

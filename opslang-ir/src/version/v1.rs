@@ -98,6 +98,7 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
         Apply = Apply<'cx>,
 
         BinOp = BinOp<'cx>,
+        Compare = Compare<'cx>,
 
         // Parentheses are removed
         Parened = Infallible,
@@ -149,7 +150,8 @@ re_export! {
 
     pub type Unary<'cx>;
     pub type Binary<'cx>;
-    pub type Compare<'cx>;
+    pub type CompareOp<'cx>;
+    pub type CompareOpExpr<'cx>;
     pub type Set<'cx>;
     pub type InfixImport<'cx>;
     pub type If<'cx>;
@@ -343,6 +345,12 @@ pub struct Apply<'cx> {
     pub qualifications: Vec<Qualif<'cx>>,
     /// The resolved function definition.
     pub resolved_function: Option<ResolvedPath<'cx>>,
+}
+
+#[derive(Debug, PartialEq, Visit)]
+pub struct Compare<'cx> {
+    pub head: Expr<'cx>,
+    pub tail_with_op: Vec<CompareOpExpr<'cx>>,
 }
 
 /// Obtain the representative type of this node.

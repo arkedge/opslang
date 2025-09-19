@@ -232,6 +232,7 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
         type UnOp;
         type Compare;
         type CompareOp;
+        type CompareOpExpr;
         type NotEqualToken;
         type Binary;
         type BinOp;
@@ -241,6 +242,7 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
         type InfixImport;
         type If;
         type IfElse;
+        type Wait;
         type Select;
 
         // Literal types
@@ -292,6 +294,7 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
             type As;
             type If;
             type Else;
+            type Wait;
             type Select;
             type Prc;
             type Const;

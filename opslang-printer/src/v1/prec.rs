@@ -48,6 +48,7 @@ impl<'cx, F: PrintableFamily<'cx>> HasPrecedence for ExprKind<'cx, F> {
             | ExprKind::PreQualified(_)
             | ExprKind::InfixImport(_)
             | ExprKind::If(_)
+            | ExprKind::Wait(_)
             | ExprKind::Select(_) => Precedence::ATOMIC,
         }
     }

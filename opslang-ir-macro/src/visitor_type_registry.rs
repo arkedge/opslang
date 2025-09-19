@@ -342,7 +342,6 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
         type PreQualified;
         type Unary;
         type UnOp;
-        type Compare;
         type CompareOp;
         type NotEqualToken;
         type Binary;
@@ -352,6 +351,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
         type InfixImport;
         type If;
         type IfElse;
+        type Wait;
         type Select;
 
         // Literal types
@@ -398,6 +398,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
             type As;
             type If;
             type Else;
+            type Wait;
             type Select;
             type Prc;
             type Const;
@@ -432,6 +433,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
         type DateTime;
         type Numeric;
         type Apply;
+        type Compare;
     }
     // types that are defined in ty crate, substituted with 'cx
     crate ty<'cx> {
@@ -464,8 +466,7 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
         type NumericKind;
         type ExprKind<'cx, ir>;
         type ExprMut<'cx, ir>;
-        // actual type is Vec<ScopeItem<'cx, IrTypeFamily>>
-        type ScopeItem<'cx, ir>: ::std::vec::Vec;
+        type ScopeItem<'cx, ir>: ::std::vec::Vec; // actual type is Vec<ScopeItem<'cx, IrTypeFamily>>
         type Qualif<'cx, ir>: ::std::vec::Vec;
         type SelectItem<'cx, ir>;
         type SelectItem<'cx, ir>: ::std::vec::Vec;
@@ -475,13 +476,14 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
         type BinOp<'cx>;
         type NumericKind<'cx>;
         type Expr<'cx>: ::std::vec::Vec;
+        type CompareOpExpr<'cx>;
+        type CompareOpExpr<'cx>: ::std::vec::Vec; // actual type is Vec<CompareOpExpr<'cx, IrTypeFamily>
     }
     crate ty {
         type Ident<'cx>;
         type TyKind<'cx>;
         type Identifier<'cx>;
-        // actual type is Vec<Ty<'cx>>
-        type Ty<'cx>: ::std::vec::Vec;
+        type Ty<'cx>: ::std::vec::Vec; // actual type is Vec<Ty<'cx>>
         type IntTy;
         type UintTy;
         type FloatTy;

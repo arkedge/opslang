@@ -1,7 +1,7 @@
 use crate::SelectItem;
 
 use super::{
-    Block, Comment, CompareOp, DefaultTypeFamily, Expr, ExprKind, ExprMut, Parameter, Row,
+    Block, Comment, CompareOpExpr, DefaultTypeFamily, Expr, ExprKind, ExprMut, Parameter, Row,
     ScopeItem, ToplevelItem, family::TypeFamily,
 };
 use typed_arena::Arena;
@@ -26,7 +26,7 @@ pub struct Context<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     ident_slice_arena: Arena<F::Ident>,
     select_item_slice_arena: Arena<SelectItem<'cx, F>>,
     qualif_slice_arena: Arena<F::Qualif>,
-    compare_op_expr_tuple_slice_arena: Arena<(CompareOp<'cx, F>, F::Expr)>,
+    compare_op_expr_tuple_slice_arena: Arena<CompareOpExpr<'cx, F>>,
 }
 
 impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
@@ -109,8 +109,8 @@ impl<'cx, F: TypeFamily<'cx>> Context<'cx, F> {
 
     pub fn alloc_compare_op_expr_tuple_slice(
         &'cx self,
-        tuples: impl IntoIterator<Item = (CompareOp<'cx, F>, F::Expr)>,
-    ) -> &'cx [(CompareOp<'cx, F>, F::Expr)] {
+        tuples: impl IntoIterator<Item = CompareOpExpr<'cx, F>>,
+    ) -> &'cx [CompareOpExpr<'cx, F>] {
         self.compare_op_expr_tuple_slice_arena.alloc_extend(tuples)
     }
 

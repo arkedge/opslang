@@ -192,6 +192,7 @@ declare_kw! {
     pub struct If "if"
     pub struct As "as"
     pub struct Else "else"
+    pub struct Wait "wait"
     pub struct Select "select"
     pub struct Prc "prc"
     pub struct Const "const"
@@ -218,6 +219,9 @@ macro_rules! V1Token {
     };
     (else) => {
         $crate::syntax::v1::token::Else
+    };
+    (wait) => {
+        $crate::syntax::v1::token::Wait
     };
     (select) => {
         $crate::syntax::v1::token::Select

@@ -415,12 +415,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::CompareExpr<'_> {
             cx.alloc_expr(syn::ExprKind::Compare(syn::Compare {
                 head: self.arithmetic_expr.process_token(cx),
                 tail_with_op: cx.alloc_compare_op_expr_tuple_slice(
-                    self.compare_expr_list.iter().map(|expr| {
-                        (
-                            expr.compare_op.process_token(cx),
-                            expr.arithmetic_expr.process_token(cx),
-                        )
-                    }),
+                    self.compare_expr_list
+                        .iter()
+                        .map(|expr| syn::CompareOpExpr {
+                            op: expr.compare_op.process_token(cx),
+                            val: expr.arithmetic_expr.process_token(cx),
+                        }),
                 ),
             }))
         }
@@ -576,6 +576,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
                             .process_token(cx),
                     }))
                 }
+            }
+            grammar_trait::PrefixExpr::WaitApplyExpr(prefix_expr_wait_apply_expr) => {
+                cx.alloc_expr(syn::ExprKind::Wait(syn::Wait {
+                    wait_kw: Token![wait](prefix_expr_wait_apply_expr.wait.wrap()),
+                    expr: prefix_expr_wait_apply_expr.apply_expr.process_token(cx),
+                }))
             }
         }
     }

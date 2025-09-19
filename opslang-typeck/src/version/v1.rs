@@ -162,6 +162,7 @@ opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx, '_> {
         self.ty_last_seen = Some(*ty);
     }
     fn visit_ty(&mut self, _ty: &Ty<'cx>) {
+        dbg!(_ty);
         panic!("Found `Ty` immutability. this prevents type variable resolution. review changes to IR structure and eliminate possession of immutable `Ty`pes.");
     }
     fn visit_numeric_mut(&mut self, numeric: &mut ir::Numeric<'cx>) {

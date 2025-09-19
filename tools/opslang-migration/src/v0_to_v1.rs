@@ -815,6 +815,15 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Wait {
             }
         }
 
+        if conds.len() == 1 {
+            // Single condition, no need for select
+            return Ok(v1::Expr::wait(
+                ctx,
+                V1Token![wait](Span),
+                conds.pop().unwrap().expr,
+            ));
+        }
+
         Ok(v1::Expr::select(
             ctx,
             V1Token![select](Span),

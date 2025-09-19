@@ -202,6 +202,26 @@ impl<'cx> TypeChecker<'cx> {
                     Ok(ir_expr)
                 }
             }
+            ast::ExprKind::Wait(wait) => {
+                let mut expr_ir = self.typeck_expr(env, subst, &wait.expr)?;
+                self.eagerly_resolve(subst, &mut expr_ir.ty)?;
+
+                // Check that the expression is awaitable
+                let ty = expr_ir.ty;
+                let is_awaitable = ty.is_bool() || ty.is_duration();
+                if !is_awaitable {
+                    return Err(anyhow!(
+                        "wait expression requires awaitable type (bool or duration), got {ty}",
+                    ));
+                }
+
+                // Create IR wait expression
+                let ir_expr = ir::Expr::new(
+                    ir::ExprMut::wait(self.ir_cx, wait.wait_kw.into_token(), expr_ir),
+                    Ty::mk_unit(self.tcx),
+                );
+                Ok(ir_expr)
+            }
             ast::ExprKind::Select(select) => {
                 let ast::Select {
                     select_kw,
@@ -277,19 +297,28 @@ impl<'cx> TypeChecker<'cx> {
                 // Type check all comparison operands - they should all have the same type
                 let expected_type = head_ir.ty;
 
-                for (op, expr) in compare.tail_with_op {
+                for ast::CompareOpExpr { op, val: expr } in compare.tail_with_op {
                     let expr_ir = self.typeck_expr(env, subst, expr)?;
 
                     // Unify with expected type
                     self.unify(subst, expected_type, expr_ir.ty)?;
 
-                    ir_tail.push((op.into_token(), expr_ir));
+                    ir_tail.push(ast::CompareOpExpr {
+                        op: op.into_token(),
+                        val: expr_ir,
+                    });
                 }
 
                 // Create IR Compare expression - result is always bool
                 let bool_type = Ty::mk_bool(self.tcx);
                 let ir_expr = ir::Expr::new(
-                    ir::ExprMut::compare(self.ir_cx, head_ir, ir_tail),
+                    ir::ExprMut::from_kind(
+                        self.ir_cx,
+                        ir::ExprKind::Compare(ir::Compare {
+                            head: head_ir,
+                            tail_with_op: ir_tail,
+                        }),
+                    ),
                     bool_type,
                 );
                 Ok(ir_expr)
