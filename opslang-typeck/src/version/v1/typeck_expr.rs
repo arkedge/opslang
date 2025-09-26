@@ -19,48 +19,9 @@ impl<'cx> TypeChecker<'cx> {
             ast::ExprKind::Parened(_parened) => unreachable!("handled above"),
             ast::ExprKind::Literal(literal) => self.typeck_literal(env, subst, literal),
             ast::ExprKind::Variable(path) => {
-                // First check if this is a single identifier that can be resolved in local environment
-                if let Some(ident) = path.is_ident()
-                    && let Some(type_ref) = env.lookup_variable(ident)
-                {
-                    // Found in local environment - create a resolved path with local variable
-                    let resolved_ident = self.tcx.alloc_identifier(ident.raw);
-                    let resolved_path = ir::ResolvedPath {
-                        item: ir::ResolvedItem::LocalVariable(resolved_ident),
-                        original_path: path,
-                    };
-
-                    let ir_expr =
-                        ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), type_ref);
-                    return Ok(ir_expr);
-                }
-
-                // Fall back to module resolution
-                if let Ok(ResolvePathResult {
-                    resolved_path,
-                    item,
-                }) = self.resolve_path(path)
-                    && let ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. } = item
-                {
-                    let ir_expr =
-                        ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), *ty);
-                    return Ok(ir_expr);
-                }
-
-                // Try external resolver if available
-                if let Some(ty) = self.try_external_resolve(*path) {
-                    let resolved_path = ir::ResolvedPath {
-                        item: ir::ResolvedItem::External,
-                        original_path: path,
-                    };
-                    let wrapped_ty = Ty::mk_external(self.tcx, *path, ty);
-                    let ir_expr =
-                        ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), wrapped_ty);
-                    return Ok(ir_expr);
-                }
-
-                // Not found
-                Err(anyhow!("unbound variable: {path}"))
+                let (resolved_path, ty) = self.typeck_path(env, subst, path)?;
+                let ir_expr = ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), ty);
+                Ok(ir_expr)
             }
             ast::ExprKind::Binary(binary) => self.typeck_binary(env, subst, binary),
             ast::ExprKind::Unary(unary) => {

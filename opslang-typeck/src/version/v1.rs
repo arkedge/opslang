@@ -27,6 +27,7 @@ mod typeck_constant;
 mod typeck_expr;
 mod typeck_function;
 mod typeck_literal;
+mod typeck_path;
 mod typeck_statement;
 
 /// Creates the builtin module containing all primitive types.
