@@ -577,7 +577,7 @@ impl<'cx> Default for TypingContext<'cx> {
 ///
 /// Module items define the public interface of a module, including constants,
 /// type definitions, and function definitions that can be imported by other modules.
-#[derive(Debug, Clone, Copy, Visit)]
+#[derive(Debug, Clone, Copy, Visit, PartialEq)]
 #[skip_all_visit]
 pub enum ModuleItem<'cx> {
     /// A constant value.

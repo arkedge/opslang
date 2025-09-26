@@ -209,17 +209,17 @@ pub struct Scope<'cx> {
     pub items: Vec<ScopeItem<'cx>>,
 }
 
-#[derive(Debug, Clone, Copy, Visit)]
+#[derive(Debug, Clone, Copy, Visit, PartialEq)]
 /// A resolved path reference to a definition or module item.
 pub struct ResolvedPath<'cx> {
-    /// The resolved item - either a module item or local variable.
+    /// The resolved item.
     pub item: ResolvedItem<'cx>,
     /// The original path that was resolved.
     pub original_path: &'cx ast::Path<'cx>,
 }
 
-#[derive(Debug, Clone, Copy, Visit)]
-/// The resolved item - either a module item or local variable.
+#[derive(Debug, Clone, Copy, Visit, PartialEq)]
+/// The resolved item - either a module item, local variable, or external reference.
 pub enum ResolvedItem<'cx> {
     /// Reference to a module item (types, functions, constants from modules).
     ModuleItem(&'cx opslang_ty::version::v1::ModuleItem<'cx>),
@@ -227,23 +227,10 @@ pub enum ResolvedItem<'cx> {
     LocalVariable(opslang_ty::version::v1::Ident<'cx>),
     /// Reference to an external path resolved via an external resolver.
     External,
-}
-
-impl<'cx> PartialEq for ResolvedItem<'cx> {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (ResolvedItem::ModuleItem(a), ResolvedItem::ModuleItem(b)) => std::ptr::eq(*a, *b),
-            (ResolvedItem::LocalVariable(a), ResolvedItem::LocalVariable(b)) => a == b,
-            (ResolvedItem::External, ResolvedItem::External) => true,
-            _ => false,
-        }
-    }
-}
-
-impl<'cx> PartialEq for ResolvedPath<'cx> {
-    fn eq(&self, other: &Self) -> bool {
-        self.item == other.item && self.original_path == other.original_path
-    }
+    /// Temporary placeholder for unresolved external functions during type checking.
+    ///
+    /// FIXME: This should be removed once proper module system are implemented.
+    Main,
 }
 
 #[derive(Debug, PartialEq, Visit)]

@@ -353,23 +353,16 @@ impl<'cx> TypeChecker<'cx> {
                 self.unify(subst, file_ir.ty, string_type)?;
 
                 // FIXME: Resolve path in loaded file
-                let resolved = self.resolve_path(path)?;
-
-                let (ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. }) = resolved.item
-                else {
-                    // FIXME: display Expr
-                    return Err(anyhow!("`{path}` is not a member of given file"));
+                let resolved_path = ir::ResolvedPath {
+                    item: ir::ResolvedItem::Main,
+                    original_path: path,
                 };
+                let ty = Ty::mk_function(self.tcx, vec![], Ty::mk_unit(self.tcx));
 
                 // Create IR InfixImport expression
                 let ir_expr = ir::Expr::new(
-                    ir::ExprMut::import(
-                        self.ir_cx,
-                        file_ir,
-                        question.into_token(),
-                        resolved.resolved_path,
-                    ),
-                    *ty,
+                    ir::ExprMut::import(self.ir_cx, file_ir, question.into_token(), resolved_path),
+                    ty,
                 );
                 Ok(ir_expr)
             }
