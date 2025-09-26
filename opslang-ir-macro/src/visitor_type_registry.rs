@@ -366,6 +366,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
         type InfixImport;
         type If;
         type IfElse;
+        type Call;
         type Wait;
         type Select;
 
@@ -413,6 +414,7 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
             type As;
             type If;
             type Else;
+            type Call;
             type Wait;
             type Select;
             type Prc;
@@ -503,6 +505,7 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
     crate ty {
         type Ident<'cx>;
         type TyKind<'cx>;
+        type Procedure<'cx>;
         type Identifier<'cx>;
         type Ty<'cx>: ::std::vec::Vec; // actual type is Vec<Ty<'cx>>
         type IntTy;

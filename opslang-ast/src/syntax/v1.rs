@@ -250,6 +250,7 @@ pub enum ExprKind<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     Cast(F::Cast),
     InfixImport(F::InfixImport),
     If(F::If),
+    Call(F::Call),
     Wait(F::Wait),
     Select(F::Select),
 }
@@ -563,7 +564,7 @@ pub struct Cast<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]
 pub struct InfixImport<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub file: F::Expr,
+    pub file: F::Literal,
     pub question: token::Question<'cx, F>,
     pub path: F::Path,
 }
@@ -580,6 +581,12 @@ pub struct If<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 pub struct IfElse<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
     pub else_kw: token::Else<'cx, F>,
     pub else_clause: F::Block,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]
+pub struct Call<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
+    pub call_kw: token::Call<'cx, F>,
+    pub expr: F::Expr,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]

@@ -158,6 +158,9 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Conditional expressions with if/then/else branching logic.
         type If;
 
+        /// Precedure call expression that invokes a procedure with arguments.
+        type Call;
+
         /// Async wait expression that awaits the result of an awaitable expression.
         type Wait;
 

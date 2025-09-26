@@ -242,6 +242,7 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
         type InfixImport;
         type If;
         type IfElse;
+        type Call;
         type Wait;
         type Select;
 
@@ -294,6 +295,7 @@ const V1_AST_NODE_TYPES: &[AstNodeTy<Const>] = define_ast_node_types! {
             type As;
             type If;
             type Else;
+            type Call;
             type Wait;
             type Select;
             type Prc;

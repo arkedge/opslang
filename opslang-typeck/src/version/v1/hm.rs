@@ -105,24 +105,29 @@ impl<'cx> super::TypeChecker<'cx> {
             // Function types unify if they have the same arity and corresponding types unify
             (
                 TyKind::Function {
-                    arg: args1,
+                    arg: arg1,
                     ret: ret1,
+                    is_procedure: prc1,
                 },
                 TyKind::Function {
-                    arg: args2,
+                    arg: arg2,
                     ret: ret2,
+                    is_procedure: prc2,
                 },
             ) => {
-                if args1.len() != args2.len() {
+                if arg1.len() != arg2.len() {
                     return Err(anyhow!(
                         "function arity mismatch: {} vs {}",
-                        args1.len(),
-                        args2.len()
+                        arg1.len(),
+                        arg2.len()
                     ));
+                }
+                if prc1.is_some() && prc2.is_some() && prc1 != prc2 {
+                    return Err(anyhow!("procedure mismatch: {:?} vs {:?}", prc1, prc2));
                 }
 
                 // Unify corresponding argument types
-                for (arg1, arg2) in args1.iter().zip(args2.iter()) {
+                for (arg1, arg2) in arg1.iter().zip(arg2.iter()) {
                     self.unify(subst, *arg1, *arg2)?;
                 }
 

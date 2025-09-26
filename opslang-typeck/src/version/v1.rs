@@ -1,13 +1,13 @@
 use anyhow::anyhow;
+use ast::token::IntoToken;
 use chrono::Utc;
-use opslang_ast::v1::token::IntoToken;
 use opslang_ast::v1::{self as ast};
 use opslang_ir::version::v1::{self as ir};
 
 use ir::Typed;
 use opslang_ty::version::v1::{
-    self as ty, FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, Substitution, Ty,
-    TyKind, TyVid, TypingContext,
+    self as ty, FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, PolyTy,
+    Procedure, Substitution, Ty, TyKind, TyVid, TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -22,6 +22,7 @@ mod lower;
 mod typeck_apply;
 mod typeck_binary;
 mod typeck_block;
+mod typeck_call;
 mod typeck_constant;
 mod typeck_expr;
 mod typeck_function;
@@ -57,9 +58,9 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
     builtin.add_type(cx.alloc_toplevel_ident("duration"), Ty::mk_duration(cx));
     builtin.add_type(cx.alloc_toplevel_ident("time"), Ty::mk_time(cx));
 
-    builtin.add_function(
+    builtin.add_library_function(
         cx.alloc_toplevel_ident("assert"),
-        Ty::mk_function(cx, vec![Ty::mk_bool(cx)], Ty::mk_unit(cx)),
+        PolyTy::mono(Ty::mk_function(cx, vec![Ty::mk_bool(cx)], Ty::mk_unit(cx))),
     );
 
     builtin.add_library_function(cx.alloc_toplevel_ident("assert_eq"), {
@@ -340,11 +341,19 @@ impl<'cx> TypeChecker<'cx> {
             None => Ty::mk_unit(self.tcx),
         };
 
-        let func_type = Ty::mk_function(self.tcx, param_types, return_type);
-
         let func_name = func_name.raw;
 
         let func_identifier_id = self.tcx.alloc_identifier(func_name);
+
+        let func_type = Ty::mk_procedure(
+            self.tcx,
+            Some(Procedure::SameModule {
+                name: func_identifier_id,
+            }),
+            param_types,
+            return_type,
+        );
+
         env.bind(func_name, func_identifier_id, func_type);
 
         Ok(())

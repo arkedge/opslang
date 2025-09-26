@@ -182,7 +182,7 @@ impl_expr_and_expr_mut! {
     #[inline]
     pub fn import(
         ctx: &'cx context::Context<'cx, F>,
-        file: F::Expr,
+        file: F::Literal,
         question: token::Question<'cx, F>,
         path: F::Path,
     ) -> Self

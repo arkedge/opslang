@@ -9,7 +9,7 @@ impl<'cx> TypeChecker<'cx> {
         typing_env: &Environment<'cx, '_>,
         subst: &mut Substitution<'cx>,
         literal: &'cx ast::Literal<'cx>,
-    ) -> Result<ir::Expr<'cx>> {
+    ) -> Result<(ir::Literal<'cx>, Ty<'cx>)> {
         match literal {
             ast::Literal::String(s) => {
                 let ir_string = ir::String {
@@ -18,9 +18,7 @@ impl<'cx> TypeChecker<'cx> {
                 };
                 let ir_literal = ir::Literal::String(ir_string);
                 let string_type = Ty::mk_string(self.tcx);
-                let ir_expr =
-                    ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), string_type);
-                Ok(ir_expr)
+                Ok((ir_literal, string_type))
             }
             ast::Literal::Numeric(numeric) => {
                 let mut kind = NumericKind::Repr(numeric.raw);
@@ -40,8 +38,7 @@ impl<'cx> TypeChecker<'cx> {
 
                 let ir_numeric = ir::Numeric { kind, ast: numeric };
                 let ir_literal = ir::Literal::Numeric(ir_numeric);
-                let ir_expr = ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), ty);
-                Ok(ir_expr)
+                Ok((ir_literal, ty))
             }
             ast::Literal::Array(array) => {
                 if array.exprs.is_empty() {
@@ -55,9 +52,7 @@ impl<'cx> TypeChecker<'cx> {
                         right_bracket: array.right_bracket.into_token(),
                     };
                     let ir_literal = ir::Literal::Array(ir_array);
-                    let ir_expr =
-                        ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), array_type);
-                    Ok(ir_expr)
+                    Ok((ir_literal, array_type))
                 } else {
                     // Non-empty array - type check all elements
                     let mut ir_exprs = Vec::new();
@@ -84,9 +79,7 @@ impl<'cx> TypeChecker<'cx> {
                         ir_exprs,
                         array.right_bracket.into_token(),
                     );
-                    let ir_expr =
-                        ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_array), array_type);
-                    Ok(ir_expr)
+                    Ok((ir_array, array_type))
                 }
             }
             ast::Literal::Bytes(bytes) => {
@@ -97,9 +90,7 @@ impl<'cx> TypeChecker<'cx> {
                 };
                 let ir_literal = ast::Literal::Bytes(ir_bytes);
                 let bytes_type = Ty::mk_bytes(self.tcx);
-                let ir_expr =
-                    ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), bytes_type);
-                Ok(ir_expr)
+                Ok((ir_literal, bytes_type))
             }
             ast::Literal::HexBytes(hex_bytes) => {
                 let byte_data = self.ir_cx.alloc_bytes(
@@ -113,9 +104,7 @@ impl<'cx> TypeChecker<'cx> {
                 };
                 let ir_literal = ast::Literal::HexBytes(ir_hex_bytes);
                 let hex_bytes_type = Ty::mk_bytes(self.tcx);
-                let ir_expr =
-                    ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), hex_bytes_type);
-                Ok(ir_expr)
+                Ok((ir_literal, hex_bytes_type))
             }
             ast::Literal::DateTime(dt) => {
                 // Parse the raw datetime string to chrono::DateTime<Utc>
@@ -132,9 +121,7 @@ impl<'cx> TypeChecker<'cx> {
                 };
                 let ir_literal = ast::Literal::DateTime(ir_datetime);
                 let time_type = Ty::mk_time(self.tcx);
-                let ir_expr =
-                    ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), time_type);
-                Ok(ir_expr)
+                Ok((ir_literal, time_type))
             }
         }
     }

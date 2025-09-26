@@ -774,7 +774,7 @@ impl<'cx> ConvertV0ToV1<'cx> for v0::Call {
     ) -> Result<Self::Converted, ConversionError> {
         // Create path argument as string literal
         let path_str = ctx.alloc_str(&self.path.full_name);
-        let file = v1::Expr::literal(ctx, v1::literal::Literal::string(ctx, path_str, Span));
+        let file = v1::literal::Literal::string(ctx, path_str, Span);
         let path = v1::Path::single(ctx, "main", Span);
         let arg = v1::Expr::import(ctx, file, V1Token![?](Position), path);
 

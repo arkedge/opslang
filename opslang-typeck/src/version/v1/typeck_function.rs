@@ -13,9 +13,13 @@ impl<'cx> TypeChecker<'cx> {
             .lookup_variable(func_name)
             .ok_or_else(|| anyhow!("function '{func_name}' not found in environment"))?;
 
-        let (param_types, return_type) = match func_type.kind() {
-            TyKind::Function { arg, ret } => (arg, *ret),
-            _ => return Err(anyhow!("expected function type for '{func_name}'")),
+        let TyKind::Function {
+            arg: param_types,
+            ret: return_type,
+            is_procedure: _,
+        } = func_type.kind()
+        else {
+            return Err(anyhow!("expected function type for '{func_name}'"));
         };
 
         let mut func_env = global_env.extend_inherit();
@@ -50,7 +54,7 @@ impl<'cx> TypeChecker<'cx> {
             left_paren: func_def.left_paren.into_token(),
             parameters: self.ir_cx.alloc_parameter_slice(ir_parameters),
             right_paren: func_def.right_paren.into_token(),
-            return_type,
+            return_type: *return_type,
             body: ir_body,
         })
     }

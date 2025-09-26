@@ -17,7 +17,11 @@ impl<'cx> TypeChecker<'cx> {
         }
         match expr {
             ast::ExprKind::Parened(_parened) => unreachable!("handled above"),
-            ast::ExprKind::Literal(literal) => self.typeck_literal(env, subst, literal),
+            ast::ExprKind::Literal(literal) => {
+                let (ir_literal, ty) = self.typeck_literal(env, subst, literal)?;
+                let ir_expr = ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), ty);
+                Ok(ir_expr)
+            }
             ast::ExprKind::Variable(path) => {
                 let (resolved_path, ty) = self.typeck_path(env, subst, path)?;
                 let ir_expr = ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), ty);
@@ -307,18 +311,26 @@ impl<'cx> TypeChecker<'cx> {
                     path,
                 } = infix_import;
                 // InfixImport expressions are like "file ? path" operations
-                let file_ir = self.typeck_expr(env, subst, file)?;
+                let (file_ir, ty) = self.typeck_literal(env, subst, file)?;
 
                 // File should be a string type
+                // FIXME: file must be a string literal
                 let string_type = Ty::mk_string(self.tcx);
-                self.unify(subst, file_ir.ty, string_type)?;
+                self.unify(subst, ty, string_type)?;
 
                 // FIXME: Resolve path in loaded file
+                // resolves to a procedure with no arguments and unit return type for now
                 let resolved_path = ir::ResolvedPath {
                     item: ir::ResolvedItem::Main,
                     original_path: path,
                 };
-                let ty = Ty::mk_function(self.tcx, vec![], Ty::mk_unit(self.tcx));
+                // FIXME: Resolve procedure correctly
+                let ty = Ty::mk_procedure(
+                    self.tcx,
+                    Some(ty::Procedure::External),
+                    vec![],
+                    Ty::mk_unit(self.tcx),
+                );
 
                 // Create IR InfixImport expression
                 let ir_expr = ir::Expr::new(
@@ -327,6 +339,7 @@ impl<'cx> TypeChecker<'cx> {
                 );
                 Ok(ir_expr)
             }
+            ast::ExprKind::Call(call) => self.typeck_call(env, subst, call),
         }
     }
 }

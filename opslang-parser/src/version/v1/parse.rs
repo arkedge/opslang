@@ -583,6 +583,12 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::PrefixExpr<'_> {
                     expr: prefix_expr_wait_apply_expr.apply_expr.process_token(cx),
                 }))
             }
+            grammar_trait::PrefixExpr::CallApplyExpr(prefix_expr_call_apply_expr) => {
+                cx.alloc_expr(syn::ExprKind::Call(syn::Call {
+                    call_kw: Token![call](prefix_expr_call_apply_expr.call.wrap()),
+                    expr: prefix_expr_call_apply_expr.apply_expr.process_token(cx),
+                }))
+            }
         }
     }
 }
@@ -663,9 +669,19 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::Callable<'_> {
             grammar_trait::Callable::Path(callable_path) => cx.alloc_expr(syn::ExprKind::Variable(
                 callable_path.path.process_token(cx),
             )),
-            grammar_trait::Callable::Literal(callable_literal) => cx.alloc_expr(
-                syn::ExprKind::Literal(callable_literal.literal.process_token(cx)),
-            ),
+            grammar_trait::Callable::LiteralCallableOpt(callable_literal) => {
+                let literal = callable_literal.literal.process_token(cx);
+                if let Some(opt) = &callable_literal.callable_opt {
+                    syn::Expr::import(
+                        cx,
+                        literal,
+                        Token![?](opt.quest.wrap()),
+                        opt.path.process_token(cx),
+                    )
+                } else {
+                    cx.alloc_expr(syn::ExprKind::Literal(literal))
+                }
+            }
             grammar_trait::Callable::LParenExprRParen(callable_lparen_expr_rparen) => cx
                 .alloc_expr(syn::ExprKind::Parened(syn::Parened {
                     left_paren: syn::token::OpenParen(callable_lparen_expr_rparen.l_paren.wrap()),
@@ -719,21 +735,8 @@ impl<'cx> ProcessToken<'cx> for grammar_trait::AtomicExpr<'_> {
             grammar_trait::AtomicExpr::Qualif(atomic_expr_qualif) => cx.alloc_expr(
                 syn::ExprKind::Qualif(atomic_expr_qualif.qualif.process_token(cx)),
             ),
-            grammar_trait::AtomicExpr::ImportExpr(atomic_expr_import) => {
-                let expr = atomic_expr_import
-                    .import_expr
-                    .lower_prefix_expr
-                    .process_token(cx);
-                if let Some(import_expr_opt) = &atomic_expr_import.import_expr.import_expr_opt {
-                    syn::Expr::import(
-                        cx,
-                        expr,
-                        Token![?](import_expr_opt.quest.wrap()),
-                        import_expr_opt.path.process_token(cx),
-                    )
-                } else {
-                    expr
-                }
+            grammar_trait::AtomicExpr::LowerPrefixExpr(atomic_expr_import) => {
+                atomic_expr_import.lower_prefix_expr.process_token(cx)
             }
         }
     }

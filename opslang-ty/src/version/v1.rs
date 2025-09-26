@@ -85,7 +85,13 @@ pub enum TyKind<'cx> {
     Array { inner: Ty<'cx> },
 
     /// Function type with argument types and return type.
-    Function { arg: Vec<Ty<'cx>>, ret: Ty<'cx> },
+    Function {
+        arg: Vec<Ty<'cx>>,
+        ret: Ty<'cx>,
+
+        /// Whether this is a procedure.
+        is_procedure: Option<Procedure<'cx>>,
+    },
 
     /// Inference variable used during type inference.
     Infer(InferTy),
@@ -95,6 +101,13 @@ pub enum TyKind<'cx> {
 
     /// External type identified by a string name.
     External { path: ast::Path<'cx>, ty: Ty<'cx> },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Visit)]
+pub enum Procedure<'cx> {
+    SameModule { name: Ident<'cx> },
+    // FIXME: Add cross-module procedures
+    External,
 }
 
 /// A type reference that points to a type kind.
@@ -256,9 +269,11 @@ impl<'cx> TyKind<'cx> {
             // Recursively check array element type
             TyKind::Array { inner } => inner.occurs(var),
             // Check all argument types and return type
-            TyKind::Function { arg: args, ret } => {
-                args.iter().any(|arg| arg.occurs(var)) || ret.occurs(var)
-            }
+            TyKind::Function {
+                arg,
+                ret,
+                is_procedure: _,
+            } => arg.iter().any(|arg| arg.occurs(var)) || ret.occurs(var),
             // Primitive types cannot contain variables
             _ => false,
         }
@@ -460,8 +475,31 @@ impl<'cx> Ty<'cx> {
         Self::from_kind(cx, TyKind::Array { inner })
     }
 
+    pub fn mk_procedure(
+        cx: &'cx TypingContext<'cx>,
+        procedure: Option<Procedure<'cx>>,
+        arg: Vec<Ty<'cx>>,
+        ret: Ty<'cx>,
+    ) -> Self {
+        Self::from_kind(
+            cx,
+            TyKind::Function {
+                arg,
+                ret,
+                is_procedure: procedure,
+            },
+        )
+    }
+
     pub fn mk_function(cx: &'cx TypingContext<'cx>, arg: Vec<Ty<'cx>>, ret: Ty<'cx>) -> Self {
-        Self::from_kind(cx, TyKind::Function { arg, ret })
+        Self::from_kind(
+            cx,
+            TyKind::Function {
+                arg,
+                ret,
+                is_procedure: None,
+            },
+        )
     }
 
     pub fn mk_variable(cx: &'cx TypingContext<'cx>, var: TyVid) -> Self {
@@ -517,9 +555,17 @@ impl Display for TyKind<'_> {
             // Format array types as [element_type]
             TyKind::Array { inner } => return write!(f, "[{inner}]"),
             // Format function types as (arg1, arg2, ...) -> return_type
-            TyKind::Function { arg: args, ret } => {
-                let arg_strs: Vec<String> = args.iter().map(|arg| arg.to_string()).collect();
-                return write!(f, "({}) -> {ret}", arg_strs.join(", "),);
+            TyKind::Function {
+                arg,
+                ret,
+                is_procedure,
+            } => {
+                let arg_strs: Vec<String> = arg.iter().map(|arg| arg.to_string()).collect();
+                return if is_procedure.is_some() {
+                    write!(f, "prc ({}) -> {ret}", arg_strs.join(", "),)
+                } else {
+                    write!(f, "({}) -> {ret}", arg_strs.join(", "),)
+                };
             }
             // Display inference variables with distinctive prefixes
             TyKind::Infer(infer_ty) => match infer_ty {
@@ -716,8 +762,8 @@ impl<'cx> Module<'cx> {
         self.add_item(ModuleItem::Type { id, ty })
     }
 
-    /// Creates a new function module item.
-    pub fn add_function(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
+    /// Creates a new procedure module item.
+    pub fn add_prc(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
         self.add_item(ModuleItem::Prc { id, ty })
     }
 

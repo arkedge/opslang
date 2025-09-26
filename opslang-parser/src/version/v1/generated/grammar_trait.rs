@@ -204,11 +204,6 @@ pub trait ActionTrait<'t> {
         Ok(())
     }
 
-    /// Semantic action for non-terminal 'ImportExpr'
-    fn import_expr(&mut self, _arg: &ImportExpr<'t>) -> Result<()> {
-        Ok(())
-    }
-
     /// Semantic action for non-terminal 'IfExpr'
     fn if_expr(&mut self, _arg: &IfExpr<'t>) -> Result<()> {
         Ok(())
@@ -633,7 +628,20 @@ pub struct PrefixExprWaitApplyExpr<'t> {
 }
 
 ///
-/// Type derived for production 94
+/// Type derived for production 88
+///
+/// `PrefixExpr: 'call' ApplyExpr;`
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct PrefixExprCallApplyExpr<'t> {
+    pub call: Token<'t>, /* call */
+    pub apply_expr: Box<ApplyExpr<'t>>,
+}
+
+///
+/// Type derived for production 95
 ///
 /// `LowerPrefixOp: '&';`
 ///
@@ -645,7 +653,7 @@ pub struct LowerPrefixOpAmp<'t> {
 }
 
 ///
-/// Type derived for production 95
+/// Type derived for production 96
 ///
 /// `LowerPrefixOp: '$';`
 ///
@@ -657,7 +665,7 @@ pub struct LowerPrefixOpDollar<'t> {
 }
 
 ///
-/// Type derived for production 96
+/// Type derived for production 97
 ///
 /// `Callable: Path;`
 ///
@@ -669,19 +677,20 @@ pub struct CallablePath<'t> {
 }
 
 ///
-/// Type derived for production 97
+/// Type derived for production 98
 ///
-/// `Callable: Literal;`
+/// `Callable: Literal CallableOpt /* Option */;`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
-pub struct CallableLiteral<'t> {
+pub struct CallableLiteralCallableOpt<'t> {
     pub literal: Box<Literal<'t>>,
+    pub callable_opt: Option<CallableOpt<'t>>,
 }
 
 ///
-/// Type derived for production 98
+/// Type derived for production 99
 ///
 /// `Callable: '(' Expr ')';`
 ///
@@ -695,7 +704,7 @@ pub struct CallableLParenExprRParen<'t> {
 }
 
 ///
-/// Type derived for production 99
+/// Type derived for production 100
 ///
 /// `Callable: IfExpr;`
 ///
@@ -707,7 +716,7 @@ pub struct CallableIfExpr<'t> {
 }
 
 ///
-/// Type derived for production 100
+/// Type derived for production 101
 ///
 /// `Callable: SelectExpr;`
 ///
@@ -719,7 +728,7 @@ pub struct CallableSelectExpr<'t> {
 }
 
 ///
-/// Type derived for production 101
+/// Type derived for production 104
 ///
 /// `AtomicExpr: Qualif;`
 ///
@@ -731,15 +740,15 @@ pub struct AtomicExprQualif<'t> {
 }
 
 ///
-/// Type derived for production 102
+/// Type derived for production 105
 ///
-/// `AtomicExpr: ImportExpr;`
+/// `AtomicExpr: LowerPrefixExpr;`
 ///
 #[allow(dead_code)]
 #[derive(Builder, Debug, Clone)]
 #[builder(crate = "parol_runtime::derive_builder")]
-pub struct AtomicExprImportExpr<'t> {
-    pub import_expr: Box<ImportExpr<'t>>,
+pub struct AtomicExprLowerPrefixExpr<'t> {
+    pub lower_prefix_expr: Box<LowerPrefixExpr<'t>>,
 }
 
 ///
@@ -973,7 +982,7 @@ pub struct ArrayOpt<'t> {
 #[derive(Debug, Clone)]
 pub enum AtomicExpr<'t> {
     Qualif(AtomicExprQualif<'t>),
-    ImportExpr(AtomicExprImportExpr<'t>),
+    LowerPrefixExpr(AtomicExprLowerPrefixExpr<'t>),
 }
 
 ///
@@ -1025,10 +1034,21 @@ pub struct ByteLiteral<'t> {
 #[derive(Debug, Clone)]
 pub enum Callable<'t> {
     Path(CallablePath<'t>),
-    Literal(CallableLiteral<'t>),
+    LiteralCallableOpt(CallableLiteralCallableOpt<'t>),
     LParenExprRParen(CallableLParenExprRParen<'t>),
     IfExpr(CallableIfExpr<'t>),
     SelectExpr(CallableSelectExpr<'t>),
+}
+
+///
+/// Type derived for non-terminal CallableOpt
+///
+#[allow(dead_code)]
+#[derive(Builder, Debug, Clone)]
+#[builder(crate = "parol_runtime::derive_builder")]
+pub struct CallableOpt<'t> {
+    pub quest: Token<'t>, /* ? */
+    pub path: Box<Path<'t>>,
 }
 
 ///
@@ -1417,28 +1437,6 @@ pub struct IfExprOpt<'t> {
 }
 
 ///
-/// Type derived for non-terminal ImportExpr
-///
-#[allow(dead_code)]
-#[derive(Builder, Debug, Clone)]
-#[builder(crate = "parol_runtime::derive_builder")]
-pub struct ImportExpr<'t> {
-    pub lower_prefix_expr: Box<LowerPrefixExpr<'t>>,
-    pub import_expr_opt: Option<ImportExprOpt<'t>>,
-}
-
-///
-/// Type derived for non-terminal ImportExprOpt
-///
-#[allow(dead_code)]
-#[derive(Builder, Debug, Clone)]
-#[builder(crate = "parol_runtime::derive_builder")]
-pub struct ImportExprOpt<'t> {
-    pub quest: Token<'t>, /* ? */
-    pub path: Box<Path<'t>>,
-}
-
-///
 /// Type derived for non-terminal KindArg
 ///
 #[allow(dead_code)]
@@ -1659,6 +1657,7 @@ pub enum PrefixExpr<'t> {
     MinusApplyExpr(PrefixExprMinusApplyExpr<'t>),
     PrefixExprListApplyExpr(PrefixExprPrefixExprListApplyExpr<'t>),
     WaitApplyExpr(PrefixExprWaitApplyExpr<'t>),
+    CallApplyExpr(PrefixExprCallApplyExpr<'t>),
 }
 
 ///
@@ -1937,6 +1936,7 @@ pub enum ASTType<'t> {
     Break(Break<'t>),
     ByteLiteral(ByteLiteral<'t>),
     Callable(Callable<'t>),
+    CallableOpt(Option<CallableOpt<'t>>),
     CastExpr(CastExpr<'t>),
     CastExprOpt(Option<CastExprOpt<'t>>),
     CommaExprList(CommaExprList<'t>),
@@ -1972,8 +1972,6 @@ pub enum ASTType<'t> {
     Ieee754Float(Ieee754Float<'t>),
     IfExpr(IfExpr<'t>),
     IfExprOpt(Option<IfExprOpt<'t>>),
-    ImportExpr(ImportExpr<'t>),
-    ImportExprOpt(Option<ImportExprOpt<'t>>),
     KindArg(KindArg<'t>),
     LetStmt(LetStmt<'t>),
     Literal(Literal<'t>),
@@ -3829,6 +3827,31 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
 
     /// Semantic action for production 88:
     ///
+    /// `PrefixExpr: 'call' ApplyExpr;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn prefix_expr_3(
+        &mut self,
+        call: &ParseTreeType<'t>,
+        _apply_expr: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let call = call.token()?.clone();
+        let apply_expr = pop_item!(self, apply_expr, ApplyExpr, context);
+        let prefix_expr_3_built = PrefixExprCallApplyExpr {
+            call,
+            apply_expr: Box::new(apply_expr),
+        };
+        let prefix_expr_3_built = PrefixExpr::CallApplyExpr(prefix_expr_3_built);
+        // Calling user action here
+        self.user_grammar.prefix_expr(&prefix_expr_3_built)?;
+        self.push(ASTType::PrefixExpr(prefix_expr_3_built), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 89:
+    ///
     /// `ApplyExpr: LowerPrefixExpr ApplyExprList /* Vec */;`
     ///
     #[parol_runtime::function_name::named]
@@ -3851,7 +3874,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 89:
+    /// Semantic action for production 90:
     ///
     /// `ApplyExprList /* Vec<T>::Push */: ApplyExprList AtomicExpr;`
     ///
@@ -3874,7 +3897,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 90:
+    /// Semantic action for production 91:
     ///
     /// `ApplyExprList /* Vec<T>::New */: ;`
     ///
@@ -3887,7 +3910,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 91:
+    /// Semantic action for production 92:
     ///
     /// `LowerPrefixExpr: LowerPrefixExprOpt /* Option */ Callable;`
     ///
@@ -3913,7 +3936,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 92:
+    /// Semantic action for production 93:
     ///
     /// `LowerPrefixExprOpt /* Option<T>::Some */: LowerPrefixOp;`
     ///
@@ -3932,7 +3955,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 93:
+    /// Semantic action for production 94:
     ///
     /// `LowerPrefixExprOpt /* Option<T>::None */: ;`
     ///
@@ -3944,7 +3967,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 94:
+    /// Semantic action for production 95:
     ///
     /// `LowerPrefixOp: '&';`
     ///
@@ -3962,7 +3985,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 95:
+    /// Semantic action for production 96:
     ///
     /// `LowerPrefixOp: '$';`
     ///
@@ -3980,7 +4003,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 96:
+    /// Semantic action for production 97:
     ///
     /// `Callable: Path;`
     ///
@@ -3999,26 +4022,32 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 97:
+    /// Semantic action for production 98:
     ///
-    /// `Callable: Literal;`
+    /// `Callable: Literal CallableOpt /* Option */;`
     ///
     #[parol_runtime::function_name::named]
-    fn callable_1(&mut self, _literal: &ParseTreeType<'t>) -> Result<()> {
+    fn callable_1(
+        &mut self,
+        _literal: &ParseTreeType<'t>,
+        _callable_opt: &ParseTreeType<'t>,
+    ) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
+        let callable_opt = pop_item!(self, callable_opt, CallableOpt, context);
         let literal = pop_item!(self, literal, Literal, context);
-        let callable_1_built = CallableLiteral {
+        let callable_1_built = CallableLiteralCallableOpt {
             literal: Box::new(literal),
+            callable_opt,
         };
-        let callable_1_built = Callable::Literal(callable_1_built);
+        let callable_1_built = Callable::LiteralCallableOpt(callable_1_built);
         // Calling user action here
         self.user_grammar.callable(&callable_1_built)?;
         self.push(ASTType::Callable(callable_1_built), context);
         Ok(())
     }
 
-    /// Semantic action for production 98:
+    /// Semantic action for production 99:
     ///
     /// `Callable: '(' Expr ')';`
     ///
@@ -4046,7 +4075,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 99:
+    /// Semantic action for production 100:
     ///
     /// `Callable: IfExpr;`
     ///
@@ -4065,7 +4094,7 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 100:
+    /// Semantic action for production 101:
     ///
     /// `Callable: SelectExpr;`
     ///
@@ -4084,7 +4113,41 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 101:
+    /// Semantic action for production 102:
+    ///
+    /// `CallableOpt /* Option<T>::Some */: '?' Path;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn callable_opt_0(
+        &mut self,
+        quest: &ParseTreeType<'t>,
+        _path: &ParseTreeType<'t>,
+    ) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        let quest = quest.token()?.clone();
+        let path = pop_item!(self, path, Path, context);
+        let callable_opt_0_built = CallableOpt {
+            quest,
+            path: Box::new(path),
+        };
+        self.push(ASTType::CallableOpt(Some(callable_opt_0_built)), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 103:
+    ///
+    /// `CallableOpt /* Option<T>::None */: ;`
+    ///
+    #[parol_runtime::function_name::named]
+    fn callable_opt_1(&mut self) -> Result<()> {
+        let context = function_name!();
+        trace!("{}", self.trace_item_stack(context));
+        self.push(ASTType::CallableOpt(None), context);
+        Ok(())
+    }
+
+    /// Semantic action for production 104:
     ///
     /// `AtomicExpr: Qualif;`
     ///
@@ -4103,83 +4166,22 @@ impl<'t, 'u> ActionAuto<'t, 'u> {
         Ok(())
     }
 
-    /// Semantic action for production 102:
+    /// Semantic action for production 105:
     ///
-    /// `AtomicExpr: ImportExpr;`
+    /// `AtomicExpr: LowerPrefixExpr;`
     ///
     #[parol_runtime::function_name::named]
-    fn atomic_expr_1(&mut self, _import_expr: &ParseTreeType<'t>) -> Result<()> {
+    fn atomic_expr_1(&mut self, _lower_prefix_expr: &ParseTreeType<'t>) -> Result<()> {
         let context = function_name!();
         trace!("{}", self.trace_item_stack(context));
-        let import_expr = pop_item!(self, import_expr, ImportExpr, context);
-        let atomic_expr_1_built = AtomicExprImportExpr {
-            import_expr: Box::new(import_expr),
+        let lower_prefix_expr = pop_item!(self, lower_prefix_expr, LowerPrefixExpr, context);
+        let atomic_expr_1_built = AtomicExprLowerPrefixExpr {
+            lower_prefix_expr: Box::new(lower_prefix_expr),
         };
-        let atomic_expr_1_built = AtomicExpr::ImportExpr(atomic_expr_1_built);
+        let atomic_expr_1_built = AtomicExpr::LowerPrefixExpr(atomic_expr_1_built);
         // Calling user action here
         self.user_grammar.atomic_expr(&atomic_expr_1_built)?;
         self.push(ASTType::AtomicExpr(atomic_expr_1_built), context);
-        Ok(())
-    }
-
-    /// Semantic action for production 103:
-    ///
-    /// `ImportExpr: LowerPrefixExpr ImportExprOpt /* Option */;`
-    ///
-    #[parol_runtime::function_name::named]
-    fn import_expr(
-        &mut self,
-        _lower_prefix_expr: &ParseTreeType<'t>,
-        _import_expr_opt: &ParseTreeType<'t>,
-    ) -> Result<()> {
-        let context = function_name!();
-        trace!("{}", self.trace_item_stack(context));
-        let import_expr_opt = pop_item!(self, import_expr_opt, ImportExprOpt, context);
-        let lower_prefix_expr = pop_item!(self, lower_prefix_expr, LowerPrefixExpr, context);
-        let import_expr_built = ImportExpr {
-            lower_prefix_expr: Box::new(lower_prefix_expr),
-            import_expr_opt,
-        };
-        // Calling user action here
-        self.user_grammar.import_expr(&import_expr_built)?;
-        self.push(ASTType::ImportExpr(import_expr_built), context);
-        Ok(())
-    }
-
-    /// Semantic action for production 104:
-    ///
-    /// `ImportExprOpt /* Option<T>::Some */: '?' Path;`
-    ///
-    #[parol_runtime::function_name::named]
-    fn import_expr_opt_0(
-        &mut self,
-        quest: &ParseTreeType<'t>,
-        _path: &ParseTreeType<'t>,
-    ) -> Result<()> {
-        let context = function_name!();
-        trace!("{}", self.trace_item_stack(context));
-        let quest = quest.token()?.clone();
-        let path = pop_item!(self, path, Path, context);
-        let import_expr_opt_0_built = ImportExprOpt {
-            quest,
-            path: Box::new(path),
-        };
-        self.push(
-            ASTType::ImportExprOpt(Some(import_expr_opt_0_built)),
-            context,
-        );
-        Ok(())
-    }
-
-    /// Semantic action for production 105:
-    ///
-    /// `ImportExprOpt /* Option<T>::None */: ;`
-    ///
-    #[parol_runtime::function_name::named]
-    fn import_expr_opt_1(&mut self) -> Result<()> {
-        let context = function_name!();
-        trace!("{}", self.trace_item_stack(context));
-        self.push(ASTType::ImportExprOpt(None), context);
         Ok(())
     }
 
@@ -5249,24 +5251,24 @@ impl<'t> UserActionsTrait<'t> for ActionAuto<'t, '_> {
             85 => self.prefix_expr_list_0(&children[0], &children[1]),
             86 => self.prefix_expr_list_1(),
             87 => self.prefix_expr_2(&children[0], &children[1]),
-            88 => self.apply_expr(&children[0], &children[1]),
-            89 => self.apply_expr_list_0(&children[0], &children[1]),
-            90 => self.apply_expr_list_1(),
-            91 => self.lower_prefix_expr(&children[0], &children[1]),
-            92 => self.lower_prefix_expr_opt_0(&children[0]),
-            93 => self.lower_prefix_expr_opt_1(),
-            94 => self.lower_prefix_op_0(&children[0]),
-            95 => self.lower_prefix_op_1(&children[0]),
-            96 => self.callable_0(&children[0]),
-            97 => self.callable_1(&children[0]),
-            98 => self.callable_2(&children[0], &children[1], &children[2]),
-            99 => self.callable_3(&children[0]),
-            100 => self.callable_4(&children[0]),
-            101 => self.atomic_expr_0(&children[0]),
-            102 => self.atomic_expr_1(&children[0]),
-            103 => self.import_expr(&children[0], &children[1]),
-            104 => self.import_expr_opt_0(&children[0], &children[1]),
-            105 => self.import_expr_opt_1(),
+            88 => self.prefix_expr_3(&children[0], &children[1]),
+            89 => self.apply_expr(&children[0], &children[1]),
+            90 => self.apply_expr_list_0(&children[0], &children[1]),
+            91 => self.apply_expr_list_1(),
+            92 => self.lower_prefix_expr(&children[0], &children[1]),
+            93 => self.lower_prefix_expr_opt_0(&children[0]),
+            94 => self.lower_prefix_expr_opt_1(),
+            95 => self.lower_prefix_op_0(&children[0]),
+            96 => self.lower_prefix_op_1(&children[0]),
+            97 => self.callable_0(&children[0]),
+            98 => self.callable_1(&children[0], &children[1]),
+            99 => self.callable_2(&children[0], &children[1], &children[2]),
+            100 => self.callable_3(&children[0]),
+            101 => self.callable_4(&children[0]),
+            102 => self.callable_opt_0(&children[0], &children[1]),
+            103 => self.callable_opt_1(),
+            104 => self.atomic_expr_0(&children[0]),
+            105 => self.atomic_expr_1(&children[0]),
             106 => self.if_expr(&children[0], &children[1], &children[2], &children[3]),
             107 => self.if_expr_opt_0(&children[0], &children[1]),
             108 => self.if_expr_opt_1(),

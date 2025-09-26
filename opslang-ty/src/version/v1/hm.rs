@@ -131,10 +131,14 @@ impl<'cx> Substitution<'cx> {
                     })
                 }
             }
-            TyKind::Function { arg: args, ret } => {
+            TyKind::Function {
+                arg,
+                ret,
+                is_procedure,
+            } => {
                 let mut changed = false;
                 // Apply substitutions to all argument types
-                let substituted_args: Vec<Ty<'cx>> = args
+                let substituted_args: Vec<Ty<'cx>> = arg
                     .iter()
                     .map(|&arg| {
                         let substituted = self.apply_substitution_pure(cx, arg);
@@ -155,6 +159,7 @@ impl<'cx> Substitution<'cx> {
                     cx.alloc_type(TyKind::Function {
                         arg: substituted_args,
                         ret: substituted_ret,
+                        is_procedure: *is_procedure,
                     })
                 } else {
                     ty

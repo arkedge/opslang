@@ -153,6 +153,7 @@ PrefixExpr
     : '-' ApplyExpr
     | { Qualif } ApplyExpr
     | 'wait' ApplyExpr
+    | 'call' ApplyExpr // ad-hoc "call"
     ;
 
 // application: lower than `&`, `$`
@@ -171,7 +172,7 @@ LowerPrefixOp
 
 Callable
     : Path
-    | Literal
+    | Literal ['?' Path]
     | '(' Expr ')'
     | IfExpr
     | SelectExpr
@@ -180,12 +181,7 @@ Callable
 // expressions with clear space delimitation
 AtomicExpr
     : Qualif
-    | ImportExpr
-    ;
-
-// ad-hoc import expression
-ImportExpr
-    : LowerPrefixExpr ['?' Path]
+    | LowerPrefixExpr
     ;
 
 IfExpr

@@ -38,6 +38,21 @@ impl<'cx> TypeChecker<'cx> {
 
         self.unify(subst, func_ir.ty, expected_func_type)?;
 
+        if let TyKind::Function {
+            arg: _,
+            ret: _,
+            is_procedure,
+        } = func_ir.ty.kind()
+        {
+            if is_procedure.is_some() {
+                return Err(anyhow!(
+                    "cannot apply a procedure, add `call` before the procedure name"
+                ));
+            }
+        } else {
+            unreachable!();
+        }
+
         args.shrink_to_fit();
         qualifications.shrink_to_fit();
 

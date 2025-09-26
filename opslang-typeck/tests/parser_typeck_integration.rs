@@ -426,3 +426,20 @@ prc main() {
 
     parse_typeck_success(source);
 }
+
+#[test]
+fn test_prc_call() {
+    let source = r#"#! lang=v1
+prc f() {
+    return;
+}
+
+prc main() {
+    call f;
+    call "unknown"?main;
+    return;
+}
+"#;
+
+    parse_typeck_success(source);
+}
