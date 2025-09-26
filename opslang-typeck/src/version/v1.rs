@@ -6,8 +6,8 @@ use opslang_ir::version::v1::{self as ir};
 
 use ir::Typed;
 use opslang_ty::version::v1::{
-    self as ty, FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, Ty, TyKind,
-    TyVid, TypingContext,
+    self as ty, FloatTy, Ident, InferTy, IntTy, Module, ModuleItem, ModuleLoader, Substitution, Ty,
+    TyKind, TyVid, TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -15,9 +15,8 @@ use std::ops::{Deref, DerefMut};
 
 type Result<T, E = anyhow::Error> = std::result::Result<T, E>;
 
-mod hm;
-use hm::Substitution;
 mod environment;
+mod hm;
 use environment::Environment;
 mod lower;
 mod typeck_apply;
@@ -29,6 +28,8 @@ mod typeck_function;
 mod typeck_literal;
 mod typeck_path;
 mod typeck_statement;
+
+pub use hm::generalize_ty;
 
 /// Creates the builtin module containing all primitive types.
 ///
@@ -59,6 +60,17 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> &'cx Module<'c
     builtin.add_function(
         cx.alloc_toplevel_ident("assert"),
         Ty::mk_function(cx, vec![Ty::mk_bool(cx)], Ty::mk_unit(cx)),
+    );
+
+    builtin.add_library_function(cx.alloc_toplevel_ident("assert_eq"), {
+        let var = Ty::mk_fresh(cx);
+        let body = Ty::mk_function(cx, vec![var, var], Ty::mk_unit(cx));
+        generalize_ty(body)
+    });
+    // any type can be printed, for now.
+    builtin.add_library_function(
+        cx.alloc_toplevel_ident("print"),
+        generalize_ty(Ty::mk_function(cx, vec![Ty::mk_fresh(cx)], Ty::mk_unit(cx))),
     );
 
     builtin.add_constant(cx.alloc_toplevel_ident("true"), Ty::mk_bool(cx));

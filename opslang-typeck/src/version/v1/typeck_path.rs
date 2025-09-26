@@ -27,9 +27,18 @@ impl<'cx> TypeChecker<'cx> {
             resolved_path,
             item,
         }) = self.resolve_path(path)
-            && let ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. } = item
         {
-            return Ok((resolved_path, *ty));
+            match item {
+                ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. } => {
+                    return Ok((resolved_path, *ty));
+                }
+                ModuleItem::LibraryFn { ty: poly_ty, .. } => {
+                    // Instantiate polymorphic type with fresh type variables
+                    let instantiated_ty = poly_ty.instantiate(self.tcx);
+                    return Ok((resolved_path, instantiated_ty));
+                }
+                _ => {}
+            }
         }
 
         // Try external resolver if available

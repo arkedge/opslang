@@ -70,7 +70,10 @@ impl OutsideIrCrateInterTy<'_> {
 
 /// Wrapper for `InstanceKind` that provides type generation methods.
 #[derive(Clone, Copy, Debug)]
-pub struct IrNodeTyInstance(pub(super) InstanceKind);
+pub struct IrNodeTyInstance {
+    pub(super) ty: InstanceKind,
+    pub(super) has_lifetime: bool,
+}
 
 /// Specifies the source crate and type family for IR node types.
 #[derive(Clone, Copy, Debug)]
@@ -96,7 +99,7 @@ impl std::ops::Deref for IrNodeTyInstance {
     type Target = InstanceKind;
 
     fn deref(&self) -> &Self::Target {
-        &self.0
+        &self.ty
     }
 }
 
@@ -153,7 +156,9 @@ impl IrNodeTyInstance {
             colon2_token: None,
             args: Punctuated::new(),
         };
-        g.args.push(parse_quote!('cx));
+        if self.has_lifetime {
+            g.args.push(parse_quote!('cx));
+        }
         if let Some(path) = self.kind().ty_arg(rebase_ir_to_super) {
             g.args.push(path);
         }
@@ -161,7 +166,7 @@ impl IrNodeTyInstance {
     }
     /// Get base crate path from the wrapped instance kind.
     fn base_path(&self, rebase_ir_to_super: bool) -> Path {
-        self.0.base_path(rebase_ir_to_super)
+        self.ty.base_path(rebase_ir_to_super)
     }
 }
 

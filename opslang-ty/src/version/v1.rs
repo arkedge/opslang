@@ -20,6 +20,9 @@ use typed_arena::Arena;
 
 use opslang_ast::syntax::v1 as ast;
 
+pub mod hm;
+pub use hm::{IntVarValue, Substitution};
+
 /// Signed integer types, following Rust's naming convention.
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Visit)]
 #[skip_all_visit]
@@ -331,6 +334,51 @@ impl<'cx> TyKind<'cx> {
     }
 }
 
+/// Represents a polymorphic type with type variables.
+///
+/// A polymorphic type consists of type variables (TyVar) that can be instantiated
+/// to create monomorphic types. This enables generic functions and types.
+#[derive(Debug, Clone, PartialEq, Visit)]
+pub struct PolyTy<'cx> {
+    /// The type variables bound by this polymorphic type.
+    pub type_vars: Vec<TyVid>,
+    /// The body type that may contain the bound type variables.
+    pub body: Ty<'cx>,
+}
+
+impl<'cx> PolyTy<'cx> {
+    /// Creates a new polymorphic type.
+    pub fn new(type_vars: Vec<TyVid>, body: Ty<'cx>) -> Self {
+        Self { type_vars, body }
+    }
+
+    /// Creates a monomorphic type (no type variables).
+    pub fn mono(body: Ty<'cx>) -> Self {
+        Self {
+            type_vars: Vec::new(),
+            body,
+        }
+    }
+
+    /// Instantiates the polymorphic type with fresh type variables.
+    ///
+    /// This creates a new monomorphic type by replacing bound type variables
+    /// with fresh type variables for inference.
+    pub fn instantiate(&self, cx: &'cx TypingContext<'cx>) -> Ty<'cx> {
+        if self.type_vars.is_empty() {
+            return self.body;
+        }
+
+        let mut substitution = hm::Substitution::new();
+        for &var in &self.type_vars {
+            let fresh_var = TyVid::fresh();
+            let fresh_ty = Ty::mk_variable(cx, fresh_var);
+            substitution.insert(var, fresh_ty);
+        }
+        substitution.apply_substitution_pure(cx, self.body)
+    }
+}
+
 impl<'cx> Ty<'cx> {
     pub fn from_kind(cx: &'cx TypingContext<'cx>, kind: TyKind<'cx>) -> Self {
         cx.alloc_type(kind)
@@ -418,6 +466,10 @@ impl<'cx> Ty<'cx> {
 
     pub fn mk_variable(cx: &'cx TypingContext<'cx>, var: TyVid) -> Self {
         Self::from_kind(cx, TyKind::Infer(InferTy::TyVar(var)))
+    }
+
+    pub fn mk_fresh(cx: &'cx TypingContext<'cx>) -> Self {
+        Self::mk_variable(cx, TyVid::fresh())
     }
 
     pub fn mk_int_var(cx: &'cx TypingContext<'cx>, var: IntVid) -> Self {
@@ -577,7 +629,7 @@ impl<'cx> Default for TypingContext<'cx> {
 ///
 /// Module items define the public interface of a module, including constants,
 /// type definitions, and function definitions that can be imported by other modules.
-#[derive(Debug, Clone, Copy, Visit, PartialEq)]
+#[derive(Debug, Clone, Visit, PartialEq)]
 #[skip_all_visit]
 pub enum ModuleItem<'cx> {
     /// A constant value.
@@ -600,6 +652,13 @@ pub enum ModuleItem<'cx> {
         id: Ident<'cx>,
         /// The type associated with this module item
         ty: Ty<'cx>,
+    },
+    /// A library function definition with polymorphic type.
+    LibraryFn {
+        /// The identifier of this module item
+        id: Ident<'cx>,
+        /// The polymorphic type associated with this module item
+        ty: PolyTy<'cx>,
     },
 }
 
@@ -642,6 +701,7 @@ impl<'cx> Module<'cx> {
             ModuleItem::Constant { id, .. } => id,
             ModuleItem::Type { id, .. } => id,
             ModuleItem::Prc { id, .. } => id,
+            ModuleItem::LibraryFn { id, .. } => id,
         };
         self.items.insert(id.name.to_string(), item);
     }
@@ -659,6 +719,11 @@ impl<'cx> Module<'cx> {
     /// Creates a new function module item.
     pub fn add_function(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
         self.add_item(ModuleItem::Prc { id, ty })
+    }
+
+    /// Creates a new library function module item, which can be polymorphic.
+    pub fn add_library_function(&mut self, id: Ident<'cx>, ty: PolyTy<'cx>) {
+        self.add_item(ModuleItem::LibraryFn { id, ty })
     }
 
     /// Looks up an item by name within this module.

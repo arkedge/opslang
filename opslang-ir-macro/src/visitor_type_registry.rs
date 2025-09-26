@@ -149,15 +149,15 @@ macro_rules! define_ir_node_types {
         }
         crate ast<'cx, default> {
             $(type $ast_default_name:ident;)*
-            $(mod $ast_default_module:ident {
-                $(type $ast_default_mod_name:ident;)*
-            })*
         }
         crate ir<'cx> {
             $(type $ir_name:ident;)*
         }
         crate ty<'cx> {
             $(type $ty_name:ident;)*
+        }
+        crate ty {
+            $(type $ty_no_cx_name:ident;)*
         }
     ) => {
         {
@@ -169,7 +169,10 @@ macro_rules! define_ir_node_types {
             &[
                 $(
                     IrNodeTy {
-                        ty: Some(IrNodeTyInstance(InstanceKind::ast_ir())),
+                        ty: Some(IrNodeTyInstance {
+                            ty: InstanceKind::ast_ir(),
+                            has_lifetime: true,
+                        }),
                         name: stringify!($ast_name),
                         ..default
                     },
@@ -177,7 +180,10 @@ macro_rules! define_ir_node_types {
                 $(
                     $(
                         IrNodeTy {
-                            ty: Some(IrNodeTyInstance(InstanceKind::ast_ir())),
+                            ty: Some(IrNodeTyInstance {
+                                ty: InstanceKind::ast_ir(),
+                                has_lifetime: true,
+                            }),
                             child: Some(stringify!($ast_module)),
                             name: stringify!($ast_mod_name),
                         },
@@ -185,32 +191,41 @@ macro_rules! define_ir_node_types {
                 )*
                 $(
                     IrNodeTy {
-                        ty: Some(IrNodeTyInstance(InstanceKind::ast_default())),
+                        ty: Some(IrNodeTyInstance {
+                            ty: InstanceKind::ast_default(),
+                            has_lifetime: true,
+                        }),
                         name: stringify!($ast_default_name),
                         ..default
                     },
                 )*
                 $(
-                    $(
-                        IrNodeTy {
-                            ty: InstanceKind::ast_default().wrap(),
-                            child: Some(stringify!($ast_default_module)),
-                            name: stringify!($ast_default_mod_name),
-                            ..default
-                        },
-                    )*
-                )*
-                $(
                     IrNodeTy {
-                        ty: Some(IrNodeTyInstance(InstanceKind::ir())),
+                        ty: Some(IrNodeTyInstance {
+                            ty: InstanceKind::ir(),
+                            has_lifetime: true,
+                        }),
                         name: stringify!($ir_name),
                         ..default
                     },
                 )*
                 $(
                     IrNodeTy {
-                        ty: Some(IrNodeTyInstance(InstanceKind::ty())),
+                        ty: Some(IrNodeTyInstance {
+                            ty: InstanceKind::ty(),
+                            has_lifetime: true,
+                        }),
                         name: stringify!($ty_name),
+                        ..default
+                    },
+                )*
+                $(
+                    IrNodeTy {
+                        ty: Some(IrNodeTyInstance {
+                            ty: InstanceKind::ty(),
+                            has_lifetime: false,
+                        }),
+                        name: stringify!($ty_no_cx_name),
                         ..default
                     },
                 )*
@@ -437,9 +452,15 @@ const V1_IR_NODE_TYPES: &[IrNodeTy<Const>] = define_ir_node_types! {
     }
     // types that are defined in ty crate, substituted with 'cx
     crate ty<'cx> {
-        // actual type is `Ty<'cx>`
-        type Ty;
+        type Ty; // actual type is `Ty<'cx>`, and so on
         type ModuleItem;
+    }
+    // types that are defined in ty crate, without 'cx
+    crate ty {
+        type InferTy; // actual type is `InferTy`, and so on
+        type TyVid;
+        type IntVid;
+        type FloatVid;
     }
 };
 
@@ -487,10 +508,6 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
         type IntTy;
         type UintTy;
         type FloatTy;
-        type InferTy;
-        type IntVid;
-        type FloatVid;
-        type TyVid;
     }
     extern {
         type ::std::convert::Infallible;

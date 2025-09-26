@@ -395,3 +395,34 @@ prc main() {
 
     parse_typeck_success(source);
 }
+
+#[test]
+fn test_assert_eq() {
+    let source = r#"#! lang=v1
+prc main() {
+    assert_eq true false;
+    assert_eq 1 1;
+    assert_eq 3.14 3.14;
+    assert_eq "hello" "hello";
+    return;
+}
+"#;
+
+    parse_typeck_success(source);
+}
+
+#[test]
+fn test_print() {
+    let source = r#"#! lang=v1
+prc main() {
+    print "Hello, World!";
+    print 42;
+    print 3.14;
+    print true;
+    print 1s;
+    return;
+}
+"#;
+
+    parse_typeck_success(source);
+}
