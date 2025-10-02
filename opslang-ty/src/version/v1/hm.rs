@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-use super::{FloatTy, FloatVid, InferTy, IntTy, IntVid, Ty, TyKind, TyVid, TypingContext, UintTy};
+use super::{
+    FloatTy, FloatVid, InferTy, IntTy, IntVid, Integer, Ty, TyKind, TyVid, TypingContext, UintTy,
+};
 
 /// Represents a type substitution mapping type variables to concrete types.
 ///
@@ -11,15 +13,9 @@ pub struct Substitution<'cx> {
     /// Maps type variables to their substituted types
     ty_map: HashMap<TyVid, Ty<'cx>>,
     /// Maps integer variables to their substituted types
-    int_map: HashMap<IntVid, IntVarValue>,
+    int_map: HashMap<IntVid, Integer>,
     /// Maps float variables to their substituted types
     float_map: HashMap<FloatVid, FloatTy>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum IntVarValue {
-    IntType(IntTy),
-    UintType(UintTy),
 }
 
 impl<'cx> Substitution<'cx> {
@@ -42,18 +38,18 @@ impl<'cx> Substitution<'cx> {
     }
 
     /// Inserts a mapping from an integer variable to a concrete integer type.
-    pub fn resolve_int_var(&mut self, var: IntVid, ty: IntVarValue) {
+    pub fn resolve_int_var(&mut self, var: IntVid, ty: Integer) {
         self.int_map.insert(var, ty);
     }
 
     /// Inserts a mapping from an integer variable to a concrete integer type.
     pub fn resolve_int(&mut self, var: IntVid, ty: IntTy) {
-        self.int_map.insert(var, IntVarValue::IntType(ty));
+        self.int_map.insert(var, Integer::Int(ty));
     }
 
     /// Inserts a mapping from an integer variable to a concrete unsigned integer type.
     pub fn resolve_uint(&mut self, var: IntVid, ty: UintTy) {
-        self.int_map.insert(var, IntVarValue::UintType(ty));
+        self.int_map.insert(var, Integer::Uint(ty));
     }
 
     /// Inserts a mapping from a float variable to a concrete float type.
@@ -69,7 +65,7 @@ impl<'cx> Substitution<'cx> {
     }
 
     /// Gets the substituted integer type for a given integer variable.
-    pub fn get_int(&self, var: &IntVid) -> Option<IntVarValue> {
+    pub fn get_int(&self, var: &IntVid) -> Option<Integer> {
         self.int_map.get(var).copied()
     }
 
@@ -106,8 +102,8 @@ impl<'cx> Substitution<'cx> {
             TyKind::Infer(InferTy::IntVar(var)) => {
                 if let Some(substituted_ty) = self.int_map.get(var) {
                     match substituted_ty {
-                        IntVarValue::IntType(int_ty) => Ty::mk_int(cx, *int_ty),
-                        IntVarValue::UintType(uint_ty) => Ty::mk_uint(cx, *uint_ty),
+                        Integer::Int(int_ty) => Ty::mk_int(cx, *int_ty),
+                        Integer::Uint(uint_ty) => Ty::mk_uint(cx, *uint_ty),
                     }
                 } else {
                     ty
