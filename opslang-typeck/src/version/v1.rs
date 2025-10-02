@@ -6,8 +6,8 @@ use opslang_ir::version::v1::{self as ir};
 
 use ir::Typed;
 use opslang_ty::version::v1::{
-    self as ty, FloatTy, Ident, IntTy, Module, ModuleItem, ModuleLoader, PolyTy, Procedure,
-    Substitution, Ty, TyKind, TyVid, TypingContext,
+    self as ty, FloatTy, Ident, IntTy, Module, ModuleDef, ModuleItem, ModuleLoader, PolyTy,
+    Procedure, Substitution, Ty, TyKind, TyVid, TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -107,7 +107,7 @@ impl<'cx> TypeChecker<'cx> {
     /// Adds a module to the type checker's module loader.
     ///
     /// This makes the module's exported items available for type resolution.
-    pub fn add_module(&mut self, module: &'cx Module<'cx>) {
+    pub fn add_module(&mut self, module: Module<'cx>) {
         self.module_loader.add_module(module);
     }
 

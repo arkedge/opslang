@@ -589,7 +589,7 @@ pub struct TypingContext<'cx> {
     /// Arena for allocating identifier information
     identifier_arena: Arena<Identifier<'cx>>,
     /// Arena for allocating module definitions
-    module_arena: Arena<Module<'cx>>,
+    module_arena: Arena<ModuleDef<'cx>>,
     /// Arena for allocating module items
     module_item_arena: Arena<ModuleItem<'cx>>,
     /// Global counter for unique definition IDs
@@ -653,8 +653,8 @@ impl<'cx> TypingContext<'cx> {
     ///
     /// This allows modules to be stored with the same lifetime as the typing context,
     /// enabling safe references across the type checking process.
-    pub fn alloc_module(&'cx self, module: Module<'cx>) -> &'cx Module<'cx> {
-        self.module_arena.alloc(module)
+    pub fn alloc_module(&'cx self, module: ModuleDef<'cx>) -> Module<'cx> {
+        Module(self.module_arena.alloc(module))
     }
 
     /// Allocates a module item in the module item arena and returns a reference.
@@ -708,19 +708,31 @@ pub enum ModuleItem<'cx> {
     },
 }
 
-/// Represents a module containing named items.
-///
-/// Modules provide namespacing and organization for types, functions, and constants.
-/// Each module maintains a mapping from names to their corresponding items.
 #[derive(Debug, Clone)]
-pub struct Module<'cx> {
+/// Definition of a module containing named items.
+pub struct ModuleDef<'cx> {
     /// The name of this module
     id: Ident<'cx>,
     /// Map from item names to their definitions
     items: HashMap<String, ModuleItem<'cx>>,
 }
 
-impl<'cx> Module<'cx> {
+#[derive(Debug, Clone, Copy)]
+/// Represents a module containing named items.
+///
+/// Modules provide namespacing and organization for types, functions, and constants.
+/// Each module maintains a mapping from names to their corresponding items.
+pub struct Module<'cx>(pub &'cx ModuleDef<'cx>);
+
+impl<'cx> std::ops::Deref for Module<'cx> {
+    type Target = &'cx ModuleDef<'cx>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<'cx> ModuleDef<'cx> {
     /// Creates a new empty module with the given name.
     ///
     /// The module starts with no items and can be populated using add_item.
@@ -794,7 +806,7 @@ impl<'cx> Module<'cx> {
 #[derive(Debug)]
 pub struct ModuleLoader<'cx> {
     /// Map from module names to their definitions
-    modules: HashMap<String, &'cx Module<'cx>>,
+    modules: HashMap<String, Module<'cx>>,
 }
 
 impl<'cx> ModuleLoader<'cx> {
@@ -810,14 +822,14 @@ impl<'cx> ModuleLoader<'cx> {
     /// Registers a module with the loader under the given name.
     ///
     /// This makes the module available for path resolution and import operations.
-    pub fn add_module(&mut self, module: &'cx Module<'cx>) {
+    pub fn add_module(&mut self, module: Module<'cx>) {
         self.modules.insert(module.id.name.to_string(), module);
     }
 
     /// Looks up a module by name.
     ///
     /// Returns None if no module with the given name is registered.
-    pub fn lookup_module(&self, name: &str) -> Option<&'cx Module<'cx>> {
+    pub fn lookup_module(&self, name: &str) -> Option<Module<'cx>> {
         self.modules.get(name).copied()
     }
 
