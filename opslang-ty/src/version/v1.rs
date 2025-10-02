@@ -714,7 +714,7 @@ pub struct ModuleDef<'cx> {
     /// The name of this module
     id: Ident<'cx>,
     /// Map from item names to their definitions
-    items: HashMap<String, ModuleItem<'cx>>,
+    items: HashMap<&'cx str, ModuleItem<'cx>>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -730,6 +730,15 @@ impl<'cx> std::ops::Deref for Module<'cx> {
     fn deref(&self) -> &Self::Target {
         &self.0
     }
+}
+
+#[derive(Debug)]
+/// Error indicating that a module item with the same name already exists.
+///
+/// FIXME: Replace with `HashMap::try_insert` once stabilized.
+pub struct AlreadyDefinedError<'module, 'cx> {
+    pub name: &'cx str,
+    pub entry: std::collections::hash_map::OccupiedEntry<'module, &'cx str, ModuleItem<'cx>>,
 }
 
 impl<'cx> ModuleDef<'cx> {
@@ -753,34 +762,61 @@ impl<'cx> ModuleDef<'cx> {
     /// Adds an item to this module.
     ///
     /// The item is indexed by its name, allowing for efficient lookup.
-    /// If an item with the same name already exists, it will be replaced.
-    fn add_item(&mut self, item: ModuleItem<'cx>) {
+    /// If an item with the same name already exists,
+    fn add_item(&mut self, item: ModuleItem<'cx>) -> Result<(), AlreadyDefinedError<'_, 'cx>> {
         let id = match &item {
             ModuleItem::Constant { id, .. } => id,
             ModuleItem::Type { id, .. } => id,
             ModuleItem::Prc { id, .. } => id,
             ModuleItem::LibraryFn { id, .. } => id,
         };
-        self.items.insert(id.name.to_string(), item);
+        use std::collections::hash_map::Entry;
+        // FIXME: Replace with `HashMap::try_insert` once stabilized.
+        match self.items.entry(id.name) {
+            Entry::Occupied(occupied_entry) => Err(AlreadyDefinedError {
+                name: id.name,
+                entry: occupied_entry,
+            }),
+            Entry::Vacant(vacant_entry) => {
+                vacant_entry.insert(item);
+                Ok(())
+            }
+        }
     }
 
     /// Creates a new constant module item.
-    pub fn add_constant(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
+    pub fn add_constant(
+        &mut self,
+        id: Ident<'cx>,
+        ty: Ty<'cx>,
+    ) -> Result<(), AlreadyDefinedError<'_, 'cx>> {
         self.add_item(ModuleItem::Constant { id, ty })
     }
 
     /// Creates a new type module item.
-    pub fn add_type(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
+    pub fn add_type(
+        &mut self,
+        id: Ident<'cx>,
+        ty: Ty<'cx>,
+    ) -> Result<(), AlreadyDefinedError<'_, 'cx>> {
         self.add_item(ModuleItem::Type { id, ty })
     }
 
     /// Creates a new procedure module item.
-    pub fn add_prc(&mut self, id: Ident<'cx>, ty: Ty<'cx>) {
+    pub fn add_prc(
+        &mut self,
+        id: Ident<'cx>,
+        ty: Ty<'cx>,
+    ) -> Result<(), AlreadyDefinedError<'_, 'cx>> {
         self.add_item(ModuleItem::Prc { id, ty })
     }
 
     /// Creates a new library function module item, which can be polymorphic.
-    pub fn add_library_function(&mut self, id: Ident<'cx>, ty: PolyTy<'cx>) {
+    pub fn add_library_function(
+        &mut self,
+        id: Ident<'cx>,
+        ty: PolyTy<'cx>,
+    ) -> Result<(), AlreadyDefinedError<'_, 'cx>> {
         self.add_item(ModuleItem::LibraryFn { id, ty })
     }
 
@@ -788,7 +824,7 @@ impl<'cx> ModuleDef<'cx> {
     ///
     /// Returns None if no item with the given name exists in this module.
     pub fn lookup_item(&self, name: opslang_ast::Path<'cx>) -> Option<&ModuleItem<'cx>> {
-        self.items.get(&name.to_string())
+        self.items.get(name.to_string().as_str())
     }
 
     /// Returns an iterator over all items in this module.
