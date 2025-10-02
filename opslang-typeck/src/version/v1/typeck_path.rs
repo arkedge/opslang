@@ -10,12 +10,10 @@ impl<'cx> TypeChecker<'cx> {
     ) -> Result<(ir::ResolvedPath<'cx>, Ty<'cx>)> {
         // First check if this is a single identifier that can be resolved in local environment
         if let Some(ident) = path.is_ident()
-            && let Some(ty) = env.lookup_variable(ident)
+            && let Some(environment::TypedIdent { id, ty }) = env.lookup_var(ident)
         {
-            // Found in local environment - create a resolved path with local variable
-            let resolved_ident = self.tcx.alloc_identifier(ident.raw);
             let resolved_path = ir::ResolvedPath {
-                item: ir::ResolvedItem::LocalVariable(resolved_ident),
+                item: ir::ResolvedItem::LocalVariable(id),
                 original_path: path,
             };
 

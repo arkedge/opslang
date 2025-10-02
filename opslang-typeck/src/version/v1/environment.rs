@@ -7,12 +7,17 @@ use opslang_ast::syntax::v1 as ast;
 /// lexical scoping where inner scopes can shadow outer scope bindings.
 #[derive(Debug)]
 pub struct Environment<'cx, 'env> {
-    /// Maps variable names to their unique identifiers
-    name_bindings: HashMap<&'cx str, Ident<'cx>>,
-    /// Maps identifiers to their types
-    type_bindings: HashMap<Ident<'cx>, Ty<'cx>>,
-    /// Reference to parent environment for scope chaining
+    /// Maps variable names to their unique identifiers.
+    name_bindings: HashMap<&'cx str, TypedIdent<'cx>>,
+
+    /// Reference to parent environment for scope chaining.
     parent: Option<&'env Self>,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct TypedIdent<'cx> {
+    pub id: Ident<'cx>,
+    pub ty: Ty<'cx>,
 }
 
 impl<'cx, 'env> Environment<'cx, 'env> {
@@ -22,7 +27,6 @@ impl<'cx, 'env> Environment<'cx, 'env> {
     pub fn new() -> Self {
         Self {
             name_bindings: HashMap::new(),
-            type_bindings: HashMap::new(),
             parent: None,
         }
     }
@@ -33,7 +37,6 @@ impl<'cx, 'env> Environment<'cx, 'env> {
     pub fn extend_inherit(&'env self) -> Self {
         Self {
             name_bindings: HashMap::new(),
-            type_bindings: HashMap::new(),
             parent: Some(self),
         }
     }
@@ -42,42 +45,18 @@ impl<'cx, 'env> Environment<'cx, 'env> {
     ///
     /// This is a convenience method that performs both name and type binding in one operation.
     pub fn bind(&mut self, name: &'cx str, id: Ident<'cx>, ty: Ty<'cx>) {
-        self.name_bindings.insert(name, id);
-        self.type_bindings.insert(id, ty);
+        self.name_bindings.insert(name, TypedIdent { id, ty });
     }
 
     /// Looks up a name to find its associated identifier.
     ///
     /// Searches the current environment first, then walks up the parent chain.
     /// Returns None if the name is not bound in any accessible scope.
-    pub fn lookup_name(&self, name: ast::Ident<'cx>) -> Option<Ident<'cx>> {
+    pub fn lookup_var(&self, name: ast::Ident<'cx>) -> Option<TypedIdent<'cx>> {
         self.name_bindings
             .get(name.raw)
             .copied()
-            .or_else(|| self.parent.and_then(|parent| parent.lookup_name(name)))
-    }
-
-    /// Looks up the type associated with an identifier.
-    ///
-    /// Searches the current environment first, then walks up the parent chain.
-    /// Returns None if the identifier is not associated with any type in accessible scopes.
-    pub fn lookup_type(&self, id: Ident<'cx>) -> Option<Ty<'cx>> {
-        self.type_bindings
-            .get(&id)
-            .copied()
-            .or_else(|| self.parent.and_then(|parent| parent.lookup_type(id)))
-    }
-
-    /// Looks up a variable by name and returns its type.
-    ///
-    /// This combines name lookup and type lookup into a single operation,
-    /// which is the most common operation during type checking.
-    pub fn lookup_variable(&self, name: ast::Ident<'cx>) -> Option<Ty<'cx>> {
-        if let Some(id) = self.lookup_name(name) {
-            self.lookup_type(id)
-        } else {
-            None
-        }
+            .or_else(|| self.parent.and_then(|parent| parent.lookup_var(name)))
     }
 }
 

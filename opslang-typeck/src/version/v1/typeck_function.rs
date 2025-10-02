@@ -9,8 +9,11 @@ impl<'cx> TypeChecker<'cx> {
         let func_name = func_def.name;
 
         // Retrieve the already resolved function type from the environment
-        let func_type = global_env
-            .lookup_variable(func_name)
+        let environment::TypedIdent {
+            id: typed_func_name,
+            ty: func_type,
+        } = global_env
+            .lookup_var(func_name)
             .ok_or_else(|| anyhow!("function '{func_name}' not found in environment"))?;
 
         let TyKind::Function {
@@ -45,12 +48,11 @@ impl<'cx> TypeChecker<'cx> {
         let mut ir_body = self.typeck_block(&func_env, &mut subst, func_def.body)?;
 
         // Apply final substitution using visitor
-        let mut visitor = SubstitutionVisitor::new(subst, self.tcx);
-        visitor.visit_mut(&mut ir_body);
+        hm::SubstitutionVisitor::new(subst, self.tcx).visit_mut(&mut ir_body);
 
         Ok(ir::FunctionDef {
             prc_token: func_def.prc_token.into_token(),
-            name: self.tcx.alloc_identifier(func_def.name.raw),
+            name: typed_func_name,
             left_paren: func_def.left_paren.into_token(),
             parameters: self.ir_cx.alloc_parameter_slice(ir_parameters),
             right_paren: func_def.right_paren.into_token(),

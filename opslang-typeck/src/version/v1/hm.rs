@@ -1,8 +1,8 @@
+use anyhow::anyhow;
+use opslang_ty::version::v1::{InferTy, PolyTy, Substitution, Ty, TyKind, TyVid};
 use std::collections::HashSet;
 
-use anyhow::anyhow;
-
-use opslang_ty::version::v1::{InferTy, PolyTy, Substitution, Ty, TyKind, TyVid};
+use super::*;
 
 impl<'cx> super::TypeChecker<'cx> {
     /// Attempts to unify two types, producing a substitution that makes them equal.
@@ -203,5 +203,94 @@ opslang_ir_macro::v1_ir_visitor_impl!(for TyVarCollector {
             self.seen.insert(*var);
             self.type_vars.push(*var);
         }
+    }
+});
+
+/// Mutable `Cow`, do not copy on write.
+enum CowMut<'a, T> {
+    Borrowed(&'a mut T),
+    Owned(T),
+}
+
+impl<'a, T> Deref for CowMut<'a, T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            CowMut::Borrowed(r) => r,
+            CowMut::Owned(v) => v,
+        }
+    }
+}
+
+impl<'a, T> DerefMut for CowMut<'a, T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        match self {
+            CowMut::Borrowed(r) => r,
+            CowMut::Owned(v) => v,
+        }
+    }
+}
+
+/// Visitor for applying substitutions to all types in the IR.
+pub struct SubstitutionVisitor<'cx, 'a> {
+    ty_last_seen: Option<Ty<'cx>>,
+    subst: CowMut<'a, Substitution<'cx>>,
+    tcx: &'cx TypingContext<'cx>,
+}
+
+impl<'cx, 'a> SubstitutionVisitor<'cx, 'a> {
+    pub fn new(subst: Substitution<'cx>, tcx: &'cx TypingContext<'cx>) -> Self {
+        Self {
+            subst: CowMut::Owned(subst),
+            tcx,
+            ty_last_seen: None,
+        }
+    }
+    pub fn new_borrowed(subst: &'a mut Substitution<'cx>, tcx: &'cx TypingContext<'cx>) -> Self {
+        Self {
+            subst: CowMut::Borrowed(subst),
+            tcx,
+            ty_last_seen: None,
+        }
+    }
+}
+
+opslang_ir_macro::v1_ir_visitor_impl!(for SubstitutionVisitor<'cx, '_> {
+    fn visit_expr_mut(&mut self, expr: &mut ir::Expr<'cx>) {
+        use ir::IrMutVisitor;
+        // visit ty first
+        self.visit_ty_mut(&mut expr.ty);
+        self.visit_mut(&mut expr.kind);
+    }
+    fn visit_ty_mut(&mut self, ty: &mut Ty<'cx>) {
+        self.subst.apply_substitution(self.tcx, ty);
+        let kind = ty.kind();
+        match kind {
+            TyKind::Infer(InferTy::IntVar(int_vid)) => {
+                // Resolve integer type variables to i32 by default
+                self.subst.resolve_int(*int_vid, IntTy::I64);
+            }
+            TyKind::Infer(InferTy::FloatVar(float_vid)) => {
+                // Resolve float type variables to f64 by default in Rust
+                self.subst.resolve_float(*float_vid, FloatTy::F64);
+            }
+            _ => {}
+        }
+        self.subst.apply_substitution(self.tcx, ty);
+        self.ty_last_seen = Some(*ty);
+    }
+    fn visit_ty(&mut self, _ty: &Ty<'cx>) {
+        dbg!(_ty);
+        panic!("Found `Ty` immutability. this prevents type variable resolution. review changes to IR structure and eliminate possession of immutable `Ty`pes.");
+    }
+    fn visit_numeric_mut(&mut self, numeric: &mut ir::Numeric<'cx>) {
+        if let ir::NumericKind::Repr(unparsed) = numeric.kind {
+            let literal = typeck_literal::parse_literal(unparsed, self.ty_last_seen.unwrap()).unwrap();
+            numeric.kind = literal;
+        }
+    }
+    fn visit_resolved_item_mut(&mut self, _resolved_item: &mut ir::ResolvedItem<'cx>) {
+        // `ResolvedItem` is immutable, not calling super
     }
 });

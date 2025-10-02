@@ -13,8 +13,7 @@ impl<'cx> TypeChecker<'cx> {
         self.unify(&mut subst, declared_type, inferred_expr.ty)?;
 
         // Apply final substitution using visitor
-        let mut visitor = SubstitutionVisitor::new(subst, self.tcx);
-        visitor.visit_mut(&mut inferred_expr);
+        hm::SubstitutionVisitor::new(subst, self.tcx).visit_mut(&mut inferred_expr);
 
         let ir_ty = self.resolve_path(&const_def.ty)?.resolved_path;
 
