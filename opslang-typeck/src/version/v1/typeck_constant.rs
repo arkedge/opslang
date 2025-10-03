@@ -19,7 +19,7 @@ impl<'cx> TypeChecker<'cx> {
 
         Ok(ir::ConstantDef {
             const_token: const_def.const_token.into_token(),
-            name: self.tcx.alloc_identifier(const_def.name.raw),
+            name: self.tcx.alloc_identifier(const_def.name),
             colon: const_def.colon.into_token(),
             ty: ir_ty,
             eq: const_def.eq.into_token(),

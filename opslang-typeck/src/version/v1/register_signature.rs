@@ -44,8 +44,6 @@ impl<'cx> TypeChecker<'cx> {
             None => Ty::mk_unit(self.tcx),
         };
 
-        let func_name = func_name.raw;
-
         let func_identifier_id = self.tcx.alloc_identifier(func_name);
 
         let func_type = Ty::mk_procedure(
@@ -67,11 +65,11 @@ impl<'cx> TypeChecker<'cx> {
         env: &mut Environment<'cx, '_>,
         const_def: &ast::ConstantDef<'cx>,
     ) -> Result<()> {
-        let const_name = const_def.name.raw;
-        let declared_type = self.resolve_type_from_path(const_def.ty)?;
-
-        let const_identifier_id = self.tcx.alloc_identifier(const_name);
-        env.bind(const_name, const_identifier_id, declared_type);
+        self.bind(
+            env,
+            const_def.name,
+            self.resolve_type_from_path(const_def.ty)?,
+        );
 
         Ok(())
     }

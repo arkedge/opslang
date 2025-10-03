@@ -222,7 +222,7 @@ pub struct ResolvedPath<'cx> {
 /// The resolved item - either a module item, local variable, or external reference.
 pub enum ResolvedItem<'cx> {
     /// Reference to a module item (types, functions, constants from modules).
-    ModuleItem(&'cx opslang_ty::version::v1::ModuleItem<'cx>),
+    ModuleItem(opslang_ty::version::v1::ModuleItem<'cx>),
     /// Reference to a local variable (function parameters, local bindings).
     LocalVariable(opslang_ty::version::v1::Ident<'cx>),
     /// Reference to an external path resolved via an external resolver.

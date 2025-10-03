@@ -511,6 +511,7 @@ const V1_IR_INTER_TYPES: &[IrInterTy<Const>] = define_ir_inter_types! {
         type IntTy;
         type UintTy;
         type FloatTy;
+        type ModuleItemDef<'cx>;
     }
     extern {
         type ::std::convert::Infallible;

@@ -35,7 +35,7 @@ mod poly;
 pub use poly::PolyTy;
 
 mod module;
-pub use module::{AlreadyDefinedError, Module, ModuleDef, ModuleItem, ModuleLoader};
+pub use module::{AlreadyDefinedError, Module, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader};
 
 /// Represents the different kinds of types in the type system.
 ///

@@ -3,8 +3,8 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn resolve_type_from_path(&self, path: ast::Path<'cx>) -> Result<Ty<'cx>> {
         match self.module_loader.resolve_path(path) {
-            Some(item) => match item {
-                opslang_ty::version::v1::ModuleItem::Type { ty, .. } => Ok(*ty),
+            Some(item) => match &*item {
+                opslang_ty::version::v1::ModuleItemDef::Type { ty, .. } => Ok(*ty),
                 _ => Err(anyhow!("path `{path}` does not refer to a type")),
             },
             None => Err(anyhow!("unknown type: {path}")),

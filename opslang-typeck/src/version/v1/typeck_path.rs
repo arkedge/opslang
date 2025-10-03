@@ -5,7 +5,6 @@ impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_path(
         &mut self,
         env: &Environment<'cx, '_>,
-        _subst: &mut Substitution<'cx>,
         path: &'cx ast::Path<'cx>,
     ) -> Result<(ir::ResolvedPath<'cx>, Ty<'cx>)> {
         // First check if this is a single identifier that can be resolved in local environment
@@ -26,11 +25,11 @@ impl<'cx> TypeChecker<'cx> {
             item,
         }) = self.resolve_path(path)
         {
-            match item {
-                ModuleItem::Constant { ty, .. } | ModuleItem::Prc { ty, .. } => {
+            match &*item {
+                ModuleItemDef::Constant { ty, .. } | ModuleItemDef::Prc { ty, .. } => {
                     return Ok((resolved_path, *ty));
                 }
-                ModuleItem::LibraryFn { ty: poly_ty, .. } => {
+                ModuleItemDef::LibraryFn { ty: poly_ty, .. } => {
                     // Instantiate polymorphic type with fresh type variables
                     let instantiated_ty = poly_ty.instantiate(self.tcx);
                     return Ok((resolved_path, instantiated_ty));

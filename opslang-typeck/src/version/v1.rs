@@ -6,8 +6,8 @@ use opslang_ir::version::v1::{self as ir};
 
 use ir::Typed;
 use opslang_ty::version::v1::{
-    self as ty, FloatTy, Ident, IntTy, Module, ModuleDef, ModuleItem, ModuleLoader, PolyTy,
-    Procedure, Substitution, Ty, TyKind, TyVid, TypingContext,
+    self as ty, FloatTy, Ident, IntTy, Module, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader,
+    PolyTy, Procedure, Substitution, Ty, TyKind, TyVid, TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -183,7 +183,7 @@ struct ResolvePathResult<'cx> {
     /// The resolved path for IR generation
     resolved_path: ir::ResolvedPath<'cx>,
     /// The original module item with type information
-    item: &'cx ModuleItem<'cx>,
+    item: ModuleItem<'cx>,
 }
 
 #[cfg(test)]

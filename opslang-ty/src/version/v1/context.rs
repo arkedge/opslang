@@ -12,7 +12,7 @@ pub struct TypingContext<'cx> {
     /// Arena for allocating module definitions
     module_arena: Arena<ModuleDef<'cx>>,
     /// Arena for allocating module items
-    module_item_arena: Arena<ModuleItem<'cx>>,
+    module_item_arena: Arena<ModuleItemDef<'cx>>,
     /// Global counter for unique definition IDs
     next_definition_id: AtomicUsize,
 }
@@ -62,10 +62,10 @@ impl<'cx> TypingContext<'cx> {
     ///
     /// Each call to this method generates a globally unique identifier,
     /// enabling proper shadowing where multiple variables can have the same name.
-    pub fn alloc_identifier(&'cx self, name: &'cx str) -> Ident<'cx> {
+    pub fn alloc_identifier(&'cx self, name: ast::Ident<'cx>) -> Ident<'cx> {
         let definition_id = self.next_definition_id.fetch_add(1, Ordering::SeqCst);
         Ident(self.identifier_arena.alloc(Identifier {
-            name,
+            name: name.raw,
             definition_id,
         }))
     }
@@ -81,8 +81,8 @@ impl<'cx> TypingContext<'cx> {
     /// Allocates a module item in the module item arena and returns a reference.
     ///
     /// This allows module items to be stored with the same lifetime as the typing context.
-    pub fn alloc_module_item(&'cx self, item: ModuleItem<'cx>) -> &'cx ModuleItem<'cx> {
-        self.module_item_arena.alloc(item)
+    pub fn alloc_module_item(&'cx self, item: ModuleItemDef<'cx>) -> ModuleItem<'cx> {
+        ModuleItem(self.module_item_arena.alloc(item))
     }
 }
 

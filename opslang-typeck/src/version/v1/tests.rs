@@ -1,4 +1,5 @@
-use opslang_ty::version::{IntTy, ModuleItem};
+use opslang_ir::version::ResolvedItem;
+use opslang_ty::version::{IntTy, ModuleItemDef};
 
 use super::*;
 
@@ -39,7 +40,7 @@ fn test_builtin_module() {
             .is_none()
     );
 
-    if let Some(ModuleItem::Type { id, ty }) = builtin.lookup_item(parse_ident(&ast_cx, "i32")) {
+    if let Some(ModuleItemDef::Type { id, ty }) = builtin.lookup_item(parse_ident(&ast_cx, "i32")) {
         assert_eq!(id.name, "i32");
         assert!(matches!(ty.kind(), TyKind::Int(IntTy::I32)));
     }
@@ -124,27 +125,36 @@ fn test_unify_basic() {
 fn test_variable_resolution_priority() {
     let cx = TypingContext::new();
     let ir_cx = ir::Context::new();
+
+    // these variables are defined here so as to live longer than the checker
+    let i32_ident = ast::Ident {
+        raw: "i32",
+        span: ast::Span {
+            start: ast::BytePos(0),
+            end: ast::BytePos(0),
+        },
+    };
+    let binding = [i32_ident];
+    let path = ast::Path { segments: &binding };
+
     let builtin = create_builtin_module(&cx);
 
     let mut loader = ModuleLoader::new();
     loader.add_module(builtin);
-    let mut _checker = TypeChecker::with_module_loader(loader, &cx, &ir_cx);
+    let mut checker = TypeChecker::with_module_loader(loader, &cx, &ir_cx);
 
     let mut env = Environment::<'_, '_>::new();
 
-    // ローカル変数 "i32" を定義（組み込み型をシャドーイング）
+    // define local variable `i32` with type `String`
     let local_i32_type = Ty::mk_string(&cx);
-    let local_id = cx.alloc_identifier("i32");
-    env.bind("i32", local_id, local_i32_type);
+    checker.bind(&mut env, i32_ident, local_i32_type);
 
-    // パスを作成して型を解決
-    // let path = ast::Path {
-    //     raw: "i32",
-    //     segments: &[],
-    // };
+    // resolve path `i32`
+    let (resolved_type, _) = checker.typeck_path(&env, &path).unwrap();
 
-    // let (resolved_type, _) = checker.typeck_variable(&cx, &env, &path).unwrap();
-
-    // // ローカル変数が優先されるべき（String型になっている）
-    // assert!(matches!(resolved_type.kind(), TyKind::String));
+    // should resolve to local variable type `String` instead of builtin type `i32`
+    assert!(matches!(
+        resolved_type.item,
+        ResolvedItem::LocalVariable { .. }
+    ));
 }

@@ -23,7 +23,7 @@ impl<'cx> TypeChecker<'cx> {
                 Ok(ir_expr)
             }
             ast::ExprKind::Variable(path) => {
-                let (resolved_path, ty) = self.typeck_path(env, subst, path)?;
+                let (resolved_path, ty) = self.typeck_path(env, path)?;
                 let ir_expr = ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), ty);
                 Ok(ir_expr)
             }

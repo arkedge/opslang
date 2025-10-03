@@ -1,4 +1,4 @@
-use super::{HashMap, Ident, Ty};
+use super::*;
 use opslang_ast::syntax::v1 as ast;
 
 /// Represents a lexical environment for name and type bindings.
@@ -44,8 +44,8 @@ impl<'cx, 'env> Environment<'cx, 'env> {
     /// Binds a name to an identifier and associates the identifier with a type.
     ///
     /// This is a convenience method that performs both name and type binding in one operation.
-    pub fn bind(&mut self, name: &'cx str, id: Ident<'cx>, ty: Ty<'cx>) {
-        self.name_bindings.insert(name, TypedIdent { id, ty });
+    pub fn bind(&mut self, name: ast::Ident<'cx>, id: Ident<'cx>, ty: Ty<'cx>) {
+        self.name_bindings.insert(name.raw, TypedIdent { id, ty });
     }
 
     /// Looks up a name to find its associated identifier.
@@ -63,5 +63,19 @@ impl<'cx, 'env> Environment<'cx, 'env> {
 impl<'cx, 'env> Default for Environment<'cx, 'env> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl<'cx> TypeChecker<'cx> {
+    /// Binds a name to a new identifier with type and returns the identifier.
+    pub fn bind(
+        &mut self,
+        env: &mut Environment<'cx, '_>,
+        name: ast::Ident<'cx>,
+        ty: Ty<'cx>,
+    ) -> Ident<'cx> {
+        let id = self.tcx.alloc_identifier(name);
+        env.bind(name, id, ty);
+        id
     }
 }

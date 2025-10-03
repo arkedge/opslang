@@ -29,14 +29,11 @@ impl<'cx> TypeChecker<'cx> {
 
         // Convert parameters to IR using the already resolved types
         let mut ir_parameters = Vec::new();
-        for (param, param_type) in func_def.parameters.iter().zip(param_types.iter()) {
-            let param_name = param.name.raw;
-
-            let param_identifier_id = self.tcx.alloc_identifier(param_name);
-            func_env.bind(param_name, param_identifier_id, *param_type);
+        for (param, param_type) in func_def.parameters.iter().zip(param_types) {
+            let param_id = self.bind(&mut func_env, param.name, *param_type);
 
             let ir_param = ir::Parameter {
-                name: param_identifier_id,
+                name: param_id,
                 colon: param.colon.into_token(),
                 ty: self.resolve_type_from_path(param.ty)?,
             };
