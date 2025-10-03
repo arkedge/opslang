@@ -11,7 +11,6 @@ hookable (add to inter types).
 */
 
 use opslang_visitor_macro::Visit;
-use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::fmt::Display;
 use std::hash::Hash;
@@ -186,12 +185,6 @@ pub struct Identifier<'cx> {
 /// efficient passing and comparison of identifiers.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
 pub struct Ident<'cx>(pub &'cx Identifier<'cx>);
-
-impl<'cx> Borrow<str> for Ident<'cx> {
-    fn borrow(&self) -> &str {
-        self.name
-    }
-}
 
 impl<'cx> std::ops::Deref for Ident<'cx> {
     type Target = &'cx Identifier<'cx>;
