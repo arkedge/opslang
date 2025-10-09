@@ -11,7 +11,6 @@ hookable (add to inter types).
 */
 
 use opslang_visitor_macro::Visit;
-use std::collections::HashMap;
 use std::fmt::Display;
 use std::hash::Hash;
 use std::sync::atomic::{AtomicU32, AtomicUsize, Ordering};
@@ -32,9 +31,6 @@ pub use context::TypingContext;
 
 mod poly;
 pub use poly::PolyTy;
-
-mod module;
-pub use module::{AlreadyDefinedError, Module, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader};
 
 /// Represents the different kinds of types in the type system.
 ///

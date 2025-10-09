@@ -12,6 +12,7 @@ opslang-ir-macro.workspace = true
 opslang-visitor.workspace = true
 opslang-visitor-macro.workspace = true
 opslang-ty.workspace = true
+opslang-module.workspace = true
 chrono.workspace = true
 typed-arena.workspace = true
 

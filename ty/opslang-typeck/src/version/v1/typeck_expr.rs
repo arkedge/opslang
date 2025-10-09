@@ -346,6 +346,8 @@ impl<'cx> TypeChecker<'cx> {
 
 #[cfg(test)]
 mod tests {
+    use opslang_module::version::v1::ModuleContext;
+
     use super::*;
 
     #[test]
@@ -365,7 +367,12 @@ mod tests {
         let tcx = TypingContext::new();
         let ast_cx = ast::context::Context::new();
         let ir_cx = ir::Context::new();
-        let mut type_checker = TypeChecker::new(&tcx, &ir_cx);
+        let module = ModuleContext::new();
+        let gcx = GlobalContext {
+            tcx: &tcx,
+            module: &module,
+        };
+        let mut type_checker = TypeChecker::new(gcx, &ir_cx);
         type_checker.add_external_resolver(Resolver);
         let path = ast::Path::single(
             &ast_cx,

@@ -9,10 +9,6 @@ pub struct TypingContext<'cx> {
     type_arena: Arena<TyKind<'cx>>,
     /// Arena for allocating identifier information
     identifier_arena: Arena<Identifier<'cx>>,
-    /// Arena for allocating module definitions
-    module_arena: Arena<ModuleDef<'cx>>,
-    /// Arena for allocating module items
-    module_item_arena: Arena<ModuleItemDef<'cx>>,
     /// Global counter for unique definition IDs
     next_definition_id: AtomicUsize,
 }
@@ -25,8 +21,6 @@ impl<'cx> TypingContext<'cx> {
         Self {
             type_arena: Arena::new(),
             identifier_arena: Arena::new(),
-            module_arena: Arena::new(),
-            module_item_arena: Arena::new(),
             next_definition_id: AtomicUsize::new(1),
         }
     }
@@ -68,21 +62,6 @@ impl<'cx> TypingContext<'cx> {
             name: name.raw,
             definition_id,
         }))
-    }
-
-    /// Allocates a module in the module arena and returns a reference.
-    ///
-    /// This allows modules to be stored with the same lifetime as the typing context,
-    /// enabling safe references across the type checking process.
-    pub fn alloc_module(&'cx self, module: ModuleDef<'cx>) -> Module<'cx> {
-        Module(self.module_arena.alloc(module))
-    }
-
-    /// Allocates a module item in the module item arena and returns a reference.
-    ///
-    /// This allows module items to be stored with the same lifetime as the typing context.
-    pub fn alloc_module_item(&'cx self, item: ModuleItemDef<'cx>) -> ModuleItem<'cx> {
-        ModuleItem(self.module_item_arena.alloc(item))
     }
 }
 

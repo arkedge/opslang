@@ -22,6 +22,9 @@ macro_rules! define_ir_node_types {
         crate ty {
             $(type $ty_no_cx_name:ident;)*
         }
+        crate module<'cx> {
+            $(type $module_name:ident;)*
+        }
     ) => {
         {
             let default = IrNodeTy {
@@ -75,7 +78,7 @@ macro_rules! define_ir_node_types {
                 $(
                     IrNodeTy {
                         ty: Some(IrNodeTyInstance {
-                            ty: InstanceKind::ty(),
+                            ty: InstanceKind::Other("opslang_ty"),
                             has_lifetime: true,
                         }),
                         name: stringify!($ty_name),
@@ -85,10 +88,20 @@ macro_rules! define_ir_node_types {
                 $(
                     IrNodeTy {
                         ty: Some(IrNodeTyInstance {
-                            ty: InstanceKind::ty(),
+                            ty: InstanceKind::Other("opslang_ty"),
                             has_lifetime: false,
                         }),
                         name: stringify!($ty_no_cx_name),
+                        ..default
+                    },
+                )*
+                $(
+                    IrNodeTy {
+                        ty: Some(IrNodeTyInstance {
+                            ty: InstanceKind::Other("opslang_module"),
+                            has_lifetime: true,
+                        }),
+                        name: stringify!($module_name),
                         ..default
                     },
                 )*
@@ -109,6 +122,9 @@ macro_rules! define_ir_inter_types {
         }
         crate ty {
             $(type $ty_name:ident $(<$ty_cx:lifetime>)? $(: $ty_wrapper:path)?;)*
+        }
+        crate module {
+            $(type $module_name:ident $(<$module_cx:lifetime>)? $(: $module_wrapper:path)?;)*
         }
         extern {
             $(type $ext_name:path;)*
@@ -158,13 +174,26 @@ macro_rules! define_ir_inter_types {
                 )*
                 $(
                     IrInterTy::Instance(IrInterTyInstance {
-                        ty: Some(InstanceKind::ty()),
+                        ty: Some(InstanceKind::Other("opslang_ty")),
                         name: stringify!($ty_name),
                         $(
                             has_lifetime: {stringify!($ty_cx); true},
                         )?
                         $(
                             wrapper: Some(stringify!($ty_wrapper)),
+                        )?
+                        ..default
+                    }),
+                )*
+                $(
+                    IrInterTy::Instance(IrInterTyInstance {
+                        ty: Some(InstanceKind::Other("opslang_module")),
+                        name: stringify!($module_name),
+                        $(
+                            has_lifetime: {stringify!($module_cx); true},
+                        )?
+                        $(
+                            wrapper: Some(stringify!($module_wrapper)),
                         )?
                         ..default
                     }),

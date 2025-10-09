@@ -123,7 +123,7 @@ impl<'cx> super::TypeChecker<'cx> {
                     ));
                 }
                 if prc1.is_some() && prc2.is_some() && prc1 != prc2 {
-                    return Err(anyhow!("procedure mismatch: {:?} vs {:?}", prc1, prc2));
+                    return Err(anyhow!("procedure mismatch: {prc1:?} vs {prc2:?}"));
                 }
 
                 // Unify corresponding argument types

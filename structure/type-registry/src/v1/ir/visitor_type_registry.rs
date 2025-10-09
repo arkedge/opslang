@@ -135,8 +135,7 @@ pub const NODE_TYPES: &[IrNodeTy<Const>] = crate::define_ir_node_types! {
     }
     // types that are defined in ty crate, substituted with 'cx
     crate ty<'cx> {
-        type Ty; // actual type is `Ty<'cx>`, and so on
-        type ModuleItem;
+        type Ty; // actual type is `Ty<'cx>`
     }
     // types that are defined in ty crate, without 'cx
     crate ty {
@@ -144,6 +143,10 @@ pub const NODE_TYPES: &[IrNodeTy<Const>] = crate::define_ir_node_types! {
         type TyVid;
         type IntVid;
         type FloatVid;
+    }
+    // types that are defined in module crate, substituted with 'cx
+    crate module<'cx> {
+        type ModuleItem; // actual type is `ModuleItem<'cx>`
     }
 };
 
@@ -192,6 +195,8 @@ pub const INTER_TYPES: &[IrInterTy<Const>] = crate::define_ir_inter_types! {
         type IntTy;
         type UintTy;
         type FloatTy;
+    }
+    crate module {
         type ModuleItemDef<'cx>;
     }
     extern {

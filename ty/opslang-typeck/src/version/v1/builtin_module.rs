@@ -4,7 +4,8 @@ use super::*;
 ///
 /// The builtin module provides access to fundamental types like integers, strings,
 /// and other primitives that are available in all contexts without explicit imports.
-pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> Module<'cx> {
+pub fn create_builtin_module<'cx>(gcx: GlobalContext<'cx>) -> Module<'cx> {
+    let cx = gcx.tcx;
     let mut builtin = ModuleDef::new(cx.alloc_toplevel_ident("builtin"));
 
     // Add all builtin primitive types
@@ -83,5 +84,5 @@ pub fn create_builtin_module<'cx>(cx: &'cx TypingContext<'cx>) -> Module<'cx> {
         .add_constant(cx.alloc_toplevel_ident("false"), Ty::mk_bool(cx))
         .unwrap();
 
-    cx.alloc_module(builtin)
+    gcx.module.alloc_module(builtin)
 }

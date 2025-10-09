@@ -1,5 +1,8 @@
-use opslang_ir::version::ResolvedItem;
-use opslang_ty::version::{IntTy, ModuleItemDef};
+use opslang_ir::version::v1::ResolvedItem;
+use opslang_module::version::v1::{ModuleContext, ModuleItemDef};
+use opslang_ty::version::v1::IntTy;
+
+use crate::v1_setup_cx;
 
 use super::*;
 
@@ -27,9 +30,8 @@ fn test_display() {
 
 #[test]
 fn test_builtin_module() {
-    let cx = TypingContext::new();
-    let ast_cx = ast::context::Context::new();
-    let builtin = create_builtin_module(&cx);
+    v1_setup_cx!(ast_cx, _ir_cx, gcx = { cx, module });
+    let builtin = create_builtin_module(gcx);
 
     assert_eq!(builtin.name(), "builtin");
     assert!(builtin.lookup_item(parse_ident(&ast_cx, "i32")).is_some());
@@ -50,7 +52,12 @@ fn test_builtin_module() {
 fn test_module_loader() {
     let cx = TypingContext::new();
     let ast_cx = ast::context::Context::new();
-    let builtin = create_builtin_module(&cx);
+    let module = ModuleContext::new();
+    let gcx = GlobalContext {
+        tcx: &cx,
+        module: &module,
+    };
+    let builtin = create_builtin_module(gcx);
 
     let mut loader = ModuleLoader::new();
     loader.add_module(builtin);
@@ -71,12 +78,17 @@ fn test_type_checker_with_modules() {
     let cx = TypingContext::new();
     let ast_cx = ast::context::Context::new();
     let ir_cx = ir::Context::new();
-    let builtin = create_builtin_module(&cx);
+    let module = ModuleContext::new();
+    let gcx = GlobalContext {
+        tcx: &cx,
+        module: &module,
+    };
+    let builtin = create_builtin_module(gcx);
 
     let mut loader = ModuleLoader::new();
     loader.add_module(builtin);
 
-    let checker = TypeChecker::with_module_loader(loader, &cx, &ir_cx);
+    let checker = TypeChecker::with_module_loader(loader, gcx, &ir_cx);
 
     let i32_type = checker
         .resolve_type_from_path(parse_ident(&ast_cx, "i32"))
@@ -106,12 +118,17 @@ fn test_substitution() {
 fn test_unify_basic() {
     let cx = TypingContext::new();
     let ir_cx = ir::Context::new();
+    let module = ModuleContext::new();
+    let gcx = GlobalContext {
+        tcx: &cx,
+        module: &module,
+    };
 
     let int_type1 = Ty::mk_i32(&cx);
     let int_type2 = Ty::mk_i32(&cx);
     let float_type = Ty::mk_f64(&cx);
 
-    let chk = TypeChecker::new(&cx, &ir_cx);
+    let chk = TypeChecker::new(gcx, &ir_cx);
 
     let result = chk.unify_pure(int_type1, int_type2);
     assert!(result.is_ok());
@@ -125,6 +142,11 @@ fn test_unify_basic() {
 fn test_variable_resolution_priority() {
     let cx = TypingContext::new();
     let ir_cx = ir::Context::new();
+    let module = ModuleContext::new();
+    let gcx = GlobalContext {
+        tcx: &cx,
+        module: &module,
+    };
 
     // these variables are defined here so as to live longer than the checker
     let i32_ident = ast::Ident {
@@ -137,11 +159,11 @@ fn test_variable_resolution_priority() {
     let binding = [i32_ident];
     let path = ast::Path { segments: &binding };
 
-    let builtin = create_builtin_module(&cx);
+    let builtin = create_builtin_module(gcx);
 
     let mut loader = ModuleLoader::new();
     loader.add_module(builtin);
-    let mut checker = TypeChecker::with_module_loader(loader, &cx, &ir_cx);
+    let mut checker = TypeChecker::with_module_loader(loader, gcx, &ir_cx);
 
     let mut env = Environment::<'_, '_>::new();
 

@@ -5,9 +5,10 @@ use opslang_ast::v1::{self as ast};
 use opslang_ir::version::v1::{self as ir};
 
 use ir::Typed;
+use opslang_module::version::v1::{Module, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader};
 use opslang_ty::version::v1::{
-    self as ty, FloatTy, Ident, IntTy, Module, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader,
-    PolyTy, Procedure, Substitution, Ty, TyKind, TyVid, TypingContext,
+    self as ty, FloatTy, Ident, IntTy, PolyTy, Procedure, Substitution, Ty, TyKind, TyVid,
+    TypingContext,
 };
 use opslang_visitor::VisitorMut;
 use std::collections::HashMap;
@@ -38,6 +39,9 @@ mod typeck_statement;
 mod builtin_module;
 pub use builtin_module::create_builtin_module;
 
+pub mod context;
+use context::GlobalContext;
+
 /// The main type checker that performs type inference and checking.
 pub struct TypeChecker<'cx> {
     /// Module loader for resolving external symbols.
@@ -46,8 +50,16 @@ pub struct TypeChecker<'cx> {
     /// Optional external resolver for custom type resolution.
     external_resolver: Option<Box<dyn ExternalResolver<'cx>>>,
 
-    tcx: &'cx TypingContext<'cx>,
+    gcx: GlobalContext<'cx>,
     ir_cx: &'cx ir::Context<'cx>,
+}
+
+impl<'cx> Deref for TypeChecker<'cx> {
+    type Target = GlobalContext<'cx>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.gcx
+    }
 }
 
 impl core::fmt::Debug for TypeChecker<'_> {
@@ -64,18 +76,18 @@ impl core::fmt::Debug for TypeChecker<'_> {
 /// Resolved item belongs to no module.
 pub trait ExternalResolver<'cx> {
     /// Resolves a path to a type, returning `None` if not found.
-    fn resolve(&self, path: ast::Path<'cx>, cx: &'cx TypingContext<'cx>) -> Option<Ty<'cx>>;
+    fn resolve(&self, path: ast::Path<'cx>, tcx: &'cx TypingContext<'cx>) -> Option<Ty<'cx>>;
 }
 
 impl<'cx> TypeChecker<'cx> {
     /// Creates a new type checker with empty module loader.
     ///
     /// The type checker starts with no modules loaded.
-    pub fn new(tcx: &'cx TypingContext<'cx>, ir_cx: &'cx ir::Context<'cx>) -> Self {
+    pub fn new(gcx: GlobalContext<'cx>, ir_cx: &'cx ir::Context<'cx>) -> Self {
         Self {
             external_resolver: None,
             module_loader: ModuleLoader::new(),
-            tcx,
+            gcx,
             ir_cx,
         }
     }
@@ -85,13 +97,13 @@ impl<'cx> TypeChecker<'cx> {
     /// This allows pre-loading modules before starting type checking operations.
     pub fn with_module_loader(
         module_loader: ModuleLoader<'cx>,
-        tcx: &'cx TypingContext<'cx>,
+        gcx: GlobalContext<'cx>,
         ir_cx: &'cx ir::Context<'cx>,
     ) -> Self {
         Self {
             external_resolver: None,
             module_loader,
-            tcx,
+            gcx,
             ir_cx,
         }
     }
@@ -188,3 +200,20 @@ struct ResolvePathResult<'cx> {
 
 #[cfg(test)]
 mod tests;
+
+#[macro_export]
+/// Shorthand to set up a type checking contexts.
+///
+/// Internal use only but exposed for use in tests.
+macro_rules! v1_setup_cx {
+    ($ast_context:ident, $ir_context:ident, $gcx:ident = { $typing_context:ident, $module_context:ident $(,)? }) => {
+        let $ast_context = ast::context::Context::new();
+        let $ir_context = ir::context::Context::new();
+        let $typing_context = TypingContext::new();
+        let $module_context = ModuleContext::new();
+        let $gcx = GlobalContext {
+            tcx: &$typing_context,
+            module: &$module_context,
+        };
+    };
+}

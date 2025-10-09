@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use opslang_ty::version::v1::{Ident, PolyTy, Ty};
+
 use super::*;
 
 /// Represents different kinds of items that can exist within a module.

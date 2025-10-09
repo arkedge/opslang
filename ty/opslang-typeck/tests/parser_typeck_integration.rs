@@ -3,16 +3,20 @@
 
 use std::fmt::Debug;
 
-use opslang_ast::v1::context::Context as AstContext;
-use opslang_ir::version::v1::Context as IrContext;
+use opslang_ast::syntax::v1 as ast;
+use opslang_ir::version::v1 as ir;
+use opslang_module::version::v1::ModuleContext;
 use opslang_parser::{ParseOps, ParserInput};
 use opslang_ty::version::v1::TypingContext;
-use opslang_typeck::version::v1::{TypeChecker, create_builtin_module};
+use opslang_typeck::{
+    v1_setup_cx,
+    version::v1::{TypeChecker, context::GlobalContext, create_builtin_module},
+};
 
 /// Helper function to parse source code into AST.
 fn parse_source<'cx>(
     source: &'cx str,
-    context: &'cx AstContext<'cx>,
+    context: &'cx ast::context::Context<'cx>,
 ) -> Result<opslang_ast::v1::Program<'cx>, impl Debug> {
     let input = ParserInput {
         content: source,
@@ -23,21 +27,19 @@ fn parse_source<'cx>(
 
 /// Helper function to create type checker with builtin types.
 fn create_type_checker<'cx>(
-    tcx: &'cx TypingContext<'cx>,
-    ir_cx: &'cx IrContext<'cx>,
+    gcx: GlobalContext<'cx>,
+    ir_cx: &'cx ir::context::Context<'cx>,
 ) -> TypeChecker<'cx> {
-    let mut checker = TypeChecker::new(tcx, ir_cx);
-    checker.add_module(create_builtin_module(tcx));
+    let mut checker = TypeChecker::new(gcx, ir_cx);
+    checker.add_module(create_builtin_module(gcx));
     checker
 }
 
 fn parse_typeck_success(source: &'static str) {
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
+    v1_setup_cx!(ast_context, ir_context, gcx = { typing_context, module_context, });
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let mut checker = create_type_checker(gcx, &ir_context);
     let result = checker.typeck(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
@@ -64,12 +66,10 @@ prc add(x: i32, y: i32) -> i32 {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
+    v1_setup_cx!(ast_context, ir_context, gcx = { typing_context, module_context, });
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let mut checker = create_type_checker(gcx, &ir_context);
     let result = checker.typeck(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
@@ -103,12 +103,10 @@ prc helper(value: i32) -> i32 {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
+    v1_setup_cx!(ast_context, ir_context, gcx = { typing_context, module_context, });
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let mut checker = create_type_checker(gcx, &ir_context);
     let result = checker.typeck(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
@@ -126,12 +124,10 @@ const FLOAT_VAL: f64 = 3.14;
 const STRING_VAL: string = "hello";
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
+    v1_setup_cx!(ast_context, ir_context, gcx = { typing_context, module_context, });
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let mut checker = create_type_checker(gcx, &ir_context);
     let result = checker.typeck(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
@@ -200,12 +196,10 @@ prc main() {
 }
 "#;
 
-    let ast_context = AstContext::new();
-    let typing_context = TypingContext::new();
-    let ir_context = IrContext::new();
+    v1_setup_cx!(ast_context, ir_context, gcx = { typing_context, module_context, });
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
-    let mut checker = create_type_checker(&typing_context, &ir_context);
+    let mut checker = create_type_checker(gcx, &ir_context);
     let result = checker.typeck(&program);
 
     // This should fail due to unbound variable
