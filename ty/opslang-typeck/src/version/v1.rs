@@ -128,7 +128,10 @@ impl<'cx> TypeChecker<'cx> {
     /// This is the main entry point for type checking and IR generation.
     /// It processes all top-level definitions, performs type inference,
     /// and converts the AST to a typed IR representation.
-    pub fn typeck(&mut self, program: &ast::Program<'cx>) -> Result<ir::Program<'cx>> {
+    pub fn typeck_single_program(
+        &mut self,
+        program: &ast::Program<'cx>,
+    ) -> Result<ir::Program<'cx>> {
         // Create global environment for top-level definitions
         let mut global_env = Environment::<'cx, '_>::new();
 

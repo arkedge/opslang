@@ -40,7 +40,7 @@ fn parse_typeck_success(source: &'static str) {
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
     let mut checker = create_type_checker(gcx, &ir_context);
-    let result = checker.typeck(&program);
+    let result = checker.typeck_single_program(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
 }
@@ -70,7 +70,7 @@ prc add(x: i32, y: i32) -> i32 {
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
     let mut checker = create_type_checker(gcx, &ir_context);
-    let result = checker.typeck(&program);
+    let result = checker.typeck_single_program(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
 
@@ -107,7 +107,7 @@ prc helper(value: i32) -> i32 {
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
     let mut checker = create_type_checker(gcx, &ir_context);
-    let result = checker.typeck(&program);
+    let result = checker.typeck_single_program(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
 
@@ -128,7 +128,7 @@ const STRING_VAL: string = "hello";
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
     let mut checker = create_type_checker(gcx, &ir_context);
-    let result = checker.typeck(&program);
+    let result = checker.typeck_single_program(&program);
 
     assert!(result.is_ok(), "Type checking failed: {:?}", result.err());
 
@@ -200,7 +200,7 @@ prc main() {
 
     let program = parse_source(source, &ast_context).expect("Failed to parse source");
     let mut checker = create_type_checker(gcx, &ir_context);
-    let result = checker.typeck(&program);
+    let result = checker.typeck_single_program(&program);
 
     // This should fail due to unbound variable
     assert!(
