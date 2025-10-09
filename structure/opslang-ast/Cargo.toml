@@ -1,0 +1,25 @@
+[package]
+name = "opslang-ast"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "ops file language AST"
+
+[features]
+v0 = []
+v1 = ["dep:typed-arena"]
+default = ["v0", "v1"]
+
+[dependencies]
+opslang-ast-macro.workspace = true
+opslang-visitor.workspace = true
+opslang-visitor-macro.workspace = true
+typed-arena.workspace = true
+typed-arena.optional = true
+
+escape8259 = "0.5.3"
+chrono = "0.4.33"
+
+[dev-dependencies]
+opslang-ast-macro.workspace = true
+opslang-parser.workspace = true

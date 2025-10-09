@@ -1,17 +1,18 @@
 [workspace]
 resolver = "2"
 members = [
-    "opslang-ast",
-    "opslang-ast-macro",
+    "structure/opslang-ast",
+    "structure/opslang-ast/macro",
     "opslang-diag",
-    "opslang-ir",
-    "opslang-ir-macro",
+    "structure/opslang-ir",
+    "structure/opslang-ir/macro",
     "opslang-parser",
     "opslang-printer",
-    "opslang-ty",
-    "opslang-typeck",
+    "ty/opslang-ty",
+    "ty/opslang-typeck",
+    "ty/opslang-module",
     "opslang-visitor",
-    "opslang-visitor-macro",
+    "opslang-visitor/macro",
     "opslang-visitor-macro-helper",
     "tools/opslang-migration",
     "tools/opslang-formatter",
@@ -21,3 +22,41 @@ members = [
 version = "0.4.0"
 edition = "2024"
 license = "MPL-2.0"
+
+[workspace.dependencies]
+anyhow = "1.0.100"
+chrono = "0.4.42"
+typed-arena = "2.0.2"
+thiserror = "2.0.17"
+
+clap = { version = "4.5.48", features = ["derive"] }
+walkdir = "2.5.0"
+toml = "0.9.7"
+
+serde = { version = "1.0.228", features = ["derive"] }
+
+syn = { version = "2.0.106", features = ["visit-mut", "full", "derive"] }
+proc-macro2 = "1.0.101"
+quote = "1.0.41"
+synstructure = "0.13.2"
+convert_case = "0.8.0"
+
+peg = "0.8.1"
+parol = "3.0.1"
+parol_runtime = "3.0.0"
+
+opslang-ast = { path = "./structure/opslang-ast", version = "=0.4.0" }
+opslang-ast-macro = { path = "./structure/opslang-ast/macro", version = "=0.4.0" }
+opslang-ir = { path = "./structure/opslang-ir", version = "=0.4.0" }
+opslang-ir-macro = { path = "./structure/opslang-ir/macro", version = "=0.4.0" }
+opslang-diag = { path = "./opslang-diag", version = "=0.4.0" }
+opslang-parser = { path = "./opslang-parser", version = "=0.4.0" }
+opslang-printer = { path = "./opslang-printer", version = "=0.4.0" }
+opslang-ty = { path = "./ty/opslang-ty", version = "=0.4.0" }
+opslang-typeck = { path = "./ty/opslang-typeck", version = "=0.4.0" }
+opslang-module = { path = "./ty/opslang-module", version = "=0.4.0" }
+opslang-visitor = { path = "./opslang-visitor", version = "=0.4.0" }
+opslang-visitor-macro = { path = "./opslang-visitor/macro", version = "=0.4.0" }
+opslang-visitor-macro-helper = { path = "./opslang-visitor-macro-helper", version = "=0.4.0" }
+opslang-migration = { path = "./tools/opslang-migration", version = "=0.4.0" }
+opslang-formatter = { path = "./tools/opslang-formatter", version = "=0.4.0" }
