@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "structure/type-registry",
     "structure/opslang-ast",
     "structure/opslang-ast/macro",
     "opslang-diag",
@@ -45,6 +46,7 @@ peg = "0.8.1"
 parol = "3.0.1"
 parol_runtime = "3.0.0"
 
+opslang-type-registry = { path = "./structure/type-registry", version = "=0.4.0" }
 opslang-ast = { path = "./structure/opslang-ast", version = "=0.4.0" }
 opslang-ast-macro = { path = "./structure/opslang-ast/macro", version = "=0.4.0" }
 opslang-ir = { path = "./structure/opslang-ir", version = "=0.4.0" }

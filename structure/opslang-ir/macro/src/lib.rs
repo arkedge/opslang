@@ -1,7 +1,6 @@
 mod declare_ir_visitor_trait;
 mod ir_consistency_check;
 mod visitor_impl;
-mod visitor_type_registry;
 
 use proc_macro::TokenStream;
 

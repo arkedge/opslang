@@ -1,4 +1,4 @@
-use crate::visitor_type_registry::{AstInterTy, AstNodeTy};
+use opslang_type_registry::v1::ast::types::{AstInterTy, AstNodeTy};
 use opslang_visitor_macro_helper::{CallsiteTraitName, no_intermediate_helper};
 
 /// Generates visitor implementation for AST types.

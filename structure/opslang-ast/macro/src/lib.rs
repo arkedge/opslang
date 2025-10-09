@@ -5,7 +5,6 @@ mod derive_position;
 mod derive_span;
 mod v1_default_type_subst;
 mod visitor_impl;
-mod visitor_type_registry;
 
 #[inline]
 fn wrap_proc_macro<T: syn::parse::Parse>(

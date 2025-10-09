@@ -14,3 +14,4 @@ quote.workspace = true
 synstructure.workspace = true
 convert_case.workspace = true
 opslang-visitor-macro-helper.workspace = true
+opslang-type-registry.workspace = true

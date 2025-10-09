@@ -1,19 +1,8 @@
-use crate::visitor_type_registry::IrNodeTy;
+use opslang_type_registry::v1::ir::types::IrNodeTy;
 use opslang_visitor_macro_helper::{
-    MethodKind, VisitorMode,
-    shared_visitor_trait::{TraitDeclaration, VisitableType, declare_visitor_trait},
+    VisitorMode,
+    shared_visitor_trait::{TraitDeclaration, declare_visitor_trait},
 };
-
-impl VisitableType for IrNodeTy {
-    fn generate_visit_method_name(&self, kind: MethodKind, mode: VisitorMode) -> String {
-        self.generate_visit_method_name(kind, mode)
-    }
-
-    fn full_type_path(&self) -> proc_macro2::TokenStream {
-        let type_path = self.inside_of_v1_child_mod().super_path();
-        quote::quote! { #type_path }
-    }
-}
 
 /// Generates a comprehensive immutable visitor trait for all V1 IR types.
 pub fn declare_ir_visitor_trait(

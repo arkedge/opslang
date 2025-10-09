@@ -1,4 +1,4 @@
-use crate::visitor_type_registry::{IrInterTy, IrNodeTy};
+use opslang_type_registry::v1::ir::types::{IrInterTy, IrNodeTy};
 use opslang_visitor_macro_helper::{CallsiteTraitName, VisitorType, no_intermediate_helper};
 
 /// Generates visitor implementation for IR types.

@@ -14,7 +14,7 @@ use quote::quote;
 ///
 /// See the call site for more information.
 pub fn ir_consistency_check() -> TokenStream {
-    let ir_types = crate::visitor_type_registry::IrNodeTy::get_v1_ir_node_types();
+    let ir_types = opslang_type_registry::v1::ir::types::IrNodeTy::get_v1_ir_node_types();
 
     let type_checks = ir_types.map(|ir_type| {
         let type_path = ir_type.inside_of_v1_child_mod().super_path();

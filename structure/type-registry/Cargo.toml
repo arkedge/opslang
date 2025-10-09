@@ -1,17 +1,12 @@
 [package]
-name = "opslang-ast-macro"
+name = "opslang-type-registry"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
-[lib]
-proc-macro = true
-
 [dependencies]
 syn.workspace = true
-proc-macro2.workspace = true
 quote.workspace = true
-synstructure.workspace = true
+proc-macro2.workspace = true
 convert_case.workspace = true
-opslang-type-registry.workspace = true
 opslang-visitor-macro-helper.workspace = true

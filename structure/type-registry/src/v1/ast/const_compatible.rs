@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use proc_macro2::Span;
 use syn::Ident;
 
-use super::*;
+use super::types::*;
 
 mod sealed {
     pub trait Sealed {}
