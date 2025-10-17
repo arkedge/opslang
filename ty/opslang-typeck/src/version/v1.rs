@@ -123,6 +123,33 @@ impl<'cx> TypeChecker<'cx> {
         self.module_loader.add_module(module);
     }
 
+    /// Performs type checking on multiple AST programs and converts them to IR.
+    ///
+    /// This is the entry point for type checking multiple files.
+    /// It first collects all signatures from all programs, then performs type checking
+    /// on each program's items with the unified global environment.
+    pub fn typeck_programs(
+        &mut self,
+        programs: &[ast::Program<'cx>],
+    ) -> Result<Vec<ir::Program<'cx>>> {
+        // First pass: collect all signatures from all programs
+        let mut global_env = Environment::new();
+        for program in programs {
+            for definition in program.toplevel_items {
+                self.register_signature(&mut global_env, definition)?;
+            }
+        }
+
+        // Second pass: type check each program with the unified global environment
+        let mut ir_programs = Vec::new();
+        for program in programs {
+            let ir_program = self.typeck_items_with_global_env(&global_env, program)?;
+            ir_programs.push(ir_program);
+        }
+
+        Ok(ir_programs)
+    }
+
     /// Performs type checking on an AST program and converts it to IR.
     ///
     /// This is the main entry point for type checking and IR generation.
@@ -133,10 +160,10 @@ impl<'cx> TypeChecker<'cx> {
         program: &ast::Program<'cx>,
     ) -> Result<ir::Program<'cx>> {
         // First pass: collect all function and constant signatures
-        let mut global_env = self.collect_signatures(program)?;
+        let global_env = self.collect_signatures(program)?;
 
         // Second pass: type check implementations and lower comments
-        self.typeck_items_with_global_env(&mut global_env, program)
+        self.typeck_items_with_global_env(&global_env, program)
     }
 
     // Note: 'env can be any lifetime, even that of later borrowing from the *returned value*.
@@ -155,7 +182,7 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_items_with_global_env<'env>(
         &mut self,
-        global_env: &'env mut Environment<'cx, 'env>,
+        global_env: &'env Environment<'cx, 'env>,
         program: &ast::Program<'cx>,
     ) -> Result<ir::Program<'cx>> {
         let mut ir_definitions = Vec::new();
