@@ -1,0 +1,6 @@
+#! lang=v1
+
+prc main() {
+    print false;
+    return;
+}

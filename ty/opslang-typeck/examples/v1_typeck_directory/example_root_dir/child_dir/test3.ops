@@ -1,0 +1,6 @@
+#! lang=v1
+
+prc main() {
+    assert (1 == 1);
+    return;
+}
