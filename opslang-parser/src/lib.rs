@@ -1,4 +1,5 @@
 pub mod version;
+use thiserror::Error;
 pub use version::*;
 
 use std::{marker::PhantomData, path::PathBuf};
@@ -65,18 +66,21 @@ impl<Version: ParserVersion, T> Versioned<Version, T> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 /// An error type that is thrown when the self-describing parser encounters an error.
 pub enum SelfDescribingError<'a, E> {
     /// An error that occurred while parsing the shebang line.
+    #[error(transparent)]
     ShebangSearchError(ShebangSearchError<'a>),
+    #[error("version mismatch: expected '{expected}', found '{found}'")]
     VersionMismatch {
         /// The expected version of the parser.
         expected: &'static str,
         /// The found version in the input.
         found: &'a str,
     },
-    Other(E),
+    #[error(transparent)]
+    Other(#[from] E),
 }
 
 pub struct SelfDescribingParser<Version>(PhantomData<Version>);
@@ -113,13 +117,18 @@ pub struct Shebang<'a> {
     pub lang: &'a str,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum ShebangSearchError<'a> {
     /// The content is empty, so no shebang line can be found.
+    #[error("the file is empty, no shebang line found")]
     FileIsEmpty,
+
     /// The shebang line was not found in the first line of the content.
+    #[error("the first line is not a shebang line")]
     FirstLineIsNotShebang,
+
     /// An syntax error occurred while parsing the shebang line.
+    #[error("syntax error in shebang line: expected {expected}, found '{found}'")]
     SyntaxError {
         expected: &'static str,
         found: &'a str,
