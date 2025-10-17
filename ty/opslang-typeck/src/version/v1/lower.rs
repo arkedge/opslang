@@ -2,6 +2,19 @@ use anyhow::anyhow;
 use opslang_ast::v1::{self as ast};
 use opslang_ir::version::v1::{self as ir};
 
+/// Lowers an AST comment to an IR comment, preserving source information.
+pub fn lower_comment<'cx>(
+    ir_cx: &'cx ir::Context<'cx>,
+    ast_comment: &'cx ast::Comment<'cx>,
+) -> ir::Comment<'cx> {
+    ir::Comment {
+        content: ast_comment.content,
+        span: ast_comment.span,
+        source_comments: ir_cx.alloc_ast_comment_slice(&[ast_comment]),
+    }
+}
+
+/// Merges multiple AST comments into a single IR comment, preserving source information.
 pub fn merge_comments<'cx>(
     ir_cx: &'cx ir::Context<'cx>,
     comments: &[&'cx ast::Comment<'cx>],

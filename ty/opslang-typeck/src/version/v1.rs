@@ -151,11 +151,6 @@ impl<'cx> TypeChecker<'cx> {
                 continue;
             }
 
-            // Collect comment from this item if present
-            if let Some(comment) = &toplevel_item.comment {
-                pending_comments.push(comment);
-            }
-
             // If this item has a definition, create an IR Definition
             if let Some(kind) = &toplevel_item.kind {
                 let leading_comment = if pending_comments.is_empty() {
@@ -177,12 +172,17 @@ impl<'cx> TypeChecker<'cx> {
 
                 let ir_definition = ir::Definition {
                     comment_before: leading_comment,
-                    comment_trailing: None, // TODO: Handle trailing comments
+                    comment_trailing: toplevel_item
+                        .comment
+                        .map(|ast_comment| lower::lower_comment(self.ir_cx, ast_comment)),
                     kind: ir_kind,
                 };
 
                 ir_definitions.push(ir_definition);
                 pending_comments.clear();
+            } else if let Some(comment) = &toplevel_item.comment {
+                // Collect comment from this item if present
+                pending_comments.push(comment);
             }
         }
 
