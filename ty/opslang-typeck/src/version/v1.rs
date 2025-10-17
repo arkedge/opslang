@@ -132,15 +132,32 @@ impl<'cx> TypeChecker<'cx> {
         &mut self,
         program: &ast::Program<'cx>,
     ) -> Result<ir::Program<'cx>> {
-        // Create global environment for top-level definitions
-        let mut global_env = Environment::<'cx, '_>::new();
-
         // First pass: collect all function and constant signatures
-        for definition in program.toplevel_items {
-            self.register_definition(&mut global_env, definition)?;
-        }
+        let mut global_env = self.collect_signatures(program)?;
 
-        // Second pass: type check implementations and process comments
+        // Second pass: type check implementations and lower comments
+        self.typeck_items_with_global_env(&mut global_env, program)
+    }
+
+    // Note: 'env can be any lifetime, even that of later borrowing from the *returned value*.
+    fn collect_signatures<'env>(
+        &mut self,
+        program: &ast::Program<'cx>,
+    ) -> Result<Environment<'cx, 'env>> {
+        // Create global environment for top-level definitions
+        let mut global_env = Environment::new();
+
+        for definition in program.toplevel_items {
+            self.register_signature(&mut global_env, definition)?;
+        }
+        Ok(global_env)
+    }
+
+    fn typeck_items_with_global_env<'env>(
+        &mut self,
+        global_env: &'env mut Environment<'cx, 'env>,
+        program: &ast::Program<'cx>,
+    ) -> Result<ir::Program<'cx>> {
         let mut ir_definitions = Vec::new();
         let mut pending_comments: Vec<&'cx ast::Comment<'cx>> = Vec::new();
 
@@ -161,11 +178,11 @@ impl<'cx> TypeChecker<'cx> {
 
                 let ir_kind = match kind {
                     ast::DefinitionKind::Function(func_def) => {
-                        let ir_func = self.typeck_function(&global_env, func_def)?;
+                        let ir_func = self.typeck_function(global_env, func_def)?;
                         ir::DefinitionKind::Function(ir_func)
                     }
                     ast::DefinitionKind::Constant(const_def) => {
-                        let ir_const = self.typeck_constant(&global_env, const_def)?;
+                        let ir_const = self.typeck_constant(global_env, const_def)?;
                         ir::DefinitionKind::Constant(ir_const)
                     }
                 };

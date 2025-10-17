@@ -1,7 +1,7 @@
 use super::*;
 
 impl<'cx> TypeChecker<'cx> {
-    pub(super) fn register_definition(
+    pub(super) fn register_signature(
         &mut self,
         env: &mut Environment<'cx, '_>,
         definition: &ast::ToplevelItem<'cx>,
