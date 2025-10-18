@@ -6,3 +6,6 @@ pub use module::{AlreadyDefinedError, Module, ModuleDef, ModuleItem, ModuleItemD
 
 pub mod context;
 pub use context::ModuleContext;
+
+pub mod path;
+pub use path::{ModulePath, ModulePathData};

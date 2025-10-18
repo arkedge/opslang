@@ -19,6 +19,9 @@ type Result<T, E = anyhow::Error> = std::result::Result<T, E>;
 mod environment;
 use environment::Environment;
 
+mod session;
+pub use session::{ModuleEntry, Session};
+
 mod hm;
 pub use hm::generalize_ty;
 
@@ -123,31 +126,45 @@ impl<'cx> TypeChecker<'cx> {
         self.module_loader.add_module(module);
     }
 
-    /// Performs type checking on multiple AST programs and converts them to IR.
+    /// Performs type checking on multiple modules using a session.
     ///
     /// This is the entry point for type checking multiple files.
-    /// It first collects all signatures from all programs, then performs type checking
-    /// on each program's items with the unified global environment.
-    pub fn typeck_programs(
+    /// The session should already contain all modules with their AST programs.
+    /// This function performs a two-pass type check:
+    /// 1. First pass: collect signatures from each module
+    /// 2. Second pass: type check each module with access to all module environments
+    pub fn typeck_programs<'mcx, 'env>(
         &mut self,
-        programs: &[ast::Program<'cx>],
-    ) -> Result<Vec<ir::Program<'cx>>> {
-        // First pass: collect all signatures from all programs
-        let mut global_env = Environment::new();
-        for program in programs {
-            for definition in program.toplevel_items {
-                self.register_signature(&mut global_env, definition)?;
+        session: &mut Session<'cx, 'mcx, 'env>,
+    ) -> Result<()> {
+        // First pass: collect all signatures from all modules
+        let module_paths: Vec<_> = session.iter().map(|(path, _)| *path).collect();
+
+        for &path in &module_paths {
+            let entry = session.get_module(&path).unwrap();
+            let mut env = Environment::new();
+
+            for definition in entry.program.toplevel_items {
+                // Note: 'env does not refer to this borrowing.
+                self.register_signature(&mut env, definition)?;
             }
+
+            session.register_environment(path, env);
         }
 
-        // Second pass: type check each program with the unified global environment
-        let mut ir_programs = Vec::new();
-        for program in programs {
-            let ir_program = self.typeck_items_with_global_env(&global_env, program)?;
-            ir_programs.push(ir_program);
+        // Second pass: type check each module
+        for path in &module_paths {
+            let entry = session.get_module(path).unwrap();
+            let program = &entry.program;
+
+            // Note: 'env DOES refer to this borrowing.
+            let env = session.get_environment(path).unwrap();
+            let ir_program = self.typeck_items_with_global_env(env, program)?;
+
+            session.get_module_mut(path).unwrap().ir_program = Some(ir_program);
         }
 
-        Ok(ir_programs)
+        Ok(())
     }
 
     /// Performs type checking on an AST program and converts it to IR.

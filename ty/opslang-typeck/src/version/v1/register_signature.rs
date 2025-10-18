@@ -1,9 +1,9 @@
 use super::*;
 
 impl<'cx> TypeChecker<'cx> {
-    pub(super) fn register_signature(
+    pub(super) fn register_signature<'env>(
         &mut self,
-        env: &mut Environment<'cx, '_>,
+        env: &mut Environment<'cx, 'env>,
         definition: &ast::ToplevelItem<'cx>,
     ) -> Result<()> {
         if let Some(kind) = &definition.kind {
@@ -19,9 +19,9 @@ impl<'cx> TypeChecker<'cx> {
         Ok(())
     }
 
-    fn register_function_signature(
+    fn register_function_signature<'env>(
         &mut self,
-        env: &mut Environment<'cx, '_>,
+        env: &mut Environment<'cx, 'env>,
         func_def: &ast::FunctionDef<'cx>,
     ) -> Result<()> {
         let func_name = func_def.name;
@@ -60,9 +60,9 @@ impl<'cx> TypeChecker<'cx> {
         Ok(())
     }
 
-    fn register_constant_signature(
+    fn register_constant_signature<'env>(
         &mut self,
-        env: &mut Environment<'cx, '_>,
+        env: &mut Environment<'cx, 'env>,
         const_def: &ast::ConstantDef<'cx>,
     ) -> Result<()> {
         self.bind(

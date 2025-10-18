@@ -8,7 +8,9 @@ use opslang_ir::version::v1 as ir;
 use opslang_module::version::v1::ModuleContext;
 use opslang_parser::{ParseOps, ParserInput};
 use opslang_ty::version::v1::TypingContext;
-use opslang_typeck::version::v1::{TypeChecker, context::GlobalContext, create_builtin_module};
+use opslang_typeck::version::v1::{
+    Session, TypeChecker, context::GlobalContext, create_builtin_module,
+};
 use std::fs;
 use std::path::PathBuf;
 
@@ -46,8 +48,8 @@ fn main() -> Result<()> {
         module: &module_cx,
     };
 
-    // Parse all files
-    let mut programs = Vec::new();
+    // Parse all files and create session
+    let mut session = Session::new();
     for path in &ops_files {
         let source = fs::read_to_string(path)?;
         let input = ParserInput {
@@ -56,7 +58,12 @@ fn main() -> Result<()> {
         };
         let program = ast::Program::parse(input, &ast_cx)
             .map_err(|e| anyhow::anyhow!("Failed to parse '{}': {e}", path.display()))?;
-        programs.push(program);
+
+        // Create module path from file name
+        let file_name = path.file_stem().unwrap().to_str().unwrap();
+        let module_path = module_cx.alloc_root_path(ast_cx.alloc_str(file_name));
+
+        session.add_module(module_path, program);
         println!("Parsed: {}", path.display());
     }
 
@@ -65,11 +72,17 @@ fn main() -> Result<()> {
     typeck.add_module(create_builtin_module(gcx));
 
     // Type check all programs
-    println!("\nType checking {} program(s)...", programs.len());
-    let ir_programs = typeck.typeck_programs(&programs)?;
+    println!("\nType checking {} module(s)...", session.iter().count());
+    typeck.typeck_programs(&mut session)?;
 
     println!("\nType checking completed successfully!");
-    println!("Generated {} IR program(s)", ir_programs.len());
+    println!(
+        "Generated {} IR program(s)",
+        session
+            .iter()
+            .filter(|(_, entry)| entry.ir_program.is_some())
+            .count()
+    );
 
     Ok(())
 }

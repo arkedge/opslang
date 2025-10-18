@@ -15,6 +15,7 @@ opslang-module.workspace = true
 opslang-visitor.workspace = true
 anyhow.workspace = true
 chrono.workspace = true
+typed-arena.workspace = true
 
 [dev-dependencies]
 opslang-parser.workspace = true
