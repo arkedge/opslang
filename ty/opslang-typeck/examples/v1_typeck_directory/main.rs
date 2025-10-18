@@ -21,13 +21,18 @@ fn main() -> Result<()> {
         .join("v1_typeck_directory")
         .join("example_root_dir");
 
-    // Collect all .ops files in the example directory
+    // Collect all .ops files recursively in the example directory
     let mut ops_files = Vec::new();
-    for entry in fs::read_dir(&example_dir)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_file() && path.extension().is_some_and(|ext| ext == "ops") {
-            ops_files.push(path);
+    let mut dirs_to_visit = vec![example_dir.clone()];
+    while let Some(dir) = dirs_to_visit.pop() {
+        for entry in fs::read_dir(&dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                dirs_to_visit.push(path);
+            } else if path.is_file() && path.extension().is_some_and(|ext| ext == "ops") {
+                ops_files.push(path);
+            }
         }
     }
 
