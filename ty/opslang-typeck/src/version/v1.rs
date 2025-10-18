@@ -133,10 +133,7 @@ impl<'cx> TypeChecker<'cx> {
     /// This function performs a two-pass type check:
     /// 1. First pass: collect signatures from each module
     /// 2. Second pass: type check each module with access to all module environments
-    pub fn typeck_programs<'mcx, 'env>(
-        &mut self,
-        session: &mut Session<'cx, 'mcx, 'env>,
-    ) -> Result<()> {
+    pub fn typeck_programs<'env>(&mut self, session: &mut Session<'cx, 'env>) -> Result<()> {
         // First pass: collect all signatures from all modules
         let module_paths: Vec<_> = session.iter().map(|(path, _)| *path).collect();
 
