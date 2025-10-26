@@ -564,9 +564,9 @@ pub struct Cast<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]
 pub struct InfixImport<'cx, F: TypeFamily<'cx> = DefaultTypeFamily> {
-    pub file: F::Literal,
+    pub file: F::FilePath,
     pub question: token::Question<'cx, F>,
-    pub path: F::Path,
+    pub path: F::ImportedPath,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Visit, OrderSpan)]

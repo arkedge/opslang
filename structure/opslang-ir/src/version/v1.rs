@@ -43,6 +43,7 @@ use opslang_ast::{
     token::{IntoPosition, IntoSpan},
     v1::{self as ast, TypeFamily as AstTypeFamily, token},
 };
+use opslang_module::version::v1 as module;
 use opslang_ty::version::v1::{self as ty, Ident, Ty, TypingContext};
 use opslang_visitor_macro::Visit;
 use std::convert::Infallible;
@@ -90,6 +91,8 @@ impl<'cx> AstTypeFamily<'cx> for IrTypeFamily {
         PreQualified = Infallible,
 
         // Expression components
+        FilePath = module::ModulePath<'cx>,
+        ImportedPath = Ident<'cx>,
         String = String<'cx>,
         Bytes = Bytes<'cx>,
         HexBytes = HexBytes<'cx>,

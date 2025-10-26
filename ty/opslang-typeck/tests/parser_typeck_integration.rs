@@ -435,7 +435,7 @@ prc f() {
 
 prc main() {
     call f;
-    call "unknown"?main;
+    call "test"?main; # import itself from same file
     return;
 }
 "#;

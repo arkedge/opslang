@@ -67,10 +67,7 @@ impl<'cx, 'env> Session<'cx, 'env> {
     }
 
     /// Gets a mutable environment for a module.
-    pub fn get_environment_mut(
-        &mut self,
-        path: &ModulePath<'cx>,
-    ) -> Option<&mut Scope<'cx, 'env>> {
+    pub fn get_environment_mut(&mut self, path: &ModulePath<'cx>) -> Option<&mut Scope<'cx, 'env>> {
         self.module_toplevel.get_mut(path)
     }
 
@@ -83,5 +80,24 @@ impl<'cx, 'env> Session<'cx, 'env> {
 impl<'cx, 'env> Default for Session<'cx, 'env> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct SecondPassSession<'cx, 'sess> {
+    /// The underlying type checking session.
+    sess: &'sess Session<'cx, 'sess>,
+
+    /// The module path currently being type checked.
+    pub module_path: ModulePath<'cx>,
+}
+
+impl<'cx, 'sess> SecondPassSession<'cx, 'sess> {
+    pub fn new(sess: &'sess Session<'cx, 'sess>, module_path: ModulePath<'cx>) -> Self {
+        Self { sess, module_path }
+    }
+
+    pub fn get_toplevel_items_of(&self, path: &ModulePath<'cx>) -> Option<&Scope<'cx, '_>> {
+        self.sess.get_environment(path)
     }
 }

@@ -7,7 +7,7 @@ impl<'cx> TypeChecker<'cx> {
     /// It updates the provided substitution with any new type constraints discovered during checking.
     pub(super) fn typeck_expr<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         mut expr: &'cx ast::ExprKind<'cx>,
@@ -307,39 +307,7 @@ impl<'cx> TypeChecker<'cx> {
                 Ok(ir_expr)
             }
             ast::ExprKind::InfixImport(infix_import) => {
-                let ast::InfixImport {
-                    file,
-                    question,
-                    path,
-                } = infix_import;
-                // InfixImport expressions are like "file ? path" operations
-                let (file_ir, ty) = self.typeck_literal(session, env, subst, file)?;
-
-                // File should be a string type
-                // FIXME: file must be a string literal
-                let string_type = Ty::mk_string(self.tcx);
-                self.unify(subst, ty, string_type)?;
-
-                // FIXME: Resolve path in loaded file
-                // resolves to a procedure with no arguments and unit return type for now
-                let resolved_path = ir::ResolvedPath {
-                    item: ir::ResolvedItem::Main,
-                    original_path: path,
-                };
-                // FIXME: Resolve procedure correctly
-                let ty = Ty::mk_procedure(
-                    self.tcx,
-                    Some(ty::Procedure::External),
-                    vec![],
-                    Ty::mk_unit(self.tcx),
-                );
-
-                // Create IR InfixImport expression
-                let ir_expr = ir::Expr::new(
-                    ir::ExprMut::import(self.ir_cx, file_ir, question.into_token(), resolved_path),
-                    ty,
-                );
-                Ok(ir_expr)
+                self.typeck_infix_import(session, infix_import)
             }
             ast::ExprKind::Call(call) => self.typeck_call(session, env, subst, call),
         }
@@ -391,8 +359,9 @@ mod tests {
         let mut subst = Substitution::new();
         let env = Scope::new();
         let session = Session::new();
+        let session = SecondPassSession::new(&session, module.alloc_root_path("test"));
         let ir_expr = type_checker
-            .typeck_expr(&session, &env, &mut subst, &expr)
+            .typeck_expr(session, &env, &mut subst, &expr)
             .unwrap();
         assert_eq!(ir_expr.ty, Ty::mk_external(&tcx, path, Ty::mk_i32(&tcx)));
     }

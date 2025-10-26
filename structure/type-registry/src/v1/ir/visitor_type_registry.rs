@@ -198,6 +198,7 @@ pub const INTER_TYPES: &[IrInterTy<Const>] = crate::define_ir_inter_types! {
     }
     crate module {
         type ModuleItemDef<'cx>;
+        type ModulePath<'cx>;
     }
     extern {
         type ::std::convert::Infallible;

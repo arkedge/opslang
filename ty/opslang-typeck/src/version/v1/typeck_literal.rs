@@ -6,7 +6,7 @@ use opslang_ty::version::v1::{FloatVid, IntVid};
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_literal<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         scope: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         literal: &'cx ast::Literal<'cx>,

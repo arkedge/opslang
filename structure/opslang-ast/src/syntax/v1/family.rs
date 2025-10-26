@@ -105,6 +105,12 @@ pub trait TypeFamily<'cx>: Debug + PartialEq + Clone + Copy + Default + 'static 
         /// Literal values including numbers, strings, arrays, and other constant data.
         type Literal;
 
+        /// String literal (AST) or resolved local module (IR) file path.
+        type FilePath;
+
+        /// Imported path representing an item being imported from another local module.
+        type ImportedPath;
+
         /// Array literal containing a sequence of expressions.
         type Array;
 

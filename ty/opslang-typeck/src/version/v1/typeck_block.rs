@@ -3,7 +3,7 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_block<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         block: &ast::Block<'cx>,
@@ -59,7 +59,7 @@ enum RowProcessResult<'cx> {
 impl<'cx> TypeChecker<'cx> {
     fn typeck_row<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         env: &mut Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         row: &ast::Row<'cx>,

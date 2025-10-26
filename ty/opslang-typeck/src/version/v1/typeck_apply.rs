@@ -3,7 +3,7 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_apply<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         apply: &'cx ast::Apply<'cx>,
@@ -71,7 +71,7 @@ impl<'cx> TypeChecker<'cx> {
 
     fn typeck_qualif<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         qualif: &'cx ast::Qualif<'cx>,

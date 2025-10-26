@@ -3,7 +3,7 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_function<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         global_env: &Scope<'cx, 'env>,
         func_def: &'cx ast::FunctionDef<'cx>,
     ) -> Result<ir::FunctionDef<'cx>> {

@@ -7,7 +7,7 @@ impl<'cx> TypeChecker<'cx> {
     /// It updates the provided substitution with any new type constraints discovered during checking.
     pub(super) fn typeck_binary<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         expr: &'cx ast::Binary<'cx>,

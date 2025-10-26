@@ -62,6 +62,8 @@ define_trait_alias!(
         PreQualified = PreQualified<'cx, Self>,
         Parened = Parened<'cx, Self>,
         Literal = Literal<'cx, Self>,
+        FilePath = Literal<'cx, Self>,
+        ImportedPath = Path<'cx, Self>,
         Array = Array<'cx, Self>,
         String = String<'cx, Self>,
         Bytes = Bytes<'cx, Self>,

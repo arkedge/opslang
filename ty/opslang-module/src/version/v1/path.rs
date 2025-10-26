@@ -1,5 +1,7 @@
 use std::ops::Deref;
 
+use opslang_visitor_macro::Visit;
+
 /// Represents a module path as a cons cell (single-linked list).
 ///
 /// Module paths form a chain from leaf to root, enabling efficient
@@ -12,7 +14,8 @@ pub struct ModulePathData<'cx> {
     pub parent: Option<ModulePath<'cx>>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Visit)]
+#[skip_all_visit]
 pub struct ModulePath<'cx>(pub(super) &'cx ModulePathData<'cx>);
 
 impl<'cx> Deref for ModulePath<'cx> {

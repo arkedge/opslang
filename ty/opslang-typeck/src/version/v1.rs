@@ -6,7 +6,9 @@ use opslang_ir::version::v1::{self as ir};
 use opslang_module::version::v1 as module;
 
 use ir::Typed;
-use opslang_module::version::v1::{Module, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader};
+use opslang_module::version::v1::{
+    Module, ModuleContext, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader, ModulePath,
+};
 use opslang_ty::version::v1::{
     self as ty, FloatTy, Ident, IntTy, PolyTy, Procedure, Substitution, Ty, TyKind, TyVid,
     TypingContext,
@@ -21,7 +23,7 @@ mod environment;
 use environment::Scope;
 
 mod session;
-pub use session::{ModuleEntry, Session};
+pub use session::{ModuleEntry, SecondPassSession, Session};
 
 mod hm;
 pub use hm::generalize_ty;
@@ -29,6 +31,7 @@ pub use hm::generalize_ty;
 mod lower;
 mod register_signature;
 mod resolve;
+
 mod typeck_apply;
 mod typeck_binary;
 mod typeck_block;
@@ -36,6 +39,7 @@ mod typeck_call;
 mod typeck_constant;
 mod typeck_expr;
 mod typeck_function;
+mod typeck_infix_import;
 mod typeck_literal;
 mod typeck_path;
 mod typeck_statement;
@@ -157,7 +161,11 @@ impl<'cx> TypeChecker<'cx> {
 
             // Note: 'env DOES refer to this variable's lifetime.
             let env = session.get_environment(path).unwrap();
-            let ir_program = self.typeck_items_with_global_env(session, env, program)?;
+            let ir_program = self.typeck_items_with_global_env(
+                SecondPassSession::new(session, *path),
+                env,
+                program,
+            )?;
 
             session.get_module_mut(path).unwrap().ir_program = Some(ir_program);
         }
@@ -183,7 +191,11 @@ impl<'cx> TypeChecker<'cx> {
         let global_env = session.get_environment(&path).unwrap();
 
         // Second pass: type check implementations and lower comments
-        self.typeck_items_with_global_env(&session, global_env, program)
+        self.typeck_items_with_global_env(
+            SecondPassSession::new(&session, path),
+            global_env,
+            program,
+        )
     }
 
     // Note: 'env can be any lifetime, even that of later borrowing from the *returned value*.
@@ -202,7 +214,7 @@ impl<'cx> TypeChecker<'cx> {
 
     pub fn typeck_items_with_global_env<'env>(
         &mut self,
-        session: &Session<'cx, 'env>,
+        session: SecondPassSession<'cx, 'env>,
         global_env: &Scope<'cx, 'env>,
         program: &ast::Program<'cx>,
     ) -> Result<ir::Program<'cx>> {

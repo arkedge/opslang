@@ -182,9 +182,9 @@ impl_expr_and_expr_mut! {
     #[inline]
     pub fn import(
         ctx: &'cx context::Context<'cx, F>,
-        file: F::Literal,
+        file: F::FilePath,
         question: token::Question<'cx, F>,
-        path: F::Path,
+        path: F::ImportedPath,
     ) -> Self
     where
         F: TypeFamily<'cx, InfixImport = InfixImport<'cx, F>>,
