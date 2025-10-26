@@ -1,0 +1,271 @@
+%start Program
+%title "opslang v1 grammar"
+%grammar_type 'LALR(1)'
+%auto_newline_off
+
+%on Hash %enter Cmnt
+
+%scanner Cmnt {
+    %auto_newline_off
+    %auto_ws_off
+    %on EndOfLine %enter INITIAL
+}
+
+%%
+
+EndOfLine
+    : <INITIAL, Cmnt>/\r?\n|\r/
+    ;
+
+Comment: Hash [ CommentContent ];
+
+Hash: '#';
+
+CommentContent
+    : <Cmnt>/[^\r\n]*/
+    ;
+
+// `Definition [ EndOfLine Program ]` don't work (?) 
+Program
+    : Definition EndOfLine Program
+    | Definition;
+
+Definition
+    : [ FunctionDef | ConstantDef ] [ Comment ]
+    ;
+
+FunctionDef
+    : 'prc' Ident '(' [ ParameterList ] ')' [ '->' Path ] Block
+    ;
+
+ParameterList
+    : Parameter [ CommaParameterList ]
+    ;
+
+CommaParameterList
+    : ',' [ ParameterList ]
+    ;
+
+Parameter
+    : Ident ':' Path
+    ;
+
+ConstantDef
+    : 'const' Ident ':' Path '=' Expr Semi
+    ;
+
+Scope
+    : ScopeContent [ EndOfLine Scope ]
+    ;
+
+ScopeContent
+    : [ Break ] [ ScopeContentKind ] [ Comment ]
+    ;
+
+ScopeContentKind
+    : Statement
+    | Block
+    ;
+
+Statement: StatementKind Semi;
+
+Break: '.';
+Semi: ';';
+
+StatementKind
+    : LetStmt
+    | Expr
+    | ReturnStmt
+    ;
+
+ReturnStmt: 'return';
+
+LetStmt
+    : 'let' Ident '=' Expr
+    ;
+
+// Precedence climbing method
+Expr
+    : SetExpr
+    ;
+
+// `:=`: lower than `||`
+SetExpr
+    : LogicalOrExpr [ ':=' LogicalOrExpr ]
+    ;
+
+// `||` : lower than `&&`
+LogicalOrExpr
+    : { LogicalAndExpr '||' } LogicalAndExpr
+    ;
+
+// `&&` : lower then compare
+LogicalAndExpr
+    : { CompareExpr '&&' } CompareExpr
+    ;
+
+// `>=`, `<=`, `>`, `<`, `!=` (`/=`), `==`
+//     : lower then arithmetic
+CompareExpr
+    : ArithmeticExpr { CompareOp ArithmeticExpr }
+    ;
+
+CompareOp
+    : '>='
+    | '<='
+    | '>'
+    | '<'
+    | '!='
+    | '/='
+    | '=='
+    ;
+
+// `+`, `-`
+//     : lower then factor
+ArithmeticExpr
+    : { FactorExpr ArithmeticOp } FactorExpr
+    ;
+
+ArithmeticOp
+    : '+'
+    | '-'
+    ;
+
+// `*`, `/`
+//     : lower then prefix
+FactorExpr
+    : { CastExpr FactorOp } CastExpr
+    ;
+
+FactorOp
+    : '*'
+    | '/'
+    | '%'
+    ;
+
+// `-`: lower than application
+CastExpr
+    : PrefixExpr [ 'as' Path ]
+    ;
+
+// `-`: lower than application
+PrefixExpr
+    : '-' ApplyExpr
+    | { Qualif } ApplyExpr
+    | 'wait' ApplyExpr
+    | 'call' ApplyExpr // ad-hoc "call"
+    ;
+
+// application: lower than `&`, `$`
+ApplyExpr
+    : LowerPrefixExpr { AtomicExpr }
+    ;
+
+// `&`, `$`: lower than grouping
+LowerPrefixExpr
+    : [ LowerPrefixOp ] Callable
+    ;
+
+LowerPrefixOp
+    : '&'
+    | '$';
+
+Callable
+    : Path
+    | Literal ['?' Path]
+    | '(' Expr ')'
+    | IfExpr
+    | SelectExpr
+    ;
+
+// expressions with clear space delimitation
+AtomicExpr
+    : Qualif
+    | LowerPrefixExpr
+    ;
+
+IfExpr
+    : 'if' Expr Block [ 'else' Block ]
+    ;
+
+SelectExpr
+    : 'select' '{' SelectScope '}'
+    ;
+
+SelectScope
+    : [ SelectScopeContent ] [ EndOfLine SelectScope ]
+    ;
+
+SelectScopeContent
+    : Expr '=>' Block
+    ;
+
+// Qualification for function application
+Qualif
+    : Modifier
+    | DefaultModifier
+    ;
+
+DefaultModifier: '~' Path;
+
+Modifier: '@' Path [ KindArg ];
+KindArg: ':' Callable;
+
+Path: Ident { '.' Ident };
+
+Ident: /[_a-zA-Z](\w|[\/-])*/;
+
+Literal
+    : Array
+    | String
+    | ByteLiteral
+    | HexByteLiteral
+    | Numeric
+    | Rfc3339DateTime
+    ;
+
+Array
+    : '[' [ CommaSepElements ] ']';
+
+CommaSepElements
+    : Expr [ CommaExprList ]
+    ;
+
+CommaExprList
+    : ',' [ CommaSepElements ]
+    ;
+
+// String with permissive escapes
+String: /"(\\.|[^"])*"/;
+
+// Byte string with permissive escapes
+ByteLiteral: /b"(\\.|[^"])*"/;
+
+// Byte string in hexadecimal with permissive digit separators
+HexByteLiteral: /bx"[0-9a-fA-F_]*"/;
+
+Numeric
+    : BinaryInteger
+    | OctalInteger
+    | HexadecimalInteger
+    | Ieee754Float
+    ;
+
+// Binary integer with permissive digit separators
+BinaryInteger: /0b[01_]+([a-zA-Z](\w|[\/-])*)?/;
+
+// Octal integer with permissive digit separators
+OctalInteger: /0o[0-7_]+([a-zA-Z](\w|[\/-])*)?/;
+
+// Hexadecimal integer with permissive digit separators
+HexadecimalInteger: /0x[0-9a-fA-F_]+([g-zG-Z](\w|[\/-])*)?/;
+
+// IEEE 754 with permissive digit separators, without leading zeros
+Ieee754Float: /[-+]?(0|[1-9][0-9_]*)(\.[0-9_]+)?([eE][-+]?(0|[1-9][0-9_]*)?)?([a-df-zA-DF-Z](\w|[\/-])*)?/;
+
+// `chrono`-crate version of RFC 3339
+Rfc3339DateTime: /\d{4}-\d{2}-\d{2}[tT]\d{2}:\d{2}:\d{2}(.\d+)?([zZ]|[+-]\d{2}:\d{2})/;
+
+Block
+    : '{' Scope '}'
+    ;

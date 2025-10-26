@@ -1,13 +1,35 @@
 [package]
 name = "opslang-parser"
 version.workspace = true
-edition = "2021"
-license = "MPL-2.0"
+edition.workspace = true
+license.workspace = true
 description = "ops file language parser"
 
+[features]
+v0 = ["dep:peg"]
+v1 = ["build-parol", "dep:typed-arena"]
+build-parol = ["dep:parol", "dep:parol_runtime"]
+default = ["v0", "v1"]
+
 [dependencies]
-peg = "0.8.1"
-thiserror = "1.0.48"
-anyhow = "1.0.75"
-opslang-ast = "0.4.0"
-chrono = "0.4.33"
+opslang-ast.workspace = true
+opslang-diag.workspace = true
+
+peg.workspace = true
+peg.optional = true
+parol.workspace = true
+parol.optional = true
+parol_runtime.workspace = true
+parol_runtime.optional = true
+typed-arena.workspace = true
+typed-arena.optional = true
+
+thiserror.workspace = true
+anyhow.workspace = true
+chrono.workspace = true
+
+[build-dependencies]
+parol.workspace = true
+parol.optional = true
+parol_runtime.workspace = true
+parol_runtime.optional = true

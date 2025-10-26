@@ -1,0 +1,161 @@
+mod ast_consistency_check;
+mod declare_ast_visitor;
+mod derive_map_into_token;
+mod derive_position;
+mod derive_span;
+mod v1_default_type_subst;
+mod visitor_impl;
+
+#[inline]
+fn wrap_proc_macro<T: syn::parse::Parse>(
+    input: proc_macro::TokenStream,
+    f: impl Fn(T) -> syn::Result<proc_macro2::TokenStream>,
+) -> proc_macro::TokenStream {
+    syn::parse(input)
+        .and_then(f)
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro_derive(Span)]
+pub fn derive_span(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, derive_span::derive_span)
+}
+
+#[proc_macro_derive(OrderSpan)]
+pub fn derive_order_span(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, derive_span::derive_order_span)
+}
+
+#[proc_macro_derive(Position)]
+pub fn derive_position(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, derive_position::derive_position)
+}
+
+#[proc_macro_derive(MapIntoToken)]
+pub fn derive_map_into_token(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, derive_map_into_token::derive_map_into_token)
+}
+
+#[proc_macro]
+pub fn v1_default_type_subst(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, v1_default_type_subst::v1_default_type_subst)
+}
+
+#[proc_macro]
+pub fn v1_default_type_subst_internal(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, v1_default_type_subst::v1_default_type_subst_internal)
+}
+
+/// Generates comprehensive AST visitor implementations for v1 syntax nodes.
+///
+/// This procedural macro implements the visitor pattern for AST traversal by generating
+/// `Visitor<T>` trait implementations for all v1 AST node types. It enables differential
+/// programming where you can provide custom implementations for specific node types while
+/// automatically getting default traversal behavior for all others.
+///
+/// # Implementation Details
+///
+/// The macro generates `Visitor<NodeType>` implementations for every AST node type defined
+/// in the v1 syntax. For methods you provide, it uses your custom implementation exactly.
+/// For methods you don't provide, it generates default implementations that automatically
+/// traverse child nodes. Additionally, your visitor type will implement the `AstVisitor`
+/// trait, which provides convenient `visit_*` and `super_*` method pairs.
+///
+/// # Syntax
+///
+/// ```ignore (illustrative)
+/// opslang_ast_macro::v1_ast_visitor_impl!(for YourVisitor {
+///     fn visit_some_node(&mut self, node: &SomeNode<'cx>) {
+///         // Your custom logic here
+///         self.super_some_node(node); // Continue traversal
+///     }
+/// });
+/// ```
+///
+/// # Method Pairs
+///
+/// The `AstVisitor` trait provides two methods for each AST node type:
+/// - `visit_*`: Entry point for visiting a node (delegates to `Visitor<T>::visit`)
+/// - `super_*`: Default traversal behavior that visits all child nodes
+///
+/// This design allows you to easily override specific node handling while preserving
+/// automatic traversal of the entire AST structure.
+///
+/// # Example
+///
+/// ```ignore (illustrative)
+/// #[derive(Default)]
+/// struct CountingVisitor {
+///     function_count: usize,
+/// }
+///
+/// opslang_ast_macro::v1_ast_visitor_impl!(for CountingVisitor {
+///     fn visit_function_def(&mut self, node: &opslang_ast::v1::FunctionDef<'cx>) {
+///         self.function_count += 1;
+///         self.super_function_def(node); // Continue visiting child nodes
+///     }
+/// });
+/// ```
+#[proc_macro]
+pub fn v1_ast_visitor_impl(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, visitor_impl::visitor_impl)
+}
+
+#[proc_macro_attribute]
+pub fn v1_declare_ast_visitor_trait(
+    _attr: proc_macro::TokenStream,
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    wrap_proc_macro(input, declare_ast_visitor::declare_ast_visitor_trait)
+}
+
+/// Generates a compile-time consistency check for AST types registry.
+///
+/// This procedural macro verifies that all AST types defined in the centralized registry
+/// (`visitor_type_registry.rs`) actually exist and are accessible from the context where this macro is called.
+/// The macro is designed to be called from within a v1 child module context to ensure that
+/// all registered types can be referenced using `super::` paths.
+///
+/// # Purpose
+///
+/// The AST types registry in `visitor_type_registry.rs` maintains a list of all AST node types for use by
+/// procedural macros, but this registry is independent of the actual type definitions. This
+/// creates a potential inconsistency where the registry might reference types that don't exist
+/// or have been renamed/moved.
+///
+/// # Implementation
+///
+/// The macro generates compile-time checks in the form:
+/// ```ignore
+/// const _: () = {
+///     let _: super::Type1<'cx>;
+///     let _: super::module::Type2<'cx>;
+///     // ... for each registered type
+/// };
+/// ```
+///
+/// If any type in the registry doesn't exist or isn't accessible with the expected path,
+/// compilation will fail with a clear error message pointing to the problematic type.
+///
+/// # Usage
+///
+/// This macro should be called from within a child module of `opslang_ast::syntax::v1`
+/// to verify type accessibility:
+///
+/// ```ignore
+/// // In opslang-ast/src/syntax/v1/some_child_module.rs
+/// opslang_ast_macro::ast_consistency_check!();
+/// ```
+///
+/// # Guarantees
+///
+/// Successful compilation of this macro ensures:
+/// 1. All types in the AST registry exist
+/// 2. All types are accessible from v1 child module context using `super::` paths
+/// 3. All types accept the expected lifetime parameter `'cx`
+/// 4. The registry is consistent with actual type definitions
+#[proc_macro]
+pub fn ast_consistency_check(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    ast_consistency_check::ast_consistency_check().into()
+}

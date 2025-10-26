@@ -1,0 +1,20 @@
+[package]
+name = "opslang-ir"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "ops file language IR"
+
+[dependencies]
+opslang-ast.workspace = true
+opslang-ast-macro.workspace = true
+opslang-ir-macro.workspace = true
+opslang-visitor.workspace = true
+opslang-visitor-macro.workspace = true
+opslang-ty.workspace = true
+opslang-module.workspace = true
+chrono.workspace = true
+typed-arena.workspace = true
+
+[dev-dependencies]
+opslang-parser.workspace = true

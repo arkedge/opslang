@@ -1,0 +1,23 @@
+[package]
+name = "opslang-migration"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "opslang-migration"
+path = "src/main.rs"
+
+[dependencies]
+opslang-ast.workspace = true
+opslang-ast-macro.workspace = true
+opslang-parser.workspace = true
+opslang-ty.workspace = true
+opslang-ir.workspace = true
+opslang-typeck.workspace = true
+opslang-printer.workspace = true
+parol_runtime.workspace = true
+thiserror.workspace = true
+clap.workspace = true
+walkdir.workspace = true
+chrono.workspace = true

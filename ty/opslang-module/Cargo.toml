@@ -1,0 +1,12 @@
+[package]
+name = "opslang-module"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+opslang-ty.workspace = true
+opslang-ast.workspace = true
+opslang-visitor.workspace = true
+opslang-visitor-macro.workspace = true
+typed-arena.workspace = true

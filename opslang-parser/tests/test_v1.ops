@@ -1,0 +1,29 @@
+#! lang=v1
+
+prc main() {
+    let ok = "OK";                # string型
+    let t = 2024-01-01T00:00:00Z; # time型
+    let d = 1;                    # duration型
+    let ti = 2000;                # 数値型
+
+   .# breakpoint機能
+    assert (2 == 2);                # WINGS: check_value
+    assert_eq 2 2;
+    assert_approx_eq 1.0 1.0 0.001; # WINGS: --tolerance 0.001
+    print 2;                        # WINGS: get
+    wait 5;                         # WINGS: wait_sec
+    wait (1 == 1 && 2 <= 2);        # WINGS: wait_until
+    wait (0 == 1 || 5);             # タイムアウトつき
+
+    print &MOBC.HK;     # telemetry id 参照
+    print $MOBC.HK.XX.YY;
+    let hk = MOBC.HK;   # テレメトリ集合型
+    print hk.OBC.XX.YY; # テレメトリ集合型は構造体のように参照できる
+
+    @RT MOBC.NOP;                       # Time Indicator をとらないコマンド
+    MOBC.NOP @TL:20;                    # ステップ単位のTime Indicatorをとるコマンド
+    @TL:20 MOBC.NOP;                    # Time Indicatorは前置が可能
+    MOBC.NOP @BL:30;
+    MOBC.NOP @UTL:2024-01-01T00:00:00Z; # 時刻をTime Indicatorとしてとるコマンド
+    AOBC.NOP @TL:20 ~MOBC;              # 最終的な実行コンポーネントが異なるコマンド (WINGSのMOBC_TL.AOBC_RTに相当)
+}

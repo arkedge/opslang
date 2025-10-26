@@ -1,0 +1,11 @@
+strategy = "comment_aligned"
+
+# Base formatting options
+indent_str = "    "
+indent_level = 0
+max_width = 80
+newline_style = "unix"
+
+# Comment alignment options
+grouping = "consecutive"
+position = "to_longest"

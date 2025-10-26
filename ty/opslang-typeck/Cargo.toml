@@ -1,0 +1,21 @@
+[package]
+name = "opslang-typeck"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "ops file language type checker"
+
+[dependencies]
+opslang-ty.workspace = true
+
+opslang-ast.workspace = true
+opslang-ir.workspace = true
+opslang-ir-macro.workspace = true
+opslang-module.workspace = true
+opslang-visitor.workspace = true
+anyhow.workspace = true
+chrono.workspace = true
+typed-arena.workspace = true
+
+[dev-dependencies]
+opslang-parser.workspace = true

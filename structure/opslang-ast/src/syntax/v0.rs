@@ -1,5 +1,3 @@
-//! type definition of AST.
-
 use chrono::{DateTime, Utc};
 use std::ops::Range;
 
