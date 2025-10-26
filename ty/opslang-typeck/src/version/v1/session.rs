@@ -18,7 +18,7 @@ pub struct Session<'cx, 'env> {
     /// Map from module path to module entry.
     modules: HashMap<ModulePath<'cx>, ModuleEntry<'cx>>,
     /// Map from module path to its environment with registered signatures.
-    module_environments: HashMap<ModulePath<'cx>, Environment<'cx, 'env>>,
+    module_toplevel: HashMap<ModulePath<'cx>, Environment<'cx, 'env>>,
 }
 
 impl<'cx, 'env> Session<'cx, 'env> {
@@ -26,7 +26,7 @@ impl<'cx, 'env> Session<'cx, 'env> {
     pub fn new() -> Self {
         Self {
             modules: HashMap::new(),
-            module_environments: HashMap::new(),
+            module_toplevel: HashMap::new(),
         }
     }
 
@@ -62,8 +62,8 @@ impl<'cx, 'env> Session<'cx, 'env> {
     }
 
     /// Gets the environment for a module.
-    pub fn get_environment(&self, path: &ModulePath<'cx>) -> Option<&Environment<'cx, 'env>> {
-        self.module_environments.get(path)
+    pub fn get_environment(&self, path: &ModulePath<'cx>) -> Option<&Environment<'cx, '_>> {
+        self.module_toplevel.get(path)
     }
 
     /// Gets a mutable environment for a module.
@@ -71,12 +71,12 @@ impl<'cx, 'env> Session<'cx, 'env> {
         &mut self,
         path: &ModulePath<'cx>,
     ) -> Option<&mut Environment<'cx, 'env>> {
-        self.module_environments.get_mut(path)
+        self.module_toplevel.get_mut(path)
     }
 
     /// Registers an environment for a module.
     pub fn register_environment(&mut self, path: ModulePath<'cx>, env: Environment<'cx, 'env>) {
-        self.module_environments.insert(path, env);
+        self.module_toplevel.insert(path, env);
     }
 }
 

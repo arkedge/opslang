@@ -3,6 +3,7 @@ use ast::token::IntoToken;
 use chrono::Utc;
 use opslang_ast::v1::{self as ast};
 use opslang_ir::version::v1::{self as ir};
+use opslang_module::version::v1 as module;
 
 use ir::Typed;
 use opslang_module::version::v1::{Module, ModuleDef, ModuleItem, ModuleItemDef, ModuleLoader};
@@ -17,7 +18,7 @@ use std::ops::{Deref, DerefMut};
 type Result<T, E = anyhow::Error> = std::result::Result<T, E>;
 
 mod environment;
-use environment::Environment;
+use environment::{Environment, Scope};
 
 mod session;
 pub use session::{ModuleEntry, Session};
@@ -139,14 +140,14 @@ impl<'cx> TypeChecker<'cx> {
 
         for &path in &module_paths {
             let entry = session.get_module(&path).unwrap();
-            let mut env = Environment::new();
+            let mut toplevel = Scope::new();
 
             for definition in entry.program.toplevel_items {
                 // Note: 'env does not refer to this borrowing.
-                self.register_signature(&mut env, definition)?;
+                self.register_signature(&mut toplevel, definition)?;
             }
 
-            session.register_environment(path, env);
+            session.register_environment(path, Environment::new(path, toplevel));
         }
 
         // Second pass: type check each module
@@ -154,7 +155,7 @@ impl<'cx> TypeChecker<'cx> {
             let entry = session.get_module(path).unwrap();
             let program = &entry.program;
 
-            // Note: 'env DOES refer to this borrowing.
+            // Note: 'env DOES refer to this variable's lifetime.
             let env = session.get_environment(path).unwrap();
             let ir_program = self.typeck_items_with_global_env(env, program)?;
 
@@ -172,9 +173,10 @@ impl<'cx> TypeChecker<'cx> {
     pub fn typeck_single_program(
         &mut self,
         program: &ast::Program<'cx>,
+        path: module::ModulePath<'cx>,
     ) -> Result<ir::Program<'cx>> {
         // First pass: collect all function and constant signatures
-        let global_env = self.collect_signatures(program)?;
+        let global_env = self.collect_signatures(program, path)?;
 
         // Second pass: type check implementations and lower comments
         self.typeck_items_with_global_env(&global_env, program)
@@ -184,14 +186,15 @@ impl<'cx> TypeChecker<'cx> {
     fn collect_signatures<'env>(
         &mut self,
         program: &ast::Program<'cx>,
+        path: module::ModulePath<'cx>,
     ) -> Result<Environment<'cx, 'env>> {
         // Create global environment for top-level definitions
-        let mut global_env = Environment::new();
+        let mut toplevel = Scope::new();
 
         for definition in program.toplevel_items {
-            self.register_signature(&mut global_env, definition)?;
+            self.register_signature(&mut toplevel, definition)?;
         }
-        Ok(global_env)
+        Ok(Environment::new(path, toplevel))
     }
 
     fn typeck_items_with_global_env<'env>(

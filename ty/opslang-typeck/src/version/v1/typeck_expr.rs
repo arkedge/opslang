@@ -387,7 +387,8 @@ mod tests {
 
         let expr = ast_cx.alloc_expr(ast::ExprKind::Variable(path));
         let mut subst = Substitution::new();
-        let env = Environment::new();
+        let root_path = module.alloc_root_path("test");
+        let env = Environment::from_path(root_path);
         let ir_expr = type_checker.typeck_expr(&env, &mut subst, &expr).unwrap();
         assert_eq!(ir_expr.ty, Ty::mk_external(&tcx, path, Ty::mk_i32(&tcx)));
     }

@@ -1,17 +1,38 @@
 use super::*;
 use opslang_ast::syntax::v1 as ast;
+use opslang_module::version::v1::ModulePath;
 
 /// Represents a lexical environment for name and type bindings.
 ///
 /// Environments form a chain through parent references, enabling proper
 /// lexical scoping where inner scopes can shadow outer scope bindings.
 #[derive(Debug)]
-pub struct Environment<'cx, 'env> {
+pub struct Scope<'cx, 'scope> {
     /// Maps variable names to their unique identifiers.
     name_bindings: HashMap<&'cx str, TypedIdent<'cx>>,
 
     /// Reference to parent environment for scope chaining.
-    parent: Option<&'env Self>,
+    parent: Option<&'scope Self>,
+}
+
+#[derive(Debug)]
+pub struct Environment<'cx, 'scope> {
+    path: ModulePath<'cx>,
+    scope: Scope<'cx, 'scope>,
+}
+
+impl<'cx, 'scope> DerefMut for Environment<'cx, 'scope> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.scope
+    }
+}
+
+impl<'cx, 'scope> Deref for Environment<'cx, 'scope> {
+    type Target = Scope<'cx, 'scope>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.scope
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -20,7 +41,7 @@ pub struct TypedIdent<'cx> {
     pub ty: Ty<'cx>,
 }
 
-impl<'cx, 'env> Environment<'cx, 'env> {
+impl<'cx, 'scope> Scope<'cx, 'scope> {
     /// Creates a new top-level environment with no parent.
     ///
     /// This represents the global scope.
@@ -34,7 +55,7 @@ impl<'cx, 'env> Environment<'cx, 'env> {
     /// Creates a new environment that extends a parent environment.
     ///
     /// The new environment can access bindings from the parent chain while allowing local shadowing.
-    pub fn extend_inherit(&'env self) -> Self {
+    pub fn extend_inherit(&'scope self) -> Self {
         Self {
             name_bindings: HashMap::new(),
             parent: Some(self),
@@ -60,7 +81,30 @@ impl<'cx, 'env> Environment<'cx, 'env> {
     }
 }
 
-impl<'cx, 'env> Default for Environment<'cx, 'env> {
+impl<'cx, 'scope> Environment<'cx, 'scope> {
+    pub fn new(path: ModulePath<'cx>, scope: Scope<'cx, 'scope>) -> Self {
+        Self { scope, path }
+    }
+
+    pub fn from_path(path: ModulePath<'cx>) -> Self {
+        Self {
+            scope: Scope::new(),
+            path,
+        }
+    }
+
+    /// Creates a new environment that extends a parent environment.
+    ///
+    /// The new environment can access bindings from the parent chain while allowing local shadowing.
+    pub fn extend_inherit(&'scope self) -> Self {
+        Self {
+            scope: self.scope.extend_inherit(),
+            path: self.path,
+        }
+    }
+}
+
+impl<'cx, 'scope> Default for Scope<'cx, 'scope> {
     fn default() -> Self {
         Self::new()
     }
@@ -70,12 +114,12 @@ impl<'cx> TypeChecker<'cx> {
     /// Binds a name to a new identifier with type and returns the identifier.
     pub fn bind(
         &mut self,
-        env: &mut Environment<'cx, '_>,
+        scope: &mut Scope<'cx, '_>,
         name: ast::Ident<'cx>,
         ty: Ty<'cx>,
     ) -> Ident<'cx> {
         let id = self.tcx.alloc_identifier(name);
-        env.bind(name, id, ty);
+        scope.bind(name, id, ty);
         id
     }
 }

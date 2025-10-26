@@ -165,7 +165,8 @@ fn test_variable_resolution_priority() {
     loader.add_module(builtin);
     let mut checker = TypeChecker::with_module_loader(loader, gcx, &ir_cx);
 
-    let mut env = Environment::<'_, '_>::new();
+    let root_path = module.alloc_root_path("test");
+    let mut env = Environment::from_path(root_path);
 
     // define local variable `i32` with type `String`
     let local_i32_type = Ty::mk_string(&cx);
