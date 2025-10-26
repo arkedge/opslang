@@ -1,9 +1,9 @@
 use super::*;
 
 impl<'cx> TypeChecker<'cx> {
-    pub(super) fn typeck_function(
+    pub(super) fn typeck_function<'env>(
         &mut self,
-        global_env: &Environment<'cx, '_>,
+        global_env: &Environment<'cx, 'env>,
         func_def: &'cx ast::FunctionDef<'cx>,
     ) -> Result<ir::FunctionDef<'cx>> {
         let func_name = func_def.name;

@@ -1,9 +1,9 @@
 use super::*;
 
 impl<'cx> TypeChecker<'cx> {
-    pub(super) fn typeck_block(
+    pub(super) fn typeck_block<'env>(
         &mut self,
-        env: &Environment<'cx, '_>,
+        env: &Environment<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         block: &ast::Block<'cx>,
     ) -> Result<ir::Block<'cx>> {
@@ -56,9 +56,9 @@ enum RowProcessResult<'cx> {
 }
 
 impl<'cx> TypeChecker<'cx> {
-    fn typeck_row(
+    fn typeck_row<'env>(
         &mut self,
-        env: &mut Environment<'cx, '_>,
+        env: &mut Environment<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         row: &ast::Row<'cx>,
     ) -> Result<RowProcessResult<'cx>> {

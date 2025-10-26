@@ -5,9 +5,9 @@ impl<'cx> TypeChecker<'cx> {
     ///
     /// This function infers the type of an expression and converts it to its IR representation.
     /// It updates the provided substitution with any new type constraints discovered during checking.
-    pub(super) fn typeck_binary(
+    pub(super) fn typeck_binary<'env>(
         &mut self,
-        env: &Environment<'cx, '_>,
+        env: &Environment<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         expr: &'cx ast::Binary<'cx>,
     ) -> Result<ir::Expr<'cx>> {

@@ -1,9 +1,9 @@
 use super::*;
 
 impl<'cx> TypeChecker<'cx> {
-    pub(super) fn typeck_apply(
+    pub(super) fn typeck_apply<'env>(
         &mut self,
-        env: &Environment<'cx, '_>,
+        env: &Environment<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         apply: &'cx ast::Apply<'cx>,
         qualifs: &'cx [ast::Qualif<'cx>],

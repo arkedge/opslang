@@ -1,9 +1,9 @@
 use super::*;
 
 impl<'cx> TypeChecker<'cx> {
-    pub(super) fn typeck_constant(
+    pub(super) fn typeck_constant<'env>(
         &mut self,
-        env: &Environment<'cx, '_>,
+        env: &Environment<'cx, 'env>,
         const_def: &'cx ast::ConstantDef<'cx>,
     ) -> Result<ir::ConstantDef<'cx>> {
         let declared_type = self.resolve_type_from_path(const_def.ty)?;

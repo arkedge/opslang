@@ -4,9 +4,9 @@ use opslang_ir::version::v1::NumericKind;
 use opslang_ty::version::v1::{FloatVid, IntVid};
 
 impl<'cx> TypeChecker<'cx> {
-    pub(super) fn typeck_literal(
+    pub(super) fn typeck_literal<'env>(
         &mut self,
-        typing_env: &Environment<'cx, '_>,
+        typing_env: &Environment<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         literal: &'cx ast::Literal<'cx>,
     ) -> Result<(ir::Literal<'cx>, Ty<'cx>)> {
