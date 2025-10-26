@@ -4,7 +4,7 @@ impl<'cx> TypeChecker<'cx> {
     /// Type checks a path expression, resolving it to a variable or module item.
     pub(super) fn typeck_path<'env>(
         &mut self,
-        env: &Environment<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         path: &'cx ast::Path<'cx>,
     ) -> Result<(ir::ResolvedPath<'cx>, Ty<'cx>)> {
         // First check if this is a single identifier that can be resolved in local environment

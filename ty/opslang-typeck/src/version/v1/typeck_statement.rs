@@ -3,13 +3,14 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_statement<'env>(
         &mut self,
-        env: &mut Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &mut Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         stmt: &ast::Statement<'cx>,
     ) -> Result<ir::Statement<'cx>> {
         match stmt {
             ast::Statement::Let(let_stmt) => {
-                let ir_rhs = self.typeck_expr(env, subst, &let_stmt.rhs)?;
+                let ir_rhs = self.typeck_expr(session, env, subst, &let_stmt.rhs)?;
 
                 // Bind the variable to the environment with the inferred type
                 let var_name = let_stmt.variable;
@@ -24,7 +25,7 @@ impl<'cx> TypeChecker<'cx> {
                 }))
             }
             ast::Statement::Expr(expr_stmt) => {
-                let ir_expr = self.typeck_expr(env, subst, &expr_stmt.expr)?;
+                let ir_expr = self.typeck_expr(session, env, subst, &expr_stmt.expr)?;
 
                 Ok(ir::Statement::Expr(ir::ExprStatement {
                     expr: ir_expr,

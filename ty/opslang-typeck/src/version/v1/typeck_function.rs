@@ -3,7 +3,8 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_function<'env>(
         &mut self,
-        global_env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        global_env: &Scope<'cx, 'env>,
         func_def: &'cx ast::FunctionDef<'cx>,
     ) -> Result<ir::FunctionDef<'cx>> {
         let func_name = func_def.name;
@@ -42,7 +43,7 @@ impl<'cx> TypeChecker<'cx> {
 
         // Type check function body and collect substitutions
         let mut subst = Substitution::new();
-        let mut ir_body = self.typeck_block(&func_env, &mut subst, func_def.body)?;
+        let mut ir_body = self.typeck_block(session, &func_env, &mut subst, func_def.body)?;
 
         // Apply final substitution using visitor
         hm::SubstitutionVisitor::new(subst, self.tcx).visit_mut(&mut ir_body);

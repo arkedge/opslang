@@ -3,19 +3,20 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_apply<'env>(
         &mut self,
-        env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         apply: &'cx ast::Apply<'cx>,
         qualifs: &'cx [ast::Qualif<'cx>],
     ) -> Result<ir::Expr<'cx>> {
-        let func_ir = self.typeck_expr(env, subst, &apply.function)?;
+        let func_ir = self.typeck_expr(session, env, subst, &apply.function)?;
         let mut arg_types = Vec::new();
         let mut args = Vec::new();
         let mut qualifications = Vec::new();
 
         // Process qualifications first
         for qualif in qualifs {
-            let qualif_ir = self.typeck_qualif(env, subst, qualif)?;
+            let qualif_ir = self.typeck_qualif(session, env, subst, qualif)?;
             qualifications.push(qualif_ir);
         }
 
@@ -23,11 +24,11 @@ impl<'cx> TypeChecker<'cx> {
         for arg in apply.args {
             if let ast::ExprKind::Qualif(qualif) = arg.0 {
                 // Collect Qualif as qualification
-                let qualif_ir = self.typeck_qualif(env, subst, qualif)?;
+                let qualif_ir = self.typeck_qualif(session, env, subst, qualif)?;
                 qualifications.push(qualif_ir);
             } else {
                 // Regular argument
-                let arg_ir = self.typeck_expr(env, subst, arg)?;
+                let arg_ir = self.typeck_expr(session, env, subst, arg)?;
                 arg_types.push(arg_ir.ty);
                 args.push(arg_ir);
             }
@@ -68,9 +69,10 @@ impl<'cx> TypeChecker<'cx> {
         Ok(ir_expr)
     }
 
-    fn typeck_qualif(
+    fn typeck_qualif<'env>(
         &mut self,
-        env: &Environment<'cx, '_>,
+        session: &Session<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         qualif: &'cx ast::Qualif<'cx>,
     ) -> Result<ir::Qualif<'cx>> {
@@ -78,7 +80,7 @@ impl<'cx> TypeChecker<'cx> {
             ast::Qualif::Modifier(modifier) => {
                 let ir_path = self.resolve_path(&modifier.id)?.resolved_path;
                 let ir_param = if let Some(param) = &modifier.arg {
-                    let param_ir = self.typeck_expr(env, subst, &param.value)?;
+                    let param_ir = self.typeck_expr(session, env, subst, &param.value)?;
                     Some(ir::ModifierParam {
                         colon_token: param.colon_token.into_token(),
                         value: param_ir,

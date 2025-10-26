@@ -7,13 +7,14 @@ impl<'cx> TypeChecker<'cx> {
     /// It updates the provided substitution with any new type constraints discovered during checking.
     pub(super) fn typeck_binary<'env>(
         &mut self,
-        env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         expr: &'cx ast::Binary<'cx>,
     ) -> Result<ir::Expr<'cx>> {
         let binary = expr;
-        let mut lhs_ir = self.typeck_expr(env, subst, &binary.lhs)?;
-        let mut rhs_ir = self.typeck_expr(env, subst, &binary.rhs)?;
+        let mut lhs_ir = self.typeck_expr(session, env, subst, &binary.lhs)?;
+        let mut rhs_ir = self.typeck_expr(session, env, subst, &binary.rhs)?;
 
         match binary.op {
             ast::BinOp::Add(span) => {

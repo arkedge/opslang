@@ -7,7 +7,8 @@ impl<'cx> TypeChecker<'cx> {
     /// It updates the provided substitution with any new type constraints discovered during checking.
     pub(super) fn typeck_expr<'env>(
         &mut self,
-        env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         mut expr: &'cx ast::ExprKind<'cx>,
     ) -> Result<ir::Expr<'cx>> {
@@ -18,7 +19,7 @@ impl<'cx> TypeChecker<'cx> {
         match expr {
             ast::ExprKind::Parened(_parened) => unreachable!("handled above"),
             ast::ExprKind::Literal(literal) => {
-                let (ir_literal, ty) = self.typeck_literal(env, subst, literal)?;
+                let (ir_literal, ty) = self.typeck_literal(session, env, subst, literal)?;
                 let ir_expr = ir::Expr::new(ir::ExprMut::literal(self.ir_cx, ir_literal), ty);
                 Ok(ir_expr)
             }
@@ -27,9 +28,9 @@ impl<'cx> TypeChecker<'cx> {
                 let ir_expr = ir::Expr::new(ir::ExprMut::variable(self.ir_cx, resolved_path), ty);
                 Ok(ir_expr)
             }
-            ast::ExprKind::Binary(binary) => self.typeck_binary(env, subst, binary),
+            ast::ExprKind::Binary(binary) => self.typeck_binary(session, env, subst, binary),
             ast::ExprKind::Unary(unary) => {
-                let expr_ir = self.typeck_expr(env, subst, &unary.expr)?;
+                let expr_ir = self.typeck_expr(session, env, subst, &unary.expr)?;
 
                 match unary.op {
                     ast::UnOp::Neg(_) => {
@@ -89,7 +90,7 @@ impl<'cx> TypeChecker<'cx> {
                 }
             }
             ast::ExprKind::Cast(cast) => {
-                let mut expr_ir = self.typeck_expr(env, subst, &cast.expr)?;
+                let mut expr_ir = self.typeck_expr(session, env, subst, &cast.expr)?;
                 self.eagerly_resolve(subst, &mut expr_ir.ty)?;
                 let target_ty = self.resolve_type_from_path(cast.ty)?;
 
@@ -114,15 +115,16 @@ impl<'cx> TypeChecker<'cx> {
                 );
                 Ok(ir_expr)
             }
-            ast::ExprKind::Apply(apply) => self.typeck_apply(env, subst, apply, &[]),
+            ast::ExprKind::Apply(apply) => self.typeck_apply(session, env, subst, apply, &[]),
             ast::ExprKind::If(if_expr) => {
-                let cond_ir = self.typeck_expr(env, subst, &if_expr.cond)?;
+                let cond_ir = self.typeck_expr(session, env, subst, &if_expr.cond)?;
                 let bool_type = Ty::mk_bool(self.tcx);
                 self.unify(subst, cond_ir.ty, bool_type)?;
-                let ir_then_block = self.typeck_block(env, subst, if_expr.then_clause)?;
+                let ir_then_block = self.typeck_block(session, env, subst, if_expr.then_clause)?;
 
                 if let Some(else_clause) = &if_expr.else_opt {
-                    let ir_else_block = self.typeck_block(env, subst, else_clause.else_clause)?;
+                    let ir_else_block =
+                        self.typeck_block(session, env, subst, else_clause.else_clause)?;
                     let unified_then = subst.apply_substitution_pure(
                         self.tcx,
                         ir_then_block.ty(self.tcx).unwrap_or(Ty::mk_unit(self.tcx)),
@@ -168,7 +170,7 @@ impl<'cx> TypeChecker<'cx> {
                 }
             }
             ast::ExprKind::Wait(wait) => {
-                let mut expr_ir = self.typeck_expr(env, subst, &wait.expr)?;
+                let mut expr_ir = self.typeck_expr(session, env, subst, &wait.expr)?;
                 self.eagerly_resolve(subst, &mut expr_ir.ty)?;
 
                 // Check that the expression is awaitable
@@ -198,8 +200,8 @@ impl<'cx> TypeChecker<'cx> {
                 let mut result_type = None;
 
                 for item in *items {
-                    let mut expr_ir = self.typeck_expr(env, subst, &item.expr)?;
-                    let body_ir = self.typeck_block(env, subst, item.body)?;
+                    let mut expr_ir = self.typeck_expr(session, env, subst, &item.expr)?;
+                    let body_ir = self.typeck_block(session, env, subst, item.body)?;
 
                     // Check that the expression is awaitable
                     self.eagerly_resolve(subst, &mut expr_ir.ty)?;
@@ -247,7 +249,7 @@ impl<'cx> TypeChecker<'cx> {
             }
             ast::ExprKind::PreQualified(prequalified) => {
                 if let ast::ExprKind::Apply(apply) = &prequalified.expr.0 {
-                    self.typeck_apply(env, subst, apply, prequalified.qualifs)
+                    self.typeck_apply(session, env, subst, apply, prequalified.qualifs)
                 } else {
                     Err(anyhow!(
                         "PreQualified expressions can only be applied to function calls"
@@ -256,14 +258,14 @@ impl<'cx> TypeChecker<'cx> {
             }
             ast::ExprKind::Compare(compare) => {
                 // Compare expressions have a head expression and a tail of (op, expr) pairs
-                let head_ir = self.typeck_expr(env, subst, &compare.head)?;
+                let head_ir = self.typeck_expr(session, env, subst, &compare.head)?;
                 let mut ir_tail = Vec::new();
 
                 // Type check all comparison operands - they should all have the same type
                 let expected_type = head_ir.ty;
 
                 for ast::CompareOpExpr { op, val: expr } in compare.tail_with_op {
-                    let expr_ir = self.typeck_expr(env, subst, expr)?;
+                    let expr_ir = self.typeck_expr(session, env, subst, expr)?;
 
                     // Unify with expected type
                     self.unify(subst, expected_type, expr_ir.ty)?;
@@ -290,8 +292,8 @@ impl<'cx> TypeChecker<'cx> {
             }
             ast::ExprKind::Set(set) => {
                 // Set expressions are assignment-like operations (lhs := rhs)
-                let lhs_ir = self.typeck_expr(env, subst, &set.lhs)?;
-                let rhs_ir = self.typeck_expr(env, subst, &set.rhs)?;
+                let lhs_ir = self.typeck_expr(session, env, subst, &set.lhs)?;
+                let rhs_ir = self.typeck_expr(session, env, subst, &set.rhs)?;
 
                 // Unify lhs and rhs types - they should be the same
                 self.unify(subst, lhs_ir.ty, rhs_ir.ty)?;
@@ -311,7 +313,7 @@ impl<'cx> TypeChecker<'cx> {
                     path,
                 } = infix_import;
                 // InfixImport expressions are like "file ? path" operations
-                let (file_ir, ty) = self.typeck_literal(env, subst, file)?;
+                let (file_ir, ty) = self.typeck_literal(session, env, subst, file)?;
 
                 // File should be a string type
                 // FIXME: file must be a string literal
@@ -339,7 +341,7 @@ impl<'cx> TypeChecker<'cx> {
                 );
                 Ok(ir_expr)
             }
-            ast::ExprKind::Call(call) => self.typeck_call(env, subst, call),
+            ast::ExprKind::Call(call) => self.typeck_call(session, env, subst, call),
         }
     }
 }
@@ -387,9 +389,11 @@ mod tests {
 
         let expr = ast_cx.alloc_expr(ast::ExprKind::Variable(path));
         let mut subst = Substitution::new();
-        let root_path = module.alloc_root_path("test");
-        let env = Environment::from_path(root_path);
-        let ir_expr = type_checker.typeck_expr(&env, &mut subst, &expr).unwrap();
+        let env = Scope::new();
+        let session = Session::new();
+        let ir_expr = type_checker
+            .typeck_expr(&session, &env, &mut subst, &expr)
+            .unwrap();
         assert_eq!(ir_expr.ty, Ty::mk_external(&tcx, path, Ty::mk_i32(&tcx)));
     }
 }

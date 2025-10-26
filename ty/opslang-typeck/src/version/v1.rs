@@ -18,7 +18,7 @@ use std::ops::{Deref, DerefMut};
 type Result<T, E = anyhow::Error> = std::result::Result<T, E>;
 
 mod environment;
-use environment::{Environment, Scope};
+use environment::Scope;
 
 mod session;
 pub use session::{ModuleEntry, Session};
@@ -147,7 +147,7 @@ impl<'cx> TypeChecker<'cx> {
                 self.register_signature(&mut toplevel, definition)?;
             }
 
-            session.register_environment(path, Environment::new(path, toplevel));
+            session.register_environment(path, toplevel);
         }
 
         // Second pass: type check each module
@@ -157,7 +157,7 @@ impl<'cx> TypeChecker<'cx> {
 
             // Note: 'env DOES refer to this variable's lifetime.
             let env = session.get_environment(path).unwrap();
-            let ir_program = self.typeck_items_with_global_env(env, program)?;
+            let ir_program = self.typeck_items_with_global_env(session, env, program)?;
 
             session.get_module_mut(path).unwrap().ir_program = Some(ir_program);
         }
@@ -175,31 +175,35 @@ impl<'cx> TypeChecker<'cx> {
         program: &ast::Program<'cx>,
         path: module::ModulePath<'cx>,
     ) -> Result<ir::Program<'cx>> {
+        let mut session = Session::new();
+
         // First pass: collect all function and constant signatures
-        let global_env = self.collect_signatures(program, path)?;
+        let global_env = self.collect_signatures(program)?;
+        session.register_environment(path, global_env);
+        let global_env = session.get_environment(&path).unwrap();
 
         // Second pass: type check implementations and lower comments
-        self.typeck_items_with_global_env(&global_env, program)
+        self.typeck_items_with_global_env(&session, global_env, program)
     }
 
     // Note: 'env can be any lifetime, even that of later borrowing from the *returned value*.
-    fn collect_signatures<'env>(
+    pub fn collect_signatures<'env>(
         &mut self,
         program: &ast::Program<'cx>,
-        path: module::ModulePath<'cx>,
-    ) -> Result<Environment<'cx, 'env>> {
+    ) -> Result<Scope<'cx, 'env>> {
         // Create global environment for top-level definitions
         let mut toplevel = Scope::new();
 
         for definition in program.toplevel_items {
             self.register_signature(&mut toplevel, definition)?;
         }
-        Ok(Environment::new(path, toplevel))
+        Ok(toplevel)
     }
 
-    fn typeck_items_with_global_env<'env>(
+    pub fn typeck_items_with_global_env<'env>(
         &mut self,
-        global_env: &'env Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        global_env: &Scope<'cx, 'env>,
         program: &ast::Program<'cx>,
     ) -> Result<ir::Program<'cx>> {
         let mut ir_definitions = Vec::new();
@@ -222,11 +226,11 @@ impl<'cx> TypeChecker<'cx> {
 
                 let ir_kind = match kind {
                     ast::DefinitionKind::Function(func_def) => {
-                        let ir_func = self.typeck_function(global_env, func_def)?;
+                        let ir_func = self.typeck_function(session, global_env, func_def)?;
                         ir::DefinitionKind::Function(ir_func)
                     }
                     ast::DefinitionKind::Constant(const_def) => {
-                        let ir_const = self.typeck_constant(global_env, const_def)?;
+                        let ir_const = self.typeck_constant(session, global_env, const_def)?;
                         ir::DefinitionKind::Constant(ir_const)
                     }
                 };

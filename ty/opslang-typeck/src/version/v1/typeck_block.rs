@@ -3,7 +3,8 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_block<'env>(
         &mut self,
-        env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         block: &ast::Block<'cx>,
     ) -> Result<ir::Block<'cx>> {
@@ -14,7 +15,7 @@ impl<'cx> TypeChecker<'cx> {
         for item in block.scope.items {
             match item {
                 ast::ScopeItem::Row(row) => {
-                    match self.typeck_row(&mut local_env, subst, row)? {
+                    match self.typeck_row(session, &mut local_env, subst, row)? {
                         RowProcessResult::Comment(comment) => {
                             pending_comments.push(comment);
                         }
@@ -28,7 +29,7 @@ impl<'cx> TypeChecker<'cx> {
                 ast::ScopeItem::Block(nested_block) => {
                     // Flush any pending comments before adding the block
                     self.flush_comments_to_items(&mut pending_comments, &mut ir_items)?;
-                    let ir_block = self.typeck_block(&local_env, subst, nested_block)?;
+                    let ir_block = self.typeck_block(session, &local_env, subst, nested_block)?;
                     ir_items.push(ir::ScopeItem::Block(ir_block));
                 }
             }
@@ -58,7 +59,8 @@ enum RowProcessResult<'cx> {
 impl<'cx> TypeChecker<'cx> {
     fn typeck_row<'env>(
         &mut self,
-        env: &mut Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &mut Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         row: &ast::Row<'cx>,
     ) -> Result<RowProcessResult<'cx>> {
@@ -72,7 +74,7 @@ impl<'cx> TypeChecker<'cx> {
 
         // Process as a regular row
         let ir_content = if let Some(content) = &row.statement {
-            let stmt = self.typeck_statement(env, subst, content)?;
+            let stmt = self.typeck_statement(session, env, subst, content)?;
             Some(stmt)
         } else {
             None

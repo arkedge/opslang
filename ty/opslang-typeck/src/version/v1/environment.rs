@@ -1,6 +1,5 @@
 use super::*;
 use opslang_ast::syntax::v1 as ast;
-use opslang_module::version::v1::ModulePath;
 
 /// Represents a lexical environment for name and type bindings.
 ///
@@ -13,26 +12,6 @@ pub struct Scope<'cx, 'scope> {
 
     /// Reference to parent environment for scope chaining.
     parent: Option<&'scope Self>,
-}
-
-#[derive(Debug)]
-pub struct Environment<'cx, 'scope> {
-    path: ModulePath<'cx>,
-    scope: Scope<'cx, 'scope>,
-}
-
-impl<'cx, 'scope> DerefMut for Environment<'cx, 'scope> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.scope
-    }
-}
-
-impl<'cx, 'scope> Deref for Environment<'cx, 'scope> {
-    type Target = Scope<'cx, 'scope>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.scope
-    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -78,29 +57,6 @@ impl<'cx, 'scope> Scope<'cx, 'scope> {
             .get(name.raw)
             .copied()
             .or_else(|| self.parent.and_then(|parent| parent.lookup_var(name)))
-    }
-}
-
-impl<'cx, 'scope> Environment<'cx, 'scope> {
-    pub fn new(path: ModulePath<'cx>, scope: Scope<'cx, 'scope>) -> Self {
-        Self { scope, path }
-    }
-
-    pub fn from_path(path: ModulePath<'cx>) -> Self {
-        Self {
-            scope: Scope::new(),
-            path,
-        }
-    }
-
-    /// Creates a new environment that extends a parent environment.
-    ///
-    /// The new environment can access bindings from the parent chain while allowing local shadowing.
-    pub fn extend_inherit(&'scope self) -> Self {
-        Self {
-            scope: self.scope.extend_inherit(),
-            path: self.path,
-        }
     }
 }
 

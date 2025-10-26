@@ -3,12 +3,13 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_constant<'env>(
         &mut self,
-        env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         const_def: &'cx ast::ConstantDef<'cx>,
     ) -> Result<ir::ConstantDef<'cx>> {
         let declared_type = self.resolve_type_from_path(const_def.ty)?;
         let mut subst = Substitution::new();
-        let mut inferred_expr = self.typeck_expr(env, &mut subst, &const_def.value)?;
+        let mut inferred_expr = self.typeck_expr(session, env, &mut subst, &const_def.value)?;
 
         self.unify(&mut subst, declared_type, inferred_expr.ty)?;
 

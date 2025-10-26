@@ -3,18 +3,19 @@ use super::*;
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_call<'env>(
         &mut self,
-        env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        env: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         call: &'cx ast::Call<'cx>,
     ) -> Result<ir::Expr<'cx>> {
         if let ast::ExprKind::Apply(apply) = call.expr.0 {
-            let func_ir = self.typeck_expr(env, subst, &apply.function)?;
+            let func_ir = self.typeck_expr(session, env, subst, &apply.function)?;
             let mut arg_types = Vec::new();
             let mut args = Vec::new();
 
             // Process arguments
             for arg in apply.args {
-                let arg_ir = self.typeck_expr(env, subst, arg)?;
+                let arg_ir = self.typeck_expr(session, env, subst, arg)?;
                 arg_types.push(arg_ir.ty);
                 args.push(arg_ir);
             }
@@ -40,7 +41,7 @@ impl<'cx> TypeChecker<'cx> {
             Ok(ir_expr)
         } else {
             // Allow calling `() -> T` procedures
-            let func_ir = self.typeck_expr(env, subst, call.expr.0)?;
+            let func_ir = self.typeck_expr(session, env, subst, call.expr.0)?;
             let return_type = Ty::mk_variable(self.tcx, TyVid::fresh());
             let expected_func_type = Ty::mk_function(self.tcx, vec![], return_type);
             self.unify(subst, func_ir.ty, expected_func_type)?;

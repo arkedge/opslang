@@ -6,7 +6,8 @@ use opslang_ty::version::v1::{FloatVid, IntVid};
 impl<'cx> TypeChecker<'cx> {
     pub(super) fn typeck_literal<'env>(
         &mut self,
-        typing_env: &Environment<'cx, 'env>,
+        session: &Session<'cx, 'env>,
+        scope: &Scope<'cx, 'env>,
         subst: &mut Substitution<'cx>,
         literal: &'cx ast::Literal<'cx>,
     ) -> Result<(ir::Literal<'cx>, Ty<'cx>)> {
@@ -58,7 +59,7 @@ impl<'cx> TypeChecker<'cx> {
                     let mut ir_exprs = Vec::new();
 
                     // Type check first element to establish the element type
-                    let first_ir = self.typeck_expr(typing_env, subst, &array.exprs[0])?;
+                    let first_ir = self.typeck_expr(session, scope, subst, &array.exprs[0])?;
 
                     let ty = first_ir.ty;
                     ir_exprs.push(first_ir);
@@ -66,7 +67,7 @@ impl<'cx> TypeChecker<'cx> {
 
                     // Type check remaining elements and unify with element type
                     for expr in &array.exprs[1..] {
-                        let expr_ir = self.typeck_expr(typing_env, subst, expr)?;
+                        let expr_ir = self.typeck_expr(session, scope, subst, expr)?;
 
                         self.unify(subst, element_type, expr_ir.ty)?;
 
